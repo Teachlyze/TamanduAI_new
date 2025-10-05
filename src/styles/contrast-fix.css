@@ -1,0 +1,124 @@
+/* Global Dark Mode Contrast Fixes */
+
+/* Ensure all text has proper contrast in dark mode */
+.dark {
+  color-scheme: dark;
+}
+
+/* Text colors with proper contrast */
+.dark .text-slate-800:not([class*="dark:"]) {
+  color: white !important;
+}
+
+.dark .text-slate-700:not([class*="dark:"]) {
+  color: rgb(226 232 240) !important;
+}
+
+.dark .text-slate-600:not([class*="dark:"]) {
+  color: rgb(203 213 225) !important;
+}
+
+.dark .text-slate-500:not([class*="dark:"]) {
+  color: rgb(148 163 184) !important;
+}
+
+.dark .text-gray-800:not([class*="dark:"]) {
+  color: white !important;
+}
+
+.dark .text-gray-700:not([class*="dark:"]) {
+  color: rgb(229 231 235) !important;
+}
+
+.dark .text-gray-600:not([class*="dark:"]) {
+  color: rgb(209 213 219) !important;
+}
+
+.dark .text-gray-500:not([class*="dark:"]) {
+  color: rgb(156 163 175) !important;
+}
+
+/* Link colors */
+.dark a.text-blue-600:not([class*="dark:"]) {
+  color: rgb(96 165 250) !important;
+}
+
+.dark a.text-purple-600:not([class*="dark:"]) {
+  color: rgb(192 132 252) !important;
+}
+
+/* Background colors */
+.dark .bg-white:not([class*="dark:"]) {
+  background-color: rgb(31 41 55) !important;
+}
+
+.dark .bg-gray-50:not([class*="dark:"]) {
+  background-color: rgb(17 24 39) !important;
+}
+
+.dark .bg-gray-100:not([class*="dark:"]) {
+  background-color: rgb(31 41 55) !important;
+}
+
+/* Border colors */
+.dark .border-gray-200:not([class*="dark:"]) {
+  border-color: rgb(55 65 81) !important;
+}
+
+.dark .border-gray-300:not([class*="dark:"]) {
+  border-color: rgb(75 85 99) !important;
+}
+
+.dark .border-slate-200:not([class*="dark:"]) {
+  border-color: rgb(51 65 85) !important;
+}
+
+/* Ensure proper contrast for all headings */
+.dark h1:not([class*="dark:"]),
+.dark h2:not([class*="dark:"]),
+.dark h3:not([class*="dark:"]),
+.dark h4:not([class*="dark:"]),
+.dark h5:not([class*="dark:"]),
+.dark h6:not([class*="dark:"]) {
+  color: white !important;
+}
+
+/* Labels */
+.dark label:not([class*="dark:"]) {
+  color: rgb(226 232 240) !important;
+}
+
+/* Paragraphs without specific text color */
+.dark p:not([class*="dark:"]):not([class*="text-"]) {
+  color: rgb(203 213 225) !important;
+}
+
+/* Lists */
+.dark li:not([class*="dark:"]):not([class*="text-"]) {
+  color: rgb(203 213 225) !important;
+}
+
+/* Scrollbars */
+.dark ::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background-color: rgb(17 24 39);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: rgb(55 65 81);
+  border-radius: 6px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(75 85 99);
+}
+
+/* Selection */
+.dark ::selection {
+  background-color: rgb(37 99 235);
+  color: white;
+}

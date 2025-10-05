@@ -1,0 +1,261 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "back": "Back",
+    "retry": "Try again",
+    "next": "Next",
+    "submit": "Submit",
+    "upload": "Upload File",
+    "download": "Download",
+    "view": "View",
+    "settings": "Settings",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "profile": "Profile",
+    "notifications": "Notifications",
+    "help": "Help",
+    "optional": "optional",
+    "language": "Language",
+    "theme": "Theme",
+    "darkMode": "Dark Mode",
+    "highContrast": "High Contrast"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Welcome to TamanduAI!",
+      "subtitle": "Let's set up your account for a personalized experience."
+    },
+    "personal": {
+      "title": "Personal Information",
+      "subtitle": "This information helps us personalize your experience."
+    },
+    "terms": {
+      "title": "Terms and Conditions",
+      "subtitle": "Please read and accept our terms to continue.",
+      "termsOfUse": "Terms of Use",
+      "termsContent": "By using TamanduAI, you agree to our terms of use that govern access and use of the platform...",
+      "privacyPolicy": "Privacy Policy",
+      "privacyContent": "Your data is protected according to our privacy policy that describes how we collect, use and protect your information...",
+      "acceptTerms": "I accept the Terms of Use",
+      "acceptPrivacy": "I accept the Privacy Policy",
+      "termsLink": "Read the full terms",
+      "privacyLink": "Read the privacy policy"
+    },
+    "fields": {
+      "fullName": "Full name",
+      "role": "What is your role?",
+      "age": "Age",
+      "cpf": "CPF"
+    },
+    "placeholders": {
+      "fullName": "Enter your full name",
+      "age": "Enter your age",
+      "cpf": "000.000.000-00"
+    },
+    "roles": {
+      "student": "Student",
+      "teacher": "Teacher",
+      "school": "School"
+    },
+    "completing": "Finishing...",
+    "complete": "Complete Registration",
+    "errors": {
+      "required": "Please fill in name, role and accept the terms and privacy policy.",
+      "generic": "Failed to complete onboarding"
+    }
+  },
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Confirm Password",
+    "nameLabel": "Full Name",
+    "forgotPassword": "Forgot password?",
+    "dontHaveAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "resetPassword": "Reset Password",
+    "checkEmail": "Check your email",
+    "passwordsMustMatch": "Passwords must match",
+    "invalidEmail": "Invalid email",
+    "emailRequired": "Email is required",
+    "passwordRequired": "Password is required",
+    "nameRequired": "Name is required",
+    "loginSuccess": "Login successful",
+    "loginError": "Login error",
+    "registerSuccess": "Registration successful",
+    "registerError": "Registration error",
+    "welcomeBack": "Welcome back",
+    "signInToContinue": "Sign in to your account to continue",
+    "rememberMe": "Remember me",
+    "blocked": "Blocked",
+    "createAccount": "Create your account",
+    "startJourney": "Start your educational journey",
+    "accountType": "Account type"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "overview": "Overview",
+    "recentActivities": "Recent Activities",
+    "myClasses": "My Classes",
+    "myGrades": "My Grades",
+    "alerts": "Alerts",
+    "performance": "Performance",
+    "error": {
+      "title": "Error loading dashboard",
+      "subtitle": "Could not load the dashboard component. Please try again."
+    },
+    "search": {
+      "placeholder": "Search students, classes, activities..."
+    }
+  },
+    "hero": {
+      "title": "Revolutionize Education with AI",
+      "title2": "education",
+      "title3": "is now",
+      "subtitle": "Complete platform for teachers and students",
+      "description": "Smart tools that transform the educational experience, with personalized chatbot, class management and much more.",
+      "cta": "Start Free",
+      "demo": "View Demo"
+    },
+    "features": {
+      "advancedAI": "Advanced Educational AI",
+      "smartManagement": "Smart Management",
+      "dynamicActivities": "Dynamic Activities",
+      "intelligentAnalytics": "Intelligent Analytics",
+      "aiChatbot": "Intelligent chatbot trained for each class",
+      "organizeClasses": "Organize classes and teachers with ease",
+      "createInteractive": "Create interactive activities without limitations",
+      "detailedReports": "Detailed progress reports"
+    },
+    "benefits": {
+      "saveTime": "Save Time",
+      "improveResults": "Improve Results",
+      "facilitatesTeaching": "Facilitates Teaching",
+      "focusEssential": "Focus on the Essential",
+      "reduceAdmin": "Reduce 70% of time in administrative tasks",
+      "increaseEngagement": "Increase in student engagement",
+      "empowerMethodology": "Tools that enhance your methodology",
+      "moreTimeTeaching": "More time to teach, less bureaucracy"
+    }
+  },
+  "classes": {
+    "createClass": "Create Class",
+    "className": "Class Name",
+    "classDescription": "Description",
+    "students": "Students",
+    "teachers": "Teachers",
+    "materials": "Materials",
+    "activities": "Activities",
+    "members": "Members",
+    "settings": "Settings",
+    "invite": "Invite",
+    "leave": "Leave Class",
+    "archive": "Archive",
+    "delete": "Delete Class"
+  },
+  "activities": {
+    "title": "Activities",
+    "createActivity": "Create Activity",
+    "activityTitle": "Activity Title",
+    "description": "Description",
+    "dueDate": "Due Date",
+    "points": "Points",
+    "weight": "Weight",
+    "submissions": "Submissions",
+    "graded": "Graded",
+    "pending": "Pending",
+    "draft": "Draft",
+    "published": "Published",
+    "submit": "Submit",
+    "grade": "Grade",
+    "feedback": "Feedback",
+    "export": "Export Grades"
+  },
+  "materials": {
+    "title": "Materials",
+    "addMaterial": "Add Material",
+    "category": "Category",
+    "tags": "Tags",
+    "uploadFile": "Upload File",
+    "link": "Link",
+    "document": "Document",
+    "video": "Video",
+    "image": "Image"
+  },
+  "meetings": {
+    "title": "Meetings",
+    "scheduleMeeting": "Schedule Meeting",
+    "joinMeeting": "Join Meeting",
+    "startMeeting": "Start Meeting",
+    "endMeeting": "End Meeting",
+    "scheduled": "Scheduled",
+    "live": "Live",
+    "ended": "Ended",
+    "canceled": "Canceled"
+  },
+  "alerts": {
+    "title": "Alerts",
+    "studentsNeedAttention": "Students Need Attention",
+    "lowGrade": "Low Grade",
+    "lateSubmissions": "Late Submissions",
+    "plagiarism": "Plagiarism Detected",
+    "noSubmissions": "No Submissions",
+    "resolved": "Resolved",
+    "pending": "Pending",
+    "generateAlerts": "Generate Alerts"
+  },
+  "grades": {
+    "title": "Grades",
+    "average": "Average",
+    "weightedAverage": "Weighted Average",
+    "totalPoints": "Total Points",
+    "gradeReport": "Grade Report",
+    "exportPDF": "Export PDF",
+    "exportExcel": "Export Excel"
+  },
+  "accessibility": {
+    "title": "Accessibility",
+    "subtitle": "Customize your experience",
+    "reset": "Reset",
+    "done": "Done",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode",
+    "themeDesc": "Toggle between light and dark mode",
+    "light": "Light",
+    "dark": "Dark",
+    "languageDesc": "Select your preferred language",
+    "fontSize": "Font Size",
+    "fontSizeDesc": "Adjust the font size",
+    "highContrast": "High Contrast",
+    "highContrastDesc": "Improve visibility with stronger colors",
+    "dyslexiaFont": "Dyslexia Font",
+    "dyslexiaFontDesc": "Use optimized font for reading",
+    "reducedMotion": "Reduced Motion",
+    "reducedMotionDesc": "Reduce movements to prevent nausea",
+    "autoSave": "Your settings are automatically saved"
+  },
+  "errors": {
+    "generic": "An error occurred. Please try again.",
+    "networkError": "Connection error. Check your internet.",
+    "unauthorized": "You don't have permission to access this resource.",
+    "notFound": "Resource not found.",
+    "validationError": "Validation error. Check the fields.",
+    "sessionExpired": "Your session has expired. Please login again."
+  }
+}

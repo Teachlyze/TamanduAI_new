@@ -1,0 +1,489 @@
+import React, { Suspense } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import ProtectedRoute from '../components/ProtectedRoute';
+import Loading from '../components/Loading';
+import ErrorBoundary from '../components/ui/ErrorBoundary';
+
+// Lazy load components for better performance
+const Dashboard = React.lazy(() => import('../pages/Dashboard'));
+const NewLandingPage = React.lazy(() => import('../pages/NewLandingPage'));
+const LoginPage = React.lazy(() => import('../pages/LoginPage'));
+const RegisterPage = React.lazy(() => import('../pages/RegisterPage'));
+const ForgotPasswordPage = React.lazy(() => import('../pages/ForgotPasswordPage'));
+const ResetPasswordPage = React.lazy(() => import('../pages/ResetPasswordPage'));
+const EmailConfirmationPage = React.lazy(() => import('../pages/EmailConfirmationPage'));
+const PricingPage = React.lazy(() => import('../pages/PricingPage'));
+const PrivacyPolicy = React.lazy(() => import('../pages/PrivacyPolicy'));
+const TermsOfUse = React.lazy(() => import('../pages/TermsOfUse'));
+const DocumentationPage = React.lazy(() => import('../pages/DocumentationPage'));
+const ContactPage = React.lazy(() => import('../pages/ContactPage'));
+const BetaPage = React.lazy(() => import('../pages/BetaPage'));
+const LogoutPage = React.lazy(() => import('../pages/LogoutPage'));
+const JoinClassPage = React.lazy(() => import('../pages/JoinClassPage'));
+const UserProfilePage = React.lazy(() => import('../pages/UserProfilePage'));
+
+// Dashboard Components
+const DashboardHome = React.lazy(() => import('../components/dashboard/DashboardHome'));
+const ClassesPage = React.lazy(() => import('../components/dashboard/ClassesPage'));
+const ClassDetailsPage = React.lazy(() => import('../components/dashboard/ClassDetailsPage'));
+const StudentsPage = React.lazy(() => import('../components/students/StudentsPage'));
+const StudentProfilePage = React.lazy(() => import('../pages/dashboard/StudentProfilePage'));
+const InviteStudentPage = React.lazy(() => import('../pages/students/InviteStudentPage'));
+const ActivitiesPage = React.lazy(() => import('../components/dashboard/ActivitiesPage'));
+const ActivityPage = React.lazy(() => import('../pages/ActivityPage'));
+const ReportsPage = React.lazy(() => import('../components/dashboard/ReportsPage'));
+const ChatbotPage = React.lazy(() => import('../components/dashboard/ChatbotPageWrapper'));
+const NotificationTest = React.lazy(() => import('../pages/notifications/NotificationTest'));
+const AcademicHistoryPage = React.lazy(() => import('../pages/dashboard/AcademicHistoryPage'));
+const PerformanceAnalyticsPage = React.lazy(() => import('../pages/dashboard/PerformanceAnalyticsPage'));
+const SettingsPage = React.lazy(() => import('../components/dashboard/SettingsPage'));
+const AgendaPage = React.lazy(() => import('../components/dashboard/AgendaPageWrapper'));
+const ActivitySubmissionsPage = React.lazy(() => import('../pages/classes/ActivitySubmissionsPage'));
+const MeetingsPage = React.lazy(() => import('../pages/meetings/MeetingsPageWrapper'));
+const MeetingRoomPage = React.lazy(() => import('../pages/meetings/MeetingRoomPage'));
+const CreateClassroomForm = React.lazy(() => import('../components/classrooms/CreateClassroomForm'));
+const CreateClassForm = React.lazy(() => import('../components/classes/CreateClassForm'));
+const ClassroomDetailsPage = React.lazy(() => import('../pages/ClassroomDetailsPage'));
+const ActivitiesListPage = React.lazy(() => import('../pages/ActivitiesListPage'));
+const CreateActivityPage = React.lazy(() => import('../pages/CreateActivityPage'));
+const DraftsPage = React.lazy(() => import('../pages/activities/DraftsPage'));
+const StudentActivitiesPage = React.lazy(() => import('../pages/student/StudentActivitiesPage'));
+const ActivityDetailsPage = React.lazy(() => import('../components/activities/ActivityDetailsPage'));
+const NotificationCenter = React.lazy(() => import('../pages/notifications/NotificationCenter'));
+const PrivacyPreferences = React.lazy(() => import('@/components/PrivacyPreferences'));
+
+// HMR test component only in development
+const HMRTest = import.meta.env.DEV ? React.lazy(() => import('../hmr-test')) : null;
+
+const AppRoutes = () => {
+  return (
+    <Routes>
+      {/* Rotas Públicas */}
+      <Route
+        path="/"
+        element={
+          <Suspense fallback={<Loading />}>
+            <NewLandingPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/login"
+        element={
+          <Suspense fallback={<Loading />}>
+            <LoginPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <Suspense fallback={<Loading />}>
+            <RegisterPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/forgot-password"
+        element={
+          <Suspense fallback={<Loading />}>
+            <ForgotPasswordPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/reset-password"
+        element={
+          <Suspense fallback={<Loading />}>
+            <ResetPasswordPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/confirm-email"
+        element={
+          <Suspense fallback={<Loading />}>
+            <EmailConfirmationPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/pricing"
+        element={
+          <Suspense fallback={<Loading />}>
+            <PricingPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/privacy"
+        element={
+          <Suspense fallback={<Loading />}>
+            <PrivacyPolicy />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/terms"
+        element={
+          <Suspense fallback={<Loading />}>
+            <TermsOfUse />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/docs"
+        element={
+          <Suspense fallback={<Loading />}>
+            <DocumentationPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/beta"
+        element={
+          <Suspense fallback={<Loading />}>
+            <BetaPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/contact"
+        element={
+          <Suspense fallback={<Loading />}>
+            <ContactPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/privacy-preferences"
+        element={
+          <Suspense fallback={<Loading />}>
+            <PrivacyPreferences />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/logout"
+        element={
+          <Suspense fallback={<Loading />}>
+            <LogoutPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/join/:token"
+        element={
+          <Suspense fallback={<Loading />}>
+            <JoinClassPage />
+          </Suspense>
+        }
+      />
+
+      {/* Development-only routes */}
+      {import.meta.env.DEV && HMRTest && (
+        <Route
+          path="/hmr-test"
+          element={
+            <Suspense fallback={<Loading />}>
+              <HMRTest />
+            </Suspense>
+          }
+        />
+      )}
+
+      {/* Rotas Protegidas com Layout de Dashboard */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <ErrorBoundary errorTitle="Erro no Dashboard" errorMessage="Não foi possível carregar o dashboard. Tente recarregar a página.">
+              <Suspense fallback={<Loading />}>
+                <Dashboard />
+              </Suspense>
+            </ErrorBoundary>
+          </ProtectedRoute>
+        }
+      >
+        <Route
+          index
+          element={
+            <Suspense fallback={<Loading />}>
+              <DashboardHome />
+            </Suspense>
+          }
+        />
+        <Route
+          path="classes"
+          element={
+            <ErrorBoundary errorTitle="Erro ao carregar Turmas" errorMessage="Não foi possível carregar a página de turmas. Tente recarregar a página.">
+              <Suspense fallback={<Loading />}>
+                <ClassesPage />
+              </Suspense>
+            </ErrorBoundary>
+          }
+        />
+        <Route
+          path="classes/new"
+          element={
+            <Suspense fallback={<Loading />}>
+              <CreateClassForm />
+            </Suspense>
+          }
+        />
+        <Route
+          path="classes/:classId"
+          element={
+            <Suspense fallback={<Loading />}>
+              <ClassDetailsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="students"
+          element={
+            <Suspense fallback={<Loading />}>
+              <StudentsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="students/:id"
+          element={
+            <Suspense fallback={<Loading />}>
+              <StudentProfilePage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="students/invite"
+          element={
+            <Suspense fallback={<Loading />}>
+              <InviteStudentPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="activities"
+          element={
+            <Suspense fallback={<Loading />}>
+              <ActivitiesPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="student/activities"
+          element={
+            <ProtectedRoute allowRoles={['student']}>
+              <Suspense fallback={<Loading />}>
+                <StudentActivitiesPage />
+              </Suspense>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="activities/drafts"
+          element={
+            <Suspense fallback={<Loading />}>
+              <DraftsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="activities/create"
+          element={
+            <Suspense fallback={<Loading />}>
+              <CreateActivityPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="activities/:id"
+          element={
+            <Suspense fallback={<Loading />}>
+              <ActivityPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="classes/:classId/activities/:activityId/submissions"
+          element={
+            <Suspense fallback={<Loading />}>
+              <ActivitySubmissionsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="activities/edit/:id"
+          element={
+            <Suspense fallback={<Loading />}>
+              <ActivityPage mode="edit" />
+            </Suspense>
+          }
+        />
+        <Route
+          path="reports"
+          element={
+            <Suspense fallback={<Loading />}>
+              <ReportsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="calendar"
+          element={
+            <Suspense fallback={<Loading />}>
+              <AgendaPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="meetings"
+          element={
+            <ErrorBoundary errorTitle="Erro ao carregar Reuniões" errorMessage="Não foi possível carregar a página de reuniões.">
+              <Suspense fallback={<Loading />}>
+                <MeetingsPage />
+              </Suspense>
+            </ErrorBoundary>
+          }
+        />
+        <Route
+          path="chatbot"
+          element={
+            <Suspense fallback={<Loading />}>
+              <ChatbotPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="notification-test"
+          element={
+            <Suspense fallback={<Loading />}>
+              <NotificationTest />
+            </Suspense>
+          }
+        />
+        <Route
+          path="settings"
+          element={
+            <Suspense fallback={<Loading />}>
+              <SettingsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <Suspense fallback={<Loading />}>
+              <div>Página não encontrada</div>
+            </Suspense>
+          }
+        />
+      </Route>
+
+      {/* Outras Rotas Protegidas */}
+      <Route
+        path="/classrooms"
+        element={
+          <ProtectedRoute>
+            <Suspense fallback={<Loading />}>
+              <CreateClassForm />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/meetings/:meetingId"
+        element={
+          <ProtectedRoute>
+            <Suspense fallback={<Loading />}>
+              <MeetingRoomPage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/aluno/:studentId/historico"
+        element={
+          <ProtectedRoute>
+            <Suspense fallback={<Loading />}>
+              <AcademicHistoryPage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/aluno/:studentId/desempenho"
+        element={
+          <ProtectedRoute>
+            <Suspense fallback={<Loading />}>
+              <PerformanceAnalyticsPage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/classrooms/:roomUuid"
+        element={
+          <ProtectedRoute>
+            <Suspense fallback={<Loading />}>
+              <ClassroomDetailsPage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/atividades"
+        element={
+          <ProtectedRoute>
+            <Suspense fallback={<Loading />}>
+              <ActivitiesListPage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/atividades/criar"
+        element={
+          <ProtectedRoute requiredRoles="teacher">
+            <Suspense fallback={<Loading />}>
+              <CreateActivityPage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Suspense fallback={<Loading />}>
+              <UserProfilePage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/atividades/:id"
+        element={
+          <ProtectedRoute requiredRoles={["teacher", "student"]}>
+            <Suspense fallback={<Loading />}>
+              <ActivityDetailsPage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/notifications"
+        element={
+          <ProtectedRoute>
+            <Suspense fallback={<Loading />}>
+              <NotificationCenter />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
+  );
+};
+
+export default AppRoutes;

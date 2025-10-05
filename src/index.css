@@ -1,0 +1,425 @@
+/* Importações do Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import contrast fixes for dark mode */
+@import './styles/contrast-fix.css';
+
+/* Estilos básicos de reset e tipografia */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Variáveis de cores para o tema claro */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 221.2 83.2% 53.3%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 221.2 83.2% 53.3%;
+  --radius: 0.5rem;
+}
+
+/* Variáveis de cores para o tema escuro */
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 224.3 76.3% 48%;
+}
+
+/* Estilos base */
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+  }
+  
+  /* Estilos para elementos de formulário */
+  input, textarea, select {
+    @apply bg-background text-foreground border-border rounded-md border p-2 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none;
+  }
+  
+  /* Estilos para botões */
+  button {
+    @apply bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:opacity-90 transition-opacity;
+  }
+  
+  /* Estilos para links */
+  a {
+    @apply text-primary hover:underline;
+  }
+  
+  /* Estilos para cards */
+  .card {
+    @apply bg-card text-card-foreground rounded-lg border border-border p-6 shadow-sm;
+  }
+}
+
+/* Container raiz da aplicação */
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Garante que imagens sejam responsivas */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Remove estilos de lista padrão */
+ul, ol {
+  list-style: none;
+}
+
+/* Remove estilos de link padrão */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Garante que elementos de formulário herdem a fonte */
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 100%;
+  line-height: 1.15;
+  margin: 0;
+}
+
+/* Remove o estilo padrão dos botões */
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button;
+  cursor: pointer;
+}
+
+/* Corrige o alinhamento do texto em navegadores antigos */
+button,
+select {
+  text-transform: none;
+}
+
+/* Remove o contorno padrão do foco */
+button:focus,
+input:focus {
+  outline: none;
+}
+
+/* Corrige o alinhamento do texto em navegadores antigos */
+button,
+input {
+  overflow: visible;
+}
+
+/* Remove a borda padrão do Firefox */
+button::-moz-focus-inner,
+[type="button"]::-moz-focus-inner,
+[type="reset"]::-moz-focus-inner,
+[type="submit"]::-moz-focus-inner {
+  border-style: none;
+  padding: 0;
+}
+
+/* Remove o preenchimento no Firefox */
+button:-moz-focusring,
+[type="button"]:-moz-focusring,
+[type="reset"]:-moz-focusring,
+[type="submit"]:-moz-focusring {
+  outline: 1px dotted ButtonText;
+}
+
+/* Remove a seta padrão do select no IE 10+ */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem top 50%;
+  background-size: 0.65rem auto;
+  padding-right: 2.5rem;
+}
+
+/* Remove o estilo padrão do IE 10+ */
+select::-ms-expand {
+  display: none;
+}
+
+/* Remove o estilo padrão do IE 10+ */
+[type="search"] {
+  -webkit-appearance: textfield;
+  outline-offset: -2px;
+}
+
+/* Remove o padding interno no Chrome no macOS */
+[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/* Corrige o estilo do botão de limpar no Chrome */
+[type="search"]::-webkit-search-cancel-button,
+[type="search"]::-webkit-search-results-button {
+  -webkit-appearance: none;
+}
+
+/* Remove o estilo padrão do IE 10+ */
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/* Remove o estilo padrão do IE 10+ */
+[type="checkbox"],
+[type="radio"] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+/* Remove o estilo padrão do IE 10+ */
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/* Remove o estilo padrão do IE 10+ */
+[hidden] {
+  display: none;
+}
+
+/* Corrige o estilo do botão de detalhes no Chrome */
+::-webkit-details-marker {
+  display: none;
+}
+
+/* Corrige o estilo do botão de detalhes no Firefox */
+details > summary {
+  list-style: none;
+}
+
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Corrige o estilo do placeholder */
+::placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+
+/* Corrige o estilo do placeholder no IE 10+ */
+:-ms-input-placeholder {
+  color: #6b7280;
+}
+
+/* Corrige o estilo do placeholder no Edge */
+::-ms-input-placeholder {
+  color: #6b7280;
+}
+
+/* Corrige o estilo do placeholder no Firefox */
+::-moz-placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+
+/* Corrige o estilo do placeholder no Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Corrige o estilo do placeholder no Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Remove o estilo padrão do IE 10+ */
+[type="search"] {
+  -webkit-appearance: textfield;
+  outline-offset: -2px;
+}
+
+/* Remove o padding interno no Chrome no macOS */
+[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/* Corrige o estilo do botão de limpar no Chrome */
+[type="search"]::-webkit-search-cancel-button,
+[type="search"]::-webkit-search-results-button {
+  -webkit-appearance: none;
+}
+
+/* Remove o estilo padrão do IE 10+ */
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/* Remove o estilo padrão do IE 10+ */
+[type="checkbox"],
+[type="radio"] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+/* Remove o estilo padrão do IE 10+ */
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/* Remove o estilo padrão do IE 10+ */
+[hidden] {
+  display: none;
+}
+
+/* Corrige o estilo do botão de detalhes no Chrome */
+::-webkit-details-marker {
+  display: none;
+}
+
+/* Corrige o estilo do botão de detalhes no Firefox */
+details > summary {
+  list-style: none;
+}
+
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Corrige o estilo do placeholder */
+::placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+
+/* Corrige o estilo do placeholder no IE 10+ */
+:-ms-input-placeholder {
+  color: #6b7280;
+}
+
+/* Corrige o estilo do placeholder no Edge */
+::-ms-input-placeholder {
+  color: #6b7280;
+}
+
+/* Corrige o estilo do placeholder no Firefox */
+::-moz-placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+
+/* Corrige o estilo do placeholder no Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Corrige o estilo do placeholder no Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Variáveis CSS para temas */
+:root {
+  --bg-primary: #ffffff;
+  --text-primary: #1a202c;
+  --border-color: #e2e8f0;
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 221.2 83.2% 53.3%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 221.2 83.2% 53.3%;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --bg-primary: #1a202c;
+  --text-primary: #f7fafc;
+  --border-color: #4a5568;
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 224.3 76.3% 48%;
+}

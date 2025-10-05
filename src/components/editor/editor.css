@@ -1,0 +1,6 @@
+/* Editor container styles */
+.editor-container { position: relative; width: 100%; }
+.editor-inner { position: relative; }
+
+/* Accessibility */
+[contenteditable="true"]:focus { outline: 2px solid #3b82f6; outline-offset: -1px; }

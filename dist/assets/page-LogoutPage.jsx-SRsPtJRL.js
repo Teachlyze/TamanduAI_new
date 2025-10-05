@@ -1,0 +1,1 @@
+import{r as e}from"./react-vendor-C2HUFn5N.js";import{a}from"./lazy-CreateActivityPage.jsx-DYBofU2F.js";import{u as s}from"./vendor-react-router-B4Bn0PSh.js";const g=()=>{const{logout:o}=a(),r=s();return e.useEffect(()=>{r("/",{replace:!0}),(async()=>{try{await o()}catch(t){console.error("Erro ao fazer logout:",t)}})()},[o,r]),null};export{g as default};
