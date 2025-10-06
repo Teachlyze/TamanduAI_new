@@ -1,5 +1,6 @@
 import NotificationService from './notificationService';
 import EmailService from './emailService';
+import EmailTemplateService from './emailTemplateService';
 import { notificationTemplates } from '@/constants/notificationTemplates';
 import { resolveChannels } from '@/constants/notificationRules';
 
@@ -52,15 +53,49 @@ const NotificationOrchestrator = {
       );
     }
 
-    // Email delivery
+    // Email delivery - Use new template system if template ID matches
     if (channels.includes('email')) {
       if (!email) throw new Error('Email recipient is required for email delivery');
-      const subject = render(tpl.emailSubject || tpl.title || 'Notificação');
-      const html = tpl.emailHtml ? render(tpl.emailHtml) : undefined;
-      const text = !html ? render(tpl.message || '') : undefined;
-      deliveries.push(
-        EmailService.sendEmail({ to: email, subject, html, text })
-      );
+      
+      // Map template IDs to new system
+      const templateMapping = {
+        'accountCreated': 'welcome',
+        'classInviteSent': 'class-invite',
+        'classInviteAccepted': 'class-invite-accepted',
+        'newActivity': 'new-activity',
+        'deadlineWarning24h': 'deadline-warning',
+        'activityCorrected': 'activity-corrected',
+        'plagiarismDetected': 'plagiarism-alert',
+        'monthlyReportGenerated': 'monthly-report',
+        'passwordRecoveryRequested': 'password-recovery',
+        'passwordChanged': 'password-changed',
+        'accountConfirmed': 'account-confirmed',
+        'loginNewDevice': 'login-new-device',
+        'studentAddedToClass': 'student-added',
+        'studentRemovedFromClass': 'student-removed',
+        'classCreated': 'class-created'
+      };
+
+      const newTemplateId = templateMapping[templateId];
+      
+      if (newTemplateId) {
+        // Use new template system
+        deliveries.push(
+          EmailTemplateService.send(newTemplateId, {
+            to: email,
+            variables,
+            language: variables.language || 'pt'
+          })
+        );
+      } else {
+        // Fallback to old system
+        const subject = render(tpl.emailSubject || tpl.title || 'Notificação');
+        const html = tpl.emailHtml ? render(tpl.emailHtml) : undefined;
+        const text = !html ? render(tpl.message || '') : undefined;
+        deliveries.push(
+          EmailService.sendEmail({ to: email, subject, html, text })
+        );
+      }
     }
 
     const results = await Promise.allSettled(deliveries);

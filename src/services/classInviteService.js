@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabaseClient';
 import NotificationOrchestrator from '@/services/notificationOrchestrator';
+import EmailTemplateService from '@/services/emailTemplateService';
 
 class ClassInviteService {
   // Generate a new invite for a class (v2: class_invitations with role)
@@ -50,23 +51,28 @@ class ClassInviteService {
     try {
       // Send email if recipientEmail is provided
       if (recipientEmail) {
-        // Fetch class name
+        // Fetch class name and teacher info
         const { data: cls } = await supabase
           .from('classes')
-          .select('name')
+          .select('name, created_by')
           .eq('id', classId)
+          .single();
+
+        const { data: teacher } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', cls?.created_by)
           .single();
 
         const acceptUrl = `${window?.location?.origin || ''}/join/${invite.token}`;
 
-        await NotificationOrchestrator.send('classInviteSent', {
-          email: recipientEmail,
-          variables: {
-            className: cls?.name || 'Turma',
-            acceptUrl
-          },
-          channelOverride: 'email',
-          metadata: { classId, inviteId: invite.id }
+        // Use new email template system
+        await EmailTemplateService.sendClassInvite({
+          to: recipientEmail,
+          className: cls?.name || 'Turma',
+          teacherName: teacher?.full_name || 'Professor',
+          acceptUrl,
+          language: 'pt'
         });
       }
     } catch (e) {
@@ -166,11 +172,27 @@ class ClassInviteService {
 
       const { data: studentProfile } = await supabase
         .from('profiles')
-        .select('full_name')
+        .select('full_name, email')
         .eq('id', userId)
         .single();
 
-      if (cls?.created_by) {
+      const { data: teacherProfile } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', cls?.created_by)
+        .single();
+
+      if (cls?.created_by && teacherProfile?.email) {
+        // Send email to teacher
+        await EmailTemplateService.sendClassInviteAccepted({
+          to: teacherProfile.email,
+          studentName: studentProfile?.full_name || 'Aluno',
+          className: cls?.name || 'Turma',
+          time: new Date().toLocaleString('pt-BR'),
+          language: 'pt'
+        });
+
+        // Also send push notification
         await NotificationOrchestrator.send('classInviteAccepted', {
           userId: cls.created_by,
           variables: {
