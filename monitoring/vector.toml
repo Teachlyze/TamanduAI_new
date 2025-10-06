@@ -1,0 +1,47 @@
+[sources.nginx_access]
+type = "file"
+include = ["/var/log/nginx/access.log"]
+
+[sources.nginx_error]
+type = "file"
+include = ["/var/log/nginx/error.log"]
+
+[sources.app_logs]
+type = "file"
+include = ["/var/log/containers/*/*.log"]
+
+[transforms.parse_json]
+type = "remap"
+inputs = ["nginx_access", "nginx_error", "app_logs"]
+source = '''
+if !exists(.message) {
+  .message = to_string(.)
+}
+'''
+
+[transforms.filter_errors]
+type = "filter"
+inputs = ["parse_json"]
+condition = 'match(.message, r"error|Error|ERROR")'
+
+[sinks.prometheus_output]
+type = "prometheus_exporter"
+inputs = ["parse_json"]
+address = "0.0.0.0:9091"
+
+[sinks.console]
+type = "console"
+inputs = ["filter_errors"]
+target = "stdout"
+
+[sinks.elasticsearch]
+type = "elasticsearch"
+inputs = ["parse_json"]
+endpoint = "http://elasticsearch:9200"
+index = "logs-%Y.%m.%d"
+
+[sinks.file_backup]
+type = "file"
+inputs = ["parse_json"]
+path = "/var/log/vector/backup.log"
+encoding = "ndjson"

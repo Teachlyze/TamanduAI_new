@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import NotificationService from '@/services/notificationService.jsx';
+import NotificationService from '@/services/notificationService';
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';

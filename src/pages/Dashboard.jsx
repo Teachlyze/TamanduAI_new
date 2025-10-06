@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import ErrorBoundary from '@/components/ui/ErrorBoundary';
-import { SkipLinks } from '@/components/SkipLinks';
+import SkipLinks from '@/components/SkipLinks';
 import { Loader2, AlertCircle } from 'lucide-react';
 import Header from '@/components/dashboard/Header';
 import Sidebar from '@/components/dashboard/Sidebar';

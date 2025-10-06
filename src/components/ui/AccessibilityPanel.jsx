@@ -1,6 +1,8 @@
 // src/components/ui/AccessibilityPanel.jsx
 import React, { useState } from 'react';
-import { AccessibilityPanel as Panel, AdvancedThemeSelector } from '@/hooks/useAccessibilityAdvanced';
+import { AccessibilityPanel as Panel, AdvancedThemeSelector } from '@/hooks/useAccessibilityAdvanced.jsx';
+import { useAccessibility } from '@/hooks/useAccessibility';
+import { useWCAGValidator } from '@/hooks/useWCAGValidator';
 import { Button } from './button';
 import { Settings, Eye, Palette, Monitor } from 'lucide-react';
 

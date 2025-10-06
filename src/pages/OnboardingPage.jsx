@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
@@ -109,10 +109,11 @@ const OnboardingPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
-      <Card className="w-full max-w-xl p-6 space-y-6">
+      <div className="w-full max-w-xl p-6 space-y-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
         <div>
           <h1 className="text-2xl font-bold">Completar cadastro</h1>
           <p className="text-sm text-muted-foreground">Informe seus dados para continuar usando a plataforma.</p>
+        </div>
         <form onSubmit={submit} className="space-y-4">
           {error && (
             <div className="p-3 rounded bg-red-50 text-red-700 text-sm">{error}</div>
@@ -159,7 +160,7 @@ const OnboardingPage = () => {
             <Button type="submit" disabled={submitting} className="w-full">{submitting ? 'Salvando...' : 'Concluir'}</Button>
           </div>
         </form>
-      </Card>
+      </div>
     </div>
   );
 };

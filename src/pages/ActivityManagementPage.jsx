@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from '@/components/ui/use-toast';
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -49,9 +49,9 @@ const ActivityManagementPage = () => {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [loadData]);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -84,7 +84,7 @@ const ActivityManagementPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.id, toast]);
 
   const handleDeleteTemplate = async (templateId) => {
     if (!confirm('Tem certeza que deseja excluir este template?')) return;
@@ -124,7 +124,7 @@ const ActivityManagementPage = () => {
     }
 
     try {
-      const { data, error } = await supabase.rpc('publish_activity_template', {
+      const { error } = await supabase.rpc('publish_activity_template', {
         template_id_param: selectedTemplate.id,
         class_ids: publishData.selectedClasses,
         custom_title: publishData.customTitle || null,

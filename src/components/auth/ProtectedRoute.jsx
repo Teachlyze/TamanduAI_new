@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { motion } from 'framer-motion';
 
 export const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [checkingOnboarding, setCheckingOnboarding] = useState(false);
 
   useEffect(() => {
@@ -18,16 +19,24 @@ export const ProtectedRoute = ({ children }) => {
       );
 
       if (needsOnboarding) {
-        setCheckingOnboarding(true);
-        navigate('/onboarding', { replace: true });
+        // If already on onboarding, do not redirect or set spinner
+        if (location.pathname !== '/onboarding') {
+          setCheckingOnboarding(true);
+          navigate('/onboarding', { replace: true });
+        } else {
+          setCheckingOnboarding(false);
+        }
+      } else {
+        setCheckingOnboarding(false);
       }
     } else if (!loading && !user) {
       // If not loading and no user, redirect to login
-      navigate('/login', { replace: true, state: { from: window.location.pathname } });
+      const from = typeof window !== 'undefined' ? window.location.pathname : '/';
+      navigate('/login', { replace: true, state: { from } });
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, location.pathname]);
 
-  if (loading || checkingOnboarding) {
+  if (loading || (checkingOnboarding && location.pathname !== '/onboarding')) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
         <motion.div

@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback, useEffect, useRef, useState, Suspense } from 'react';
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
 // Lazy load do componente hCaptcha

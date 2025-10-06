@@ -3,7 +3,7 @@ import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { Layout, Typography, Card, Button, message, Tag, Descriptions, Space, List, Badge } from 'antd';
 import { setClassroomState } from '../services/agoraClassroomAPI';
 import { useActivities } from '@/contexts/ActivityContext';
-import NotificationService from '@/services/notificationService.jsx';
+import NotificationService from '@/services/notificationService';
 import { NOTIFICATION_TYPES } from '@/constants/notifications';
 import { useAuth } from "@/hooks/useAuth";
 

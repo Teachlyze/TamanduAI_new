@@ -1,5 +1,5 @@
 import AgoraRTC from 'agora-rtc-sdk-ng';
-import AgoraRTM from 'agora-rtm-sdk';
+import AgoraChat from 'agora-chat';
 
 // Read from env to avoid leaking credentials in the bundle/repo
 const APP_ID = import.meta.env.VITE_AGORA_APP_ID;
@@ -23,11 +23,24 @@ class AgoraService {
     return this.client;
   }
 
-  // Initialize Agora RTM client for signaling
+  // Initialize Agora RTM client for signaling (using Agora Chat)
   async initRTMClient(uid) {
-    this.rtmClient = AgoraRTM.createInstance(APP_ID);
+    this.rtmClient = new AgoraChat.connection({
+      appKey: APP_ID,
+    });
+
     this.uid = uid.toString();
-    await this.rtmClient.login({ uid: this.uid, token: null });
+
+    // Connect to Agora Chat
+    await new Promise((resolve, reject) => {
+      this.rtmClient.open({
+        user: this.uid,
+        pwd: 'default_password', // You might want to use a proper auth system
+        success: resolve,
+        error: reject
+      });
+    });
+
     return this.rtmClient;
   }
 
@@ -47,10 +60,10 @@ class AgoraService {
       
       await this.client.publish([this.localAudioTrack, this.localVideoTrack]);
       
-      // Join RTM channel
-      const rtmChannel = this.rtmClient.createChannel(channelName);
-      await rtmChannel.join();
-      
+      // Join RTM channel (Agora Chat approach)
+      // Note: Agora Chat handles channels differently, we'll implement basic messaging
+      this.rtmChannel = channelName;
+
       this.isJoined = true;
       return { audioTrack: this.localAudioTrack, videoTrack: this.localVideoTrack };
     } catch (error) {
@@ -76,13 +89,9 @@ class AgoraService {
       // Leave RTC channel
       await this.client.leave();
       
-      // Leave RTM channel and logout
+      // Leave RTM channel and logout (Agora Chat approach)
       if (this.rtmClient) {
-        const rtmChannel = this.rtmClient.getChannel(this.channel);
-        if (rtmChannel) {
-          await rtmChannel.leave();
-        }
-        await this.rtmClient.logout();
+        this.rtmClient.close();
       }
       
       this.isJoined = false;

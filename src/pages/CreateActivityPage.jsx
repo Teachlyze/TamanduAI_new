@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { Loader2, FileText, Code, List, CheckSquare, UploadCloud, Image as ImageIcon, ArrowLeft, CheckCircle2, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ActivityForm from '@/components/ActivityForm/ActivityForm';
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useActivityDrafts } from '../hooks/useActivityDrafts';
 

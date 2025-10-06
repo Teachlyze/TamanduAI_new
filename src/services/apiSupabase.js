@@ -19,7 +19,7 @@ const validateResourceAccess = async (resourceType, resourceId, userId, required
     }
 
     switch (resourceType) {
-      case 'class':
+      case 'class': {
         // Verificar se usuário é professor da turma ou aluno inscrito
         const { data: classAccess, error: classError } = await supabase
           .from('classes')
@@ -52,8 +52,9 @@ const validateResourceAccess = async (resourceType, resourceId, userId, required
           }
         }
         break;
+      }
 
-      case 'activity':
+      case 'activity': {
         // Verificar se atividade pertence a turma do usuário
         const { data: activityAccess, error: activityError } = await supabase
           .from('class_activities')
@@ -82,8 +83,9 @@ const validateResourceAccess = async (resourceType, resourceId, userId, required
           throw new Error('Você não tem acesso a esta atividade');
         }
         break;
+      }
 
-      case 'submission':
+      case 'submission': {
         // Verificar se submissão pertence ao usuário
         const { data: submissionAccess, error: submissionError } = await supabase
           .from('activity_submissions')
@@ -97,6 +99,7 @@ const validateResourceAccess = async (resourceType, resourceId, userId, required
           throw new Error('Você só pode acessar suas próprias submissões');
         }
         break;
+      }
 
       default:
         throw new Error(`Tipo de recurso não suportado: ${resourceType}`);

@@ -26,7 +26,7 @@ const useKeyboardNavigation = () => {
         case '4':
           // Go to help/documentation
           event.preventDefault();
-          window.location.href = '/documentation';
+          window.location.href = '/docs';
           break;
         case 'h':
         case 'H':
@@ -62,8 +62,8 @@ const useKeyboardNavigation = () => {
       focusSearch();
     }
 
-    // Arrow keys for navigation in lists/menus
-    if (event.key.startsWith('Arrow')) {
+    // Arrow keys for navigation in lists/menus (guard against undefined key)
+    if (typeof event.key === 'string' && event.key.startsWith('Arrow')) {
       handleArrowNavigation(event);
     }
 

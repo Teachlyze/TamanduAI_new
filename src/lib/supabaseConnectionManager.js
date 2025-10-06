@@ -3,8 +3,8 @@
  * Gerenciador avançado de conexões Supabase para máxima robustez
  */
 import { createClient } from '@supabase/supabase-js';
-import { errorMonitor } from '../services/errorMonitoring';
-import { performanceOptimizer } from '../services/performanceOptimizer';
+import { errorMonitor } from '../services/errorMonitoring.jsx';
+import { performanceOptimizer } from '../services/performanceOptimizer.jsx';
 
 // Configurações de ambiente com validação
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;

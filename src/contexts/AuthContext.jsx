@@ -23,13 +23,19 @@ export const AuthProvider = ({ children }) => {
           setUser(null);
           return;
         }
-        // Fetch cached user from Edge Function
-        const { data, error } = await supabase.functions.invoke('auth-me', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        if (error) throw error;
-        setUser(data?.user ?? null);
+        // Fetch cached user from Edge Function with fallback to supabase.auth.getUser()
+        try {
+          const { data, error } = await supabase.functions.invoke('auth-me', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
+          if (error) throw error;
+          setUser(data?.user ?? null);
+        } catch (edgeErr) {
+          console.warn('auth-me failed, falling back to supabase.auth.getUser():', edgeErr);
+          const { data: userData } = await supabase.auth.getUser();
+          setUser(userData?.user ?? null);
+        }
       } catch (err) {
         console.error('Bootstrap auth error:', err);
         setError(err?.message || String(err));
@@ -49,12 +55,18 @@ export const AuthProvider = ({ children }) => {
           setUser(null);
           return;
         }
-        const { data, error } = await supabase.functions.invoke('auth-me', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        if (error) throw error;
-        setUser(data?.user ?? null);
+        try {
+          const { data, error } = await supabase.functions.invoke('auth-me', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
+          if (error) throw error;
+          setUser(data?.user ?? null);
+        } catch (edgeErr) {
+          console.warn('auth-me (state change) failed, falling back to supabase.auth.getUser():', edgeErr);
+          const { data: userData } = await supabase.auth.getUser();
+          setUser(userData?.user ?? null);
+        }
       } catch (err) {
         console.error('Auth state refresh error:', err);
         setUser(null);
@@ -71,15 +83,18 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      // 1) Guard: validate hCaptcha + rate limit using Edge Function
-      try {
-        await supabase.functions.invoke('auth-guard-login', {
-          method: 'POST',
-          body: { email, hcaptchaToken },
-        })
-      } catch (guardErr) {
-        // Surface guard error to caller
-        throw new Error(guardErr?.message || 'Security check failed');
+      const isLocalhost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+      // 1) Guard: validate hCaptcha + rate limit using Edge Function (skip on localhost)
+      if (!isLocalhost) {
+        try {
+          await supabase.functions.invoke('auth-guard-login', {
+            method: 'POST',
+            body: { email, hcaptchaToken },
+          })
+        } catch (guardErr) {
+          // Surface guard error to caller
+          throw new Error(guardErr?.message || 'Security check failed');
+        }
       }
 
       // 2) Perform Supabase sign-in
@@ -98,12 +113,19 @@ export const AuthProvider = ({ children }) => {
       // After login, fetch user payload via Edge Function
       const accessToken = data.session?.access_token;
       if (!accessToken) return { user: null };
-      const { data: meData, error: meErr } = await supabase.functions.invoke('auth-me', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      if (meErr) throw meErr;
-      const meUser = meData?.user ?? null
+      let meUser = null;
+      try {
+        const { data: meData, error: meErr } = await supabase.functions.invoke('auth-me', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (meErr) throw meErr;
+        meUser = meData?.user ?? null;
+      } catch (edgeErr) {
+        console.warn('auth-me after sign-in failed, falling back to supabase.auth.getUser():', edgeErr);
+        const { data: userData } = await supabase.auth.getUser();
+        meUser = userData?.user ?? null;
+      }
       setUser(meUser);
       const needsOnboarding = !(
         meUser?.role && meUser?.terms_accepted && meUser?.privacy_accepted

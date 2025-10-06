@@ -12,15 +12,15 @@ import {
   Zap
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
   getSupabaseConnectionManager,
   checkConnection,
   forceReconnect
 } from '@/lib/supabaseConnectionManager';
-import { useErrorMonitoring } from '@/services/errorMonitoring';
-import { usePerformanceOptimization } from '@/services/performanceOptimizer';
+import { useErrorMonitoring } from '@/services/errorMonitoring.jsx';
+import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx';
 
 /**
  * Monitor de conexão Supabase em tempo real

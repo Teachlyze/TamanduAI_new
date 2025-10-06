@@ -104,6 +104,11 @@ const LandingPage = createLazyComponent('LandingPage', { priority: 'high', prefe
 const Dashboard = createLazyComponent('Dashboard', { priority: 'high' });
 const LoginPage = createLazyComponent('LoginPage', { priority: 'normal' });
 const RegisterPage = createLazyComponent('RegisterPage', { priority: 'normal' });
+const DocumentationPage = createLazyComponent('docs/DocumentationPage', { priority: 'normal' });
+const PrivacyPolicyPage = createLazyComponent('PrivacyPolicy', { priority: 'low' });
+const TermsOfUsePage = createLazyComponent('TermsOfUse', { priority: 'low' });
+const CookiesPolicyPage = createLazyComponent('CookiesPolicy', { priority: 'low' });
+const PrivacyPreferencesPage = createLazyComponent('PrivacyPreferences', { priority: 'low' });
 const ForgotPasswordPage = createLazyComponent('ForgotPasswordPage', { priority: 'low' });
 const ResetPasswordPage = createLazyComponent('ResetPasswordPage', { priority: 'low' });
 const ClassroomsPage = createLazyComponent('ClassroomsPage', { priority: 'normal' });
@@ -191,6 +196,14 @@ const router = createBrowserRouter([
         element: withPublicRoute(LoginPage, 'LoginPage')
       },
       {
+        path: 'register',
+        element: withPublicRoute(RegisterPage, 'RegisterPage')
+      },
+      {
+        path: 'docs',
+        element: withPublicRoute(DocumentationPage, 'DocumentationPage')
+      },
+      {
         path: 'onboarding',
         element: withProtectedRoute(OnboardingPage, 'OnboardingPage')
       },
@@ -201,6 +214,22 @@ const router = createBrowserRouter([
       {
         path: 'reset-password',
         element: withPublicRoute(ResetPasswordPage, 'ResetPasswordPage')
+      },
+      {
+        path: 'privacy-policy',
+        element: withPublicRoute(PrivacyPolicyPage, 'PrivacyPolicy')
+      },
+      {
+        path: 'terms-of-use',
+        element: withPublicRoute(TermsOfUsePage, 'TermsOfUse')
+      },
+      {
+        path: 'cookies',
+        element: withPublicRoute(CookiesPolicyPage, 'CookiesPolicy')
+      },
+      {
+        path: 'privacy-preferences',
+        element: withPublicRoute(PrivacyPreferencesPage, 'PrivacyPreferences')
       },
 
       // Protected routes

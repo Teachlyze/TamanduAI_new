@@ -5,7 +5,7 @@ import {
   Shield, Cookie, Settings, CheckCircle,
   ExternalLink, Info, Heart, Lock
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 
 const PrivacyButton = () => {
   const [isOpen, setIsOpen] = useState(false);

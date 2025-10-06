@@ -1,103 +1,40 @@
 {
   "common": {
     "loading": "Loading...",
-    "save": "Save",
+    "error": "Error",
+    "success": "Success",
     "cancel": "Cancel",
+    "save": "Save",
     "delete": "Delete",
     "edit": "Edit",
     "create": "Create",
     "search": "Search",
     "filter": "Filter",
-    "export": "Export",
-    "import": "Import",
+    "next": "Next",
+    "previous": "Previous",
     "close": "Close",
-    "confirm": "Confirm",
+    "open": "Open",
     "yes": "Yes",
     "no": "No",
+    "confirm": "Confirm",
     "back": "Back",
-    "retry": "Try again",
-    "next": "Next",
+    "continue": "Continue",
+    "finish": "Finish",
     "submit": "Submit",
-    "upload": "Upload File",
-    "download": "Download",
-    "view": "View",
-    "settings": "Settings",
-    "logout": "Logout",
+    "reset": "Reset",
+    "clear": "Clear",
+    "apply": "Apply",
+    "refresh": "Refresh"
+  },
+  "auth": {
     "login": "Login",
+    "logout": "Logout",
     "register": "Register",
-    "profile": "Profile",
-    "notifications": "Notifications",
-    "help": "Help",
-    "optional": "optional",
-    "language": "Language",
-    "theme": "Theme",
-    "darkMode": "Dark Mode",
-    "highContrast": "High Contrast"
-  },
-  "onboarding": {
-    "welcome": {
-      "title": "Welcome to TamanduAI!",
-      "subtitle": "Let's set up your account for a personalized experience."
-    },
-    "personal": {
-      "title": "Personal Information",
-      "subtitle": "This information helps us personalize your experience."
-    },
-    "terms": {
-      "title": "Terms and Conditions",
-      "subtitle": "Please read and accept our terms to continue.",
-      "termsOfUse": "Terms of Use",
-      "termsContent": "By using TamanduAI, you agree to our terms of use that govern access and use of the platform...",
-      "privacyPolicy": "Privacy Policy",
-      "privacyContent": "Your data is protected according to our privacy policy that describes how we collect, use and protect your information...",
-      "acceptTerms": "I accept the Terms of Use",
-      "acceptPrivacy": "I accept the Privacy Policy",
-      "termsLink": "Read the full terms",
-      "privacyLink": "Read the privacy policy"
-    },
-    "fields": {
-      "fullName": "Full name",
-      "role": "What is your role?",
-      "age": "Age",
-      "cpf": "CPF"
-    },
-    "placeholders": {
-      "fullName": "Enter your full name",
-      "age": "Enter your age",
-      "cpf": "000.000.000-00"
-    },
-    "roles": {
-      "student": "Student",
-      "teacher": "Teacher",
-      "school": "School"
-    },
-    "completing": "Finishing...",
-    "complete": "Complete Registration",
-    "errors": {
-      "required": "Please fill in name, role and accept the terms and privacy policy.",
-      "generic": "Failed to complete onboarding"
-    }
-  },
-    "emailLabel": "Email",
-    "passwordLabel": "Password",
-    "confirmPasswordLabel": "Confirm Password",
-    "nameLabel": "Full Name",
-    "forgotPassword": "Forgot password?",
-    "dontHaveAccount": "Don't have an account?",
-    "alreadyHaveAccount": "Already have an account?",
-    "signIn": "Sign In",
-    "signUp": "Sign Up",
-    "signOut": "Sign Out",
-    "resetPassword": "Reset Password",
-    "checkEmail": "Check your email",
-    "passwordsMustMatch": "Passwords must match",
-    "invalidEmail": "Invalid email",
-    "emailRequired": "Email is required",
-    "passwordRequired": "Password is required",
-    "nameRequired": "Name is required",
-    "loginSuccess": "Login successful",
+    "forgotPassword": "Forgot Password?",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
     "loginError": "Login error",
-    "registerSuccess": "Registration successful",
     "registerError": "Registration error",
     "welcomeBack": "Welcome back",
     "signInToContinue": "Sign in to your account to continue",
@@ -115,15 +52,9 @@
     "myClasses": "My Classes",
     "myGrades": "My Grades",
     "alerts": "Alerts",
-    "performance": "Performance",
-    "error": {
-      "title": "Error loading dashboard",
-      "subtitle": "Could not load the dashboard component. Please try again."
-    },
-    "search": {
-      "placeholder": "Search students, classes, activities..."
-    }
+    "performance": "Performance"
   },
+  "landing": {
     "hero": {
       "title": "Revolutionize Education with AI",
       "title2": "education",
@@ -152,9 +83,17 @@
       "increaseEngagement": "Increase in student engagement",
       "empowerMethodology": "Tools that enhance your methodology",
       "moreTimeTeaching": "More time to teach, less bureaucracy"
+    },
+    "stats": {
+      "activities": "Activities Created",
+      "satisfaction": "Satisfaction"
+    },
+    "trusted": {
+      "title": "Trusted by thousands of educators"
     }
   },
   "classes": {
+    "title": "Classes",
     "createClass": "Create Class",
     "className": "Class Name",
     "classDescription": "Description",

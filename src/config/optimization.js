@@ -513,7 +513,7 @@ export function applyEnvironmentOptimizations() {
 
   if (config.performanceMonitoring) {
     // Inicializar monitoramento de performance
-    import('../services/performanceOptimizer').then(({ performanceOptimizer }) => {
+    import('../services/performanceOptimizer.jsx').then(({ performanceOptimizer }) => {
       performanceOptimizer.startMonitoring();
     });
   }

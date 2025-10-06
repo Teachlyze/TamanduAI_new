@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, Check } from 'lucide-react';
-import { Button } from './button';
+import Button from './button';
 
 /**
  * Seletor de idioma aprimorado com interface visual

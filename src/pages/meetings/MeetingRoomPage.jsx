@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Video, Loader2, ArrowLeft } from 'lucide-react';
 import { agoraService } from '@/services/agoraService';

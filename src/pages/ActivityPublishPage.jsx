@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from '@/components/ui/use-toast';
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -48,9 +48,9 @@ const ActivityPublishPage = () => {
 
   useEffect(() => {
     loadData();
-  }, [templateId]);
+  }, [loadData]);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -84,7 +84,7 @@ const ActivityPublishPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [templateId, user?.id, toast]);
 
   const handlePublish = async () => {
     if (publishData.selectedClasses.length === 0) {
@@ -99,7 +99,7 @@ const ActivityPublishPage = () => {
     try {
       setPublishing(true);
 
-      const { data, error } = await supabase.rpc('publish_activity_template', {
+      const { error } = await supabase.rpc('publish_activity_template', {
         template_id_param: templateId,
         class_ids: publishData.selectedClasses,
         custom_title: publishData.customTitle || null,
@@ -293,7 +293,7 @@ const ActivityPublishPage = () => {
               </Button>
               <div className="ml-4">
                 <h1 className="text-2xl font-bold text-gray-900">Publicar Atividade</h1>
-                <p className="text-gray-600">Configure e publique "{template.title}" nas turmas</p>
+                <p className="text-gray-600">Configure e publique &quot;{template.title}&quot; nas turmas</p>
               </div>
             </div>
           </div>

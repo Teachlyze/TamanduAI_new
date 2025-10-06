@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Accessibility, Sun, Moon, Globe, RotateCcw, Eye, Type, Settings } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useLanguageDetection } from '../hooks/useLanguageDetection';
 import useTheme from '../hooks/useTheme';

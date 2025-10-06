@@ -2,7 +2,7 @@
 /**
  * Tratador avançado de erros do Supabase com classificação e recuperação
  */
-import { errorMonitor } from './errorMonitoring';
+import { errorMonitor } from './errorMonitoring.jsx';
 
 export class SupabaseErrorHandler {
   constructor() {

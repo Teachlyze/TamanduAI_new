@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { BookOpen, Mail, Lock, ArrowRight, Eye, EyeOff, AlertCircle, CheckCircle2, Wifi, WifiOff, Sparkles, GraduationCap } from 'lucide-react';
-import { SkipLinks } from '@/components/SkipLinks';
+import SkipLinks from '@/components/SkipLinks';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 import HCaptchaWidget from '@/components/HCaptchaWidget';
@@ -292,6 +292,7 @@ const LoginPage = () => {
                     name="email"
                     type="email"
                     placeholder="seu@email.com"
+                    autoComplete="email"
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value);
@@ -333,6 +334,7 @@ const LoginPage = () => {
                   name="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
@@ -393,7 +395,7 @@ const LoginPage = () => {
                 <input type="checkbox" className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-purple-600 focus:ring-purple-500" disabled={isBlocked} />
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('auth.rememberMe', 'Lembrar de mim')}</span>
               </label>
-              <Link to="#" className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
+              <Link to="/forgot-password" className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
                 {t('auth.forgotPassword', 'Esqueceu a senha?')}
               </Link>
             </div>

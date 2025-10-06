@@ -28,7 +28,7 @@ const sizeClasses = {
   'icon-lg': 'btn-square btn-lg',
 };
 
-const baseClasses = 'btn inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60 disabled:cursor-not-allowed active:translate-y-px';
+const baseClasses = 'btn inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60 disabled:cursor-not-allowed active:translate-y-px';
 
 const Button = React.forwardRef(({
   className,
@@ -155,7 +155,7 @@ const Button = React.forwardRef(({
       )}
 
       {/* Button content */}
-      <span className="flex-1 text-center">
+      <span className="text-center whitespace-nowrap">
         {children}
       </span>
 

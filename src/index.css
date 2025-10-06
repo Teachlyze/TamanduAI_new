@@ -1,10 +1,10 @@
+/* Import contrast fixes for dark mode */
+@import './styles/contrast-fix.css';
+
 /* Importações do Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import contrast fixes for dark mode */
-@import './styles/contrast-fix.css';
 
 /* Estilos básicos de reset e tipografia */
 *,

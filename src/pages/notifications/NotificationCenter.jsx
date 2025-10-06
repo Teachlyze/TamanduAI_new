@@ -16,13 +16,13 @@ import {
 import { format, formatDistanceToNow, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/components/ui/use-toast';
-import NotificationService from '@/services/notificationService.jsx';
+import NotificationService from '@/services/notificationService';
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from '@/lib/utils';
 import PageHeader from '@/components/PageHeader';

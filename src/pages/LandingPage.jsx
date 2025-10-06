@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { SkipLinks } from '@/components/SkipLinks';
+import Button from '@/components/ui/button';
+import SkipLinks from '@/components/SkipLinks';
 import {
   BookOpen, Users, Sparkles, TrendingUp, Brain,
   Clock, Lightbulb, Target, Rocket, Calendar, Shield,

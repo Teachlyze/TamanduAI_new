@@ -1,247 +1,90 @@
 {
   "common": {
     "loading": "Carregando...",
-    "save": "Salvar",
+    "error": "Erro",
+    "success": "Sucesso",
     "cancel": "Cancelar",
+    "save": "Salvar",
     "delete": "Excluir",
     "edit": "Editar",
     "create": "Criar",
     "search": "Buscar",
     "filter": "Filtrar",
-    "export": "Exportar",
-    "import": "Importar",
+    "next": "Próximo",
+    "previous": "Anterior",
     "close": "Fechar",
-    "confirm": "Confirmar",
+    "open": "Abrir",
     "yes": "Sim",
     "no": "Não",
+    "confirm": "Confirmar",
     "back": "Voltar",
-    "previous": "Anterior",
+    "continue": "Continuar",
+    "finish": "Finalizar",
     "submit": "Enviar",
-    "upload": "Enviar Arquivo",
-    "download": "Baixar",
-    "view": "Visualizar",
-    "settings": "Configurações",
-    "logout": "Sair",
-    "login": "Entrar",
-    "register": "Cadastrar",
-    "profile": "Perfil",
-    "notifications": "Notificações",
-    "help": "Ajuda",
-    "optional": "opcional",
-    "language": "Idioma",
-    "theme": "Tema",
-    "darkMode": "Modo Escuro",
-    "highContrast": "Alto Contraste"
+    "reset": "Resetar",
+    "clear": "Limpar",
+    "apply": "Aplicar",
+    "refresh": "Atualizar"
   },
-  "onboarding": {
-    "welcome": {
-      "title": "Bem-vindo ao TamanduAI!",
-      "subtitle": "Vamos configurar sua conta para uma experiência personalizada."
-    },
-    "personal": {
-      "title": "Informações Pessoais",
-      "subtitle": "Essas informações nos ajudam a personalizar sua experiência."
-    },
-    "terms": {
-      "title": "Termos e Condições",
-      "subtitle": "Por favor, leia e aceite nossos termos para continuar.",
-      "termsOfUse": "Termos de Uso",
-      "termsContent": "Ao usar o TamanduAI, você concorda com nossos termos de uso que regem o acesso e utilização da plataforma...",
-      "privacyPolicy": "Política de Privacidade",
-      "privacyContent": "Seus dados são protegidos conforme nossa política de privacidade que descreve como coletamos, usamos e protegemos suas informações...",
-      "acceptTerms": "Aceito os Termos de Uso",
-      "acceptPrivacy": "Aceito a Política de Privacidade",
-      "termsLink": "Leia os termos completos",
-      "privacyLink": "Leia a política de privacidade"
-    },
-    "fields": {
-      "fullName": "Nome completo",
-      "role": "Qual é o seu papel?",
-      "age": "Idade",
-      "cpf": "CPF"
-    },
-    "placeholders": {
-      "fullName": "Digite seu nome completo",
-      "age": "Digite sua idade",
-      "cpf": "000.000.000-00"
-    },
-    "roles": {
-      "student": "Aluno",
-      "teacher": "Professor",
-      "school": "Escola"
-    },
-    "completing": "Finalizando...",
-    "complete": "Concluir Cadastro",
-    "errors": {
-      "required": "Preencha nome, papel e aceite os termos e a privacidade.",
-      "generic": "Falha ao concluir onboarding"
-    }
+  "auth": {
+    "login": "Entrar",
+    "logout": "Sair",
+    "register": "Cadastrar",
+    "forgotPassword": "Esqueceu a senha?",
+    "email": "E-mail",
+    "password": "Senha",
+    "confirmPassword": "Confirmar Senha",
+    "loginError": "Erro ao fazer login",
+    "registerError": "Erro ao se cadastrar",
+    "welcomeBack": "Bem-vindo de volta",
+    "signInToContinue": "Faça login na sua conta para continuar",
+    "rememberMe": "Lembrar de mim",
+    "blocked": "Bloqueado",
+    "createAccount": "Criar conta",
+    "startJourney": "Começar jornada educacional",
+    "accountType": "Tipo de conta"
   },
   "dashboard": {
-    "title": "Dashboard",
-    "error": {
-      "title": "Erro ao carregar o dashboard",
-      "subtitle": "Não foi possível carregar o componente do dashboard. Por favor, tente novamente."
-    },
-    "search": {
-      "placeholder": "Buscar alunos, turmas, atividades..."
-    }
+    "title": "Painel",
+    "welcome": "Bem-vindo",
+    "overview": "Visão Geral",
+    "recentActivities": "Atividades Recentes",
+    "myClasses": "Minhas Turmas",
+    "myGrades": "Minhas Notas",
+    "alerts": "Alertas",
+    "performance": "Performance"
   },
-    "nav": {
-      "features": "Recursos",
-      "benefits": "Benefícios",
-      "testimonials": "Depoimentos",
-      "beta": "Beta",
-      "pricing": "Preços",
-      "docs": "Documentação",
-      "contact": "Contato",
-      "signin": "Entrar",
-      "getStarted": "Começar"
-    },
+  "landing": {
     "hero": {
-      "tag": "✨ Tecnologia de Ponta",
-      "title": {
-        "before": "Revolucione a",
-        "highlight": "educação",
-        "after": "com IA"
-      },
-      "subtitle": "Plataforma completa para professores e alunos com ferramentas inteligentes que transformam a experiência educacional.",
-      "primaryCta": "Começar Grátis",
-      "secondaryCta": "Ver Documentação",
-      "trusted": {
-        "title": "Confiável por milhares de educadores"
-      }
-    },
-    "compare": {
-      "title": "Compare e veja a diferença",
-      "teachers": {
-        "title": "Para Professores",
-        "items": "Gestão de turmas simplificada, chatbot personalizado, relatórios detalhados e muito mais."
-      },
-      "schools": {
-        "title": "Para Instituições",
-        "items": "Controle administrativo completo, analytics avançados, integração com sistemas existentes."
-      }
-    },
-    "how": {
-      "title": "Como Funciona",
-      "step1": {
-        "title": "1. Cadastre-se",
-        "text": "Crie sua conta gratuita em menos de 2 minutos."
-      },
-      "step2": {
-        "title": "2. Configure sua turma",
-        "text": "Adicione alunos e personalize as configurações."
-      },
-      "step3": {
-        "title": "3. Comece a usar",
-        "text": "Aproveite todas as ferramentas disponíveis imediatamente."
-      }
+      "title": "Revolucione a Educação com IA",
+      "title2": "educação",
+      "title3": "é agora",
+      "subtitle": "Plataforma completa para professores e alunos",
+      "description": "Ferramentas inteligentes que transformam a experiência educacional, com chatbot personalizado, gestão de turmas e muito mais.",
+      "cta": "Começar Grátis",
+      "demo": "Ver Demo"
     },
     "features": {
-      "title": {
-        "before": "Tudo que você",
-        "highlight": "precisa",
-        "after": ""
-      },
-      "subtitle": "Uma plataforma completa para modernizar sua educação",
-      "ai": {
-        "title": "IA Educacional",
-        "desc": "Chatbot inteligente treinado especificamente para sua turma e disciplina."
-      },
-      "management": {
-        "title": "Gestão Inteligente",
-        "desc": "Organize turmas, alunos e professores com facilidade e eficiência."
-      },
-      "activities": {
-        "title": "Atividades Dinâmicas",
-        "desc": "Crie atividades interativas sem limitações técnicas."
-      },
-      "analytics": {
-        "title": "Analytics Completo",
-        "desc": "Relatórios detalhados sobre o progresso e desempenho dos alunos."
-      }
+      "advancedAI": "IA Educacional Avançada",
+      "smartManagement": "Gestão Inteligente",
+      "dynamicActivities": "Atividades Dinâmicas",
+      "intelligentAnalytics": "Análise Inteligente",
+      "aiChatbot": "Chatbot inteligente treinado para cada turma",
+      "organizeClasses": "Organize turmas e professores com facilidade",
+      "createInteractive": "Crie atividades interativas sem limitações",
+      "detailedReports": "Relatórios detalhados sobre o progresso"
     },
     "benefits": {
-      "title": {
-        "before": "Benefícios que",
-        "highlight": "transformam",
-        "after": ""
-      },
-      "subtitle": "Resultados comprovados que fazem a diferença na educação",
-      "time": {
-        "title": "Economia de Tempo",
-        "desc": "Reduza 70% do tempo em tarefas administrativas",
-        "stat": "70%"
-      },
-      "results": {
-        "title": "Melhores Resultados",
-        "desc": "Aumento no engajamento e desempenho dos alunos",
-        "stat": "+45%"
-      },
-      "teaching": {
-        "title": "Ensino Facilitado",
-        "desc": "Ferramentas que potencializam sua metodologia",
-        "stat": "100%"
-      },
-      "focus": {
-        "title": "Foco no Essencial",
-        "desc": "Mais tempo para ensinar, menos burocracia",
-        "stat": "∞"
-      }
-    },
-    "students": {
-      "title": {
-        "before": "Perfeito para",
-        "highlight": "todos",
-        "after": ""
-      },
-      "subtitle": "Independente do seu perfil, temos a solução ideal",
-      "item1": {
-        "title": "Alunos Engajados",
-        "desc": "Ferramentas que aumentam o interesse e participação"
-      },
-      "item2": {
-        "title": "Aprendizado Personalizado",
-        "desc": "Conteúdo adaptado ao ritmo de cada aluno"
-      },
-      "item3": {
-        "title": "Acompanhamento Completo",
-        "desc": "Monitore o progresso em tempo real"
-      },
-      "item4": {
-        "title": "Recursos Ilimitados",
-        "desc": "Acesso a materiais e ferramentas 24/7"
-      }
-    },
-    "beta": {
-      "tag": "🚀 Em Beta",
-      "title": "Junte-se ao Beta",
-      "subtitle": "Seja um dos primeiros a experimentar nossa plataforma completa",
-      "cta": "Entrar no Beta",
-      "note": "Acesso gratuito durante o período beta",
-      "card1": {
-        "title": "Acesso Imediato",
-        "text": "Comece a usar imediatamente após o cadastro"
-      },
-      "card2": {
-        "title": "Suporte Prioritário",
-        "text": "Atendimento dedicado durante o beta"
-      },
-      "card3": {
-        "title": "Feedback Valorizado",
-        "text": "Sua opinião ajuda a moldar o produto"
-      }
-    },
-    "cta": {
-      "title": "Pronto para transformar sua experiência educacional?",
-      "subtitle": "Junte-se a milhares de educadores que já estão revolucionando o ensino",
-      "primary": "Começar Gratuitamente",
-      "secondary": "Falar com Especialista"
+      "saveTime": "Economize Tempo",
+      "improveResults": "Melhore Resultados",
+      "facilitatesTeaching": "Facilite o Ensino",
+      "focusEssential": "Foque no Essencial",
+      "reduceAdmin": "Reduza 70% do tempo em tarefas administrativas",
+      "increaseEngagement": "Aumento no engajamento dos alunos",
+      "empowerMethodology": "Ferramentas que potencializam sua metodologia",
+      "moreTimeTeaching": "Mais tempo para ensinar, menos burocracia"
     },
     "stats": {
-      "teachers": "Professores Ativos",
-      "students": "Alunos Atendidos",
       "activities": "Atividades Criadas",
       "satisfaction": "Satisfação"
     },

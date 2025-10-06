@@ -8,7 +8,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import AccessibilityButton from './components/AccessibilityButton';
 import PrivacyButton from './components/PrivacyButton';
-import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
+import useKeyboardNavigation from '@/hooks/useKeyboardNavigation';
 
 // Scroll to top on route change
 const ScrollToTop = () => {

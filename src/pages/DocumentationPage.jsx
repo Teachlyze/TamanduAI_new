@@ -48,6 +48,7 @@ import {
   Activity,
   CheckCircle,
   PlayCircle,
+  PlayCircle as PlayCircleIcon,
   PenTool,
   Layers,
   Sparkles,
@@ -85,7 +86,81 @@ import {
   MinusCircle,
   ExternalLink,
   ChevronLeft,
-  ChevronRight as ChevronRightIcon
+  ChevronRight as ChevronRightIcon,
+  ShieldCheck,
+  Database as DatabaseIcon,
+  HardDrive as HardDriveIcon,
+  Cloud as CloudIcon,
+  Eye as EyeIcon,
+  Globe as GlobeIcon,
+  Smartphone as SmartphoneIcon,
+  Clock as ClockIcon,
+  CheckCircle2,
+  AlertTriangle as AlertTriangleIcon,
+  Info as InfoIcon,
+  Zap as ZapIcon,
+  Brain as BrainIcon,
+  Shield as ShieldIcon,
+  Globe as GlobeIcon2,
+  Activity as ActivityIcon,
+  Rocket as RocketIcon,
+  Code as CodeIcon,
+  TestTube as TestTubeIcon,
+  HelpCircle as HelpCircleIcon,
+  Server as ServerIcon,
+  Terminal as TerminalIcon,
+  Lock as LockIcon2,
+  EyeOff as EyeOffIcon,
+  RefreshCw as RefreshCwIcon,
+  Github as GithubIcon,
+  Package as PackageIcon,
+  GitBranch as GitBranchIcon,
+  Container as ContainerIcon,
+  Layers as LayersIcon,
+  Cpu as CpuIcon,
+  Wifi as WifiIcon,
+  Palette as PaletteIcon,
+  Headphones as HeadphonesIcon,
+  Download as DownloadIcon,
+  FolderOpen as FolderOpenIcon,
+  Upload as UploadIcon,
+  Bell as BellIcon,
+  Monitor as MonitorIcon,
+  Image as ImageIcon,
+  Video as VideoIcon,
+  FileText as FileTextIcon,
+  Users as UsersIcon,
+  GraduationCap as GraduationCapIcon,
+  Calendar as CalendarIcon,
+  MessageCircle as MessageCircleIcon,
+  BarChart as BarChartIcon,
+  Settings as SettingsIcon,
+  Target as TargetIcon,
+  Lightbulb as LightbulbIcon,
+  Award as AwardIcon,
+  Star as StarIcon,
+  TrendingUp as TrendingUpIcon,
+  CheckCircle as CheckCircleIcon,
+  PlayCircle as PlayCircleIcon2,
+  PenTool as PenToolIcon,
+  Sparkles as SparklesIcon,
+  Archive as ArchiveIcon,
+  Timer as TimerIcon,
+  Fingerprint as FingerprintIcon,
+  Key as KeyIcon,
+  Eye as EyeIcon2,
+  Contrast as ContrastIcon,
+  Languages as LanguagesIcon,
+  HardDrive as HardDriveIcon2,
+  RefreshCw as RefreshCwIcon2,
+  AlertCircle as AlertCircleIcon2,
+  CheckSquare as CheckSquareIcon,
+  XCircle as XCircleIcon2,
+  PlusCircle as PlusCircleIcon,
+  MinusCircle as MinusCircleIcon,
+  ExternalLink as ExternalLinkIcon,
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon2
 } from 'lucide-react';
 
 const DocumentationPage = () => {
@@ -107,18 +182,31 @@ const DocumentationPage = () => {
       id: 'introduction',
       title: 'Introdução',
       icon: <BookOpen size={18} />,
-      description: 'Visão geral da plataforma TamanduAI e seus recursos avançados'
+      description: 'Visão geral da plataforma TamanduAI e seus recursos enterprise'
     },
     {
       id: 'platform-overview',
       title: 'Visão Geral da Plataforma',
       icon: <LayoutDashboard size={18} />,
-      description: 'Arquitetura e recursos enterprise implementados',
+      description: 'Arquitetura completa e recursos enterprise implementados',
       subsections: [
         'arquitetura',
         'recursos-principais',
-        'seguranca',
-        'performance'
+        'seguranca-avancada',
+        'performance-escalabilidade'
+      ]
+    },
+    {
+      id: 'security',
+      title: 'Segurança Enterprise',
+      icon: <Shield size={18} />,
+      description: 'Sistema completo de segurança e proteção de dados',
+      subsections: [
+        'autenticacao-segura',
+        'row-level-security',
+        'xss-protection',
+        'rate-limiting',
+        'auditoria-compliance'
       ]
     },
     {
@@ -127,9 +215,22 @@ const DocumentationPage = () => {
       icon: <Brain size={18} />,
       description: 'Tecnologias de inteligência artificial integradas',
       subsections: [
-        'winston-ai',
+        'winston-ai-plagio',
         'chatbot-educacional',
         'analise-preditiva'
+      ]
+    },
+    {
+      id: 'deployment',
+      title: 'Deploy & DevOps',
+      icon: <Rocket size={18} />,
+      description: 'Sistema automatizado de deploy e infraestrutura',
+      subsections: [
+        'docker-production',
+        'nginx-configuracao',
+        'supabase-cloud',
+        'monitoring-observability',
+        'backup-recovery'
       ]
     },
     {
@@ -198,19 +299,7 @@ const DocumentationPage = () => {
         'health-checks',
         'error-monitoring',
         'performance-tracking',
-        'analytics'
-      ]
-    },
-    {
-      id: 'deployment',
-      title: 'Deploy & DevOps',
-      icon: <Rocket size={18} />,
-      description: 'Sistema automatizado de deploy e manutenção',
-      subsections: [
-        'deploy-automatizado',
-        'ci-cd',
-        'backup-recovery',
-        'monitoramento-producao'
+        'python-dashboards'
       ]
     },
     {
@@ -221,20 +310,8 @@ const DocumentationPage = () => {
       subsections: [
         'openapi-spec',
         'autenticacao-api',
-        'rate-limiting',
-        'webhooks'
-      ]
-    },
-    {
-      id: 'security',
-      title: 'Segurança',
-      icon: <Shield size={18} />,
-      description: 'Medidas de segurança enterprise implementadas',
-      subsections: [
-        'autenticacao-segura',
-        'protecao-dados',
-        'auditoria',
-        'compliance'
+        'rate-limiting-api',
+        'webhooks-edge-functions'
       ]
     },
     {
@@ -341,7 +418,7 @@ const DocumentationPage = () => {
                 <div>
                   <h1 className="text-4xl font-bold mb-2">Bem-vindo ao TamanduAI</h1>
                   <p className="text-xl text-gray-600 dark:text-gray-400">
-                    Plataforma Educacional Enterprise com IA Avançada
+                    Plataforma Educacional Enterprise com IA Avançada e Segurança Completa
                   </p>
                 </div>
               </div>
@@ -349,7 +426,8 @@ const DocumentationPage = () => {
                 <p className="text-lg leading-relaxed">
                   O <strong>TamanduAI</strong> é uma plataforma educacional de última geração que combina
                   <strong> tecnologias de inteligência artificial</strong>,
-                  <strong> segurança enterprise</strong> e
+                  <strong> segurança enterprise-grade</strong>,
+                  <strong> arquitetura escalável</strong> e
                   <strong> experiência excepcional do usuário</strong> para transformar a educação moderna.
                 </p>
               </div>
@@ -362,7 +440,7 @@ const DocumentationPage = () => {
                 </div>
                 <h3 className="text-lg font-semibold mb-2">IA Avançada</h3>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  Detecção automática de plágio com Winston AI e assistente inteligente treinado por turma.
+                  Detecção automática de plágio com Winston AI, assistente inteligente e análise preditiva.
                 </p>
               </div>
 
@@ -372,7 +450,7 @@ const DocumentationPage = () => {
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Segurança Enterprise</h3>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  hCaptcha, rate limiting inteligente, auditoria completa e proteção OWASP Top 10.
+                  RLS, sanitização XSS, hCaptcha, rate limiting, auditoria completa e proteção OWASP Top 10.
                 </p>
               </div>
 
@@ -383,6 +461,36 @@ const DocumentationPage = () => {
                 <h3 className="text-lg font-semibold mb-2">Global & Acessível</h3>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
                   3 idiomas suportados, acessibilidade WCAG 2.1 completa e design responsivo.
+                </p>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mb-4">
+                  <Container className="w-6 h-6 text-orange-600" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Deploy Production-Ready</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  Docker completo, Nginx otimizado, monitoramento 24/7 e backup automático.
+                </p>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center mb-4">
+                  <Activity className="w-6 h-6 text-red-600" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Dashboards Python</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  Dashboards customizados em Python com métricas em tempo real e visualizações interativas.
+                </p>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div className="w-12 h-12 bg-teal-100 dark:bg-teal-900/30 rounded-lg flex items-center justify-center mb-4">
+                  <Database className="w-6 h-6 text-teal-600" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Supabase Cloud</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  Banco de dados escalável, Edge Functions e autenticação integrada.
                 </p>
               </div>
             </div>
@@ -400,145 +508,284 @@ const DocumentationPage = () => {
                   </div>
                   <div className="flex items-center">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                    <span>Chatbot educacional inteligente</span>
+                    <span>Segurança enterprise-grade completa</span>
                   </div>
                   <div className="flex items-center">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                    <span>Sistema de segurança enterprise</span>
+                    <span>Deploy Docker production-ready</span>
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
+                    <span>Dashboards customizados em Python</span>
                   </div>
                   <div className="flex items-center">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
                     <span>Internacionalização completa</span>
                   </div>
-                </div>
-                <div className="space-y-3">
                   <div className="flex items-center">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
                     <span>Acessibilidade WCAG 2.1</span>
                   </div>
+                </div>
+                <div className="space-y-3">
                   <div className="flex items-center">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                    <span>Monitoramento em tempo real</span>
+                    <span>Chatbot educacional inteligente</span>
                   </div>
                   <div className="flex items-center">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                    <span>Deploy automatizado</span>
+                    <span>Sistema de backup automático</span>
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
+                    <span>Rate limiting inteligente</span>
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
+                    <span>Cache multi-nível otimizado</span>
                   </div>
                   <div className="flex items-center">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
                     <span>Sistema de testes completo</span>
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
+                    <span>Documentação técnica abrangente</span>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="mt-8 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-              <h2 className="text-xl font-bold mb-4">🚀 Pronto para Produção</h2>
+              <h2 className="text-xl font-bold mb-4">🚀 Production-Ready & Enterprise-Grade</h2>
               <p className="mb-4">
                 Esta plataforma foi desenvolvida seguindo as <strong>melhores práticas da indústria</strong>
                 e está <strong>100% pronta para produção</strong> com:
               </p>
               <ul className="space-y-2">
-                <li>• Arquitetura escalável e moderna</li>
-                <li>• Segurança enterprise-grade</li>
-                <li>• Performance otimizada para milhares de usuários</li>
-                <li>• Monitoramento profissional 24/7</li>
-                <li>• Sistema de backup e recovery automático</li>
-                <li>• Documentação técnica completa</li>
+                <li>• <strong>Arquitetura escalável</strong> e moderna com Supabase Cloud</li>
+                <li>• <strong>Segurança enterprise-grade</strong> com RLS e sanitização completa</li>
+                <li>• <strong>Performance otimizada</strong> para milhares de usuários simultâneos</li>
+                <li>• <strong>Dashboards customizados</strong> em Python com métricas personalizadas</li>
+                <li>• <strong>Sistema de backup e recovery</strong> automático e confiável</li>
+                <li>• <strong>Deploy automatizado</strong> com Docker e configurações otimizadas</li>
+                <li>• <strong>Documentação técnica completa</strong> para desenvolvedores e DevOps</li>
               </ul>
             </div>
           </div>
         );
 
-      case 'platform-overview':
+      case 'deployment-monitoring-observability':
         return (
           <div className="prose dark:prose-invert max-w-none">
-            <h1>Visão Geral da Plataforma</h1>
+            <h1>Monitoramento 24/7 - Sistema Completo de Observabilidade</h1>
             <p className="lead">
-              Arquitetura completa e recursos enterprise da plataforma TamanduAI.
+              Sistema avançado de monitoramento, métricas e logs para garantir disponibilidade e performance.
             </p>
 
             <div className="space-y-8">
               <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                 <h2 className="flex items-center text-2xl font-bold mb-4">
-                  <Server className="w-6 h-6 mr-2 text-blue-600" />
-                  Arquitetura Técnica
-                </h2>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Backend</h3>
-                    <ul className="space-y-2">
-                      <li>• <strong>Supabase</strong> com Edge Functions</li>
-                      <li>• <strong>PostgreSQL</strong> com migrações automáticas</li>
-                      <li>• <strong>Redis</strong> para cache multi-nível</li>
-                      <li>• <strong>Row Level Security (RLS)</strong> completo</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Frontend</h3>
-                    <ul className="space-y-2">
-                      <li>• <strong>React 18</strong> com hooks avançados</li>
-                      <li>• <strong>Vite</strong> para build ultra-rápido</li>
-                      <li>• <strong>TypeScript</strong> para type safety</li>
-                      <li>• <strong>Sistema de design</strong> completo</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                <h2 className="flex items-center text-2xl font-bold mb-4">
-                  <Zap className="w-6 h-6 mr-2 text-yellow-600" />
-                  Recursos Avançados
-                </h2>
-                <div className="grid md:grid-cols-3 gap-4">
-                  <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                    <Brain className="w-8 h-8 mx-auto mb-2 text-blue-600" />
-                    <h4 className="font-semibold">IA Winston</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Detecção automática de plágio
-                    </p>
-                  </div>
-                  <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                    <Shield className="w-8 h-8 mx-auto mb-2 text-green-600" />
-                    <h4 className="font-semibold">Segurança</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      hCaptcha + auditoria completa
-                    </p>
-                  </div>
-                  <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                    <Globe className="w-8 h-8 mx-auto mb-2 text-purple-600" />
-                    <h4 className="font-semibold">i18n</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      3 idiomas + expansão fácil
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                <h2 className="flex items-center text-2xl font-bold mb-4">
                   <Activity className="w-6 h-6 mr-2 text-green-600" />
-                  Monitoramento & Performance
+                  Stack de Monitoramento
                 </h2>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Health Checks</h3>
-                    <ul className="space-y-2">
-                      <li>• Monitoramento automático 24/7</li>
-                      <li>• Heartbeat para detectar problemas</li>
-                      <li>• Reconexão automática inteligente</li>
-                      <li>• Métricas de performance em tempo real</li>
+
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <BarChart className="w-8 h-8 mx-auto mb-2 text-blue-600" />
+                    <h4 className="font-semibold">Prometheus</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Coleta de métricas em tempo real
+                    </p>
+                  </div>
+
+                  <div className="text-center p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                    <Code className="w-8 h-8 mx-auto mb-2 text-orange-600" />
+                    <h4 className="font-semibold">Python Dashboards</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Dashboards customizados em Python
+                    </p>
+                  </div>
+
+                  <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                    <Search className="w-8 h-8 mx-auto mb-2 text-green-600" />
+                    <h4 className="font-semibold">Elasticsearch</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Busca avançada e análise de logs
+                    </p>
+                  </div>
+
+                  <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                    <FileText className="w-8 h-8 mx-auto mb-2 text-purple-600" />
+                    <h4 className="font-semibold">Vector</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Agregação e processamento de logs
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <h2 className="flex items-center text-2xl font-bold mb-4">
+                  <Code className="w-6 h-6 mr-2 text-blue-600" />
+                  Dashboards Python Customizados
+                </h2>
+
+                <div className="space-y-6">
+                  <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                    <h3 className="font-semibold mb-2">Vantagens dos Dashboards Python</h3>
+                    <ul className="space-y-2 text-sm">
+                      <li>• <strong>Flexibilidade total</strong>: Dashboards completamente customizáveis</li>
+                      <li>• <strong>Integração direta</strong>: Conexão nativa com banco de dados e APIs</li>
+                      <li>• <strong>Visualizações avançadas</strong>: Plotly, Dash e bibliotecas Python modernas</li>
+                      <li>• <strong>Automatização</strong>: Scripts personalizados para métricas específicas</li>
                     </ul>
                   </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <h3 className="text-lg font-semibold mb-3">Tecnologias Utilizadas</h3>
+                      <ul className="space-y-2">
+                        <li>• <strong>Dash</strong>: Framework web para dashboards interativos</li>
+                        <li>• <strong>Plotly</strong>: Biblioteca de visualização avançada</li>
+                        <li>• <strong>Pandas</strong>: Manipulação e análise de dados</li>
+                        <li>• <strong>Redis</strong>: Cache e métricas em tempo real</li>
+                        <li>• <strong>PostgreSQL</strong>: Dados históricos e análises</li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-semibold mb-3">Recursos Implementados</h3>
+                      <ul className="space-y-2">
+                        <li>• <strong>Métricas em tempo real</strong>: Atualização automática</li>
+                        <li>• <strong>Gráficos interativos</strong>: Zoom, filtros, drill-down</li>
+                        <li>• <strong>Logs ao vivo</strong>: Monitoramento de eventos</li>
+                        <li>• <strong>Health checks</strong>: Status de todos os serviços</li>
+                        <li>• <strong>Alertas customizáveis</strong>: Notificações inteligentes</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <h2 className="flex items-center text-2xl font-bold mb-4">
+                  <BarChart className="w-6 h-6 mr-2 text-blue-600" />
+                  Métricas Monitoradas
+                </h2>
+
+                <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <h3 className="text-lg font-semibold mb-3">Otimização</h3>
+                    <h3 className="text-lg font-semibold mb-3">Performance</h3>
                     <ul className="space-y-2">
-                      <li>• Cache inteligente multi-nível</li>
-                      <li>• Code splitting automático</li>
-                      <li>• Bundle analysis integrado</li>
-                      <li>• Service worker avançado</li>
+                      <li>• Tempo de resposta da API</li>
+                      <li>• Throughput de requests</li>
+                      <li>• Uso de CPU e memória</li>
+                      <li>• Cache hit rate</li>
+                      <li>• Database query performance</li>
                     </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">Negócio</h3>
+                    <ul className="space-y-2">
+                      <li>• Número de usuários ativos</li>
+                      <li>• Taxa de conclusão de atividades</li>
+                      <li>• Tempo médio de resposta</li>
+                      <li>• Erros por usuário</li>
+                      <li>• Popularidade de recursos</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <h2 className="flex items-center text-2xl font-bold mb-4">
+                  <Bell className="w-6 h-6 mr-2 text-red-600" />
+                  Alertas e Notificações
+                </h2>
+
+                <div className="space-y-4">
+                  <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                    <h4 className="font-semibold text-red-800 dark:text-red-200">Alertas Críticos</h4>
+                    <ul className="text-sm mt-2 space-y-1">
+                      <li>• API indisponível por mais de 5 minutos</li>
+                      <li>• Erro rate acima de 5%</li>
+                      <li>• Tempo de resposta {'>'} 3 segundos</li>
+                      <li>• Falha no banco de dados</li>
+                    </ul>
+                  </div>
+
+                  <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                    <h4 className="font-semibold text-yellow-800 dark:text-yellow-200">Alertas de Warning</h4>
+                    <ul className="text-sm mt-2 space-y-1">
+                      <li>• Uso de CPU {'>'} 80%</li>
+                      <li>• Memória {'>'} 85%</li>
+                      <li>• Cache miss rate alto</li>
+                      <li>• Backups com problemas</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <h2 className="flex items-center text-2xl font-bold mb-4">
+                  <TrendingUp className="w-6 h-6 mr-2 text-green-600" />
+                  Dashboards Disponíveis
+                </h2>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-3">
+                    <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                      <h4 className="font-semibold">Visão Geral da Plataforma</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Health checks, usuários ativos, performance geral
+                      </p>
+                    </div>
+
+                    <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                      <h4 className="font-semibold">Performance da API</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Tempos de resposta, throughput, erros por endpoint
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                      <h4 className="font-semibold">Banco de Dados</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Conexões, queries lentas, uso de recursos
+                      </p>
+                    </div>
+
+                    <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                      <h4 className="font-semibold">Logs e Erros</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Análise de erros, padrões de uso, segurança
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl">
+                <h3 className="text-lg font-bold mb-4">🔗 Acesso aos Dashboards</h3>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="text-center p-3 bg-white dark:bg-gray-800 rounded-lg">
+                    <div className="text-lg font-bold text-blue-600 mb-1">Python Dashboards</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">http://localhost:8050</div>
+                    <div className="text-xs text-gray-500">Dashboards customizados</div>
+                  </div>
+                  <div className="text-center p-3 bg-white dark:bg-gray-800 rounded-lg">
+                    <div className="text-lg font-bold text-green-600 mb-1">Prometheus</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">http://localhost:9090</div>
+                    <div className="text-xs text-gray-500">Métricas em tempo real</div>
+                  </div>
+                  <div className="text-center p-3 bg-white dark:bg-gray-800 rounded-lg">
+                    <div className="text-lg font-bold text-purple-600 mb-1">Elasticsearch</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">http://localhost:9200</div>
+                    <div className="text-xs text-gray-500">Busca avançada de logs</div>
                   </div>
                 </div>
               </div>
@@ -546,43 +793,39 @@ const DocumentationPage = () => {
           </div>
         );
 
-      case 'ai-features-winston-ai':
+      case 'deployment-docker-production':
         return (
           <div className="prose dark:prose-invert max-w-none">
-            <h1>Detecção de Plágio com Winston AI</h1>
+            <h1>Docker Production-Ready - Deploy Completo</h1>
             <p className="lead">
-              Sistema avançado de detecção de plágio usando inteligência artificial de última geração.
+              Sistema completo de deploy containerizado com configurações otimizadas para produção.
             </p>
 
             <div className="space-y-8">
               <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                 <h2 className="flex items-center text-2xl font-bold mb-4">
-                  <Brain className="w-6 h-6 mr-2 text-blue-600" />
-                  Como Funciona
+                  <Container className="w-6 h-6 mr-2 text-blue-600" />
+                  Arquitetura Docker Atualizada
                 </h2>
+
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <h3 className="text-lg font-semibold mb-3">Análise de Texto</h3>
-                    <p className="mb-3">
-                      O Winston AI analisa o texto submetido comparando com bilhões de fontes online
-                      e conteúdo acadêmico para identificar similaridades.
-                    </p>
+                    <h3 className="text-lg font-semibold mb-3">Serviços Core</h3>
                     <ul className="space-y-2">
-                      <li>• <strong>Score de similaridade</strong> detalhado (0-100%)</li>
-                      <li>• <strong>Identificação de fontes</strong> originais</li>
-                      <li>• <strong>Detecção de paráfrase</strong> inteligente</li>
+                      <li>• <strong>Frontend</strong>: React/Vite com produção otimizada</li>
+                      <li>• <strong>Nginx</strong>: Proxy reverso com headers de segurança</li>
+                      <li>• <strong>Redis</strong>: Cache com senha e persistência</li>
+                      <li>• <strong>Edge Runtime</strong>: Ambiente para Supabase Functions</li>
+                      <li>• <strong>Python Dashboards</strong>: Dashboards customizados em Python</li>
                     </ul>
                   </div>
+
                   <div>
-                    <h3 className="text-lg font-semibold mb-3">Detecção de IA</h3>
-                    <p className="mb-3">
-                      Além de plágio tradicional, o sistema identifica conteúdo gerado por outras IAs,
-                      garantindo integridade acadêmica completa.
-                    </p>
+                    <h3 className="text-lg font-semibold mb-3">Serviços de Monitoramento</h3>
                     <ul className="space-y-2">
-                      <li>• <strong>Análise de padrões</strong> de geração de IA</li>
-                      <li>• <strong>Confiança do resultado</strong> com probabilidade</li>
-                      <li>• <strong>Relatórios detalhados</strong> para professores</li>
+                      <li>• <strong>Prometheus</strong>: Coleta de métricas</li>
+                      <li>• <strong>Elasticsearch</strong>: Busca avançada e logs</li>
+                      <li>• <strong>Vector</strong>: Agregação de logs</li>
                     </ul>
                   </div>
                 </div>
@@ -590,63 +833,73 @@ const DocumentationPage = () => {
 
               <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                 <h2 className="flex items-center text-2xl font-bold mb-4">
-                  <MessageCircle className="w-6 h-6 mr-2 text-green-600" />
-                  Integração com o Sistema
+                  <Rocket className="w-6 h-6 mr-2 text-green-600" />
+                  Comandos de Deploy
                 </h2>
+
                 <div className="space-y-4">
-                  <div className="flex items-start">
-                    <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mr-3 flex-shrink-0">1</div>
-                    <div>
-                      <h3 className="font-semibold">Submissão de Atividade</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Aluno submete atividade normalmente através da plataforma
-                      </p>
-                    </div>
+                  <div className="bg-gray-900 text-gray-100 p-4 rounded-lg">
+                    <div className="text-green-400 mb-2"># 1. Configurar ambiente</div>
+                    <div>cp .env.example .env</div>
+                    <div className="text-gray-400 mt-1"># Edite .env com suas configurações</div>
                   </div>
-                  <div className="flex items-start">
-                    <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mr-3 flex-shrink-0">2</div>
-                    <div>
-                      <h3 className="font-semibold">Análise Automática</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Sistema envia texto para análise na API Winston em background
-                      </p>
-                    </div>
+
+                  <div className="bg-gray-900 text-gray-100 p-4 rounded-lg">
+                    <div className="text-green-400 mb-2"># 2. Iniciar serviços</div>
+                    <div>docker-compose up -d</div>
+                    <div className="text-gray-400 mt-1"># Todos os serviços iniciam automaticamente</div>
                   </div>
-                  <div className="flex items-start">
-                    <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mr-3 flex-shrink-0">3</div>
-                    <div>
-                      <h3 className="font-semibold">Notificação ao Professor</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Professor recebe relatório detalhado com score e fontes identificadas
-                      </p>
-                    </div>
+
+                  <div className="bg-gray-900 text-gray-100 p-4 rounded-lg">
+                    <div className="text-green-400 mb-2"># 3. Verificar status</div>
+                    <div>docker-compose ps</div>
+                    <div className="text-gray-400 mt-1"># Verificar se todos os serviços estão rodando</div>
+                  </div>
+
+                  <div className="bg-gray-900 text-gray-100 p-4 rounded-lg">
+                    <div className="text-green-400 mb-2"># 4. Dashboards Python</div>
+                    <div className="text-gray-400 mt-1"># Acesse http://localhost:8050 para os dashboards customizados</div>
                   </div>
                 </div>
               </div>
 
               <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                 <h2 className="flex items-center text-2xl font-bold mb-4">
-                  <BarChart className="w-6 h-6 mr-2 text-purple-600" />
-                  Relatórios e Métricas
+                  <Code className="w-6 h-6 mr-2 text-purple-600" />
+                  Serviço Python Dashboards
                 </h2>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Relatório Detalhado</h3>
-                    <ul className="space-y-2">
-                      <li>• <strong>Score geral</strong> de similaridade</li>
-                      <li>• <strong>Fontes identificadas</strong> com links</li>
-                      <li>• <strong>Trechos destacados</strong> idênticos</li>
-                      <li>• <strong>Nível de confiança</strong> da análise</li>
+
+                <div className="space-y-4">
+                  <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+                    <h3 className="font-semibold mb-2">Características do Serviço</h3>
+                    <ul className="space-y-2 text-sm">
+                      <li>• <strong>Baseado em Dash</strong>: Framework Python para dashboards web</li>
+                      <li>• <strong>Visualizações com Plotly</strong>: Gráficos interativos e avançados</li>
+                      <li>• <strong>Integração com banco</strong>: Conexão direta com PostgreSQL e Redis</li>
+                      <li>• <strong>Atualização automática</strong>: Métricas em tempo real</li>
                     </ul>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Métricas da Turma</h3>
-                    <ul className="space-y-2">
-                      <li>• <strong>Taxa de plágio</strong> por período</li>
-                      <li>• <strong>Tendências</strong> de comportamento</li>
-                      <li>• <strong>Comparativos</strong> entre alunos</li>
-                      <li>• <strong>Alertas automáticos</strong> configuráveis</li>
-                    </ul>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-semibold mb-2">Tecnologias</h4>
+                      <ul className="space-y-1 text-sm">
+                        <li>• Flask/Dash para interface web</li>
+                        <li>• Plotly para visualizações</li>
+                        <li>• Pandas para análise de dados</li>
+                        <li>• Redis para métricas em tempo real</li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold mb-2">Funcionalidades</h4>
+                      <ul className="space-y-1 text-sm">
+                        <li>• Gráficos interativos com zoom</li>
+                        <li>• Filtros e drill-down</li>
+                        <li>• Logs ao vivo</li>
+                        <li>• Health checks de serviços</li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -654,20 +907,22 @@ const DocumentationPage = () => {
               <div className="bg-yellow-50 dark:bg-yellow-900/20 p-6 rounded-xl">
                 <h3 className="text-lg font-bold mb-4 flex items-center">
                   <AlertTriangle className="w-5 h-5 mr-2 text-yellow-600" />
-                  Considerações Éticas e Legais
+                  Configuração de Produção
                 </h3>
                 <div className="space-y-3">
                   <p>
-                    <strong>Privacidade:</strong> Todo o conteúdo é analisado de forma segura e confidencial.
-                    Não armazenamos o conteúdo das submissões após a análise.
+                    <strong>Dashboards Python:</strong> O serviço python-dashboards está configurado na porta 8050
+                    e integrado com Prometheus para coleta de métricas.
                   </p>
                   <p>
-                    <strong>Conformidade:</strong> O sistema está em conformidade com LGPD e outras
-                    regulamentações de proteção de dados.
+                    <strong>Variáveis obrigatórias:</strong> Configure todas as variáveis no arquivo .env,
+                    especialmente SUPABASE_URL, REDIS_PASSWORD e chaves de API.
                   </p>
                   <p>
-                    <strong>Transparência:</strong> Professores e alunos são informados sobre o uso da tecnologia
-                    através dos termos de uso e política de privacidade.
+                    <strong>SSL:</strong> Para produção, configure certificados SSL usando Let&apos;s Encrypt integrado.
+                  </p>
+                  <p>
+                    <strong>Backup:</strong> O sistema de backup automático está configurado para PostgreSQL.
                   </p>
                 </div>
               </div>
@@ -678,29 +933,102 @@ const DocumentationPage = () => {
       default:
         return (
           <div className="prose dark:prose-invert max-w-none">
-            <h1>Documentação</h1>
+            <h1>Documentação TamanduAI</h1>
             <p className="lead">
-              Selecione um tópico no menu lateral para explorar a documentação completa da plataforma TamanduAI.
+              Plataforma educacional completa com IA avançada, segurança enterprise e deploy production-ready.
             </p>
 
-            <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl">
-              <h2 className="text-xl font-bold mb-4">🚀 Plataforma Production-Ready</h2>
-              <p>
-                Esta documentação cobre todos os aspectos da plataforma TamanduAI, desde recursos básicos
-                até funcionalidades avançadas de IA, segurança enterprise e deploy automatizado.
-              </p>
-              <div className="grid md:grid-cols-3 gap-4 mt-4">
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-xl">
+              <h2 className="text-xl font-bold mb-4">🚀 Recursos Implementados</h2>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="bg-white dark:bg-gray-800 p-3 rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <Brain className="w-5 h-5 text-blue-600 mr-2" />
+                    <span className="font-semibold text-sm">IA Winston</span>
+                  </div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    Detecção automática de plágio com análise avançada
+                  </p>
+                </div>
+
+                <div className="bg-white dark:bg-gray-800 p-3 rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <Shield className="w-5 h-5 text-green-600 mr-2" />
+                    <span className="font-semibold text-sm">Segurança</span>
+                  </div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    RLS, XSS protection, rate limiting e auditoria completa
+                  </p>
+                </div>
+
+                <div className="bg-white dark:bg-gray-800 p-3 rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <Container className="w-5 h-5 text-purple-600 mr-2" />
+                    <span className="font-semibold text-sm">Docker</span>
+                  </div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    Deploy completo com Nginx, Redis e monitoramento
+                  </p>
+                </div>
+
+                <div className="bg-white dark:bg-gray-800 p-3 rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <Code className="w-5 h-5 text-orange-600 mr-2" />
+                    <span className="font-semibold text-sm">Python Dashboards</span>
+                  </div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    Dashboards customizados com métricas em tempo real
+                  </p>
+                </div>
+
+                <div className="bg-white dark:bg-gray-800 p-3 rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <Globe className="w-5 h-5 text-teal-600 mr-2" />
+                    <span className="font-semibold text-sm">i18n</span>
+                  </div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    3 idiomas suportados com expansão fácil
+                  </p>
+                </div>
+
+                <div className="bg-white dark:bg-gray-800 p-3 rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <Eye className="w-5 h-5 text-indigo-600 mr-2" />
+                    <span className="font-semibold text-sm">Acessibilidade</span>
+                  </div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    WCAG 2.1 completo com recursos avançados
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 p-6 bg-green-50 dark:bg-green-900/20 rounded-xl">
+              <h2 className="text-xl font-bold mb-4 flex items-center">
+                <CheckCircle className="w-6 h-6 mr-2 text-green-600" />
+                Status de Implementação
+              </h2>
+
+              <div className="grid md:grid-cols-4 gap-4">
                 <div className="text-center p-3 bg-white dark:bg-gray-800 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600 mb-1">100%</div>
+                  <div className="text-2xl font-bold text-green-600 mb-1">100%</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Funcional</div>
                 </div>
+
                 <div className="text-center p-3 bg-white dark:bg-gray-800 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600 mb-1">24/7</div>
+                  <div className="text-2xl font-bold text-blue-600 mb-1">24/7</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Monitorado</div>
                 </div>
+
                 <div className="text-center p-3 bg-white dark:bg-gray-800 rounded-lg">
                   <div className="text-2xl font-bold text-purple-600 mb-1">∞</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Escalável</div>
+                </div>
+
+                <div className="text-center p-3 bg-white dark:bg-gray-800 rounded-lg">
+                  <div className="text-2xl font-bold text-orange-600 mb-1">⚡</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Performance</div>
                 </div>
               </div>
             </div>

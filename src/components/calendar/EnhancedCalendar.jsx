@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 const EnhancedCalendar = ({
   mode = 'single',
   selected,
   onSelect,
-  initialFocus = false,
   className,
   ...props
 }) => {
@@ -21,7 +20,7 @@ const EnhancedCalendar = ({
 
   // Add padding days for the beginning of the month
   const startPadding = monthStart.getDay();
-  const paddedDays = Array.from({ length: startPadding }, (_, i) => null).concat(calendarDays);
+  const paddedDays = Array(startPadding).fill(null).concat(calendarDays);
 
   const handleDateClick = (date) => {
     if (!date) return;

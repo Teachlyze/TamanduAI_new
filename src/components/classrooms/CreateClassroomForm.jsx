@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Logger } from '@/services/logger';
 
 // UI Components
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

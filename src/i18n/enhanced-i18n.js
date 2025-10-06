@@ -3,6 +3,8 @@
  * Advanced i18n with pluralization, interpolation, and performance optimizations
  */
 
+import { useState, useEffect, useCallback } from 'react';
+
 // ============================================
 // I18N CONFIGURATION
 // ============================================
@@ -365,7 +367,7 @@ export const useTranslation = (namespace = I18N_CONFIG.DEFAULT_NAMESPACE) => {
     if (savedLanguage && savedLanguage !== currentLanguage) {
       changeLanguage(savedLanguage);
     }
-  }, []);
+  }, [changeLanguage, currentLanguage]);
 
   return {
     t,
@@ -464,7 +466,7 @@ export const TranslationProvider = ({ children, fallbackLanguage = I18N_CONFIG.F
     };
 
     initializeTranslations();
-  }, []);
+  }, [fallbackLanguage]);
 
   if (!isInitialized) {
     return (
@@ -721,21 +723,5 @@ export const detectUserLanguage = () => {
 // ============================================
 // EXPORTS
 // ============================================
-
-export {
-  TranslationProvider,
-  LanguageSelector,
-  Trans,
-  Plural,
-  useTranslation,
-  useTranslationLoading,
-  useTranslationPerformance,
-  formatNumber,
-  formatDate,
-  formatCurrency,
-  formatRelativeTime,
-  getTextDirection,
-  detectUserLanguage,
-};
 
 export default useTranslation;
