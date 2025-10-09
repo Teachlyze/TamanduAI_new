@@ -83,10 +83,16 @@ const AgendaPage = () => {
     // Determine role once; if query fails, default remains 'teacher'
     (async () => {
       try {
+        // Get role from user metadata first
+        if (user.user_metadata?.role) {
+          setIsTeacher(user.user_metadata.role === 'teacher');
+          return;
+        }
+        
         const { data, error } = await supabase
-          .from('user_roles')
+          .from('profiles')
           .select('role')
-          .eq('user_id', user.id)
+          .eq('id', user.id)
           .maybeSingle();
         if (!error) setIsTeacher((data?.role || 'teacher') === 'teacher');
       } catch {
@@ -97,7 +103,7 @@ const AgendaPage = () => {
       refresh();
     });
     return unsubscribe;
-  }, [user?.id]);
+  }, [user?.id, user?.user_metadata?.role]);
 
   const conflicts = useMemo(() => CalendarService.detectConflicts(events), [events]);
 

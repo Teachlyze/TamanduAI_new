@@ -20,10 +20,10 @@ export default async function handler(req, res) {
         id,
         name,
         subject,
-        teacher_id,
+        created_by,
         is_active,
         created_at,
-        class_students (
+        class_members (
           id,
           student_id,
           status
@@ -36,14 +36,14 @@ export default async function handler(req, res) {
           created_at
         )
       `)
-      .eq('teacher_id', userId)
+      .eq('created_by', userId)
       .eq('is_active', true);
 
     if (classesError) throw classesError;
 
     // Calculate stats
     const totalStudents = classes.reduce((sum, cls) =>
-      sum + cls.class_students.filter(cs => cs.status === 'active').length, 0
+      sum + cls.class_members.filter(cs => cs.status === 'active').length, 0
     );
 
     const totalClasses = classes.length;
@@ -59,19 +59,23 @@ export default async function handler(req, res) {
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
     const { data: recentActivitiesData, error: activitiesError } = await supabase
-      .from('class_activities')
+      .from('activities')
       .select(`
         id,
         title,
-        type,
+        activity_type,
         created_at,
-        classes (
-          id,
-          name,
-          subject
+        created_by,
+        activity_class_assignments!inner(
+          class_id,
+          classes!inner(
+            id,
+            name,
+            subject
+          )
         )
       `)
-      .eq('teacher_id', userId)
+      .eq('created_by', userId)
       .gte('created_at', sevenDaysAgo.toISOString())
       .order('created_at', { ascending: false })
       .limit(10);
@@ -83,17 +87,20 @@ export default async function handler(req, res) {
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
 
     const { data: upcomingDeadlinesData, error: deadlinesError } = await supabase
-      .from('class_activities')
+      .from('activities')
       .select(`
         id,
         title,
         due_date,
-        classes (
-          id,
-          name
+        activity_class_assignments!inner(
+          class_id,
+          classes!inner(
+            id,
+            name
+          )
         )
       `)
-      .eq('teacher_id', userId)
+      .eq('created_by', userId)
       .not('due_date', 'is', null)
       .gte('due_date', new Date().toISOString())
       .lte('due_date', thirtyDaysFromNow.toISOString())
@@ -104,9 +111,9 @@ export default async function handler(req, res) {
 
     // Format recent activities
     const recentActivities = recentActivitiesData?.map(activity => ({
-      type: activity.type || 'activity',
+      type: activity.activity_type || 'activity',
       title: 'Nova atividade criada',
-      description: `${activity.title} - ${activity.classes?.name || 'Turma'}`,
+      description: `${activity.title} - ${activity.activity_class_assignments[0]?.classes?.name || 'Turma'}`,
       time: getTimeAgo(activity.created_at),
       icon: 'FileText',
       color: 'blue'
@@ -115,7 +122,7 @@ export default async function handler(req, res) {
     // Format upcoming deadlines
     const upcomingDeadlines = upcomingDeadlinesData?.map(deadline => ({
       title: deadline.title,
-      class: deadline.classes?.name || 'Turma',
+      class: deadline.activity_class_assignments[0]?.classes?.name || 'Turma',
       date: deadline.due_date,
       daysLeft: Math.ceil((new Date(deadline.due_date) - new Date()) / (1000 * 60 * 60 * 24))
     })) || [];

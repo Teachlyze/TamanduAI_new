@@ -15,8 +15,8 @@ const SubmissionManager = ({
   const [error, setError] = useState(null);
   const [isCheckingPlagiarism, setIsCheckingPlagiarism] = useState(false);
   const [plagiarismResults, setPlagiarismResults] = useState({});
-  const [answersMap, setAnswersMap] = useState({}); // submission_id -> answers[]
-  const [gradingEdits, setGradingEdits] = useState({}); // submission_id -> { final_grade, feedback }
+  const [answersMap, setAnswersMap] = useState({}); // submission_id -> answers[] (from submissions.data)
+  const [gradingEdits, setGradingEdits] = useState({}); // submission_id -> { grade, feedback }
   const [selectedGroupId] = useState('all');
   const { toast } = useToast();
 
@@ -49,31 +49,26 @@ const SubmissionManager = ({
     loadPlagiarismResults();
   }, [submissions, isTeacher, isPlagiarismCheckEnabled]);
 
-  // Load per-answer lists for displayed submissions
+  // Build per-submission answers from submissions.data for display only
   useEffect(() => {
-    const loadAnswers = async () => {
-      try {
-        if (!isTeacher || !submissions?.length) return;
-        const ids = submissions.map(s => s.id).filter(Boolean);
-        if (!ids.length) return;
-        const { data, error } = await supabase
-          .from('answers')
-          .select('id, submission_id, question_index, value, is_correct, points_earned, feedback')
-          .in('submission_id', ids)
-          .order('question_index', { ascending: true });
-        if (error) throw error;
-        const map = {};
-        (data || []).forEach(a => {
-          if (!map[a.submission_id]) map[a.submission_id] = [];
-          map[a.submission_id].push(a);
-        });
-        setAnswersMap(map);
-      } catch (e) {
-        console.warn('Erro ao carregar respostas:', e);
-      }
-    };
-    loadAnswers();
-  }, [isTeacher, submissions]);
+    try {
+      const map = {};
+      (submissions || []).forEach(s => {
+        const raw = s.data;
+        if (Array.isArray(raw)) {
+          map[s.id] = raw.map((item, idx) => ({ id: `${s.id}-${idx}`, question_index: idx + 1, value: item?.answer_text ?? String(item ?? ''), is_correct: null, points_earned: null }));
+        } else if (raw && typeof raw === 'object') {
+          const entries = Object.entries(raw);
+          map[s.id] = entries.map(([key, val], idx) => ({ id: `${s.id}-${key}`, question_index: idx + 1, value: val?.answer_text ?? String(val ?? ''), is_correct: null, points_earned: null }));
+        } else {
+          map[s.id] = [];
+        }
+      });
+      setAnswersMap(map);
+    } catch (e) {
+      console.warn('Erro ao processar dados de submissão:', e);
+    }
+  }, [submissions]);
 
   // Group management features removed for now (unused UI)
 
@@ -123,19 +118,11 @@ const SubmissionManager = ({
     try {
       setError(null);
       const subId = submission.id;
-      const answers = answersMap[subId] || [];
-      // Persist answers
-      await Promise.all(answers.map(a => supabase
-        .from('answers')
-        .update({ is_correct: a.is_correct, points_earned: a.points_earned, feedback: a.feedback })
-        .eq('id', a.id)
-      ));
-
       const overrides = gradingEdits[subId] || {};
-      // Update submission (final_grade/feedback)
+      // Update submission (grade/feedback)
       const update = { updated_at: new Date().toISOString() };
-      if (typeof overrides.final_grade !== 'undefined' && overrides.final_grade !== null) {
-        update.final_grade = overrides.final_grade;
+      if (typeof overrides.grade !== 'undefined' && overrides.grade !== null) {
+        update.grade = overrides.grade;
         update.graded_at = new Date().toISOString();
         update.status = 'graded';
       }
@@ -473,7 +460,7 @@ const SubmissionManager = ({
                       {/* Show computed score inline */}
                       {(() => {
                         const { totalEarned, totalPossible } = computeSubmissionScore(submission.id);
-                        const grade = submission.final_grade ?? (totalPossible > 0 ? Math.round((totalEarned / totalPossible) * 100) : null);
+                        const grade = submission.grade ?? (totalPossible > 0 ? Math.round((totalEarned / totalPossible) * 100) : null);
                         return (
                           <div className="text-xs text-gray-600">
                             Pontos computados: {totalEarned} / {totalPossible || '?'}
@@ -492,8 +479,8 @@ const SubmissionManager = ({
                           type="number"
                           className="border rounded px-2 py-1 text-sm"
                           placeholder="Nota final (%)"
-                          value={(gradingEdits[submission.id]?.final_grade) ?? ''}
-                          onChange={e => setGradingEdits(prev => ({ ...prev, [submission.id]: { ...(prev[submission.id] || {}), final_grade: e.target.value === '' ? null : Number(e.target.value) } }))}
+                          value={(gradingEdits[submission.id]?.grade) ?? ''}
+                          onChange={e => setGradingEdits(prev => ({ ...prev, [submission.id]: { ...(prev[submission.id] || {}), grade: e.target.value === '' ? null : Number(e.target.value) } }))}
                         />
                         <button
                           type="button"

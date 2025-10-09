@@ -55,9 +55,9 @@ const ActivityManagementPage = () => {
     try {
       setLoading(true);
 
-      // Carregar templates do usuário
+      // Carregar atividades do usuário (atuam como templates)
       const { data: templatesData, error: templatesError } = await supabase
-        .from('activity_templates')
+        .from('activities')
         .select('*')
         .eq('created_by', user.id)
         .order('created_at', { ascending: false });
@@ -69,7 +69,7 @@ const ActivityManagementPage = () => {
       const { data: classesData, error: classesError } = await supabase
         .from('classes')
         .select('*')
-        .eq('teacher_id', user.id);
+        .eq('created_by', user.id);
 
       if (classesError) throw classesError;
       setClasses(classesData || []);
@@ -91,7 +91,7 @@ const ActivityManagementPage = () => {
 
     try {
       const { error } = await supabase
-        .from('activity_templates')
+        .from('activities')
         .delete()
         .eq('id', templateId)
         .eq('created_by', user.id);
@@ -124,17 +124,27 @@ const ActivityManagementPage = () => {
     }
 
     try {
-      const { error } = await supabase.rpc('publish_activity_template', {
-        template_id_param: selectedTemplate.id,
-        class_ids: publishData.selectedClasses,
-        custom_title: publishData.customTitle || null,
-        custom_description: publishData.customDescription || null,
-        custom_instructions: publishData.customInstructions || null,
-        custom_due_date: publishData.dueDate || null,
-        custom_max_points: publishData.maxPoints
-      });
+      // Marcar atividade como publicada
+      const { error: publishError } = await supabase
+        .from('activities')
+        .update({ status: 'published', published_at: new Date().toISOString() })
+        .eq('id', selectedTemplate.id)
+        .eq('created_by', user.id);
 
-      if (error) throw error;
+      if (publishError) throw publishError;
+
+      // Vincular atividade às turmas selecionadas
+      const { error: assignError } = await supabase
+        .from('activity_class_assignments')
+        .insert(
+          publishData.selectedClasses.map(classId => ({
+            activity_id: selectedTemplate.id,
+            class_id: classId,
+            assigned_at: new Date().toISOString()
+          }))
+        );
+
+      if (assignError) throw assignError;
 
       toast({
         title: 'Atividade publicada!',
@@ -173,8 +183,8 @@ const ActivityManagementPage = () => {
     const matchesSearch = template.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          template.description?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filter === 'all' ||
-                         (filter === 'published' && template.is_public) ||
-                         (filter === 'drafts' && !template.is_public);
+                         (filter === 'published' && template.status === 'published') ||
+                         (filter === 'drafts' && (template.status === 'draft' || template.is_draft));
     return matchesSearch && matchesFilter;
   });
 
@@ -292,8 +302,8 @@ const ActivityManagementPage = () => {
 
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        <Badge variant={template.is_public ? "default" : "secondary"}>
-                          {template.is_public ? "Público" : "Rascunho"}
+                        <Badge variant={template.status === 'published' ? "default" : "secondary"}>
+                          {template.status === 'published' ? "Publicada" : "Rascunho"}
                         </Badge>
                         {template.tags && template.tags.length > 0 && (
                           <Badge variant="outline">

@@ -93,7 +93,7 @@ export const generateAlertsForClass = async (classId) => {
     // Get all submissions
     const { data: submissions } = await supabase
       .from('submissions')
-      .select('user_id, final_grade, status, submitted_at, is_plagiarized')
+      .select('user_id, grade, status, submitted_at, is_plagiarized')
       .in('activity_id', activityIds)
       .in('user_id', studentIds);
 
@@ -114,9 +114,9 @@ export const generateAlertsForClass = async (classId) => {
         continue;
       }
 
-      const gradedSubmissions = studentSubmissions.filter(s => s.final_grade !== null);
+      const gradedSubmissions = studentSubmissions.filter(s => s.grade !== null);
       if (gradedSubmissions.length > 0) {
-        const avgGrade = gradedSubmissions.reduce((sum, s) => sum + s.final_grade, 0) / gradedSubmissions.length;
+        const avgGrade = gradedSubmissions.reduce((sum, s) => sum + s.grade, 0) / gradedSubmissions.length;
         
         if (avgGrade < 50) {
           alerts.push({

@@ -223,7 +223,7 @@ const RegisterPage = () => {
   const strengthLabels = ['Muito Fraca', 'Fraca', 'Razoável', 'Boa', 'Forte'];
 
   return (
-    <div className="min-h-screen w-full flex flex-col lg:flex-row-reverse bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row-reverse bg-background">
       {/* Left - Visual */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-600 via-pink-600 to-indigo-700 items-center justify-center p-8 relative overflow-hidden">
         <div className="absolute inset-0">
@@ -303,19 +303,19 @@ const RegisterPage = () => {
               <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">TamanduAI</span>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{t('auth.createAccount', 'Crie sua conta')}</h1>
-              <p className="text-gray-600 dark:text-gray-300">{t('auth.startJourney', 'Comece sua jornada educacional')}</p>
+              <h1 className="text-3xl font-bold text-foreground mb-2">{t('auth.createAccount', 'Crie sua conta')}</h1>
+              <p className="text-muted-foreground">{t('auth.startJourney', 'Comece sua jornada educacional')}</p>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
               <div className="space-y-2">
-                <label htmlFor="name" className="block text-sm font-semibold text-gray-900 dark:text-white">
+                <label htmlFor="name" className="block text-sm font-semibold text-foreground">
                   {t('auth.nameLabel', 'Nome completo')}
                 </label>
                 <div className="relative">
-                  <User className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-gray-400" />
+                  <User className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <input
                     id="name"
                     name="name"
@@ -324,14 +324,14 @@ const RegisterPage = () => {
                     value={formData.name}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    className={`w-full pl-12 pr-4 h-14 border-2 rounded-xl transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                    className={`w-full pl-12 pr-4 h-14 border-2 rounded-xl transition-all duration-200 bg-background text-foreground placeholder-muted-foreground ${
                       errors.name && touched.name
                         ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
                         : formData.name && !errors.name && touched.name
                         ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
                         : touched.name
-                        ? 'border-gray-300 dark:border-gray-600 focus:border-purple-500 focus:ring-purple-500/20'
-                        : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 focus:border-purple-500 focus:ring-purple-500/20'
+                        ? 'border-border focus:border-ring focus:ring-ring/20'
+                        : 'border-border hover:border-border focus:border-ring focus:ring-ring/20'
                     }`}
                     required
                   />
@@ -348,11 +348,11 @@ const RegisterPage = () => {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-900 dark:text-white">
+                <label htmlFor="email" className="block text-sm font-semibold text-foreground">
                   {t('auth.emailLabel', 'Email')}
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-gray-400" />
+                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <input
                     id="email"
                     name="email"
@@ -362,14 +362,14 @@ const RegisterPage = () => {
                     value={formData.email}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    className={`w-full pl-12 pr-4 h-14 border-2 rounded-xl transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                    className={`w-full pl-12 pr-4 h-14 border-2 rounded-xl transition-all duration-200 bg-background text-foreground placeholder-muted-foreground ${
                       errors.email && touched.email
                         ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
                         : formData.email && !errors.email && touched.email
                         ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
                         : touched.email
-                        ? 'border-gray-300 dark:border-gray-600 focus:border-purple-500 focus:ring-purple-500/20'
-                        : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 focus:border-purple-500 focus:ring-purple-500/20'
+                        ? 'border-border focus:border-ring focus:ring-ring/20'
+                        : 'border-border hover:border-border focus:border-ring focus:ring-ring/20'
                     }`}
                     required
                   />
@@ -386,11 +386,11 @@ const RegisterPage = () => {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="cpf" className="block text-sm font-semibold text-gray-900 dark:text-white">
+                <label htmlFor="cpf" className="block text-sm font-semibold text-foreground">
                   CPF
                 </label>
                 <div className="relative">
-                  <Shield className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-gray-400" />
+                  <Shield className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <input
                     id="cpf"
                     name="cpf"
@@ -399,14 +399,14 @@ const RegisterPage = () => {
                     value={formData.cpf}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    className={`w-full pl-12 pr-4 h-14 border-2 rounded-xl transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                    className={`w-full pl-12 pr-4 h-14 border-2 rounded-xl transition-all duration-200 bg-background text-foreground placeholder-muted-foreground ${
                       errors.cpf && touched.cpf
                         ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
                         : formData.cpf && !errors.cpf && touched.cpf
                         ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
                         : touched.cpf
-                        ? 'border-gray-300 dark:border-gray-600 focus:border-purple-500 focus:ring-purple-500/20'
-                        : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 focus:border-purple-500 focus:ring-purple-500/20'
+                        ? 'border-border focus:border-ring focus:ring-ring/20'
+                        : 'border-border hover:border-border focus:border-ring focus:ring-ring/20'
                     }`}
                     required
                   />
@@ -423,7 +423,7 @@ const RegisterPage = () => {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="role" className="block text-sm font-semibold text-gray-900 dark:text-white">
+                <label htmlFor="role" className="block text-sm font-semibold text-foreground">
                   {t('auth.accountType', 'Tipo de conta')}
                 </label>
                 <select
@@ -431,26 +431,26 @@ const RegisterPage = () => {
                   name="role"
                   value={formData.role}
                   onChange={handleChange}
-                  className={`w-full h-14 px-4 border-2 rounded-xl transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+                  className={`w-full h-14 px-4 border-2 rounded-xl transition-all duration-200 bg-background text-foreground ${
                     formData.role
-                      ? 'border-purple-400 focus:border-purple-500 focus:ring-purple-500/20'
-                      : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 focus:border-purple-500 focus:ring-purple-500/20'
+                      ? 'border-ring focus:border-ring focus:ring-ring/20'
+                      : 'border-border hover:border-border focus:border-ring focus:ring-ring/20'
                   }`}
                 >
                   <option value="student">Aluno</option>
                   <option value="teacher">Professor</option>
                 </select>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-muted-foreground">
                   Você pode alterar o tipo de conta depois nas configurações do perfil.
                 </p>
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="password" className="block text-sm font-semibold text-gray-900 dark:text-white">
+                <label htmlFor="password" className="block text-sm font-semibold text-foreground">
                   {t('auth.passwordLabel', 'Senha')}
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-gray-400" />
+                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <input
                     id="password"
                     name="password"
@@ -460,23 +460,23 @@ const RegisterPage = () => {
                     value={formData.password}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    className={`w-full pl-12 pr-16 h-14 border-2 rounded-xl transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                    className={`w-full pl-12 pr-16 h-14 border-2 rounded-xl transition-all duration-200 bg-background text-foreground placeholder-muted-foreground ${
                       errors.password && touched.password
                         ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
                         : formData.password && !errors.password && touched.password
                         ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
                         : touched.password
-                        ? 'border-gray-300 dark:border-gray-600 focus:border-purple-500 focus:ring-purple-500/20'
-                        : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 focus:border-purple-500 focus:ring-purple-500/20'
+                        ? 'border-border focus:border-ring focus:ring-ring/20'
+                        : 'border-border hover:border-border focus:border-ring focus:ring-ring/20'
                     }`}
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-8 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg flex items-center justify-center transition-colors"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-8 bg-secondary hover:bg-accent rounded-lg flex items-center justify-center transition-colors"
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4 text-gray-600 dark:text-gray-300" /> : <Eye className="w-4 h-4 text-gray-600 dark:text-gray-300" />}
+                    {showPassword ? <EyeOff className="w-4 h-4 text-muted-foreground" /> : <Eye className="w-4 h-4 text-muted-foreground" />}
                   </button>
                 </div>
                 {formData.password && (
@@ -500,7 +500,7 @@ const RegisterPage = () => {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-900 dark:text-white">
+                <label htmlFor="confirmPassword" className="block text-sm font-semibold text-foreground">
                   {t('auth.confirmPasswordLabel', 'Confirmar senha')}
                 </label>
                 <div className="relative">
@@ -514,14 +514,14 @@ const RegisterPage = () => {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    className={`w-full pl-12 pr-16 h-14 border-2 rounded-xl transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                    className={`w-full pl-12 pr-16 h-14 border-2 rounded-xl transition-all duration-200 bg-background text-foreground placeholder-muted-foreground ${
                       errors.confirmPassword && touched.confirmPassword
                         ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
                         : formData.confirmPassword && !errors.confirmPassword && touched.confirmPassword
                         ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
                         : touched.confirmPassword
-                        ? 'border-gray-300 dark:border-gray-600 focus:border-purple-500 focus:ring-purple-500/20'
-                        : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 focus:border-purple-500 focus:ring-purple-500/20'
+                        ? 'border-border focus:border-ring focus:ring-ring/20'
+                        : 'border-border hover:border-border focus:border-ring focus:ring-ring/20'
                     }`}
                     required
                   />
@@ -530,7 +530,7 @@ const RegisterPage = () => {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-8 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg flex items-center justify-center transition-colors"
                   >
-                    {showConfirmPassword ? <EyeOff className="w-4 h-4 text-gray-600 dark:text-gray-300" /> : <Eye className="w-4 h-4 text-gray-600 dark:text-gray-300" />}
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4 text-muted-foreground" /> : <Eye className="w-4 h-4 text-muted-foreground" />}
                   </button>
                 </div>
                 {errors.confirmPassword && touched.confirmPassword && (
@@ -548,16 +548,16 @@ const RegisterPage = () => {
                   name="termsAccepted"
                   checked={formData.termsAccepted}
                   onChange={handleChange}
-                  className="w-4 h-4 mt-1 rounded border-gray-300 dark:border-gray-600 text-purple-600 focus:ring-purple-500"
+                  className="w-4 h-4 mt-1 rounded border-border text-primary focus:ring-ring"
                   required
                 />
-                <label htmlFor="termsAccepted" className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                <label htmlFor="termsAccepted" className="text-sm text-foreground leading-relaxed">
                   Aceito os{' '}
-                  <Link to="/terms" className="font-semibold text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 underline">
+                  <Link to="/terms" className="font-semibold text-primary hover:underline">
                     Termos de Uso
                   </Link>
                   {' '}e{' '}
-                  <Link to="/privacy" className="font-semibold text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 underline">
+                  <Link to="/privacy" className="font-semibold text-primary hover:underline">
                     Política de Privacidade
                   </Link>
                 </label>
@@ -582,9 +582,9 @@ const RegisterPage = () => {
             </div>
 
             <div className="text-center">
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-muted-foreground">
                 {t('auth.alreadyHaveAccount', 'Já tem uma conta?')}{' '}
-                <Link to="/login" className="font-semibold text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
+                <Link to="/login" className="font-semibold text-primary hover:underline">
                   {t('auth.signIn', 'Entrar')}
                 </Link>
               </p>

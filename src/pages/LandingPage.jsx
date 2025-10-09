@@ -87,30 +87,34 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
-      <header className="w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-white/20 dark:border-gray-700/20 sticky top-0 z-50 shadow-sm">
+      <header className="w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                <BookOpen className="w-6 h-6 text-white" />
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-3">
+              <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <BookOpen className="w-5 h-5 text-white" />
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">TamanduAI</span>
-              <nav className="hidden md:flex space-x-8 ml-8">
-                <a href="#features" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('landing.navigation.features', 'Recursos')}</a>
-                <a href="#benefits" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('landing.navigation.benefits', 'Benefícios')}</a>
-                <a href="#testimonials" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('landing.navigation.testimonials', 'Depoimentos')}</a>
-                <Link to="/docs" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('landing.navigation.docs', 'Docs')}</Link>
+              <span className="text-xl font-bold text-gray-900 dark:text-white">TamanduAI</span>
+              <nav className="hidden md:flex space-x-6 ml-6">
+                <a href="#features" className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('landing.navigation.features', 'Recursos')}</a>
+                <a href="#benefits" className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('landing.navigation.benefits', 'Benefícios')}</a>
+                <a href="#testimonials" className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('landing.navigation.testimonials', 'Depoimentos')}</a>
+                <Link to="/docs" className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('landing.navigation.docs', 'Docs')}</Link>
               </nav>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3">
               <Link to="/login">
-                <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-800">{t('landing.navigation.login', 'Entrar')}</Button>
+                <Button variant="ghost" size="sm" className="text-sm">{t('landing.navigation.login', 'Entrar')}</Button>
               </Link>
               <Link to="/register">
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg">
-                  {t('landing.navigation.startFree', 'Começar Grátis')} <ArrowRight className="ml-2 w-4 h-4" />
+                <Button 
+                  size="sm"
+                  rightIcon={<ArrowRight className="w-4 h-4" />} 
+                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-200"
+                >
+                  {t('landing.navigation.startFree', 'Começar Grátis')}
                 </Button>
               </Link>
             </div>
@@ -122,43 +126,52 @@ export default function LandingPage() {
       <main id="main-content" className="flex-grow w-full">
         <SkipLinks />
         {/* Hero */}
-        <section className="relative overflow-hidden py-6 lg:py-8">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
-            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-pink-400/20 rounded-full blur-3xl"></div>
+        <section className="relative overflow-hidden py-16 lg:py-24 bg-gradient-to-b from-blue-50/50 to-white dark:from-gray-900 dark:to-background">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
           </div>
           
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center lg:text-left">
-                <div className="flex lg:text-left mb-6">
-                  <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
-                    <Sparkles className="w-4 h-4 mr-2" />{t('landing.hero.subtitle', 'Revolucione sua forma de ensinar')}
-                  </div>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-center lg:text-left">
+                <div className="inline-flex items-center px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-full text-xs font-semibold text-blue-700 dark:text-blue-300 mb-6">
+                  <Sparkles className="w-3.5 h-3.5 mr-1.5" />{t('landing.hero.subtitle', 'Revolucione sua forma de ensinar')}
                 </div>
                 
-                <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 dark:text-white leading-tight mb-6">
-                  {t('landing.hero.title', 'O futuro da')} <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">{t('landing.hero.title2', 'educação')}</span> {t('landing.hero.title3', 'é agora')}
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white leading-tight mb-6">
+                  {t('landing.hero.title', 'O futuro da')} <span className="text-blue-600">{t('landing.hero.title2', 'educação')}</span> {t('landing.hero.title3', 'é agora')}
                 </h1>
                 
-                <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed max-w-2xl">
+                <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
                   {t('landing.hero.description', 'Plataforma educacional com IA que reduz sobrecarga administrativa e potencializa o aprendizado. Junte-se a milhares de educadores!')}
                 </p>
 
-                <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                  <Button size="lg" onClick={() => navigate('/register')} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-xl">
-                    <Rocket className="w-5 h-5 mr-2" />Participar do Beta
+                <div className="flex flex-col sm:flex-row gap-3 mb-12">
+                  <Button 
+                    size="lg" 
+                    onClick={() => navigate('/register')} 
+                    leftIcon={<Rocket className="w-5 h-5" />}
+                    className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    {t('landing.hero.joinBeta', 'Participar do Beta')}
                   </Button>
-                  <Button size="lg" variant="outline" onClick={() => navigate('/docs')} className="border-2 border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400">
-                    <Globe className="w-5 h-5 mr-2" />Ver Documentação
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    onClick={() => navigate('/docs')} 
+                    leftIcon={<Play className="w-5 h-5" />}
+                    className="border-2 border-gray-300 dark:border-gray-600 hover:border-blue-600 dark:hover:border-blue-500 transition-all duration-200"
+                  >
+                    {t('landing.hero.viewDocs', 'Ver Demonstração')}
                   </Button>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
                   {stats.map((stat, i) => (
-                    <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 + i * 0.1 }} className="text-center">
-                      <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{stat.number}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</div>
+                    <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }} className="text-center">
+                      <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{stat.number}</div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{stat.label}</div>
                     </motion.div>
                   ))}
                 </div>
@@ -210,24 +223,24 @@ export default function LandingPage() {
         </section>
 
         {/* Features */}
-        <section id="features" className="py-20 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+        <section id="features" className="py-20 bg-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+              <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
                 Recursos que fazem a <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">diferença</span>
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">Ferramentas modernas desenvolvidas para educadores</p>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">Ferramentas modernas desenvolvidas para educadores</p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {features.map((f, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: i * 0.1 }} className="group h-full">
-                  <div className="relative p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 dark:border-gray-700 h-full flex flex-col">
+                  <div className="relative p-6 bg-card text-card-foreground rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-border h-full flex flex-col">
                     <div className={`w-16 h-16 bg-gradient-to-r ${f.gradient} rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform`}>
                       <f.icon className="w-8 h-8 text-white" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{f.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed flex-grow">{f.description}</p>
+                    <h3 className="text-lg font-bold text-foreground mb-3">{f.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed flex-grow">{f.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -236,27 +249,27 @@ export default function LandingPage() {
         </section>
 
         {/* Benefits */}
-        <section id="benefits" className="py-20">
+        <section id="benefits" className="py-20 bg-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+              <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
                 Resultados <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">comprovados</span>
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">Veja o impacto real na sua prática educacional</p>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">Veja o impacto real na sua prática educacional</p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {benefits.map((b, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: i * 0.1 }} className="group h-full">
-                  <div className="relative h-full flex flex-col p-8 bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-blue-900/20 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-blue-100 dark:border-blue-800">
+                  <div className="p-6 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-border">
                     <div className="flex items-center justify-between mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
+                      <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
                         <b.icon className="w-6 h-6 text-white" />
                       </div>
-                      <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{b.stat}</div>
+                      <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{b.stat}</div>
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{b.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed flex-grow">{b.description}</p>
+                    <h3 className="text-lg font-bold text-foreground mb-3">{b.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed flex-grow">{b.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -264,28 +277,190 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* Pricing Section */}
+        <section id="pricing" className="py-24 bg-gradient-to-b from-white to-blue-50/30 dark:from-background dark:to-blue-950/10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-center mb-16">
+              <div className="inline-flex items-center px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-full text-xs font-semibold text-blue-700 dark:text-blue-300 mb-6">
+                <Zap className="w-3.5 h-3.5 mr-1.5" />Oferta Especial de Lançamento
+              </div>
+              <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white mb-6">
+                Planos que <span className="text-blue-600">cabem no seu bolso</span>
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                Escolha o plano ideal para você. Sem taxas ocultas, cancele quando quiser.
+              </p>
+            </motion.div>
+
+            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {/* Plano Gratuito */}
+              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="relative">
+                <div className="h-full bg-white dark:bg-gray-800 rounded-2xl border-2 border-gray-200 dark:border-gray-700 p-8 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300">
+                  <div className="mb-6">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Gratuito</h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">Para começar</p>
+                  </div>
+                  <div className="mb-6">
+                    <span className="text-5xl font-extrabold text-gray-900 dark:text-white">R$ 0</span>
+                    <span className="text-gray-600 dark:text-gray-400">/mês</span>
+                  </div>
+                  <Button onClick={() => navigate('/register')} variant="outline" className="w-full mb-6">
+                    Começar Grátis
+                  </Button>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Até 30 alunos</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">1 turma</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Atividades básicas</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Suporte por email</span>
+                    </li>
+                  </ul>
+                </div>
+              </motion.div>
+
+              {/* Plano Pro - Destaque */}
+              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="relative">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                    MAIS POPULAR
+                  </span>
+                </div>
+                <div className="h-full bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-8 shadow-2xl transform hover:scale-105 transition-all duration-300">
+                  <div className="mb-6">
+                    <h3 className="text-xl font-bold text-white mb-2">Pro</h3>
+                    <p className="text-blue-100 text-sm">Para profissionais</p>
+                  </div>
+                  <div className="mb-6">
+                    <span className="text-5xl font-extrabold text-white">R$ 49</span>
+                    <span className="text-blue-100">/mês</span>
+                    <div className="mt-2">
+                      <span className="text-sm text-blue-100 line-through">R$ 99/mês</span>
+                      <span className="ml-2 text-xs bg-yellow-400 text-gray-900 px-2 py-0.5 rounded-full font-bold">50% OFF</span>
+                    </div>
+                  </div>
+                  <Button onClick={() => navigate('/register')} className="w-full mb-6 bg-white text-blue-600 hover:bg-blue-50">
+                    Começar Agora
+                  </Button>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-white font-medium">Alunos ilimitados</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-white font-medium">Turmas ilimitadas</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-white font-medium">Chatbot IA personalizado</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-white font-medium">Videoconferências</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-white font-medium">Analytics avançado</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-white font-medium">Suporte prioritário</span>
+                    </li>
+                  </ul>
+                </div>
+              </motion.div>
+
+              {/* Plano Instituição */}
+              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="relative">
+                <div className="h-full bg-white dark:bg-gray-800 rounded-2xl border-2 border-gray-200 dark:border-gray-700 p-8 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300">
+                  <div className="mb-6">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Instituição</h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">Para escolas</p>
+                  </div>
+                  <div className="mb-6">
+                    <span className="text-5xl font-extrabold text-gray-900 dark:text-white">Custom</span>
+                  </div>
+                  <Button onClick={() => navigate('/contact')} variant="outline" className="w-full mb-6">
+                    Falar com Vendas
+                  </Button>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Tudo do Pro</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Múltiplos professores</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Gestão centralizada</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Treinamento dedicado</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">SLA garantido</span>
+                    </li>
+                  </ul>
+                </div>
+              </motion.div>
+            </div>
+
+            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.4 }} className="text-center mt-12">
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                🎉 <span className="font-semibold">Oferta Beta:</span> Primeiros 1000 usuários ganham 3 meses grátis no plano Pro!
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
         {/* All Features Grid */}
-        <section className="py-20 bg-white/50 dark:bg-gray-900/50">
+        <section className="py-20 bg-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+              <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
                 Tudo que você <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">precisa</span>
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">Uma plataforma completa para modernizar sua educação</p>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">Uma plataforma completa para modernizar sua educação</p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {allFeatures.map((feature, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: i * 0.05 }} className="group">
-                  <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 h-full">
-                    <div className={`w-12 h-12 bg-gradient-to-r from-${feature.color}-400 to-${feature.color}-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                      <feature.icon className="w-6 h-6 text-white" />
+              {allFeatures.map((feature, i) => {
+                const colorMap = {
+                  violet: 'from-violet-400 to-violet-600',
+                  blue: 'from-blue-400 to-blue-600',
+                  indigo: 'from-indigo-400 to-indigo-600',
+                  emerald: 'from-emerald-400 to-emerald-600',
+                  pink: 'from-pink-400 to-pink-600',
+                  orange: 'from-orange-400 to-orange-600',
+                  cyan: 'from-cyan-400 to-cyan-600',
+                  red: 'from-red-400 to-red-600'
+                };
+                return (
+                  <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: i * 0.05 }} className="group">
+                    <div className="p-4 bg-card text-card-foreground rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-border h-full hover:scale-105 hover:border-primary/50">
+                      <div className={`w-10 h-10 bg-gradient-to-r ${colorMap[feature.color] || 'from-blue-400 to-blue-600'} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-lg`}>
+                        <feature.icon className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="text-base font-semibold text-foreground mb-2">{feature.title}</h3>
+                      <p className="text-sm text-muted-foreground">{feature.description}</p>
                     </div>
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{feature.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">{feature.description}</p>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -294,30 +469,38 @@ export default function LandingPage() {
         <section className="py-20 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+              <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
                 {t('landing.navigation.howItWorks', 'Como')} <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">funciona</span>
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">{t('landing.navigation.startInSteps', 'Comece em 4 passos simples')}</p>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">{t('landing.navigation.startInSteps', 'Comece em 4 passos simples')}</p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {howItWorks.map((step, i) => (
-                <motion.div key={i} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: i * 0.1 }} className="relative">
-                  <div className="text-center">
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, y: 30 }} 
+                  whileInView={{ opacity: 1, y: 0 }} 
+                  transition={{ duration: 0.6, delay: i * 0.1 }} 
+                  className="relative group"
+                >
+                  <div className="text-center bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-blue-500/50 hover:scale-105">
                     <div className="relative inline-block mb-6">
-                      <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-xl">
-                        {step.step}
+                      <div className="w-20 h-20 bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-500 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                        <span className="text-3xl font-bold text-white">{step.step}</span>
                       </div>
-                      <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg">
-                        <step.icon className="w-5 h-5 text-blue-600" />
+                      <div className="absolute -bottom-3 -right-3 w-12 h-12 bg-white dark:bg-gray-700 rounded-xl flex items-center justify-center shadow-lg border-2 border-blue-200 dark:border-blue-800 group-hover:scale-110 transition-transform">
+                        <step.icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                       </div>
                     </div>
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{step.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-300">{step.description}</p>
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{step.description}</p>
                   </div>
                   {i < howItWorks.length - 1 && (
-                    <div className="hidden lg:block absolute top-10 left-full w-full">
-                      <ChevronRight className="w-8 h-8 text-blue-400 mx-auto" />
+                    <div className="hidden lg:flex absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                        <ChevronRight className="w-5 h-5 text-white" />
+                      </div>
                     </div>
                   )}
                 </motion.div>
@@ -327,46 +510,63 @@ export default function LandingPage() {
         </section>
 
         {/* Comparison Table */}
-        <section className="py-20 bg-white dark:bg-gray-900">
+        <section className="py-20 bg-background">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+              <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
                 {t('landing.navigation.beforeAfter', 'Antes vs')} <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Depois</span>
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300">{t('landing.navigation.seeTransformation', 'Veja a transformação na sua rotina')}</p>
+              <p className="text-xl text-muted-foreground">{t('landing.navigation.seeTransformation', 'Veja a transformação na sua rotina')}</p>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden">
-              <div className="grid grid-cols-3 gap-px bg-gray-200 dark:bg-gray-700">
-                <div className="col-span-1 bg-white dark:bg-gray-800 p-4"></div>
-                <div className="bg-red-50 dark:bg-red-900/20 p-4 text-center">
-                  <div className="inline-flex items-center space-x-2 text-red-600 dark:text-red-400 font-bold">
-                    <XCircle className="w-5 h-5" />
-                    <span>Sem TamanduAI</span>
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Antes */}
+              <motion.div 
+                initial={{ opacity: 0, x: -30 }} 
+                whileInView={{ opacity: 1, x: 0 }} 
+                transition={{ duration: 0.8 }}
+                className="bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 rounded-2xl p-8 shadow-xl border-2 border-red-200 dark:border-red-800"
+              >
+                <div className="flex items-center justify-center mb-6">
+                  <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center shadow-lg">
+                    <XCircle className="w-10 h-10 text-white" />
                   </div>
                 </div>
-                <div className="bg-green-50 dark:bg-green-900/20 p-4 text-center">
-                  <div className="inline-flex items-center space-x-2 text-green-600 dark:text-green-400 font-bold">
-                    <CheckCircle2 className="w-5 h-5" />
-                    <span>Com TamanduAI</span>
-                  </div>
-                </div>
+                <h3 className="text-2xl font-bold text-center text-red-700 dark:text-red-400 mb-6">{t('landing.comparison.without', 'Sem TamanduAI')}</h3>
+                <ul className="space-y-4">
+                  {comparison.filter(item => item.before).map((item, i) => (
+                    <li key={i} className="flex items-start space-x-3">
+                      <XCircle className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-700 dark:text-gray-300 font-medium">{item.feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
 
-                {comparison.map((item, i) => (
-                  <React.Fragment key={i}>
-                    <div className="bg-white dark:bg-gray-800 p-4 flex items-center">
-                      <span className="text-gray-900 dark:text-white font-medium">{item.feature}</span>
-                    </div>
-                    <div className="bg-red-50 dark:bg-red-900/20 p-4 flex items-center justify-center">
-                      {item.before ? <CheckCircle2 className="w-6 h-6 text-red-500" /> : <XCircle className="w-6 h-6 text-red-500" />}
-                    </div>
-                    <div className="bg-green-50 dark:bg-green-900/20 p-4 flex items-center justify-center">
-                      {item.after ? <CheckCircle2 className="w-6 h-6 text-green-500" /> : <XCircle className="w-6 h-6 text-red-500" />}
-                    </div>
-                  </React.Fragment>
-                ))}
-              </div>
-            </motion.div>
+              {/* Depois */}
+              <motion.div 
+                initial={{ opacity: 0, x: 30 }} 
+                whileInView={{ opacity: 1, x: 0 }} 
+                transition={{ duration: 0.8 }}
+                className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl p-8 shadow-xl border-2 border-green-200 dark:border-green-800 relative overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 w-32 h-32 bg-green-400/10 rounded-full -mr-16 -mt-16"></div>
+                <div className="flex items-center justify-center mb-6 relative z-10">
+                  <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center shadow-lg">
+                    <CheckCircle2 className="w-10 h-10 text-white" />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold text-center text-green-700 dark:text-green-400 mb-6 relative z-10">{t('landing.comparison.with', 'Com TamanduAI')}</h3>
+                <ul className="space-y-4 relative z-10">
+                  {comparison.filter(item => item.after).map((item, i) => (
+                    <li key={i} className="flex items-start space-x-3">
+                      <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-700 dark:text-gray-300 font-medium">{item.feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            </div>
           </div>
         </section>
 
@@ -391,8 +591,12 @@ export default function LandingPage() {
                       </div>
                       <h3 className="text-2xl font-bold text-white mb-3">{useCase.title}</h3>
                       <p className="text-white/90 leading-relaxed mb-6">{useCase.description}</p>
-                      <Button variant="outline" className="bg-white/20 hover:bg-white/30 text-white border-white/30">
-                        Saiba Mais <ArrowRight className="ml-2 w-4 h-4" />
+                      <Button 
+                        variant="outline" 
+                        rightIcon={<ArrowRight className="w-4 h-4" />}
+                        className="bg-white/20 hover:bg-white/30 text-white border-white/30 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                      >
+                        {t('landing.useCases.learnMore', 'Saiba Mais')}
                       </Button>
                     </div>
                   </div>
@@ -403,30 +607,30 @@ export default function LandingPage() {
         </section>
 
         {/* Video/Demo Section */}
-        <section className="py-20 bg-white dark:bg-gray-900">
+        <section className="py-20 bg-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
                 <div className="inline-flex items-center px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full text-sm font-medium text-blue-700 dark:text-blue-300 mb-6">
                   <Play className="w-4 h-4 mr-2" />{t('landing.navigation.seeAction', 'Veja em ação')}
                 </div>
-                <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
                   Assista como é <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{t('landing.navigation.easy', 'fácil')}</span>
                 </h2>
-                <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">Veja em apenas 3 minutos como o TamanduAI pode transformar sua prática educacional.</p>
+                <p className="text-xl text-muted-foreground mb-8">Veja em apenas 3 minutos como o TamanduAI pode transformar sua prática educacional.</p>
                 
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
                       <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
                     </div>
-                    <span className="text-gray-700 dark:text-gray-300">Interface intuitiva e moderna</span>
+                    <span className="text-foreground">Interface intuitiva e moderna</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
                       <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
                     </div>
-                    <span className="text-gray-700 dark:text-gray-300">Configuração em minutos</span>
+                    <span className="text-foreground">Configuração em minutos</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
@@ -447,7 +651,7 @@ export default function LandingPage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                   <div className="absolute bottom-6 left-6 right-6">
                     <div className="flex items-center justify-between text-white">
-                      <span className="text-sm font-medium">Tour pela plataforma</span>
+                      <span className="text-sm font-medium">{t('landing.video.platformTour', 'Tour pela plataforma')}</span>
                       <span className="text-sm">3:24</span>
                     </div>
                   </div>
@@ -470,12 +674,12 @@ export default function LandingPage() {
             <div className="space-y-4">
               {faqs.map((faq, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: i * 0.05 }}>
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3 flex items-start">
+                  <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                    <h3 className="text-base font-bold text-gray-900 dark:text-white mb-3 flex items-start">
                       <span className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 text-sm font-bold mr-3 mt-0.5">?</span>
                       {faq.q}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300 pl-9">{faq.a}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">{faq.a}</p>
                   </div>
                 </motion.div>
               ))}
@@ -497,22 +701,22 @@ export default function LandingPage() {
               <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }} className="flex items-center space-x-3">
                 <BadgeCheck className="w-8 h-8 text-blue-600" />
                 <div>
-                  <div className="font-bold text-gray-900 dark:text-white">{t('landing.navigation.lgpdCompliant', 'LGPD Compliant')}</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">{t('landing.navigation.privacyProtection', 'Dados Protegidos')}</div>
+                  <div className="font-bold text-foreground">{t('landing.navigation.lgpdCompliant', 'LGPD Compliant')}</div>
+                  <div className="text-sm text-muted-foreground">{t('landing.navigation.privacyProtection', 'Dados Protegidos')}</div>
                 </div>
               </motion.div>
               <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="flex items-center space-x-3">
                 <Smartphone className="w-8 h-8 text-purple-600" />
                 <div>
-                  <div className="font-bold text-gray-900 dark:text-white">Multi-Plataforma</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">Web, iOS, Android</div>
+                  <div className="font-bold text-foreground">{t('landing.trust.multiPlatform', 'Multi-Plataforma')}</div>
+                  <div className="text-sm text-muted-foreground">{t('landing.trust.platforms', 'Web, iOS, Android')}</div>
                 </div>
               </motion.div>
               <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 }} className="flex items-center space-x-3">
                 <Headphones className="w-8 h-8 text-orange-600" />
                 <div>
-                  <div className="font-bold text-gray-900 dark:text-white">Suporte 24/7</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">Sempre disponível</div>
+                  <div className="font-bold text-foreground">{t('landing.trust.support247', 'Suporte 24/7')}</div>
+                  <div className="text-sm text-muted-foreground">{t('landing.trust.alwaysAvailable', 'Sempre disponível')}</div>
                 </div>
               </motion.div>
             </div>
@@ -524,32 +728,36 @@ export default function LandingPage() {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
               <div className="inline-flex items-center px-4 py-2 bg-white/20 rounded-full text-sm font-medium text-white mb-6">
-                <Rocket className="w-4 h-4 mr-2" />Programa Beta Exclusivo
+                <Rocket className="w-4 h-4 mr-2" />{t('landing.beta.exclusive', 'Programa Beta Exclusivo')}
               </div>
-              <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">Seja um dos primeiros a testar o TamanduAI</h2>
-              <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">Acesso gratuito por 3 meses a todas as funcionalidades. Vagas limitadas!</p>
+              <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">{t('landing.beta.title', 'Seja um dos primeiros a testar o TamanduAI')}</h2>
+              <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">{t('landing.beta.description', 'Acesso gratuito por 3 meses a todas as funcionalidades. Vagas limitadas!')}</p>
               
               <Link to="/register">
-                <Button className="bg-white text-purple-600 hover:bg-gray-50 shadow-xl px-8 py-3">
-                  <Rocket className="w-5 h-5 mr-2" />Participar do Beta
+                <Button 
+                  size="lg"
+                  leftIcon={<Rocket className="w-5 h-5" />}
+                  className="bg-white text-purple-600 hover:bg-gray-50 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 text-lg px-8 py-6"
+                >
+                  {t('landing.beta.joinBeta', 'Participar do Beta')}
                 </Button>
               </Link>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
                   <Calendar className="w-8 h-8 text-white mx-auto mb-3" />
-                  <h3 className="font-semibold text-white mb-2">3 Meses Grátis</h3>
-                  <p className="text-blue-100 text-sm">Acesso completo a todas funcionalidades</p>
+                  <h3 className="font-semibold text-white mb-2">{t('landing.beta.freeMonths', '3 Meses Grátis')}</h3>
+                  <p className="text-blue-100 text-sm">{t('landing.beta.fullAccess', 'Acesso completo a todas funcionalidades')}</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
                   <Shield className="w-8 h-8 text-white mx-auto mb-3" />
-                  <h3 className="font-semibold text-white mb-2">Sem Compromisso</h3>
-                  <p className="text-blue-100 text-sm">Cancele quando quiser, sem taxas</p>
+                  <h3 className="font-semibold text-white mb-2">{t('landing.beta.noCommitment', 'Sem Compromisso')}</h3>
+                  <p className="text-blue-100 text-sm">{t('landing.beta.cancelAnytime', 'Cancele quando quiser, sem taxas')}</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
                   <Users className="w-8 h-8 text-white mx-auto mb-3" />
-                  <h3 className="font-semibold text-white mb-2">Suporte Exclusivo</h3>
-                  <p className="text-blue-100 text-sm">Atendimento prioritário para beta testers</p>
+                  <h3 className="font-semibold text-white mb-2">{t('landing.beta.exclusiveSupport', 'Suporte Exclusivo')}</h3>
+                  <p className="text-blue-100 text-sm">{t('landing.beta.prioritySupport', 'Atendimento prioritário para beta testers')}</p>
                 </div>
               </div>
             </motion.div>
@@ -557,27 +765,27 @@ export default function LandingPage() {
         </section>
 
         {/* Testimonials */}
-        <section id="testimonials" className="py-20 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800">
+        <section id="testimonials" className="py-20 bg-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+              <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
                 O que dizem nossos <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">educadores</span>
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">Histórias reais de transformação</p>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">Histórias reais de transformação</p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {testimonials.map((t, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: i * 0.1 }} className="group">
-                  <div className="relative p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                  <div className="relative p-8 bg-card text-card-foreground rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-border">
                     <div className="flex items-center space-x-4 mb-6">
                       <img src={t.avatar} alt={t.name} className="w-16 h-16 rounded-full object-cover shadow-lg" />
                       <div>
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t.name}</h3>
+                        <h3 className="text-lg font-bold text-foreground">{t.name}</h3>
                         <p className="text-blue-600 dark:text-blue-400 font-medium">{t.role}</p>
                       </div>
                     </div>
-                    <p className="text-gray-700 dark:text-gray-300 italic mb-6 leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
+                    <p className="text-muted-foreground italic mb-6 leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
                     <div className="flex space-x-1">
                       {[...Array(t.rating)].map((_, j) => <Star key={j} className="w-5 h-5 text-yellow-400 fill-current" />)}
                     </div>
@@ -592,15 +800,26 @@ export default function LandingPage() {
         <section className="py-20 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-              <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">Pronto para transformar sua educação?</h2>
-              <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">Junte-se a milhares de educadores que já descobriram o poder da IA. Comece gratuitamente!</p>
+              <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">{t('landing.cta.title', 'Pronto para transformar sua educação?')}</h2>
+              <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">{t('landing.cta.description', 'Junte-se a milhares de educadores que já descobriram o poder da IA. Comece gratuitamente!')}</p>
               
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" onClick={() => navigate('/register')} className="bg-white text-purple-600 hover:bg-gray-50 shadow-xl">
-                  <CheckCircle className="w-5 h-5 mr-2" />Começar Gratuitamente
+              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate('/register')} 
+                  leftIcon={<CheckCircle className="w-6 h-6" />}
+                  className="bg-white text-purple-600 hover:bg-gray-50 shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 text-xl px-10 py-7 font-bold"
+                >
+                  {t('landing.cta.startFree', 'Começar Gratuitamente')}
                 </Button>
-                <Button size="lg" variant="outline" onClick={() => navigate('/contact')} className="bg-transparent text-white border-2 border-white hover:bg-white/10">
-                  <Globe className="w-5 h-5 mr-2" />Falar com Especialista
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  onClick={() => navigate('/contact')} 
+                  leftIcon={<Globe className="w-6 h-6" />}
+                  className="bg-transparent text-white border-2 border-white hover:bg-white/20 hover:scale-110 transition-all duration-300 text-xl px-10 py-7 font-bold shadow-xl"
+                >
+                  {t('landing.cta.talkSpecialist', 'Falar com Especialista')}
                 </Button>
               </div>
             </motion.div>
@@ -609,7 +828,7 @@ export default function LandingPage() {
       </main>
 
       {/* Footer */}
-      <footer id="footer" className="w-full bg-gray-900 dark:bg-black text-white py-12">
+      <footer id="footer" className="w-full bg-background text-foreground py-12 border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="col-span-1 md:col-span-2">
@@ -617,30 +836,31 @@ export default function LandingPage() {
                 <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
                   <BookOpen className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">TamanduAI</span>
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">TamanduAI</span>
               </div>
-              <p className="text-gray-400 max-w-md">Revolucionando a educação através da inteligência artificial.</p>
+              <p className="text-muted-foreground max-w-md">{t('landing.footer.tagline', 'Revolucionando a educação através da inteligência artificial.')}</p>
             </div>
             <div>
-              <h3 className="font-bold mb-4">Produto</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#features" className="hover:text-white transition-colors">Recursos</a></li>
-                <li><Link to="/docs" className="hover:text-white transition-colors">Documentação</Link></li>
+              <h3 className="font-bold mb-4">{t('landing.footer.product', 'Produto')}</h3>
+              <ul className="space-y-2 text-muted-foreground">
+                <li><a href="#features" className="hover:text-foreground transition-colors">{t('landing.footer.features', 'Recursos')}</a></li>
+                <li><Link to="/docs" className="hover:text-foreground transition-colors">{t('landing.footer.documentation', 'Documentação')}</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="font-bold mb-4">Suporte</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><Link to="/contact" className="hover:text-white transition-colors">Contato</Link></li>
-                <li><Link to="/privacy" className="hover:text-white transition-colors">Privacidade</Link></li>
+              <h3 className="font-bold mb-4">{t('landing.footer.support', 'Suporte')}</h3>
+              <ul className="space-y-2 text-muted-foreground">
+                <li><Link to="/contact" className="hover:text-foreground transition-colors">{t('landing.footer.contact', 'Contato')}</Link></li>
+                <li><Link to="/privacy" className="hover:text-foreground transition-colors">{t('landing.footer.privacy', 'Privacidade')}</Link></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-            <p>© 2025 TamanduAI. Todos os direitos reservados.</p>
+          <div className="border-t border-border pt-8 text-center text-muted-foreground">
+            <p>{t('landing.footer.copyright', '© 2025 TamanduAI. Todos os direitos reservados.')}</p>
           </div>
         </div>
       </footer>
     </div>
   );
 }
+

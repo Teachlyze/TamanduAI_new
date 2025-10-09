@@ -7,13 +7,13 @@ import NotificationOrchestrator from '@/services/notificationOrchestrator';
  * @param {Object} submissionData - The submission data
  * @param {string} submissionData.activity_id - The activity ID
  * @param {string} submissionData.user_id - The user ID
- * @param {Array} submissionData.answers - Array of answers
+ * @param {Object|Array} submissionData.data - Submission payload (JSON)
  * @param {boolean} [submit=false] - Whether to submit the submission
  * @returns {Promise<Object>} The created submission
  */
 export const createSubmission = async (submissionData, submit = false) => {
   try {
-    const { activity_id, user_id, answers, ...rest } = submissionData;
+    const { activity_id, user_id, data, ...rest } = submissionData;
     
     // Start a transaction
     const { data: submission, error: submissionError } = await supabase
@@ -24,6 +24,7 @@ export const createSubmission = async (submissionData, submit = false) => {
           user_id,
           status: submit ? 'submitted' : 'draft',
           submitted_at: submit ? new Date().toISOString() : null,
+          data: data ?? null,
           ...rest
         }
       ])
@@ -32,22 +33,7 @@ export const createSubmission = async (submissionData, submit = false) => {
 
     if (submissionError) throw submissionError;
 
-    // Save answers
-    if (answers && answers.length > 0) {
-      const { error: answersError } = await supabase
-        .from('answers')
-        .insert(
-          answers.map(answer => ({
-            submission_id: submission.id,
-            question_id: answer.question_id,
-            answer_text: answer.answer_text,
-            is_correct: answer.is_correct,
-            points_earned: answer.points_earned
-          }))
-        );
-
-      if (answersError) throw answersError;
-    }
+    // Answers are embedded in submissions.data now; no separate table writes
 
     // If submitted, notify teacher and optionally check for plagiarism
     if (submit) {
@@ -91,9 +77,11 @@ export const createSubmission = async (submissionData, submit = false) => {
           .single();
 
         if (activityCfg?.plagiarism_enabled) {
-          const textAnswers = (answers || [])
-            .filter(a => typeof a.answer_text === 'string' && a.answer_text.trim().length > 0)
-            .map(a => a.answer_text)
+          // Extract text from submission data (supports array or object)
+          const items = Array.isArray(data) ? data : Object.values(data || {});
+          const textAnswers = (items || [])
+            .map(v => (typeof v === 'string' ? v : (typeof v?.answer_text === 'string' ? v.answer_text : '')))
+            .filter(s => s && s.trim().length > 0)
             .join('\n\n');
 
           if (textAnswers.length > 0) {
@@ -135,11 +123,7 @@ export const getSubmission = async (submissionId, userId = null) => {
       .from('submissions')
       .select(`
         *,
-        answers (*),
-        activities (
-          *,
-          questions (*)
-        )
+        activities (*)
       `)
       .eq('id', submissionId);
 
@@ -173,7 +157,7 @@ export const getSubmissionsForActivity = async (activityId, options = {}) => {
       .select(`
         *,
         user:user_id (id, email, raw_user_meta_data->>'name' as name),
-        answers (*)
+        activities (id, title)
       `)
       .eq('activity_id', activityId)
       .order('submitted_at', { ascending: false });
@@ -201,9 +185,8 @@ export const getSubmissionsForActivity = async (activityId, options = {}) => {
  * Grade a submission
  * @param {string} submissionId - The submission ID
  * @param {Object} gradingData - The grading data
- * @param {number} gradingData.final_grade - The final grade
+ * @param {number} gradingData.grade - The final grade (0-100)
  * @param {string} gradingData.feedback - The feedback
- * @param {Array} [gradingData.answers] - Array of graded answers
  * @returns {Promise<Object>} The updated submission
  */
 export const gradeSubmission = async (submissionId, gradingData) => {
@@ -221,7 +204,8 @@ export const gradeSubmission = async (submissionId, gradingData) => {
     const { data: submission, error: submissionError } = await supabase
       .from('submissions')
       .update({
-        ...updateData,
+        grade: updateData.grade ?? null,
+        feedback: updateData.feedback ?? null,
         graded_at: new Date().toISOString(),
         status: 'graded',
         updated_at: new Date().toISOString()
@@ -232,24 +216,7 @@ export const gradeSubmission = async (submissionId, gradingData) => {
 
     if (submissionError) throw submissionError;
 
-    // Update answers if provided
-    if (answers.length > 0) {
-      const updates = answers.map(answer => 
-        supabase
-          .from('answers')
-          .update({
-            is_correct: answer.is_correct,
-            points_earned: answer.points_earned,
-            feedback: answer.feedback,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', answer.id)
-      );
-
-      const results = await Promise.all(updates);
-      const error = results.find(r => r.error)?.error;
-      if (error) throw error;
-    }
+    // Answers table removed from flow; keep only feedback history and notifications
 
     // Add to feedback history
     if (gradingData.feedback) {
@@ -272,7 +239,7 @@ export const gradeSubmission = async (submissionId, gradingData) => {
       // get activity title
       const { data: activity } = await supabase
         .from('activities')
-        .select('id, title')
+        .select('id, title, total_points')
         .eq('id', submission.activity_id)
         .single();
 
@@ -289,8 +256,8 @@ export const gradeSubmission = async (submissionId, gradingData) => {
         email: studentProfile?.email || undefined,
         variables: {
           activityName: activity?.title || 'Atividade',
-          grade: updateData.final_grade ?? submission.final_grade ?? 0,
-          maxGrade: updateData.max_points || 100,
+          grade: updateData.grade ?? submission.grade ?? 0,
+          maxGrade: activity?.total_points || 100,
           viewUrl: `/dashboard/activities/${submission.activity_id}/submissions/${submissionId}`
         },
         metadata: { submissionId, activityId: submission.activity_id }
@@ -307,14 +274,14 @@ export const gradeSubmission = async (submissionId, gradingData) => {
       }
 
       // Grade changed
-      if (currentSub?.final_grade != null && updateData.final_grade != null && currentSub.final_grade !== updateData.final_grade) {
+      if (currentSub?.grade != null && updateData.grade != null && currentSub.grade !== updateData.grade) {
         await NotificationOrchestrator.send('gradeChanged', {
           userId: submission.user_id,
           email: studentProfile?.email || undefined,
           variables: {
             activityName: activity?.title || 'Atividade',
-            oldGrade: currentSub.final_grade,
-            newGrade: updateData.final_grade
+            oldGrade: currentSub.grade,
+            newGrade: updateData.grade
           }
         });
       }
@@ -384,12 +351,12 @@ export const getSubmissionStats = async (activityId) => {
     // Get average grade
     const { data: gradeData, error: gradeError } = await supabase
       .from('submissions')
-      .select('final_grade')
+      .select('grade')
       .eq('activity_id', activityId)
-      .not('final_grade', 'is', null);
+      .not('grade', 'is', null);
 
     if (!gradeError && gradeData?.length > 0) {
-      const total = gradeData.reduce((sum, item) => sum + (item.final_grade || 0), 0);
+      const total = gradeData.reduce((sum, item) => sum + (item.grade || 0), 0);
       stats.average_grade = parseFloat((total / gradeData.length).toFixed(2));
     }
 
@@ -455,13 +422,16 @@ export const submitDraft = async (submissionId) => {
         .single();
 
       if (subActivity?.plagiarism_enabled) {
-        const { data: answers } = await supabase
-          .from('answers')
-          .select('answer_text')
-          .eq('submission_id', submissionId);
+        // Load submission data and extract text
+        const { data: sub } = await supabase
+          .from('submissions')
+          .select('data')
+          .eq('id', submissionId)
+          .single();
 
-        const textContent = (answers || [])
-          .map(a => a.answer_text)
+        const items = Array.isArray(sub?.data) ? sub.data : Object.values(sub?.data || {});
+        const textContent = (items || [])
+          .map(v => (typeof v === 'string' ? v : (typeof v?.answer_text === 'string' ? v.answer_text : '')))
           .filter(Boolean)
           .join('\n\n');
 

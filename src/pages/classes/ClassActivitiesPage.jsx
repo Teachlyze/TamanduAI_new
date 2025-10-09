@@ -205,7 +205,7 @@ const ClassActivitiesPage = () => {
             title: activity.title || `Atividade ${index + 1}`,
             description: activity.description || 'Sem descrição',
             dueDate: activity.due_date || null,
-            points: activity.max_points || 10,
+            points: activity.total_points || 10,
             status: activity.status || 'pending',
             submissionCount: 0, // TODO: Get from submissions table
             totalStudents: 25, // TODO: Get from class_students table

@@ -141,7 +141,7 @@ const ActivitiesPage = () => {
   const draftActivities = activities.filter(a => a.status === 'draft').length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-violet-50 to-purple-50 dark:from-indigo-950 dark:via-violet-950 dark:to-purple-950">
       <div className="p-6 space-y-8">
         {/* Header */}
         <motion.div 
@@ -150,14 +150,14 @@ const ActivitiesPage = () => {
           className="relative"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-2xl blur-xl" />
-          <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/20 shadow-xl">
+          <div className="p-12 rounded-3xl shadow-2xl backdrop-blur-xl bg-white/95 dark:bg-gray-900/95 border border-slate-200/50 dark:border-slate-700/50">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div className="space-y-2">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
+                  <div className="p-5 bg-gradient-to-br from-indigo-700 via-violet-700 to-purple-700 rounded-4xl shadow-4xl hover:shadow-5xl transition-all duration-700 hover:scale-130">
                     <Activity className="h-6 w-6 text-white" />
                   </div>
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  <h1 className="text-7xl font-black bg-gradient-to-br from-indigo-800 via-violet-800 to-purple-800 bg-clip-text text-transparent drop-shadow-3xl">
                     Atividades
                   </h1>
                 </div>
@@ -196,7 +196,7 @@ const ActivitiesPage = () => {
           <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-white/20 dark:border-gray-700/20 shadow-xl hover:shadow-2xl transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">Total</CardTitle>
-              <div className="p-2 rounded-lg bg-gradient-to-r from-blue-500/20 to-purple-500/20">
+              <div className="p-4 bg-gradient-to-br from-violet-500/20 via-purple-500/20 to-fuchsia-500/20 rounded-2xl border border-violet-200/50 dark:border-violet-700/50 shadow-xl">
                 <BookOpen className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
             </CardHeader>
@@ -209,7 +209,7 @@ const ActivitiesPage = () => {
           <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-white/20 dark:border-gray-700/20 shadow-xl hover:shadow-2xl transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">Publicadas</CardTitle>
-              <div className="p-2 rounded-lg bg-gradient-to-r from-green-500/20 to-emerald-500/20">
+              <div className="p-4 bg-gradient-to-br from-emerald-500/20 via-green-500/20 to-teal-500/20 rounded-2xl border border-emerald-200/50 dark:border-emerald-700/50 shadow-xl">
                 <Target className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
             </CardHeader>
@@ -222,7 +222,7 @@ const ActivitiesPage = () => {
           <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-white/20 dark:border-gray-700/20 shadow-xl hover:shadow-2xl transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">Concluídas</CardTitle>
-              <div className="p-2 rounded-lg bg-gradient-to-r from-emerald-500/20 to-teal-500/20">
+              <div className="p-4 bg-gradient-to-br from-emerald-500/20 via-green-500/20 to-teal-500/20 rounded-2xl border border-emerald-200/50 dark:border-emerald-700/50 shadow-xl">
                 <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               </div>
             </CardHeader>
@@ -235,7 +235,7 @@ const ActivitiesPage = () => {
           <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-white/20 dark:border-gray-700/20 shadow-xl hover:shadow-2xl transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">Rascunhos</CardTitle>
-              <div className="p-2 rounded-lg bg-gradient-to-r from-amber-500/20 to-orange-500/20">
+              <div className="p-4 bg-gradient-to-br from-amber-500/20 via-orange-500/20 to-yellow-500/20 rounded-2xl border border-amber-200/50 dark:border-amber-700/50 shadow-xl">
                 <FileText className="h-5 w-5 text-amber-600 dark:text-amber-400" />
               </div>
             </CardHeader>
@@ -314,8 +314,8 @@ const ActivitiesPage = () => {
                   transition={{ delay: index * 0.1 }}
                   className="group"
                 >
-                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-white/20 dark:border-gray-700/20 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden h-full flex flex-col">
-                    <div className="p-6 border-b border-white/10 dark:border-gray-600/20">
+                  <Card className="p-8 rounded-3xl shadow-2xl bg-white/90 dark:bg-gray-800/90 border border-slate-200/50 dark:border-slate-600/50 hover:shadow-3xl transition-all duration-500 overflow-hidden h-full flex flex-col">
+                    <div className="p-8 border-b border-slate-200/30 dark:border-slate-600/30">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <h3 className="font-semibold text-lg text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
@@ -355,7 +355,7 @@ const ActivitiesPage = () => {
                       </div>
                     </div>
 
-                    <div className="p-6 space-y-4 flex-grow">
+                    <div className="p-8 space-y-6 flex-grow">
                       <div className="flex items-center space-x-2">
                         <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusClasses[activity.status]}`}>
                           {statusIcons[activity.status]}
@@ -383,7 +383,7 @@ const ActivitiesPage = () => {
                       </div>
                     </div>
 
-                    <div className="p-6 border-t border-white/10 dark:border-gray-600/20 bg-gray-50/50 dark:bg-gray-700/20">
+                    <div className="p-8 border-t border-slate-200/30 dark:border-slate-600/30 bg-slate-50/60 dark:bg-slate-800/60">
                       <Button 
                         variant="outline" 
                         size="sm" 
@@ -400,21 +400,20 @@ const ActivitiesPage = () => {
             </div>
           ) : (
             <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-white/20 dark:border-gray-700/20 shadow-xl">
-              <div className="p-12">
+              <div className="p-12 rounded-3xl shadow-2xl bg-white/90 dark:bg-gray-800/90 border border-slate-200/50 dark:border-slate-600/50 hover:shadow-3xl transition-all duration-500">
                 <motion.div 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="text-center"
                 >
                   <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full blur-xl" />
+                    <div className="absolute top-4 bg-gradient-to-br from-rose-500/20 via-pink-500/20 to-red-500/20 rounded-full border border-rose-200/50 dark:border-rose-700/50 shadow-xl blur-xl" />
                     <BookOpen className="relative mx-auto h-16 w-16 text-gray-400 mb-4" />
                   </div>
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white">Nenhuma atividade encontrada</h3>
                   <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 mb-6">
                     {searchTerm || selectedStatus !== 'all' 
-                      ? 'Tente ajustar sua busca' 
-                      : 'Comece criando sua primeira atividade'}
+                      ? 'Tente ajustar sua busca'
                   </p>
                   {!searchTerm && selectedStatus === 'all' && isTeacher && (
                     <Button 
@@ -446,7 +445,7 @@ const ActivitiesPage = () => {
               </AlertDialogCancel>
               <AlertDialogAction 
                 onClick={handleDeleteConfirm}
-                className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white"
+                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105"
               >
                 Sim, excluir
               </AlertDialogAction>

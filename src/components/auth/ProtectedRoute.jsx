@@ -8,15 +8,42 @@ export const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [checkingOnboarding, setCheckingOnboarding] = useState(false);
+  const [emergencyTimeout, setEmergencyTimeout] = useState(false);
+
+  // Debug logs
+  useEffect(() => {
+    console.log('[ProtectedRoute] State:', { user: !!user, loading, path: location.pathname });
+  }, [user, loading, location.pathname]);
+
+  // Emergency timeout - if loading takes more than 15 seconds, force redirect to login
+  useEffect(() => {
+    if (loading) {
+      const timeoutId = setTimeout(() => {
+        console.error('[ProtectedRoute] Emergency timeout - forcing redirect to login');
+        setEmergencyTimeout(true);
+        navigate('/login', { replace: true });
+      }, 15000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [loading, navigate]);
 
   useEffect(() => {
     if (!loading && user) {
-      // Check if user needs onboarding
+      // Check if user needs onboarding (check user_metadata)
+      const metadata = user.user_metadata || {};
       const needsOnboarding = !(
-        user.role &&
-        user.terms_accepted &&
-        user.privacy_accepted
+        metadata.role &&
+        metadata.terms_accepted &&
+        metadata.privacy_accepted
       );
+      
+      console.log('[ProtectedRoute] Onboarding check:', { 
+        hasRole: !!metadata.role, 
+        termsAccepted: !!metadata.terms_accepted,
+        privacyAccepted: !!metadata.privacy_accepted,
+        needsOnboarding 
+      });
 
       if (needsOnboarding) {
         // If already on onboarding, do not redirect or set spinner
@@ -51,6 +78,11 @@ export const ProtectedRoute = ({ children }) => {
           <p className="text-gray-600 dark:text-gray-300">
             {checkingOnboarding ? 'Aguarde enquanto configuramos seu perfil' : 'Carregando sua sessão'}
           </p>
+          {emergencyTimeout && (
+            <p className="text-red-600 dark:text-red-400 mt-4 text-sm">
+              Redirecionando para login...
+            </p>
+          )}
         </motion.div>
       </div>
     );

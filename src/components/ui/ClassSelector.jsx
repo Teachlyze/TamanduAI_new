@@ -37,7 +37,7 @@ const ClassSelector = ({ onClassSelect, showCreateButton = true }) => {
         let query = supabase
           .from('classes')
           .select('id, name, subject, grade')
-          .eq('teacher_id', user.id)
+          .eq('created_by', user.id)
           .order('name', { ascending: true })
           .limit(100);
 
@@ -54,7 +54,7 @@ const ClassSelector = ({ onClassSelect, showCreateButton = true }) => {
           let fallbackQuery = supabase
             .from('classes')
             .select('*')
-            .eq('teacher_id', user.id)
+            .eq('created_by', user.id)
             .order('name', { ascending: true })
             .limit(100);
 

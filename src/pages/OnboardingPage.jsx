@@ -38,29 +38,35 @@ const OnboardingPage = () => {
 
     setSubmitting(true);
     try {
-      const payload = {
-        full_name: form.full_name,
-        role: form.role,
-        terms_accepted: !!form.terms_accepted,
-        privacy_accepted: !!form.privacy_accepted,
-      };
-      if (form.age) payload.age = Number(form.age);
-      if (form.cpf) payload.cpf = form.cpf;
+      console.log('[Onboarding] Starting onboarding process...');
+      
+      // Get current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (!user) throw new Error('No user found');
 
-      // Call onboarding function
-      const { data, error } = await supabase.functions.invoke('user-onboarding', {
-        method: 'POST',
-        body: payload,
+      console.log('[Onboarding] Updating user metadata...');
+      
+      // Update user metadata directly
+      const { data: updatedData, error: updateError } = await supabase.auth.updateUser({
+        data: {
+          full_name: form.full_name,
+          role: form.role,
+          age: form.age ? Number(form.age) : null,
+          cpf: form.cpf || null,
+          terms_accepted: true,
+          privacy_accepted: true,
+          terms_version: CURRENT_TERMS_VERSION,
+          privacy_version: CURRENT_PRIVACY_VERSION,
+          onboarding_completed: true,
+          onboarding_completed_at: new Date().toISOString(),
+        }
       });
-      if (error) throw error;
 
-      // Get user ID from response or from current session
-      const { data: { user } } = await supabase.auth.getUser();
-      const userId = data?.userId || user?.id;
-
-      if (!userId) {
-        throw new Error('User ID not found after onboarding');
-      }
+      if (updateError) throw updateError;
+      
+      console.log('[Onboarding] User metadata updated successfully');
+      const userId = user.id;
 
       // Log terms acceptance with IP/UA and versioning
       try {
@@ -88,8 +94,10 @@ const OnboardingPage = () => {
         // Don't fail the onboarding for audit errors
       }
 
+      console.log('[Onboarding] Onboarding completed successfully, redirecting to dashboard...');
       navigate('/dashboard', { replace: true });
     } catch (err) {
+      console.error('[Onboarding] Error:', err);
       setError(err?.message || t('onboarding.errors.generic', 'Falha ao concluir onboarding'));
     } finally {
       setSubmitting(false);

@@ -15,32 +15,6 @@ export const useAccessibility = () => {
     announcements: true,
   });
 
-  // Carregar preferências salvas
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('accessibility_preferences');
-      if (saved) {
-        setPreferences(JSON.parse(saved));
-      }
-    } catch (error) {
-      console.warn('Failed to load accessibility preferences:', error);
-    }
-  }, []);
-
-  // Salvar preferências
-  const savePreferences = useCallback((newPreferences) => {
-    try {
-      const updated = { ...preferences, ...newPreferences };
-      setPreferences(updated);
-      localStorage.setItem('accessibility_preferences', JSON.stringify(updated));
-
-      // Aplicar mudanças imediatamente
-      applyAccessibilitySettings(updated);
-    } catch (error) {
-      console.warn('Failed to save accessibility preferences:', error);
-    }
-  }, [preferences, applyAccessibilitySettings]);
-
   // Aplicar configurações de acessibilidade ao DOM
   const applyAccessibilitySettings = useCallback((prefs) => {
     const root = document.documentElement;
@@ -75,6 +49,32 @@ export const useAccessibility = () => {
       root.classList.remove('focus-visible');
     }
   }, []);
+
+  // Carregar preferências salvas
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('accessibility_preferences');
+      if (saved) {
+        setPreferences(JSON.parse(saved));
+      }
+    } catch (error) {
+      console.warn('Failed to load accessibility preferences:', error);
+    }
+  }, []);
+
+  // Salvar preferências
+  const savePreferences = useCallback((newPreferences) => {
+    try {
+      const updated = { ...preferences, ...newPreferences };
+      setPreferences(updated);
+      localStorage.setItem('accessibility_preferences', JSON.stringify(updated));
+
+      // Aplicar mudanças imediatamente
+      applyAccessibilitySettings(updated);
+    } catch (error) {
+      console.warn('Failed to save accessibility preferences:', error);
+    }
+  }, [preferences, applyAccessibilitySettings]);
 
   // Detectar se usuário prefere reduced motion
   useEffect(() => {

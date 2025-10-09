@@ -112,43 +112,51 @@ const CreateActivityPage = () => {
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
 
-      const templateData = {
+      const activityRow = {
         title: activityData.title || 'Nova Atividade',
         description: activityData.description || null,
         instructions: activityData.instructions || null,
-        schema: activityData.questions ? JSON.stringify({
+        schema: activityData.questions ? {
           title: activityData.title || 'Nova Atividade',
           type: 'object',
           properties: {},
           required: []
-        }) : null,
-        ui_schema: activityData.questions ? JSON.stringify({}) : null,
+        } : null,
         created_by: user.id,
-        is_public: false,
-        tags: []
+        total_points: activityData.points || 100,
+        due_date: activityData.dueDate || null,
+        status: 'draft',
+        is_draft: true,
+        draft_saved_at: new Date().toISOString()
       };
 
       const { data: template, error: templateError } = await supabase
-        .from('activity_templates')
-        .insert([templateData])
+        .from('activities')
+        .insert([activityRow])
         .select()
         .single();
 
       if (templateError) throw templateError;
 
       if (classId) {
-        const { error: publishError } = await supabase.rpc('publish_activity_template', {
-          template_id_param: template.id,
-          class_ids: [classId],
-          custom_title: activityData.title || null,
-          custom_description: activityData.description || null,
-          custom_instructions: activityData.instructions || null,
-          custom_due_date: activityData.dueDate || null,
-          custom_max_points: activityData.points || 100
-        });
+        // Mark as published
+        const { error: publishError } = await supabase
+          .from('activities')
+          .update({ status: 'published', published_at: new Date().toISOString() })
+          .eq('id', template.id)
+          .eq('created_by', user.id);
 
         if (publishError) {
-          console.warn('Error publishing to class:', publishError);
+          console.warn('Error publishing activity:', publishError);
+        } else {
+          // Link to class
+          const { error: assignError } = await supabase
+            .from('activity_class_assignments')
+            .insert([{ activity_id: template.id, class_id: classId, assigned_at: new Date().toISOString() }]);
+
+          if (assignError) {
+            console.warn('Error assigning activity to class:', assignError);
+          }
         }
       }
 

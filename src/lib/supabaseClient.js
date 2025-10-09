@@ -70,8 +70,8 @@ const customFetch = async (url, options = {}) => {
       const response = await fetch(fullUrl, {
         ...options,
         headers,
-        // Temporarily disable credentials for development
-        credentials: 'omit',
+        // Include credentials for proper authentication
+        credentials: 'same-origin',
       });
 
       lastResponse = response;
@@ -158,10 +158,8 @@ function createSupabaseInstance() {
       detectSessionInUrl: true,
       storage: window.localStorage,
     },
-    global: {
-      // This helps prevent multiple instances
-      fetch: customFetch,
-    }
+    // Remove custom fetch from global config to allow Supabase auth to work properly
+    // Custom fetch was interfering with authentication flow
   };
 
   // Create the Supabase client

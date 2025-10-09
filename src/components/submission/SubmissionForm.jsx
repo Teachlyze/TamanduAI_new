@@ -90,10 +90,19 @@ const SubmissionForm = ({ activityId, readOnly = false }) => {
       
       const data = await getSubmission(submissionId, user?.id);
       setSubmission(data);
-      
-      // Initialize answers
-      if (data.answers) {
-        setAnswers(data.answers);
+
+      // Initialize answers from submissions.data (array or object)
+      if (data?.data) {
+        if (Array.isArray(data.data)) {
+          setAnswers(data.data);
+        } else if (typeof data.data === 'object') {
+          // Convert object map to array of {question_id, answer_text}
+          const arr = Object.entries(data.data).map(([question_id, value]) => ({
+            question_id,
+            answer_text: typeof value === 'string' ? value : (value?.answer_text ?? '')
+          }));
+          setAnswers(arr);
+        }
       }
       
       // Load plagiarism check if submitted
@@ -181,7 +190,7 @@ const SubmissionForm = ({ activityId, readOnly = false }) => {
       const submissionData = {
         activity_id: activityId,
         user_id: user?.id,
-        answers: answers.map(a => ({
+        data: answers.map(a => ({
           question_id: a.question_id,
           answer_text: a.answer_text
         })),
@@ -385,9 +394,9 @@ const SubmissionForm = ({ activityId, readOnly = false }) => {
               </Button>
             )}
             
-            {isSubmitted && submission?.final_grade !== null && (
+            {isSubmitted && submission?.grade !== null && (
               <Tag color="success" style={{ fontSize: 16, padding: '4px 12px' }}>
-                Grade: {submission.final_grade}%
+                Grade: {submission.grade}%
               </Tag>
             )}
           </Space>
@@ -591,7 +600,7 @@ const SubmissionForm = ({ activityId, readOnly = false }) => {
                   <div style={{ marginTop: 16 }}>
                     <Text>Your grade: </Text>
                     <Text strong style={{ fontSize: 24 }}>
-                      {submission.final_grade}%
+                      {submission.grade}%
                     </Text>
                     
                     <div style={{ marginTop: 16 }}>

@@ -27,10 +27,16 @@ const Sidebar = ({ open, setOpen }) => {
     (async () => {
       if (!user?.id) return;
       try {
+        // Get role from user metadata or profiles table
+        if (user.user_metadata?.role) {
+          if (mounted) setRole(user.user_metadata.role);
+          return;
+        }
+        
         const { data, error } = await supabase
-          .from('user_roles')
+          .from('profiles')
           .select('role')
-          .eq('user_id', user.id)
+          .eq('id', user.id)
           .maybeSingle();
         if (!mounted) return;
         if (error) {
@@ -44,7 +50,7 @@ const Sidebar = ({ open, setOpen }) => {
       }
     })();
     return () => { mounted = false; };
-  }, [user?.id]);
+  }, [user?.id, user?.user_metadata?.role]);
 
   const teacherNav = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },

@@ -12,24 +12,15 @@ export const useTheme = () => {
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
-    // Check if user has a saved preference
-    const saved = localStorage.getItem('appTheme');
-    if (saved) {
-      return saved;
-    }
-
-    // If no saved preference, detect system preference
-    if (typeof window !== 'undefined') {
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      return prefersDark ? 'dark' : 'light';
-    }
-
-    // Fallback to light
+    // Prefer explicit user preference
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('appTheme') : null;
+    if (saved === 'light' || saved === 'dark') return saved;
+    // Default to light (do not auto-apply system dark by default)
     return 'light';
   });
 
   const [highContrast, setHighContrast] = useState(() => {
-    const saved = localStorage.getItem('highContrast');
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('highContrast') : null;
     return saved === 'true';
   });
 

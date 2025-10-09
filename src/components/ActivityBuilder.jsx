@@ -96,9 +96,10 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
         title: (schema && schema.title) || 'Sem título',
         description: '',
         schema: schema || {},
-        ui_schema: uiSchema || {},
         created_by: user.id,
         is_draft: isFinal ? false : isDraft,
+        status: isFinal ? 'published' : 'draft',
+        draft_saved_at: isFinal ? null : new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
       
@@ -109,7 +110,7 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
         if (activityId) {
           console.log('Updating existing activity:', activityId);
           const { data, error } = await supabase
-            .from('activity_templates')
+            .from('activities')
             .update(activityData)
             .eq('id', activityId)
             .select()
@@ -124,10 +125,10 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
         } else {
           console.log('Creating new activity');
           const { data, error } = await supabase
-          .from('activities')
-          .insert([activityData])
-          .select()
-          .single();
+            .from('activities')
+            .insert([activityData])
+            .select()
+            .single();
             
           if (error) {
             console.error('Error creating activity:', error);
@@ -164,7 +165,7 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
               await supabase.from('activity_class_assignments').delete().eq('activity_id', result.id);
               // Insert selected ones
               if (selectedClassIds.length > 0) {
-                const rows = selectedClassIds.map(cid => ({ activity_id: result.id, class_id: cid }));
+                const rows = selectedClassIds.map(cid => ({ activity_id: result.id, class_id: cid, assigned_at: new Date().toISOString() }));
                 await supabase.from('activity_class_assignments').insert(rows);
               }
             }
@@ -261,7 +262,7 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
         }, 10000); // 10 segundos de timeout
         
         const { data, error } = await supabase
-          .from('activity_templates')
+          .from('activities')
           .select('*')
           .eq('id', activityId)
           .single();

@@ -1,6 +1,6 @@
 // src/components/ui/AccessibilityPanel.jsx
 import React, { useState } from 'react';
-import { AccessibilityPanel as Panel, AdvancedThemeSelector } from '@/hooks/useAccessibilityAdvanced.jsx';
+import { useAccessibilityAdvanced } from '@/hooks/useAccessibilityAdvanced.jsx';
 import { useAccessibility } from '@/hooks/useAccessibility';
 import { useWCAGValidator } from '@/hooks/useWCAGValidator';
 import { Button } from './button';

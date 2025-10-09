@@ -11,9 +11,14 @@ const AccessibilityButton = () => {
   const { toggleTheme, isDark } = useTheme();
   const { currentLanguage, setLanguage, supportedLanguages } = useLanguageDetection();
 
-  const [settings, setSettings] = useState({
-    fontSize: 16,
-    highContrast: false,
+  const [settings, setSettings] = useState(() => {
+    const saved = localStorage.getItem('accessibility-settings');
+    return saved ? JSON.parse(saved) : {
+      fontSize: 16,
+      highContrast: false,
+      lineSpacing: 1.5,
+      letterSpacing: 0,
+    };
   });
 
   // Track if language was manually selected and store original browser language
@@ -24,6 +29,8 @@ const AccessibilityButton = () => {
   useEffect(() => {
     const root = document.documentElement;
     root.style.fontSize = `${settings.fontSize}px`;
+    root.style.lineHeight = settings.lineSpacing;
+    root.style.letterSpacing = `${settings.letterSpacing}px`;
 
     if (settings.highContrast) {
       root.classList.add('high-contrast');
@@ -41,9 +48,11 @@ const AccessibilityButton = () => {
     }
   }, [currentLanguage, originalBrowserLanguage]);
 
-  const hasActiveSettings = Object.values(settings).some(value =>
-    typeof value === 'boolean' ? value : value !== 16
-  );
+  const hasActiveSettings = 
+    settings.fontSize !== 16 || 
+    settings.highContrast || 
+    settings.lineSpacing !== 1.5 || 
+    settings.letterSpacing !== 0;
 
   const handleLanguageChange = async (langCode) => {
     try {
@@ -105,7 +114,7 @@ const AccessibilityButton = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/20 z-40"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
               onClick={() => setIsOpen(false)}
             />
 
@@ -200,62 +209,97 @@ const AccessibilityButton = () => {
                   </div>
                 </div>
 
-                {/* Tamanho do texto - Usando input range */}
+                {/* Tamanho do texto - Simples */}
                 <div className="space-y-3">
-                  <label className="text-sm font-medium">Tamanho do texto</label>
-                  <div className="space-y-2">
-                    <input
-                      type="range"
-                      min="12"
-                      max="24"
-                      step="1"
-                      value={settings.fontSize}
-                      onChange={(e) => setSettings(prev => ({ ...prev, fontSize: parseInt(e.target.value) }))}
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
-                    />
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Pequeno</span>
-                      <span className="font-bold">Texto exemplo</span>
-                      <span>Grande</span>
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <Type className="w-4 h-4" />
+                    Tamanho do Texto
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setSettings(prev => ({ ...prev, fontSize: Math.max(12, prev.fontSize - 2) }))}
+                      disabled={settings.fontSize <= 12}
+                      className="w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center"
+                    >
+                      <span className="text-lg font-bold">-</span>
+                    </button>
+                    <div className="flex-1 text-center">
+                      <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">{settings.fontSize}</span>
+                      <span className="text-xs text-gray-500 ml-1">px</span>
                     </div>
+                    <button
+                      onClick={() => setSettings(prev => ({ ...prev, fontSize: Math.min(24, prev.fontSize + 2) }))}
+                      disabled={settings.fontSize >= 24}
+                      className="w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center"
+                    >
+                      <span className="text-lg font-bold">+</span>
+                    </button>
                   </div>
                 </div>
 
-                {/* Idioma - Lista vertical com botões maiores */}
+                {/* Espaçamento entre linhas */}
                 <div className="space-y-3">
-                  <div>
-                    <label className="text-sm font-medium">Idioma</label>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {isLanguageManual ? (
-                        <>
-                          Selecionado: <span className="font-semibold">{currentLanguage.name}</span>
-                          <span className="text-gray-400"> (era {originalBrowserLanguage?.name || 'Português'})</span>
-                        </>
-                      ) : (
-                        <>
-                          Detectado: <span className="font-semibold">{currentLanguage.name}</span> (do navegador)
-                        </>
-                      )}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Você pode alterar o idioma se desejar:
-                    </p>
+                  <label className="text-sm font-medium">Espaçamento entre Linhas</label>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setSettings(prev => ({ ...prev, lineSpacing: Math.max(1.0, prev.lineSpacing - 0.2) }))}
+                      disabled={settings.lineSpacing <= 1.0}
+                      className="w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center"
+                    >
+                      <span className="text-lg font-bold">-</span>
+                    </button>
+                    <div className="flex-1 text-center">
+                      <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">{settings.lineSpacing.toFixed(1)}</span>
+                    </div>
+                    <button
+                      onClick={() => setSettings(prev => ({ ...prev, lineSpacing: Math.min(2.5, prev.lineSpacing + 0.2) }))}
+                      disabled={settings.lineSpacing >= 2.5}
+                      className="w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center"
+                    >
+                      <span className="text-lg font-bold">+</span>
+                    </button>
                   </div>
-                  <div className="space-y-2">
+                </div>
+
+                {/* Espaçamento entre letras */}
+                <div className="space-y-3">
+                  <label className="text-sm font-medium">Espaçamento entre Letras</label>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setSettings(prev => ({ ...prev, letterSpacing: Math.max(0, prev.letterSpacing - 0.5) }))}
+                      disabled={settings.letterSpacing <= 0}
+                      className="w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center"
+                    >
+                      <span className="text-lg font-bold">-</span>
+                    </button>
+                    <div className="flex-1 text-center">
+                      <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">{settings.letterSpacing}</span>
+                      <span className="text-xs text-gray-500 ml-1">px</span>
+                    </div>
+                    <button
+                      onClick={() => setSettings(prev => ({ ...prev, letterSpacing: Math.min(3, prev.letterSpacing + 0.5) }))}
+                      disabled={settings.letterSpacing >= 3}
+                      className="w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center"
+                    >
+                      <span className="text-lg font-bold">+</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Idioma - Simples */}
+                <div className="space-y-3">
+                  <label className="text-sm font-medium">Idioma</label>
+                  <div className="grid grid-cols-3 gap-2">
                     {supportedLanguages.map((lang) => (
                       <Button
                         key={lang.code}
                         variant={currentLanguage.code === lang.code ? "default" : "outline"}
                         size="sm"
                         onClick={() => handleLanguageChange(lang.code)}
-                        className={`w-full flex items-center gap-3 h-10 text-sm font-medium ${
-                          currentLanguage.code === lang.code
-                            ? 'bg-blue-600 text-white'
-                            : 'border-gray-300 hover:bg-gray-50'
-                        }`}
+                        className="h-10 flex flex-col items-center justify-center gap-1 p-1"
                       >
                         <span className="text-lg">{lang.flag}</span>
-                        <span className="truncate">{lang.nativeName}</span>
+                        <span className="text-xs">{lang.code.toUpperCase()}</span>
                       </Button>
                     ))}
                   </div>
@@ -269,7 +313,13 @@ const AccessibilityButton = () => {
                       setSettings({
                         fontSize: 16,
                         highContrast: false,
+                        lineSpacing: 1.5,
+                        letterSpacing: 0,
                       });
+                      if (!isLanguageManual && originalBrowserLanguage) {
+                        handleLanguageChange(originalBrowserLanguage.code);
+                        setIsLanguageManual(false);
+                      }
                     }}
                     className="flex-1"
                   >

@@ -8,7 +8,7 @@ export const calculateWeightedGrade = async (studentId, classId) => {
     // Get all activities for this class
     const { data: assignments } = await supabase
       .from('activity_class_assignments')
-      .select('activity_id, activities(id, weight, points)')
+      .select('activity_id, activities(id, weight, total_points)')
       .eq('class_id', classId);
 
     if (!assignments || assignments.length === 0) {
@@ -20,10 +20,10 @@ export const calculateWeightedGrade = async (studentId, classId) => {
     // Get student's submissions for these activities
     const { data: submissions } = await supabase
       .from('submissions')
-      .select('activity_id, final_grade')
+      .select('activity_id, grade')
       .eq('user_id', studentId)
       .in('activity_id', activityIds)
-      .not('final_grade', 'is', null);
+      .not('grade', 'is', null);
 
     if (!submissions || submissions.length === 0) {
       return { weightedGrade: null, details: [] };
@@ -32,7 +32,7 @@ export const calculateWeightedGrade = async (studentId, classId) => {
     // Create a map of submissions by activity
     const submissionMap = {};
     submissions.forEach(sub => {
-      submissionMap[sub.activity_id] = sub.final_grade;
+      submissionMap[sub.activity_id] = sub.grade;
     });
 
     // Calculate weighted grade

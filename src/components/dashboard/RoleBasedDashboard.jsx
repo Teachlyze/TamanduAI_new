@@ -30,44 +30,34 @@ const RoleBasedDashboard = () => {
         setLoading(true);
         setError(null);
 
-        // Fetch both profile and teacher status in parallel
-        const [
-          { data: profile, error: profileError },
-          { data: teacherClasses, error: teacherError }
-        ] = await Promise.all([
-          supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single(),
-          
-          // Check if user is a teacher in any class
-          supabase
-            .from('classes')
-            .select('id')
-            .eq('teacher_id', user.id)
-            .limit(1)
-        ]);
-
-        // If we have a profile with a role, use that
-        if (profile && !profileError) {
-          setUserRole(profile.role || 'student');
-        } 
-        // If no profile or error, check if user is a teacher
-        else if (teacherClasses?.length > 0 && !teacherError) {
-          setUserRole('teacher');
-        } 
-        // Default to student if we can't determine the role
-        else {
-          setUserRole('student');
+        // First try to get role from user metadata (fastest)
+        if (user.user_metadata?.role) {
+          setUserRole(user.user_metadata.role);
+          Logger.info('User role from metadata:', user.user_metadata.role);
+          setLoading(false);
+          return;
         }
 
-        Logger.info('User role determined:', profile?.role || 'student');
+        // Fallback: Fetch from profiles table
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        if (profile && !profileError) {
+          setUserRole(profile.role || 'teacher');
+          Logger.info('User role from profiles:', profile.role);
+        } else {
+          // Default to teacher if we can't determine the role
+          setUserRole('teacher');
+          Logger.warn('Could not determine user role, defaulting to teacher');
+        }
       } catch (err) {
         Logger.error('Error in fetchUserRole:', err);
         setError('Erro ao carregar as informações do usuário');
-        // Default to student role on error to prevent blocking the UI
-        setUserRole('student');
+        // Default to teacher role on error to prevent blocking the UI
+        setUserRole('teacher');
       } finally {
         setLoading(false);
       }

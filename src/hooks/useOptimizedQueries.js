@@ -37,7 +37,7 @@ export const useOptimizedTeacherDashboard = (teacherId) => {
             )
           )
         `)
-        .eq('teacher_id', teacherId)
+        .eq('created_by', teacherId)
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 
@@ -114,7 +114,7 @@ export const useOptimizedClassActivities = (classId, options = {}) => {
           updated_at,
           max_score,
           teacher_id,
-          profiles!activities_teacher_id_fkey(name),
+          profiles!activities_created_by_fkey(name),
           student_progress(
             id,
             student_id,
@@ -295,7 +295,7 @@ export const useOptimizedClassStudents = (classId) => {
     queryFn: async () => {
       // Consulta única com JOIN otimizado usando índice composto
       const { data, error } = await supabase
-        .from('class_students')
+        .from('class_members')
         .select(`
           id,
           status,
@@ -303,7 +303,7 @@ export const useOptimizedClassStudents = (classId) => {
           last_activity_at,
           current_grade,
           student_id,
-          profiles!class_students_student_id_fkey(
+          profiles!class_members_student_id_fkey(
             id,
             name,
             email,
@@ -401,7 +401,7 @@ export const useOptimizedMetrics = (teacherId, dateRange = {}) => {
             current_grade
           )
         `)
-        .eq('teacher_id', teacherId)
+        .eq('created_by', teacherId)
         .eq('is_active', true);
 
       if (error) throw error;
@@ -666,7 +666,7 @@ export const useSmartCache = () => {
       queryFn: () => {
         // Buscar classes baseado no papel do usuário
         return supabase
-          .from('class_students')
+          .from('class_members')
           .select('class_id, classes(*)')
           .eq('student_id', userId)
           .eq('status', 'active');

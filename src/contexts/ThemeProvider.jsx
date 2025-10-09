@@ -11,11 +11,13 @@ import ThemeContext from './ThemeContext';
 const ThemeProvider = ({ children }) => {
     const [theme, setTheme] = useState(() => {
     if (typeof window === 'undefined') return THEME_LIGHT;
-    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-    if (savedTheme === THEME_LIGHT || savedTheme === THEME_DARK) return savedTheme;
-    // fallback to system preference
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    return prefersDark ? THEME_DARK : THEME_LIGHT;
+    // Prefer unified key 'appTheme', then fallback to legacy THEME_STORAGE_KEY
+    const savedPrimary = localStorage.getItem('appTheme');
+    if (savedPrimary === THEME_LIGHT || savedPrimary === THEME_DARK) return savedPrimary;
+    const savedLegacy = localStorage.getItem(THEME_STORAGE_KEY);
+    if (savedLegacy === THEME_LIGHT || savedLegacy === THEME_DARK) return savedLegacy;
+    // Default to light, do NOT auto-apply system preference
+    return THEME_LIGHT;
   });
 
   // Aplicar classe de tema ao elemento raiz
@@ -28,7 +30,8 @@ const ThemeProvider = ({ children }) => {
     // Adicionar a classe do tema atual
     root.classList.add(theme);
     
-    // Salvar no localStorage
+    // Salvar no localStorage (unificado + legado para compatibilidade)
+    localStorage.setItem('appTheme', theme);
     localStorage.setItem(THEME_STORAGE_KEY, theme);
     
     // Para o modo escuro do Tailwind
@@ -49,9 +52,10 @@ const ThemeProvider = ({ children }) => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
     const handleChange = () => {
-      // Apenas atualizar se o usuário não tiver definido uma preferência
-      const saved = localStorage.getItem(THEME_STORAGE_KEY);
-      if (!saved) {
+      // Não alterar automaticamente se houver preferência salva em qualquer chave
+      const savedPrimary = localStorage.getItem('appTheme');
+      const savedLegacy = localStorage.getItem(THEME_STORAGE_KEY);
+      if (!savedPrimary && !savedLegacy) {
         setTheme(mediaQuery.matches ? THEME_DARK : THEME_LIGHT);
       }
     };

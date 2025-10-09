@@ -367,8 +367,8 @@ const DocumentationPage = () => {
           }}
           className={`w-full flex items-center justify-between px-3 py-2 text-left text-sm rounded-md transition-colors ${
             activeSection === section.id
-              ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 font-medium'
-              : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+              ? 'bg-secondary text-foreground font-medium'
+              : 'text-muted-foreground hover:bg-accent'
           }`}
         >
           <div className="flex items-center">
@@ -376,7 +376,7 @@ const DocumentationPage = () => {
             {section.title}
           </div>
           {Array.isArray(section.subsections) && section.subsections.length > 0 && (
-            <span className="ml-2 text-gray-500">
+            <span className="ml-2 text-muted-foreground">
               {expandedSections.includes(section.id) ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
             </span>
           )}
@@ -391,7 +391,7 @@ const DocumentationPage = () => {
                     setActiveSection(`${section.id}-${subsection}`);
                     setIsMenuOpen(false);
                   }}
-                  className="flex items-center w-full px-3 py-1.5 text-left text-xs rounded-md text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                  className="flex items-center w-full px-3 py-1.5 text-left text-xs rounded-md text-muted-foreground hover:bg-accent"
                 >
                   {subsection.split('-').map(word =>
                     word.charAt(0).toUpperCase() + word.slice(1)
@@ -412,12 +412,12 @@ const DocumentationPage = () => {
           <div className="prose dark:prose-invert max-w-none">
             <div className="mb-8">
               <div className="flex items-center mb-4">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mr-4">
+                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl flex items-center justify-center mr-6 shadow-2xl">
                   <Zap className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-bold mb-2">Bem-vindo ao TamanduAI</h1>
-                  <p className="text-xl text-gray-600 dark:text-gray-400">
+                  <h1 className="text-5xl font-black text-foreground mb-3">Bem-vindo ao TamanduAI</h1>
+                  <p className="text-2xl text-muted-foreground mb-8">
                     Plataforma Educacional Enterprise com IA Avançada e Segurança Completa
                   </p>
                 </div>
@@ -434,12 +434,12 @@ const DocumentationPage = () => {
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="bg-card text-card-foreground p-6 rounded-xl shadow-sm border border-border">
                 <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mb-4">
                   <Brain className="w-6 h-6 text-blue-600" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">IA Avançada</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                <p className="text-muted-foreground text-sm">
                   Detecção automática de plágio com Winston AI, assistente inteligente e análise preditiva.
                 </p>
               </div>
@@ -449,54 +449,54 @@ const DocumentationPage = () => {
                   <Shield className="w-6 h-6 text-green-600" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Segurança Enterprise</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                <p className="text-muted-foreground text-sm">
                   RLS, sanitização XSS, hCaptcha, rate limiting, auditoria completa e proteção OWASP Top 10.
                 </p>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="bg-card text-card-foreground p-6 rounded-xl shadow-sm border border-border">
                 <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center mb-4">
                   <Globe className="w-6 h-6 text-purple-600" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Global & Acessível</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                <p className="text-muted-foreground text-sm">
                   3 idiomas suportados, acessibilidade WCAG 2.1 completa e design responsivo.
                 </p>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="bg-card text-card-foreground p-6 rounded-xl shadow-sm border border-border">
                 <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mb-4">
                   <Container className="w-6 h-6 text-orange-600" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Deploy Production-Ready</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                <p className="text-muted-foreground text-sm">
                   Docker completo, Nginx otimizado, monitoramento 24/7 e backup automático.
                 </p>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="bg-card text-card-foreground p-6 rounded-xl shadow-sm border border-border">
                 <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center mb-4">
                   <Activity className="w-6 h-6 text-red-600" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Dashboards Python</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                <p className="text-muted-foreground text-sm">
                   Dashboards customizados em Python com métricas em tempo real e visualizações interativas.
                 </p>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="bg-card text-card-foreground p-6 rounded-xl shadow-sm border border-border">
                 <div className="w-12 h-12 bg-teal-100 dark:bg-teal-900/30 rounded-lg flex items-center justify-center mb-4">
                   <Database className="w-6 h-6 text-teal-600" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Supabase Cloud</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                <p className="text-muted-foreground text-sm">
                   Banco de dados escalável, Edge Functions e autenticação integrada.
                 </p>
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 p-6 rounded-xl">
-              <h2 className="text-2xl font-bold mb-4 flex items-center">
+            <div className="p-8 bg-gradient-to-br from-blue-50/90 via-indigo-50/70 to-purple-50/90 dark:from-blue-950/40 dark:via-indigo-950/30 dark:to-purple-950/40 rounded-3xl shadow-2xl">
+              <h2 className="text-3xl font-black mb-6 flex items-center">
                 <Star className="w-6 h-6 mr-2 text-yellow-500" />
                 Recursos Destacados
               </h2>
@@ -584,7 +584,7 @@ const DocumentationPage = () => {
             </p>
 
             <div className="space-y-8">
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="bg-card text-card-foreground p-6 rounded-xl shadow-sm border border-border">
                 <h2 className="flex items-center text-2xl font-bold mb-4">
                   <Activity className="w-6 h-6 mr-2 text-green-600" />
                   Stack de Monitoramento
@@ -594,7 +594,7 @@ const DocumentationPage = () => {
                   <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                     <BarChart className="w-8 h-8 mx-auto mb-2 text-blue-600" />
                     <h4 className="font-semibold">Prometheus</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-muted-foreground">
                       Coleta de métricas em tempo real
                     </p>
                   </div>
@@ -602,7 +602,7 @@ const DocumentationPage = () => {
                   <div className="text-center p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
                     <Code className="w-8 h-8 mx-auto mb-2 text-orange-600" />
                     <h4 className="font-semibold">Python Dashboards</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-muted-foreground">
                       Dashboards customizados em Python
                     </p>
                   </div>
@@ -610,7 +610,7 @@ const DocumentationPage = () => {
                   <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                     <Search className="w-8 h-8 mx-auto mb-2 text-green-600" />
                     <h4 className="font-semibold">Elasticsearch</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-muted-foreground">
                       Busca avançada e análise de logs
                     </p>
                   </div>
@@ -618,14 +618,14 @@ const DocumentationPage = () => {
                   <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
                     <FileText className="w-8 h-8 mx-auto mb-2 text-purple-600" />
                     <h4 className="font-semibold">Vector</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-muted-foreground">
                       Agregação e processamento de logs
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="bg-card text-card-foreground p-6 rounded-xl shadow-sm border border-border">
                 <h2 className="flex items-center text-2xl font-bold mb-4">
                   <Code className="w-6 h-6 mr-2 text-blue-600" />
                   Dashboards Python Customizados
@@ -668,7 +668,7 @@ const DocumentationPage = () => {
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="bg-card text-card-foreground p-6 rounded-xl shadow-sm border border-border">
                 <h2 className="flex items-center text-2xl font-bold mb-4">
                   <BarChart className="w-6 h-6 mr-2 text-blue-600" />
                   Métricas Monitoradas
@@ -699,14 +699,14 @@ const DocumentationPage = () => {
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="bg-card text-card-foreground p-6 rounded-xl shadow-sm border border-border">
                 <h2 className="flex items-center text-2xl font-bold mb-4">
                   <Bell className="w-6 h-6 mr-2 text-red-600" />
                   Alertas e Notificações
                 </h2>
 
                 <div className="space-y-4">
-                  <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                  <div className="p-4 bg-gradient-to-br from-red-50/90 via-rose-50/70 to-pink-50/90 dark:from-red-950/40 dark:via-rose-950/30 dark:to-pink-950/40 rounded-lg border border-red-200 dark:border-red-800">
                     <h4 className="font-semibold text-red-800 dark:text-red-200">Alertas Críticos</h4>
                     <ul className="text-sm mt-2 space-y-1">
                       <li>• API indisponível por mais de 5 minutos</li>
@@ -728,7 +728,7 @@ const DocumentationPage = () => {
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="bg-card text-card-foreground p-6 rounded-xl shadow-sm border border-border">
                 <h2 className="flex items-center text-2xl font-bold mb-4">
                   <TrendingUp className="w-6 h-6 mr-2 text-green-600" />
                   Dashboards Disponíveis
@@ -738,14 +738,14 @@ const DocumentationPage = () => {
                   <div className="space-y-3">
                     <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                       <h4 className="font-semibold">Visão Geral da Plataforma</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-muted-foreground">
                         Health checks, usuários ativos, performance geral
                       </p>
                     </div>
 
                     <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                       <h4 className="font-semibold">Performance da API</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-muted-foreground">
                         Tempos de resposta, throughput, erros por endpoint
                       </p>
                     </div>
@@ -754,7 +754,7 @@ const DocumentationPage = () => {
                   <div className="space-y-3">
                     <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
                       <h4 className="font-semibold">Banco de Dados</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-muted-foreground">
                         Conexões, queries lentas, uso de recursos
                       </p>
                     </div>
@@ -772,20 +772,20 @@ const DocumentationPage = () => {
               <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl">
                 <h3 className="text-lg font-bold mb-4">🔗 Acesso aos Dashboards</h3>
                 <div className="grid md:grid-cols-3 gap-4">
-                  <div className="text-center p-3 bg-white dark:bg-gray-800 rounded-lg">
+                  <div className="text-center p-3 bg-card text-card-foreground rounded-lg border border-border">
                     <div className="text-lg font-bold text-blue-600 mb-1">Python Dashboards</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">http://localhost:8050</div>
-                    <div className="text-xs text-gray-500">Dashboards customizados</div>
+                    <div className="text-sm text-muted-foreground">http://localhost:8050</div>
+                    <div className="text-xs text-muted-foreground">Dashboards customizados</div>
                   </div>
-                  <div className="text-center p-3 bg-white dark:bg-gray-800 rounded-lg">
+                  <div className="text-center p-3 bg-card text-card-foreground rounded-lg border border-border">
                     <div className="text-lg font-bold text-green-600 mb-1">Prometheus</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">http://localhost:9090</div>
-                    <div className="text-xs text-gray-500">Métricas em tempo real</div>
+                    <div className="text-sm text-muted-foreground">http://localhost:9090</div>
+                    <div className="text-xs text-muted-foreground">Métricas em tempo real</div>
                   </div>
-                  <div className="text-center p-3 bg-white dark:bg-gray-800 rounded-lg">
+                  <div className="text-center p-3 bg-card text-card-foreground rounded-lg border border-border">
                     <div className="text-lg font-bold text-purple-600 mb-1">Elasticsearch</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">http://localhost:9200</div>
-                    <div className="text-xs text-gray-500">Busca avançada de logs</div>
+                    <div className="text-sm text-muted-foreground">http://localhost:9200</div>
+                    <div className="text-xs text-muted-foreground">Busca avançada de logs</div>
                   </div>
                 </div>
               </div>

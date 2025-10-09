@@ -54,9 +54,9 @@ const ActivityPublishPage = () => {
     try {
       setLoading(true);
 
-      // Carregar template
+      // Carregar atividade (atua como template)
       const { data: templateData, error: templateError } = await supabase
-        .from('activity_templates')
+        .from('activities')
         .select('*')
         .eq('id', templateId)
         .eq('created_by', user.id)
@@ -69,7 +69,7 @@ const ActivityPublishPage = () => {
       const { data: classesData, error: classesError } = await supabase
         .from('classes')
         .select('*')
-        .eq('teacher_id', user.id);
+        .eq('created_by', user.id);
 
       if (classesError) throw classesError;
       setClasses(classesData || []);
@@ -99,17 +99,35 @@ const ActivityPublishPage = () => {
     try {
       setPublishing(true);
 
-      const { error } = await supabase.rpc('publish_activity_template', {
-        template_id_param: templateId,
-        class_ids: publishData.selectedClasses,
-        custom_title: publishData.customTitle || null,
-        custom_description: publishData.customDescription || null,
-        custom_instructions: publishData.customInstructions || null,
-        custom_due_date: publishData.dueDate || null,
-        custom_max_points: publishData.maxPoints
-      });
+      // Marcar como publicada
+      const { error: publishError } = await supabase
+        .from('activities')
+        .update({
+          status: 'published',
+          published_at: new Date().toISOString(),
+          title: publishData.customTitle || undefined,
+          description: publishData.customDescription || undefined,
+          instructions: publishData.customInstructions || undefined,
+          due_date: publishData.dueDate || undefined,
+          total_points: publishData.maxPoints || undefined
+        })
+        .eq('id', templateId)
+        .eq('created_by', user.id);
 
-      if (error) throw error;
+      if (publishError) throw publishError;
+
+      // Vincular às turmas
+      const { error: assignError } = await supabase
+        .from('activity_class_assignments')
+        .insert(
+          publishData.selectedClasses.map(cId => ({
+            activity_id: templateId,
+            class_id: cId,
+            assigned_at: new Date().toISOString()
+          }))
+        );
+
+      if (assignError) throw assignError;
 
       // Notificações: enviar push para alunos das turmas selecionadas
       try {
@@ -120,13 +138,14 @@ const ActivityPublishPage = () => {
           const className = classInfo?.name || 'Sua turma';
 
           const { data: enrollments, error: enrollErr } = await supabase
-            .from('classes_students')
-            .select('student_id')
-            .eq('class_id', cId);
+            .from('class_members')
+            .select('user_id')
+            .eq('class_id', cId)
+            .eq('role', 'student');
 
           if (enrollErr) throw enrollErr;
 
-          const studentIds = (enrollments || []).map((e) => e.student_id);
+          const studentIds = (enrollments || []).map((e) => e.user_id);
 
           // Buscar emails dos alunos
           let emailsByUser = {};

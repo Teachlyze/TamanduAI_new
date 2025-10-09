@@ -243,13 +243,13 @@ const ChatbotPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 dark:from-violet-950 dark:via-purple-950 dark:to-fuchsia-950">
       <div className="space-y-8 p-6">
         {/* Header com gradiente */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 rounded-3xl p-8 text-white"
+          className="p-12 rounded-3xl shadow-2xl backdrop-blur-xl bg-white/95 dark:bg-gray-900/95 border border-slate-200/50 dark:border-slate-700/50"
         >
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="relative z-10">
@@ -308,7 +308,7 @@ const ChatbotPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-white/50 shadow-lg"
+          className="p-12 rounded-3xl shadow-2xl bg-white/90 dark:bg-gray-800/90 border border-slate-200/50 dark:border-slate-600/50 hover:shadow-3xl transition-all duration-500"
         >
           <div className="flex items-center mb-6">
             <div className="w-12 h-12 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center mr-4">
@@ -328,7 +328,7 @@ const ChatbotPage = () => {
                 transition={{ delay: 0.1 + index * 0.1 }}
                 className="relative group"
               >
-                <div className={`bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/50 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105 ${!selectedClass ? 'opacity-50' : ''}`}>
+                <div className={`p-8 rounded-3xl shadow-2xl bg-white/90 dark:bg-gray-800/90 border border-slate-200/50 dark:border-slate-600/50 hover:shadow-3xl transition-all duration-500 hover:shadow-xl transition-all duration-300 group-hover:scale-105 ${!selectedClass ? 'opacity-50' : ''}`}>
                   <div className={`w-14 h-14 bg-gradient-to-r ${step.color} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
                     <step.icon className="w-7 h-7 text-white" />
                   </div>
@@ -350,9 +350,9 @@ const ChatbotPage = () => {
             transition={{ delay: 0.2 }}
             className="lg:col-span-2"
           >
-            <Card className="bg-white/70 backdrop-blur-sm border-white/50 shadow-lg overflow-hidden">
+            <Card className="p-8 rounded-3xl shadow-2xl bg-white/90 dark:bg-gray-800/90 border border-slate-200/50 dark:border-slate-600/50 hover:shadow-3xl transition-all duration-500">
               {/* Chat Header */}
-              <div className="p-6 border-b border-white/50 bg-gradient-to-r from-blue-50 to-purple-50">
+              <div className="p-8 rounded-3xl shadow-2xl bg-white/90 dark:bg-gray-800/90 border border-slate-200/50 dark:border-slate-600/50 hover:shadow-3xl transition-all duration-500">
                 <div className="flex items-center space-x-4">
                   <div className="relative">
                     <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
@@ -375,7 +375,7 @@ const ChatbotPage = () => {
               </div>
 
               {/* Messages */}
-              <div className="h-96 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-gray-50/50 to-white/50">
+              <div className="p-8 rounded-3xl shadow-2xl bg-white/90 dark:bg-gray-800/90 border border-slate-200/50 dark:border-slate-600/50 hover:shadow-3xl transition-all duration-500">
                 {messages.map((msg) => (
                   <motion.div
                     key={msg.id}
@@ -412,7 +412,7 @@ const ChatbotPage = () => {
               </div>
 
               {/* Input */}
-              <div className="p-6 border-t border-white/50 bg-white/50">
+              <div className="p-8 rounded-3xl shadow-2xl bg-white/90 dark:bg-gray-800/90 border border-slate-200/50 dark:border-slate-600/50 hover:shadow-3xl transition-all duration-500">
                 <div className="flex space-x-3">
                   <Input
                     value={message}
@@ -463,7 +463,7 @@ const ChatbotPage = () => {
                         initial={{ opacity: 0, x: 10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.1 * index }}
-                        className="flex items-center space-x-3 p-3 hover:bg-white/50 rounded-xl transition-all duration-300"
+                        className="flex items-center space-x-3 p-8 rounded-3xl shadow-2xl bg-white/90 dark:bg-gray-800/90 border border-slate-200/50 dark:border-slate-600/50 hover:shadow-3xl transition-all duration-500"
                       >
                         <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
                           <FileText className="w-5 h-5 text-blue-600" />
@@ -483,7 +483,7 @@ const ChatbotPage = () => {
                       </motion.div>
                     ))
                   ) : (
-                    <div className="text-center py-8">
+                    <div className="p-12 rounded-3xl shadow-2xl bg-white/90 dark:bg-gray-800/90 border border-slate-200/50 dark:border-slate-600/50 hover:shadow-3xl transition-all duration-500">
                       <FileText className="mx-auto h-12 w-12 text-gray-400 mb-3" />
                       <p className="text-gray-500">
                         {selectedClass
@@ -524,18 +524,18 @@ const ChatbotPage = () => {
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-xl">
+                  <div className="flex items-center justify-between p-8 rounded-3xl shadow-2xl bg-white/90 dark:bg-gray-800/90 border border-slate-200/50 dark:border-slate-600/50 hover:shadow-3xl transition-all duration-500">
                     <span className="text-sm text-gray-600">Modelo atual</span>
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                       <span className="text-sm font-medium text-green-600">Ativo</span>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-xl">
+                  <div className="flex items-center justify-between p-8 rounded-3xl shadow-2xl bg-white/90 dark:bg-gray-800/90 border border-slate-200/50 dark:border-slate-600/50 hover:shadow-3xl transition-all duration-500">
                     <span className="text-sm text-gray-600">Última atualização</span>
                     <span className="text-sm text-gray-900 font-medium">Hoje, {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-purple-50 rounded-xl">
+                  <div className="flex items-center justify-between p-8 rounded-3xl shadow-2xl bg-white/90 dark:bg-gray-800/90 border border-slate-200/50 dark:border-slate-600/50 hover:shadow-3xl transition-all duration-500">
                     <span className="text-sm text-gray-600">Materiais ativos</span>
                     <span className="text-sm text-purple-600 font-bold">{trainingMaterials.length}</span>
                   </div>
@@ -584,7 +584,7 @@ const ChatbotPage = () => {
 
         {/* Material Management Dialog */}
         <Dialog open={showMaterialDialog} onOpenChange={setShowMaterialDialog}>
-          <DialogContent className="bg-white/90 backdrop-blur-sm border-white/50 max-w-2xl">
+          <DialogContent className="p-12 rounded-3xl shadow-2xl bg-white/90 dark:bg-gray-800/90 border border-slate-200/50 dark:border-slate-600/50 hover:shadow-3xl transition-all duration-500">
             <DialogHeader>
               <DialogTitle>Gerenciar Materiais - {selectedClass?.name}</DialogTitle>
             </DialogHeader>
@@ -594,7 +594,7 @@ const ChatbotPage = () => {
               </p>
               <div className="max-h-64 overflow-y-auto space-y-2">
                 {currentClassMaterials.map((material) => (
-                  <div key={material.id} className="flex items-center space-x-3 p-3 border rounded-lg">
+                  <div key={material.id} className="flex items-center space-x-3 p-6 rounded-3xl shadow-2xl bg-white/90 dark:bg-gray-800/90 border border-slate-200/50 dark:border-slate-600/50 hover:shadow-3xl transition-all duration-500">
                     <Checkbox
                       id={material.id}
                       checked={trainingMaterials.includes(material.id)}

@@ -10,17 +10,18 @@ import cacheManager from '@/utils/cacheManager';
 const STALE_TIME = 60 * 1000; // 1 minuto para considerar os dados obsoletos
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000; // 1 segundo
+const REDIS_ENABLED = (import.meta?.env?.VITE_REDIS_ENABLED || '').toString().toLowerCase() === 'true';
 
-// Estratégia de cache: Stale-While-Revalidate
+// Estratégia de cache: Stale-while-Revalidate
 export const useRedisCache = (key, fetchFunction, options = {}) => {
   const {
-    ttl = 300, // 5 minutos por padrão
+    ttl = 300, // segundos
     dependencies = [],
     enabled = true,
     staleTime = STALE_TIME,
     skipInitialFetch = false,
     onSuccess,
-    onError
+    onError,
   } = options;
 
   const [data, setData] = useState(null);
@@ -29,238 +30,120 @@ export const useRedisCache = (key, fetchFunction, options = {}) => {
   const [stale, setStale] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
-  
+
   const isMounted = useRef(true);
   const fetchController = useRef(null);
   const isFetching = useRef(false);
   const cacheKey = typeof key === 'function' ? key() : key;
 
-  // Limpar ao desmontar
-  useEffect(() => {
-    return () => {
-      isMounted.current = false;
-      if (fetchController.current) {
-        fetchController.current.abort();
-      }
-    };
-  }, []);
+  useEffect(() => () => { isMounted.current = false; fetchController.current?.abort(); }, []);
 
-  // Função para buscar dados da API
   const fetchData = useCallback(async (force = false) => {
     if ((!cacheKey && !force) || !enabled) return;
-    
-    // Se já está buscando, não faz nada
     if (isFetching.current) return;
-    
     isFetching.current = true;
-    
-    // Cria um novo AbortController para a requisição
     fetchController.current = new AbortController();
-    
+
     try {
-      // Tenta buscar do cache primeiro (se não for forçado)
-      if (!force) {
-        const cachedData = await redis.get(cacheKey);
-        
+      if (!force && REDIS_ENABLED) {
+        let cachedData = null;
+        try {
+          cachedData = await redis.get(cacheKey);
+        } catch (e) {
+          Logger.warn('Redis GET failed, continuing without cache', { key: cacheKey, error: e.message });
+        }
         if (cachedData) {
           metrics.cacheHit();
-          
-          // Verifica se os dados estão obsoletos
-          const isStale = !cachedData.timestamp || 
-            (Date.now() - new Date(cachedData.timestamp).getTime() > staleTime);
-          
+          const isStale = !cachedData.timestamp || (Date.now() - new Date(cachedData.timestamp).getTime() > staleTime);
           if (isMounted.current) {
             setData(cachedData.data);
             setStale(isStale);
-            setLastUpdated(new Date(cachedData.timestamp));
+            setLastUpdated(cachedData.timestamp ? new Date(cachedData.timestamp) : new Date());
             setLoading(false);
-            
-            // Se os dados estão obsoletos, faz uma nova busca em segundo plano
-            if (isStale) {
-              Logger.debug('Data is stale, refreshing in background', { key: cacheKey });
-              fetchData(true).catch(err => {
-                Logger.error('Background refresh failed', { 
-                  key: cacheKey, 
-                  error: err.message 
-                });
-              });
-            }
-            
-            // Se temos dados em cache e não estamos forçando, retorna
-            if (!force) {
-              return;
-            }
+            if (!force && !isStale) return cachedData.data;
           }
         } else {
           metrics.cacheMiss();
         }
       }
-      
-      // Se chegou aqui, ou não tinha cache ou está forçando atualização
+
       if (isMounted.current) {
         setLoading(true);
         setError(null);
       }
-      
+
       const startTime = performance.now();
       const response = await fetchFunction(fetchController.current.signal);
       const endTime = performance.now();
-      
-      // Registra métricas de latência
       metrics.apiCall(endTime - startTime);
-      
-      if (!response) {
-        throw new Error('No response from server');
-      }
-      
-      // Prepara os dados para o cache
+      if (!response) throw new Error('No response from server');
+
       const dataToCache = {
         data: response,
         timestamp: new Date().toISOString(),
-        metadata: {
-          ttl,
-          staleTime
-        }
+        metadata: { ttl, staleTime },
       };
-      
-      // Salva no cache
-      await redis.set(cacheKey, dataToCache, ttl);
-      
-      // Atualiza o estado
+      if (REDIS_ENABLED) {
+        try { await redis.set(cacheKey, dataToCache, ttl); }
+        catch (e) { Logger.warn('Redis SET failed, skipping cache write', { key: cacheKey, error: e.message }); }
+      }
+
       if (isMounted.current) {
         setData(response);
         setStale(false);
         setLastUpdated(new Date(dataToCache.timestamp));
         setLoading(false);
-        setRetryCount(0); // Reseta a contagem de tentativas
-        
-        // Chama o callback de sucesso, se fornecido
-        if (onSuccess) {
-          onSuccess(response);
-        }
+        setRetryCount(0);
+        onSuccess?.(response);
       }
-      
       return response;
-      
-    } catch (error) {
-      // Se for um abort, não faz nada
-      if (error.name === 'AbortError') {
-        return;
-      }
-      
+    } catch (err) {
+      if (err.name === 'AbortError') return;
       metrics.apiError();
-      Logger.error('Error in useRedisCache', { 
-        key: cacheKey, 
-        error: error.message,
-        stack: error.stack
-      });
-      
+      Logger.error('Error in useRedisCache', { key: cacheKey, error: err.message, stack: err.stack });
       if (isMounted.current) {
-        setError(error);
+        setError(err);
         setLoading(false);
-        
-        // Tenta novamente em caso de erro
         if (retryCount < MAX_RETRIES) {
           const delay = RETRY_DELAY * Math.pow(2, retryCount);
-          setTimeout(() => {
-            if (isMounted.current) {
-              setRetryCount(c => c + 1);
-              fetchData(true);
-            }
-          }, delay);
-        } else if (onError) {
-          onError(error);
+          setTimeout(() => { if (isMounted.current) { setRetryCount((c) => c + 1); fetchData(true); } }, delay);
+        } else {
+          onError?.(err);
         }
       }
-      
-      throw error;
-      
+      throw err;
     } finally {
       isFetching.current = false;
       fetchController.current = null;
     }
   }, [cacheKey, fetchFunction, ttl, staleTime, enabled, retryCount, onSuccess, onError]);
 
-  // Efeito para carregar os dados quando as dependências mudam
   useEffect(() => {
     if (skipInitialFetch) return;
-    
-    fetchData().catch(() => {
-      // Já tratado no fetchData
-    });
-    
-    // Cancela a requisição ao desmontar
-    return () => {
-      if (fetchController.current) {
-        fetchController.current.abort();
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cacheKey, skipInitialFetch, ...dependencies, fetchData]);
+    fetchData().catch(() => {});
+    return () => fetchController.current?.abort();
+  }, [cacheKey, skipInitialFetch, fetchData, ...dependencies]);
 
-  // Função para invalidar o cache
   const invalidateCache = useCallback(async () => {
     if (!cacheKey) return;
-    
-    try {
-      await redis.del(cacheKey);
-      metrics.cacheDelete();
-      
-      // Força uma nova busca
-      return fetchData(true);
-    } catch (error) {
-      Logger.error('Error invalidating cache', { 
-        key: cacheKey, 
-        error: error.message 
-      });
-      throw error;
-    }
+    try { if (REDIS_ENABLED) await redis.del(cacheKey); metrics.cacheDelete?.(); }
+    catch (e) { Logger.warn('Redis DEL failed during invalidate', { key: cacheKey, error: e.message }); }
+    return fetchData(true);
   }, [cacheKey, fetchData]);
-  
-  // Função para atualizar o cache manualmente
+
   const updateCache = useCallback((updater) => {
     if (!cacheKey) return;
-    
-    setData(prevData => {
-      const newData = typeof updater === 'function' ? updater(prevData) : updater;
-      
-      // Atualiza o cache em segundo plano
-      const updateCacheAsync = async () => {
-        try {
-          const dataToCache = {
-            data: newData,
-            timestamp: new Date().toISOString(),
-            metadata: { ttl, staleTime }
-          };
-          await redis.set(cacheKey, dataToCache, ttl);
-          metrics.cacheSet();
-        } catch (error) {
-          Logger.error('Error updating cache', { 
-            key: cacheKey, 
-            error: error.message 
-          });
-        }
-      };
-      
-      updateCacheAsync();
-      
+    setData((prev) => {
+      const newData = typeof updater === 'function' ? updater(prev) : updater;
+      const dataToCache = { data: newData, timestamp: new Date().toISOString(), metadata: { ttl, staleTime } };
+      if (REDIS_ENABLED) {
+        (async () => { try { await redis.set(cacheKey, dataToCache, ttl); metrics.cacheSet?.(); } catch (e) { Logger.warn('Redis SET failed during updateCache', { key: cacheKey, error: e.message }); } })();
+      }
       return newData;
     });
   }, [cacheKey, ttl, staleTime]);
 
-  return {
-    data,
-    error,
-    loading,
-    stale,
-    lastUpdated,
-    refetch: () => fetchData(true),
-    invalidate: invalidateCache,
-    updateCache,
-    isStale: stale,
-    retryCount,
-    cacheKey
-  };
+  return { data, error, loading, stale, lastUpdated, refetch: () => fetchData(true), invalidate: invalidateCache, updateCache, isStale: stale, retryCount, cacheKey };
 };
 
 // Hook specifically for user permissions with Redis-style caching
@@ -297,23 +180,90 @@ export const useUserClasses = (userId, role = 'student') => {
     `user:classes:${userId}:${role}`,
     async () => {
       try {
-        // Fetch user classes based on role
-        const { data, error } = await supabase
-          .from('class_members')
-          .select('*')
-          .eq('user_id', userId)
-          .eq('role', role);
-        
-        if (error) throw error;
-        
-        return data || [];
+        if (role === 'teacher') {
+          // For teachers, merge classes they created and classes where they are a teacher via class_members
+          const selectColumns = `
+              id,
+              name,
+              description,
+              subject,
+              created_at,
+              updated_at,
+              created_by
+          `;
+
+          const [{ data: createdClasses, error: createdErr }, { data: memberships, error: memErr }] = await Promise.all([
+            supabase
+              .from('classes')
+              .select(selectColumns)
+              .eq('created_by', userId),
+            supabase
+              .from('class_members')
+              .select('class_id')
+              .eq('user_id', userId)
+              .eq('role', 'teacher')
+          ]);
+
+          if (createdErr) throw createdErr;
+          if (memErr) throw memErr;
+
+          const classIds = (memberships || []).map(m => m.class_id);
+          let classesByMembership = [];
+          if (classIds.length > 0) {
+            const { data: cls, error: clsErr } = await supabase
+              .from('classes')
+              .select(selectColumns)
+              .in('id', classIds);
+            if (clsErr) throw clsErr;
+            classesByMembership = cls || [];
+          }
+
+          // Merge unique by id
+          const map = new Map();
+          for (const c of [...(createdClasses || []), ...classesByMembership]) {
+            if (c && !map.has(c.id)) map.set(c.id, c);
+          }
+          return Array.from(map.values());
+        } else {
+          // For students, get classes they are members of
+          const { data, error } = await supabase
+            .from('class_members')
+            .select(`
+              class_id,
+              role,
+              joined_at,
+              classes (
+                id,
+                name,
+                description,
+                subject,
+                created_at,
+                updated_at
+              )
+            `)
+            .eq('user_id', userId)
+            .eq('role', role);
+          
+          if (error) throw error;
+          
+          // Transform data to match expected format
+          return data?.map(member => ({
+            ...member.classes,
+            member_role: member.role,
+            joined_at: member.joined_at
+          })) || [];
+        }
       } catch (error) {
         console.error('Error fetching user classes:', error);
-        throw new Error('Failed to fetch user classes: ' + error.message);
+        // Return empty array instead of throwing to prevent infinite loading
+        return [];
       }
     },
-    10 * 60, // 10 minutes cache
-    [userId, role]
+    {
+      ttl: 10 * 60, // 10 minutes cache
+      dependencies: [userId, role],
+      enabled: !!userId
+    }
   );
 };
 
@@ -685,7 +635,7 @@ export const useActivitySubmissions = (activityId, options = {}) => {
       
       // Log de métricas
       metrics.apiCall(
-        'activity_submissions',
+        'submissions',
         endTime - startTime, 
         { 
           cacheHit, 
@@ -699,12 +649,13 @@ export const useActivitySubmissions = (activityId, options = {}) => {
       // Log de métricas
       metrics.apiCall(
         endTime - startTime, 
-        'activity_submissions', 
+        'submissions', 
         { 
           cacheHit, 
           fromCache: false,
           itemCount: data?.length || 0 
         }
+
       );
       
       // Chamar callback se fornecido
@@ -944,7 +895,9 @@ export const useActivitySubmissions = (activityId, options = {}) => {
     if (!activityId) return false;
     
     try {
-      await redis.del(cacheKey);
+      if (REDIS_ENABLED && cacheKey) {
+        await redis.del(cacheKey);
+      }
       return true;
     } catch (error) {
       Logger.error('Failed to invalidate submissions cache', {
@@ -959,7 +912,6 @@ export const useActivitySubmissions = (activityId, options = {}) => {
   const _getSubmission = useCallback((submissionId) => {
     return submissions.find(s => s.id === submissionId);
   }, [submissions]);
-
   // Função para atualizar uma submissão
   const _updateSubmission = useCallback((submissionId, updates) => {
     if (!activityId) return;

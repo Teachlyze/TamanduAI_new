@@ -15,10 +15,20 @@ export default function useUserRole() {
       if (!user?.id) return;
       setLoading(true);
       try {
+        // First try to get role from user metadata (faster)
+        if (user.user_metadata?.role) {
+          if (active) {
+            setRole(user.user_metadata.role === 'student' ? 'student' : 'teacher');
+            setLoading(false);
+          }
+          return;
+        }
+        
+        // Fallback: get from profiles table
         const { data, error } = await supabase
-          .from('user_roles')
+          .from('profiles')
           .select('role')
-          .eq('user_id', user.id)
+          .eq('id', user.id)
           .maybeSingle();
         if (!active) return;
         if (!error && data?.role) {
@@ -33,7 +43,7 @@ export default function useUserRole() {
       }
     })();
     return () => { active = false; };
-  }, [user?.id]);
+  }, [user?.id, user?.user_metadata?.role]);
 
   return { role, isTeacher: role === 'teacher', loading };
 }

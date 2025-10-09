@@ -56,39 +56,41 @@ const StudentDashboard = () => {
         setLoading(true);
 
         // Get activities from all enrolled classes
-        const { data: activities, error: activitiesError } = await supabase
-          .from('class_activities')
+        const { data: activityAssignments, error: activitiesError } = await supabase
+          .from('activity_class_assignments')
           .select(`
-            id,
-            title,
-            type,
-            due_date,
-            max_score,
-            created_at,
+            activity_id,
             class_id,
+            activities!inner(
+              id,
+              title,
+              activity_type,
+              due_date,
+              max_score,
+              created_at,
+              status
+            ),
             classes!inner(name)
           `)
           .in('class_id', studentClasses.map(cls => cls.id))
-          .eq('is_published', true)
+          .eq('activities.status', 'published')
           .order('created_at', { ascending: false });
 
         if (activitiesError) {
           Logger.error('Error fetching student activities:', activitiesError);
         }
 
-        // Get student's submissions
-        const { data: submissions, error: submissionsError } = await supabase
-          .from('submissions')
-          .select(`
-            id,
-            grade,
-            status,
-            submitted_at,
-            activity_id,
-            class_activities!inner(title, class_id, classes!inner(name))
-          `)
-          .eq('student_id', user.id)
-          .in('activity_id', activities?.map(a => a.id) || []);
+        // Transform activities data
+        const activities = activityAssignments?.map(assignment => ({
+          id: assignment.activities.id,
+          title: assignment.activities.title,
+          type: assignment.activities.activity_type,
+          due_date: assignment.activities.due_date,
+          max_score: assignment.activities.max_score,
+          created_at: assignment.activities.created_at,
+          class_id: assignment.class_id,
+          classes: { name: assignment.classes.name }
+        })) || [];
 
         if (submissionsError) {
           Logger.error('Error fetching student submissions:', submissionsError);
@@ -128,12 +130,24 @@ const StudentDashboard = () => {
           upcomingDeadlines: upcoming.length
         });
 
+        // Format upcoming deadlines
+        const formattedDeadlines = upcoming.map(activity => ({
+          id: activity.id,
+          title: activity.title,
+          class: activity.classes?.name,
+          date: new Date(activity.due_date).toLocaleDateString('pt-BR'),
+          daysLeft: Math.ceil((new Date(activity.due_date) - now) / (1000 * 60 * 60 * 24)),
+          priority: Math.ceil((new Date(activity.due_date) - now) / (1000 * 60 * 60 * 24)) <= 2 ? 'high' : 'medium'
+        }));
+
+        setRecentActivities(formattedActivities);
+
         // Format recent activities (recent submissions)
         const formattedActivities = submissions?.slice(0, 5).map(submission => ({
           id: submission.id,
           type: submission.status === 'graded' ? 'graded' : 'submitted',
-          title: submission.class_activities?.title || 'Atividade',
-          description: `Turma: ${submission.class_activities?.classes?.name}`,
+          title: submission.activities?.title || 'Atividade',
+          description: `Turma: ${submission.activities?.classes?.name}`,
           time: submission.submitted_at ? new Date(submission.submitted_at).toLocaleDateString('pt-BR', {
             day: '2-digit',
             month: '2-digit',
@@ -145,18 +159,6 @@ const StudentDashboard = () => {
           grade: submission.grade,
           status: submission.status
         })) || [];
-
-        setRecentActivities(formattedActivities);
-
-        // Format upcoming deadlines
-        const formattedDeadlines = upcoming.map(activity => ({
-          id: activity.id,
-          title: activity.title,
-          class: activity.classes?.name,
-          date: new Date(activity.due_date).toLocaleDateString('pt-BR'),
-          daysLeft: Math.ceil((new Date(activity.due_date) - now) / (1000 * 60 * 60 * 24)),
-          priority: Math.ceil((new Date(activity.due_date) - now) / (1000 * 60 * 60 * 24)) <= 2 ? 'high' : 'medium'
-        }));
 
         setUpcomingDeadlines(formattedDeadlines);
       } catch (error) {

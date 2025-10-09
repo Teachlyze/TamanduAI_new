@@ -1,3 +1,4 @@
+import './consoleSilencer'; // MUST be first: silences noisy logs before anything else
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import AppWithRouter from './AppWithRouter';
@@ -6,7 +7,24 @@ import './styles/globals.scss';
 import './i18n/config'; // Initialize i18n
 import './polyfills/nodePolyfills'; // Node.js polyfills for browser
 
-console.log('Iniciando aplicação TamanduAI...');
+// Silenciar logs verbosos por padrão. Defina VITE_VERBOSE_LOGS=true para reabilitar.
+(() => {
+  try {
+    const verbose = (import.meta?.env?.VITE_VERBOSE_LOGS || '').toString().toLowerCase() === 'true';
+    if (!verbose) {
+      const noop = () => {};
+      // Preserve warnings and errors; silence log/info/debug
+      // eslint-disable-next-line no-console
+      console.log = noop;
+      // eslint-disable-next-line no-console
+      console.info = noop;
+      // eslint-disable-next-line no-console
+      console.debug = noop;
+    }
+  } catch (_) {
+    /* ignore */
+  }
+})();
 
 // Verificar se o elemento root existe
 const rootElement = document.getElementById('root');
@@ -14,19 +32,15 @@ const rootElement = document.getElementById('root');
 if (!rootElement) {
   console.error('Elemento com id "root" não encontrado no DOM');
 } else {
-  console.log('Elemento root encontrado, criando raiz do React...');
   
   try {
     const root = ReactDOM.createRoot(rootElement);
-    console.log('Raiz do React criada com sucesso, renderizando a aplicação...');
     
     root.render(
       <React.StrictMode>
         <AppWithRouter />
       </React.StrictMode>
     );
-    
-    console.log('Aplicação TamanduAI renderizada com sucesso!');
   } catch (error) {
     console.error('Erro ao renderizar a aplicação:', error);
   }

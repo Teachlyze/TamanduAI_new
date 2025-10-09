@@ -57,26 +57,52 @@ const ClassActivityFeed = () => {
       setClassData(classData);
 
       // Verificar se o usuário é professor da turma
-      setIsTeacher(classData.teacher_id === user.id);
+      setIsTeacher(classData.created_by === user.id);
 
       // Carregar atividades publicadas na turma
-      const { data: activitiesData, error: activitiesError } = await supabase
-        .from('class_activities')
+      const { data: activityAssignments, error: activitiesError } = await supabase
+        .from('activity_class_assignments')
         .select(`
-          *,
-          template:activity_templates(*)
+          id,
+          activity_id,
+          class_id,
+          assigned_at,
+          activities!inner(
+            id,
+            title,
+            description,
+            due_date,
+            total_points,
+            status,
+            published_at,
+            instructions,
+            created_by
+          )
         `)
         .eq('class_id', classId)
-        .eq('status', 'published')
-        .order('published_at', { ascending: false });
+        .eq('activities.status', 'published')
+        .order('assigned_at', { ascending: false });
 
-      if (activitiesError) throw activitiesError;
-      setActivities(activitiesData || []);
+      // Transform data to match expected format
+      const activitiesData = activityAssignments?.map(assignment => ({
+        id: assignment.activities.id,
+        title: assignment.activities.title,
+        description: assignment.activities.description,
+        type: undefined,
+        due_date: assignment.activities.due_date,
+        max_points: assignment.activities.total_points,
+        status: assignment.activities.status,
+        published_at: assignment.activities.published_at,
+        instructions: assignment.activities.instructions,
+        template: undefined,
+        class_id: assignment.class_id,
+        activity_id: assignment.activity_id
+      })) || [];
 
-      // Se for professor, carregar seus templates
+      // Se for professor, carregar suas atividades (atuam como templates)
       if (isTeacher) {
         const { data: templatesData, error: templatesError } = await supabase
-          .from('activity_templates')
+          .from('activities')
           .select('*')
           .eq('created_by', user.id)
           .order('created_at', { ascending: false });
@@ -104,7 +130,7 @@ const ClassActivityFeed = () => {
         .insert({
           activity_id: activityId,
           student_id: user.id,
-          status: 'in_progress'
+          status: 'pending'
         })
         .select()
         .single();

@@ -49,7 +49,23 @@ const TeacherDashboard = () => {
 
   useEffect(() => {
     const loadTeacherData = async () => {
-      if (!user?.id || !teacherClasses) return;
+      if (!user?.id) return;
+      
+      // If classes finished loading but there are no classes, set loading to false
+      if (!classesLoading && (!teacherClasses || teacherClasses.length === 0)) {
+        setLoading(false);
+        setTeacherStats({
+          totalStudents: 0,
+          activeClasses: 0,
+          totalActivities: 0,
+          completionRate: 0,
+          pendingSubmissions: 0,
+          upcomingDeadlines: 0
+        });
+        return;
+      }
+      
+      if (!teacherClasses || classesLoading) return;
 
       try {
         setLoading(true);
@@ -59,21 +75,37 @@ const TeacherDashboard = () => {
         const activeClasses = teacherClasses.length;
         const totalActivities = teacherClasses.reduce((sum, cls) => sum + (cls.activities_count || 0), 0);
 
-        // Get recent activities from class activities
-        const { data: activities, error: activitiesError } = await supabase
-          .from('class_activities')
+        // Get recent activities through activity_class_assignments
+        const { data: activityAssignments, error: activitiesError } = await supabase
+          .from('activity_class_assignments')
           .select(`
-            id,
-            title,
-            type,
-            created_at,
-            due_date,
+            activity_id,
             class_id,
+            activities!inner(
+              id,
+              title,
+              activity_type,
+              created_at,
+              due_date,
+              status
+            ),
             classes!inner(name)
           `)
           .in('class_id', teacherClasses.map(cls => cls.id))
           .order('created_at', { ascending: false })
           .limit(5);
+        
+        // Transform the data
+        const activities = activityAssignments?.map(assignment => ({
+          id: assignment.activities.id,
+          title: assignment.activities.title,
+          type: assignment.activities.activity_type,
+          created_at: assignment.activities.created_at,
+          due_date: assignment.activities.due_date,
+          status: assignment.activities.status,
+          class_id: assignment.class_id,
+          class_name: assignment.classes.name
+        })) || [];
 
         if (activitiesError) {
           Logger.error('Error fetching recent activities:', activitiesError);
@@ -110,7 +142,7 @@ const TeacherDashboard = () => {
           id: activity.id,
           type: activity.type || 'assignment',
           title: activity.title,
-          description: `Turma: ${activity.classes?.name}`,
+          description: `Turma: ${activity.class_name || 'N/A'}`,
           time: new Date(activity.created_at).toLocaleDateString('pt-BR', {
             day: '2-digit',
             month: '2-digit',
@@ -131,7 +163,7 @@ const TeacherDashboard = () => {
     };
 
     loadTeacherData();
-  }, [user?.id, teacherClasses]);
+  }, [user?.id, teacherClasses, classesLoading]);
 
   const stats = [
     {

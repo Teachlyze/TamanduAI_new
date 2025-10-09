@@ -103,12 +103,12 @@ const ActivityView = ({ activityId, isTeacher = false, userId }) => {
       if (existing?.id) {
         await supabase
           .from('submissions')
-          .update({ answer, files, status: 'draft', updated_at: new Date().toISOString() })
+          .update({ data: answer ?? null, attachments: files ?? [], status: 'draft', updated_at: new Date().toISOString() })
           .eq('id', existing.id);
       } else {
         await supabase
           .from('submissions')
-          .insert([{ activity_id: activityId, user_id: userId, answer, files, status: 'draft', created_at: new Date().toISOString() }]);
+          .insert([{ activity_id: activityId, user_id: userId, data: answer ?? null, attachments: files ?? [], status: 'draft', created_at: new Date().toISOString() }]);
       }
     } catch (e) {
       // silent autosave
@@ -132,18 +132,21 @@ const ActivityView = ({ activityId, isTeacher = false, userId }) => {
       
       let submissionId = existingSubmission?.id;
       
+      // Build submission payload using new schema
+      const payload = {
+        data: submissionData?.answersByIndex ? submissionData.answersByIndex : (submissionData?.answer ?? null),
+        attachments: submissionData?.files ?? [],
+        submitted_at: new Date().toISOString(),
+        status: 'submitted',
+        plagiarism_checked: false,
+        plagiarism_score: null
+      };
+
       // Se já existe uma submissão, atualiza; caso contrário, cria uma nova
       if (submissionId) {
         const { error: updateError } = await supabase
           .from('submissions')
-          .update({
-            answer: submissionData.answer,
-            files: submissionData.files,
-            submitted_at: new Date().toISOString(),
-            status: 'submitted',
-            plagiarism_checked: false,
-            plagiarism_score: null
-          })
+          .update(payload)
           .eq('id', submissionId);
           
         if (updateError) throw updateError;
@@ -154,12 +157,7 @@ const ActivityView = ({ activityId, isTeacher = false, userId }) => {
             {
               activity_id: activityId,
               user_id: userId,
-              answer: submissionData.answer,
-              files: submissionData.files,
-              submitted_at: new Date().toISOString(),
-              status: 'submitted',
-              plagiarism_checked: false,
-              plagiarism_score: null
+              ...payload
             }
           ])
           .select()
@@ -191,21 +189,7 @@ const ActivityView = ({ activityId, isTeacher = false, userId }) => {
         }
       }
       
-      // Persist per-question answers (replace existing set)
-      if (submissionId && submissionData?.answersByIndex && Object.keys(submissionData.answersByIndex).length > 0) {
-        try {
-          await supabase.from('answers').delete().eq('submission_id', submissionId);
-          const rows = Object.entries(submissionData.answersByIndex).map(([idx, val]) => ({
-            submission_id: submissionId,
-            question_index: Number(idx),
-            value: val,
-            created_at: new Date().toISOString(),
-          }));
-          if (rows.length > 0) await supabase.from('answers').insert(rows);
-        } catch (ansErr) {
-          console.warn('Falha ao salvar respostas por pergunta:', ansErr);
-        }
-      }
+      // No per-answer table persists; data stored in submissions.data
 
       // Auto-grade (best-effort)
       try {
@@ -295,9 +279,9 @@ const ActivityView = ({ activityId, isTeacher = false, userId }) => {
                   {new Date(activity.due_date).toLocaleDateString('pt-BR')}
                 </div>
               )}
-              {activity.points !== null && activity.points !== undefined && (
+              {activity.total_points !== null && activity.total_points !== undefined && (
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  {activity.points} pontos
+                  {activity.total_points} pontos
                 </span>
               )}
             </div>
@@ -351,10 +335,10 @@ const ActivityView = ({ activityId, isTeacher = false, userId }) => {
             )}
           </TabList>
           
-          <div className="p-6">
-            {/* Aba de envio de resposta (alunos) */}
-            {!isTeacher && (
-              <TabPanel>
+          {/* Aba de envio de resposta (alunos) */}
+          {!isTeacher && (
+            <TabPanel>
+              <div className="p-6">
                 {userSubmission ? (
                   <div className="space-y-4">
                     <div className="bg-green-50 border-l-4 border-green-400 p-4">
@@ -369,7 +353,7 @@ const ActivityView = ({ activityId, isTeacher = false, userId }) => {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="bg-white shadow overflow-hidden sm:rounded-lg">
                       <div className="px-4 py-5 sm:px-6">
                         <h3 className="text-lg leading-6 font-medium text-gray-900">Sua Resposta</h3>
@@ -378,17 +362,31 @@ const ActivityView = ({ activityId, isTeacher = false, userId }) => {
                         </p>
                       </div>
                       <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
-                        {userSubmission.answer ? (
-                          <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: userSubmission.answer }} />
+                        {userSubmission.data && typeof userSubmission.data === 'string' ? (
+                          <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: userSubmission.data }} />
+                        ) : userSubmission.data && Array.isArray(userSubmission.data) ? (
+                          <ul className="list-disc pl-6">
+                            {userSubmission.data.map((item, idx) => (
+                              <li key={idx} className="text-sm text-gray-700 break-words">{String(item?.answer_text ?? item)}</li>
+                            ))}
+                          </ul>
+                        ) : userSubmission.data && typeof userSubmission.data === 'object' ? (
+                          <ul className="list-disc pl-6">
+                            {Object.entries(userSubmission.data).map(([k, v]) => (
+                              <li key={k} className="text-sm text-gray-700 break-words">
+                                <span className="font-medium mr-1">{k}:</span> {String(v?.answer_text ?? v)}
+                              </li>
+                            ))}
+                          </ul>
                         ) : (
                           <p className="text-gray-500 italic">Nenhuma resposta em texto fornecida.</p>
                         )}
-                        
-                        {userSubmission.files && userSubmission.files.length > 0 && (
+
+                        {userSubmission.attachments && userSubmission.attachments.length > 0 && (
                           <div className="mt-6">
                             <h4 className="text-sm font-medium text-gray-700 mb-2">Arquivos anexados:</h4>
                             <ul className="border border-gray-200 rounded-md divide-y divide-gray-200">
-                              {userSubmission.files.map((file, index) => (
+                              {userSubmission.attachments.map((file, index) => (
                                 <li key={index} className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
                                   <div className="w-0 flex-1 flex items-center">
                                     <FiFileText className="flex-shrink-0 h-5 w-5 text-gray-400" />
@@ -409,17 +407,14 @@ const ActivityView = ({ activityId, isTeacher = false, userId }) => {
                             </ul>
                           </div>
                         )}
+                        <button
+                          type="button"
+                          onClick={() => setTabIndex(0)}
+                          className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        >
+                          Editar Resposta
+                        </button>
                       </div>
-                    </div>
-                    
-                    <div className="flex justify-end">
-                      <button
-                        type="button"
-                        onClick={() => setTabIndex(0)}
-                        className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      >
-                        Editar Resposta
-                      </button>
                     </div>
                   </div>
                 ) : (
@@ -433,12 +428,14 @@ const ActivityView = ({ activityId, isTeacher = false, userId }) => {
                     isPlagiarismCheckEnabled={activity.settings?.plagiarism_check_enabled || false}
                   />
                 )}
-              </TabPanel>
-            )}
-            
-            {/* Aba de submissões (professor) */}
-            {isTeacher && (
-              <TabPanel>
+              </div>
+            </TabPanel>
+          )}
+          
+          {/* Aba de submissões (professor) */}
+          {isTeacher && (
+            <TabPanel>
+              <div className="p-6">
                 <SubmissionManager
                   activityId={activityId}
                   userId={userId}
@@ -447,9 +444,9 @@ const ActivityView = ({ activityId, isTeacher = false, userId }) => {
                   isPlagiarismCheckEnabled={activity.settings?.plagiarism_check_enabled || false}
                   onSubmissionsChange={setSubmissions}
                 />
-              </TabPanel>
-            )}
-          </div>
+              </div>
+            </TabPanel>
+          )}
         </Tabs>
       </div>
     </div>

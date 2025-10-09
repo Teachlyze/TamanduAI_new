@@ -47,9 +47,12 @@ const LoginPage = () => {
   }, []);
 
   useEffect(() => {
+    console.log('[LoginPage] Auth state:', { user: !!user, authLoading, isCheckingAuth });
     if (user) {
+      console.log('[LoginPage] User detected, navigating to dashboard...');
       navigate('/dashboard');
     } else if (!authLoading) {
+      console.log('[LoginPage] No user, auth not loading, setting isCheckingAuth to false');
       setIsCheckingAuth(false);
     }
   }, [user, authLoading, navigate]);
@@ -159,6 +162,7 @@ const LoginPage = () => {
     
     const isFormValid = validateForm();
     if (!isFormValid) {
+      setLoading(false);
       toast({
         title: "Erro de validação",
         description: "Corrija os erros no formulário antes de continuar.",
@@ -167,6 +171,7 @@ const LoginPage = () => {
       return;
     }
     
+    // Require captcha only in production
     if (!isLocalhost && !captchaToken) {
       setLoading(false); // Reset loading state if captcha is missing
       setCaptchaError('Complete a verificação de segurança');
@@ -174,18 +179,20 @@ const LoginPage = () => {
       return;
     }
     
-    const LOGIN_TIMEOUT = 10000;
-    let loginTimeout = null;
-    
     try {
+      console.log('[LoginPage] Calling signIn...');
       const result = await signIn(email, password, captchaToken);
+      console.log('[LoginPage] signIn result:', { hasUser: !!result?.user, hasError: !!result?.error });
       
       if (result?.user) {
+        console.log('[LoginPage] Login successful, user:', result.user.email);
         setAttemptCount(0);
         toast({
           title: "Login realizado com sucesso!",
           description: "Redirecionando para o painel...",
         });
+        // Don't set loading to false here - let the navigation happen
+        console.log('[LoginPage] Navigating to dashboard...');
         navigate('/dashboard');
       } else {
         setLoading(false); // Reset loading state on error
@@ -221,14 +228,11 @@ const LoginPage = () => {
         description: errorMessage,
         variant: "destructive",
       });
-    } finally {
-      if (loginTimeout) clearTimeout(loginTimeout);
-      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-background">
       <SkipLinks />
       {/* Header */}
       <header className="sr-only">
@@ -254,8 +258,8 @@ const LoginPage = () => {
               <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">TamanduAI</span>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{t('auth.welcomeBack', 'Bem-vindo de volta')}</h1>
-              <p className="text-gray-600 dark:text-gray-300">{t('auth.signInToContinue', 'Entre na sua conta para continuar')}</p>
+              <h1 className="text-3xl font-bold text-foreground mb-2">{t('auth.welcomeBack', 'Bem-vindo de volta')}</h1>
+              <p className="text-muted-foreground">{t('auth.signInToContinue', 'Entre na sua conta para continuar')}</p>
             </div>
           </div>
 
@@ -282,11 +286,11 @@ const LoginPage = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
               <div className="space-y-2">
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-900 dark:text-white">
+                <label htmlFor="email" className="block text-sm font-semibold text-foreground">
                   {t('auth.emailLabel', 'Email')}
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-gray-400" />
+                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <input
                     id="email"
                     name="email"
@@ -300,14 +304,14 @@ const LoginPage = () => {
                     }}
                     onBlur={handleBlur}
                     disabled={isBlocked}
-                    className={`w-full pl-12 pr-4 h-14 border-2 rounded-xl transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                    className={`w-full pl-12 pr-4 h-14 border-2 rounded-xl transition-all duration-200 bg-background text-foreground placeholder-muted-foreground ${
                       errors.email && touched.email
                         ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
                         : email && !errors.email && touched.email
                         ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
                         : touched.email
-                        ? 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500/20'
-                        : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 focus:border-blue-500 focus:ring-blue-500/20'
+                        ? 'border-border focus:border-ring focus:ring-ring/20'
+                        : 'border-border hover:border-border focus:border-ring focus:ring-ring/20'
                     }`}
                     required
                   />
@@ -324,11 +328,11 @@ const LoginPage = () => {
               </div>
 
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-900 dark:text-white">
+              <label htmlFor="password" className="block text-sm font-semibold text-foreground">
                 {t('auth.passwordLabel', 'Senha')}
               </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-gray-400" />
+                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <input
                   id="password"
                   name="password"
@@ -342,24 +346,24 @@ const LoginPage = () => {
                   }}
                   onBlur={handleBlur}
                   disabled={isBlocked}
-                  className={`w-full pl-12 pr-16 h-14 border-2 rounded-xl transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                  className={`w-full pl-12 pr-16 h-14 border-2 rounded-xl transition-all duration-200 bg-background text-foreground placeholder-muted-foreground ${
                     errors.password && touched.password
                       ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
                       : password && !errors.password && touched.password
                       ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
                       : touched.password
-                      ? 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500/20'
-                      : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 focus:border-blue-500 focus:ring-blue-500/20'
+                      ? 'border-border focus:border-ring focus:ring-ring/20'
+                      : 'border-border hover:border-border focus:border-ring focus:ring-ring/20'
                   }`}
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-8 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg flex items-center justify-center transition-colors"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-8 bg-secondary hover:bg-accent rounded-lg flex items-center justify-center transition-colors"
                   disabled={isBlocked}
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4 text-gray-600 dark:text-gray-300" /> : <Eye className="w-4 h-4 text-gray-600 dark:text-gray-300" />}
+                  {showPassword ? <EyeOff className="w-4 h-4 text-muted-foreground" /> : <Eye className="w-4 h-4 text-muted-foreground" />}
                 </button>
               </div>
               {errors.password && touched.password && (
@@ -370,7 +374,7 @@ const LoginPage = () => {
               )}
             </div>
 
-            {/* HCaptcha Integration */}
+            {/* HCaptcha Integration - Only in production */}
             {!isLocalhost && (
               <div className="space-y-2">
                 <HCaptchaWidget
@@ -392,10 +396,10 @@ const LoginPage = () => {
 
             <div className="flex items-center justify-between">
               <label className="flex items-center space-x-3">
-                <input type="checkbox" className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-purple-600 focus:ring-purple-500" disabled={isBlocked} />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('auth.rememberMe', 'Lembrar de mim')}</span>
+                <input type="checkbox" className="w-4 h-4 rounded border-border text-primary focus:ring-ring" disabled={isBlocked} />
+                <span className="text-sm font-medium text-foreground">{t('auth.rememberMe', 'Lembrar de mim')}</span>
               </label>
-              <Link to="/forgot-password" className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
+              <Link to="/forgot-password" className="text-sm font-medium text-primary hover:underline">
                 {t('auth.forgotPassword', 'Esqueceu a senha?')}
               </Link>
             </div>
@@ -426,16 +430,16 @@ const LoginPage = () => {
             </div>
 
             <div className="text-center">
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-muted-foreground">
                 {t('auth.dontHaveAccount', 'Não tem conta?')}{' '}
-                <Link to="/register" className="font-semibold text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
+                <Link to="/register" className="font-semibold text-primary hover:underline">
                   {t('auth.signUp', 'Cadastre-se')}
                 </Link>
               </p>
             </div>
           </form>
 
-          <div className="flex items-center justify-center space-x-2 text-xs text-gray-500">
+          <div className="flex items-center justify-center space-x-2 text-xs text-muted-foreground">
             {navigator.onLine ? (
               <><Wifi className="w-3 h-3" /><span>Conectado</span></>
             ) : (

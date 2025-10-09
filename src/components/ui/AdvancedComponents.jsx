@@ -298,6 +298,7 @@ export const ActivityList = ({
           {sortedActivities.map((activity) => {
             const StatusIcon = getStatusIcon(activity.status);
             const statusColor = getStatusColor(activity.status);
+            const displayPoints = (activity?.points ?? activity?.total_points ?? null);
 
             return (
               <motion.div
@@ -335,10 +336,10 @@ export const ActivityList = ({
                         {activity.estimatedTime || 'N/A'}
                       </div>
 
-                      {activity.points && (
+                      {displayPoints && (
                         <div className="flex items-center gap-1">
                           <Award className="h-3 w-3" />
-                          {activity.points} pts
+                          {displayPoints} pts
                         </div>
                       )}
                     </div>
@@ -351,9 +352,9 @@ export const ActivityList = ({
                        activity.status === 'in_progress' ? 'Em andamento' : 'Pendente'}
                     </span>
 
-                    {activity.grade && (
+                    {activity.grade !== undefined && activity.grade !== null && (
                       <div className="text-right">
-                        <div className="text-sm font-medium">{activity.grade}/10</div>
+                        <div className="text-sm font-medium">{activity.grade}/{displayPoints || 100}</div>
                         <div className="text-xs text-base-content/60">Nota</div>
                       </div>
                     )}

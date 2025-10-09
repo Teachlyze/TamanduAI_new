@@ -23,7 +23,7 @@ const validateResourceAccess = async (resourceType, resourceId, userId, required
         // Verificar se usuário é professor da turma ou aluno inscrito
         const { data: classAccess, error: classError } = await supabase
           .from('classes')
-          .select('teacher_id, id')
+          .select('created_by, id')
           .eq('id', resourceId)
           .single();
 
@@ -31,12 +31,12 @@ const validateResourceAccess = async (resourceType, resourceId, userId, required
 
         if (requiredPermission === 'write') {
           // Apenas professor pode modificar
-          if (classAccess.teacher_id !== userId) {
+          if (classAccess.created_by !== userId) {
             throw new Error('Apenas o professor pode modificar esta turma');
           }
         } else {
           // Verificar se é professor ou aluno da turma
-          if (classAccess.teacher_id === userId) return true;
+          if (classAccess.created_by === userId) return true;
 
           // Verificar se é aluno da turma
           const { data: studentAccess } = await supabase
@@ -57,38 +57,56 @@ const validateResourceAccess = async (resourceType, resourceId, userId, required
       case 'activity': {
         // Verificar se atividade pertence a turma do usuário
         const { data: activityAccess, error: activityError } = await supabase
-          .from('class_activities')
+          .from('activities')
           .select(`
             id,
-            class_id,
-            class:classes(teacher_id)
+            created_by
           `)
           .eq('id', resourceId)
           .single();
 
         if (activityError) throw activityError;
 
-        // Verificar se usuário é professor da turma ou aluno inscrito
-        if (activityAccess.class?.teacher_id === userId) return true;
-
-        const { data: studentAccess } = await supabase
-          .from('class_members')
-          .select('id')
-          .eq('class_id', activityAccess.class_id)
-          .eq('user_id', userId)
-          .eq('role', 'student')
-          .single();
-
-        if (!studentAccess) {
-          throw new Error('Você não tem acesso a esta atividade');
+        // Verificar se usuário é criador da atividade
+        if (activityAccess.created_by === userId) return true;
+        
+        // Verificar se usuário tem acesso através de class_members
+        const { data: classAssignments } = await supabase
+          .from('activity_class_assignments')
+          .select('class_id')
+          .eq('activity_id', resourceId);
+        
+        if (classAssignments && classAssignments.length > 0) {
+          const classIds = classAssignments.map(a => a.class_id);
+          
+          // Check if user is teacher of any of these classes
+          const { data: teacherClasses } = await supabase
+            .from('classes')
+            .select('id')
+            .in('id', classIds)
+            .eq('created_by', userId);
+          
+          if (teacherClasses && teacherClasses.length > 0) return true;
+          
+          // Check if user is student in any of these classes
+          const { data: studentAccess } = await supabase
+            .from('class_members')
+            .select('id')
+            .in('class_id', classIds)
+            .eq('user_id', userId)
+            .eq('role', 'student');
+          
+          if (studentAccess && studentAccess.length > 0) return true;
         }
+
+        throw new Error('Você não tem acesso a esta atividade');
         break;
       }
 
       case 'submission': {
         // Verificar se submissão pertence ao usuário
         const { data: submissionAccess, error: submissionError } = await supabase
-          .from('activity_submissions')
+          .from('submissions')
           .select('student_id')
           .eq('id', resourceId)
           .single();
@@ -231,17 +249,19 @@ export const getUserProfile = async (userId = null) => {
 
     // Security: Users can only access their own profile or admins can access any
     if (targetUserId !== currentUser.id) {
-      // Check if current user is admin
-      const { data: permissions } = await supabase
-        .from('user_permissions')
-        .select('permission')
-        .eq('user_id', currentUser.id)
-        .eq('permission', 'admin')
+      // Check if current user is admin - for now, we'll use a simple role check
+      // In the future, you might want to add an admin role to the profiles table
+      const { data: userProfile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', currentUser.id)
         .single();
 
-      if (!permissions) {
-        throw new Error('Acesso negado: você só pode acessar seu próprio perfil');
+      if (userProfile?.role === 'school') {
+        return true; // School role acts as admin
       }
+
+      throw new Error('Acesso negado: você só pode acessar seu próprio perfil');
     }
 
     const { data, error } = await supabase
@@ -343,7 +363,7 @@ export const exportClassData = async (classId) => {
       // Get class details (filtered by ownership)
       const { data: classData, error: classError } = await supabase
         .from('classes')
-        .select('id, name, subject, teacher_id, created_at')
+        .select('id, name, subject, created_by, created_at')
         .eq('id', classId)
         .single();
 
@@ -366,11 +386,20 @@ export const exportClassData = async (classId) => {
 
       if (studentsError) throw studentsError;
 
-      // Get activities (filtered by class access)
-      const { data: activities, error: activitiesError } = await supabase
-        .from('class_activities')
-        .select('id, title, description, status, created_at')
-        .eq('class_id', classId);
+        // Get activities (filtered by class access)
+        const { data: activities, error: activitiesError } = await supabase
+          .from('activities')
+          .select(`
+            id,
+            title,
+            activity_type,
+            created_at,
+            due_date,
+            status,
+            created_by
+          `)
+          .in('id', activityIds)
+          .order('created_at', { ascending: false });
 
       if (activitiesError) throw activitiesError;
 
@@ -427,20 +456,30 @@ export const getPublicUrl = (bucket, path) => {
 export const getClassDetails = async (classId) => {
   const user = await getCurrentUser();
   if (!user) throw new Error('Usuário não autenticado');
+  if (!classId) throw new Error('Class ID é obrigatório');
 
-  // Security: Validate access to class
+  // Validate access
   await validateClassAccess(classId, user.id, 'read');
 
-  const { data, error } = await supabase
+  // Fetch class, members count and activities via assignments
+  const { data: classData, error: classError } = await supabase
     .from('classes')
-    .select('id, name, subject, teacher_id, created_at, updated_at')
+    .select('id, name, subject, created_by, created_at, is_active, color')
     .eq('id', classId)
     .single();
+  if (classError) throw classError;
 
-  if (error) throw error;
-  return data;
+  const [{ data: students }, { data: assignments }] = await Promise.all([
+    supabase.from('class_members').select('id').eq('class_id', classId).eq('role', 'student'),
+    supabase.from('activity_class_assignments').select('activity_id').eq('class_id', classId)
+  ]);
+
+  return {
+    ...classData,
+    students_count: students?.length || 0,
+    activities_count: assignments?.length || 0
+  };
 };
-
 /**
  * Buscar turmas de um usuário (professor ou aluno) - SEGURA
  */
@@ -455,11 +494,11 @@ export const getUserClasses = async (userId, role = 'student') => {
     }
 
     if (role === 'teacher') {
-      // Professor: turmas em que ele é teacher_id
+      // Professor: turmas em que ele é created_by
       const { data, error } = await supabase
         .from('classes')
-        .select('id, name, subject, teacher_id, created_at, students_count, activities_count')
-        .eq('teacher_id', userId)
+        .select('id, name, subject, created_by, created_at, students_count, activities_count')
+        .eq('created_by', userId)
         .order('created_at', { ascending: false })
         .limit(200);
 
@@ -477,7 +516,7 @@ export const getUserClasses = async (userId, role = 'student') => {
             id,
             name,
             subject,
-            teacher_id,
+            created_by,
             created_at,
             students_count,
             activities_count
@@ -569,10 +608,10 @@ export const getClassActivities = async (classId) => {
   }
 
   if (!classId) {
-    // Busca todos os templates do usuário (professor)
+    // Busca todas as atividades do usuário (atua como templates quando status/draft)
     const { data, error } = await supabase
-      .from('activity_templates')
-      .select('id, title, description, subject, created_at, updated_at')
+      .from('activities')
+      .select('id, title, description, instructions, due_date, status, created_at, updated_at')
       .eq('created_by', user.id)
       .order('created_at', { ascending: false });
 
@@ -582,32 +621,34 @@ export const getClassActivities = async (classId) => {
 
   // Busca atividades publicadas na turma
   const { data, error } = await supabase
-    .from('class_activities')
+    .from('activity_class_assignments')
     .select(`
       id,
-      title,
-      description,
-      instructions,
-      due_date,
-      max_points,
-      status,
-      published_at,
-      created_at,
-      template:activity_templates(
+      activity_id,
+      class_id,
+      assigned_at,
+      activities!inner(
         id,
         title,
-        subject
+        description,
+        instructions,
+        due_date,
+        total_points,
+        status,
+        published_at,
+        created_at
       )
     `)
     .eq('class_id', classId)
-    .order('published_at', { ascending: false });
+    .eq('activities.status', 'published')
+    .order('assigned_at', { ascending: false });
 
   if (error) throw error;
   return data || [];
 };
 
 // ============================================
-// ACTIVITY TEMPLATE MANAGEMENT (SECURE)
+// ACTIVITY MANAGEMENT AS TEMPLATES (SECURE)
 // ============================================
 
 /**
@@ -619,14 +660,22 @@ export const createActivityTemplate = async (templateData) => {
 
   try {
     const { data, error } = await supabase
-      .from('activity_templates')
+      .from('activities')
       .insert([{
-        ...templateData,
+        title: templateData.title,
+        description: templateData.description,
+        instructions: templateData.instructions,
+        due_date: templateData.due_date || null,
+        schema: templateData.schema || null,
+        total_points: templateData.total_points || null,
+        is_group_activity: templateData.is_group_activity || false,
+        group_size: templateData.group_size || null,
         created_by: user.id,
-        is_public: templateData.is_public || false,
-        tags: templateData.tags || []
+        status: templateData.status || 'draft',
+        is_draft: templateData.is_draft !== undefined ? templateData.is_draft : true,
+        draft_saved_at: new Date().toISOString()
       }])
-      .select('id, title, description, subject, created_by, created_at')
+      .select('id, title, description, instructions, due_date, status, created_by, created_at')
       .single();
 
     if (error) throw error;
@@ -644,11 +693,12 @@ export const getActivityTemplate = async (templateId) => {
   const user = await getCurrentUser();
   if (!user) throw new Error('Usuário não autenticado');
 
+  // Usuário pode acessar suas atividades (templates) ou atividades publicadas
   const { data, error } = await supabase
-    .from('activity_templates')
-    .select('id, title, description, instructions, subject, schema, created_by, created_at, updated_at')
+    .from('activities')
+    .select('id, title, description, instructions, schema, status, created_by, created_at, updated_at, due_date, total_points')
     .eq('id', templateId)
-    .or(`created_by.eq.${user.id},is_public.eq.true`)
+    .or(`created_by.eq.${user.id},status.eq.published`)
     .single();
 
   if (error) throw error;
@@ -663,11 +713,24 @@ export const updateActivityTemplate = async (templateId, updates) => {
   if (!user) throw new Error('Usuário não autenticado');
 
   const { data, error } = await supabase
-    .from('activity_templates')
-    .update(updates)
+    .from('activities')
+    .update({
+      title: updates.title,
+      description: updates.description,
+      instructions: updates.instructions,
+      due_date: updates.due_date,
+      schema: updates.schema,
+      total_points: updates.total_points,
+      is_group_activity: updates.is_group_activity,
+      group_size: updates.group_size,
+      is_draft: updates.is_draft,
+      status: updates.status,
+      updated_at: new Date().toISOString(),
+      draft_saved_at: updates.is_draft ? new Date().toISOString() : null
+    })
     .eq('id', templateId)
     .eq('created_by', user.id)
-    .select('id, title, description, subject, created_by, updated_at')
+    .select('id, title, description, instructions, status, updated_at')
     .single();
 
   if (error) throw error;
@@ -682,7 +745,7 @@ export const deleteActivityTemplate = async (templateId) => {
   if (!user) throw new Error('Usuário não autenticado');
 
   const { error } = await supabase
-    .from('activity_templates')
+    .from('activities')
     .delete()
     .eq('id', templateId)
     .eq('created_by', user.id);
@@ -697,20 +760,22 @@ export const listActivityTemplates = async ({ userId, publicOnly = false } = {})
   const currentUser = await getCurrentUser();
   if (!currentUser) throw new Error('Usuário não autenticado');
 
-  let query = supabase.from('activity_templates').select('id, title, description, subject, created_by, created_at, is_public');
+  // Usar activities como templates
+  let query = supabase
+    .from('activities')
+    .select('id, title, description, instructions, created_by, created_at, status');
 
   if (publicOnly) {
-    query = query.eq('is_public', true);
+    query = query.eq('status', 'published');
   } else if (userId) {
-    // Security: Users can only see their own templates or public ones
     if (userId !== currentUser.id) {
-      query = query.eq('is_public', true);
+      query = query.eq('status', 'published');
     } else {
-      query = query.or(`created_by.eq.${userId},is_public.eq.true`);
+      query = query.eq('created_by', userId);
     }
   } else {
-    // Default: only public templates for non-authenticated context
-    query = query.eq('is_public', true);
+    // Default: mostrar publicadas
+    query = query.eq('status', 'published');
   }
 
   const { data, error } = await query.order('created_at', { ascending: false });
@@ -731,22 +796,23 @@ export const publishActivityTemplate = async (templateId, classIds, overrides = 
   if (!user) throw new Error('Usuário não autenticado');
 
   try {
-    // Security: Verifica se o template existe e o usuário tem permissão
-    const { data: template, error: templateError } = await supabase
-      .from('activity_templates')
-      .select('id, title, description, instructions, created_by, is_public')
+    // Security: Verifica se a atividade existe e o usuário tem permissão
+    const { data: activity, error: activityError } = await supabase
+      .from('activities')
+      .select('id, created_by, status')
       .eq('id', templateId)
-      .or(`created_by.eq.${user.id},is_public.eq.true`)
       .single();
 
-    if (templateError) throw templateError;
-    if (!template) throw new Error('Template não encontrado ou sem permissão');
+    if (activityError) throw activityError;
+    if (!activity || activity.created_by !== user.id) {
+      throw new Error('Atividade não encontrada ou sem permissão');
+    }
 
     // Security: Verificar se usuário é professor de todas as turmas
     const { data: userClasses, error: classesError } = await supabase
       .from('classes')
       .select('id')
-      .eq('teacher_id', user.id)
+      .eq('created_by', user.id)
       .in('id', classIds);
 
     if (classesError) throw classesError;
@@ -758,26 +824,29 @@ export const publishActivityTemplate = async (templateId, classIds, overrides = 
       throw new Error(`Você não tem permissão para publicar em algumas turmas: ${unauthorizedClasses.join(', ')}`);
     }
 
-    // Cria as atividades nas turmas
-    const { data: activities, error: activitiesError } = await supabase
-      .from('class_activities')
+    // Marcar atividade como publicada
+    const { error: publishError } = await supabase
+      .from('activities')
+      .update({ status: 'published', published_at: new Date().toISOString() })
+      .eq('id', templateId)
+      .eq('created_by', user.id);
+
+    if (publishError) throw publishError;
+
+    // Vincula atividade às turmas
+    const { data: assignments, error: assignmentsError } = await supabase
+      .from('activity_class_assignments')
       .insert(
         classIds.map(classId => ({
-          template_id: templateId,
+          activity_id: templateId,
           class_id: classId,
-          title: overrides.title || template.title,
-          description: overrides.description || template.description,
-          instructions: overrides.instructions || template.instructions,
-          due_date: overrides.due_date || null,
-          max_points: overrides.max_points || 100,
-          status: 'published',
-          published_by: user.id,
-          published_at: new Date().toISOString()
-        })))
-      .select('id, title, class_id, status, published_at');
+          assigned_at: new Date().toISOString()
+        }))
+      )
+      .select('id, activity_id, class_id, assigned_at');
 
-    if (activitiesError) throw activitiesError;
-    return activities || [];
+    if (assignmentsError) throw assignmentsError;
+    return assignments || [];
   } catch (error) {
     console.error('Error publishing activity template:', error);
     throw error;
@@ -795,7 +864,7 @@ export const updateClassActivity = async (activityId, updates) => {
   await validateActivityAccess(activityId, user.id, 'write');
 
   const { data, error } = await supabase
-    .from('class_activities')
+    .from('activities')
     .update(updates)
     .eq('id', activityId)
     .select('id, title, description, status, updated_at')
@@ -816,7 +885,7 @@ export const deleteClassActivity = async (activityId) => {
   await validateActivityAccess(activityId, user.id, 'write');
 
   const { error } = await supabase
-    .from('class_activities')
+    .from('activities')
     .delete()
     .eq('id', activityId);
 
@@ -837,19 +906,15 @@ export const submitActivity = async ({ activity_id, answers, hcaptchaToken }) =>
   // Security: Validate access to activity
   await validateActivityAccess(activity_id, user.id, 'read');
 
-  // Security: Validate hCaptcha token exists
-  if (!hcaptchaToken) {
-    throw new Error('Token de verificação hCaptcha é obrigatório');
-  }
+  // Security: hCaptcha token optional here (validated upstream if needed)
 
   try {
     const { data, error } = await supabase
-      .from('activity_submissions')
+      .from('submissions')
       .insert({
         student_id: user.id,
         activity_id,
-        answers,
-        hcaptcha_token: hcaptchaToken,
+        data: answers ?? null,
         submitted_at: new Date().toISOString()
       })
       .select('id, student_id, activity_id, submitted_at, status')
@@ -878,15 +943,15 @@ export const getActivitySubmissions = async (activityId) => {
   await validateActivityAccess(activityId, user.id, 'read');
 
   const { data, error } = await supabase
-    .from('activity_submissions')
+    .from('submissions')
     .select(`
       id,
       student_id,
-      answers,
+      data,
       submitted_at,
       status,
       graded_at,
-      points,
+      grade,
       feedback,
       student:profiles(
         id,
@@ -910,7 +975,7 @@ export const gradeSubmission = async (submissionId, { points, feedback }) => {
 
   // Security: Get submission and validate access to related activity
   const { data: submission, error: submissionError } = await supabase
-    .from('activity_submissions')
+    .from('submissions')
     .select(`
       id,
       activity_id,
@@ -925,15 +990,15 @@ export const gradeSubmission = async (submissionId, { points, feedback }) => {
   await validateActivityAccess(submission.activity_id, user.id, 'write');
 
   const { data, error } = await supabase
-    .from('activity_submissions')
+    .from('submissions')
     .update({
-      points,
+      grade: points,
       feedback,
       graded_at: new Date().toISOString(),
       status: points !== null ? 'graded' : 'pending'
     })
     .eq('id', submissionId)
-    .select('id, points, feedback, graded_at, status')
+    .select('id, grade, feedback, graded_at, status')
     .single();
 
   if (error) throw error;

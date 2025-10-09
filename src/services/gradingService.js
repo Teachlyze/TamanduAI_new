@@ -19,10 +19,10 @@ const getPropType = (prop) => {
  */
 export const autoGradeSubmission = async (submissionId) => {
   try {
-    // Load submission, its activity (schema), and answers
+    // Load submission, its activity (schema), and data
     const { data: submission, error: subErr } = await supabase
       .from('submissions')
-      .select('id, user_id, activity_id, status')
+      .select('id, user_id, activity_id, status, data')
       .eq('id', submissionId)
       .single();
     if (subErr) throw subErr;
@@ -39,13 +39,15 @@ export const autoGradeSubmission = async (submissionId) => {
       .single();
     if (actErr) throw actErr;
 
-    // Answers for the submission
-    const { data: answers, error: ansErr } = await supabase
-      .from('answers')
-      .select('id, question_index, value')
-      .eq('submission_id', submissionId)
-      .order('question_index', { ascending: true });
-    if (ansErr) throw ansErr;
+    // Build answers array from submission.data
+    let answers = [];
+    const raw = submission?.data;
+    if (Array.isArray(raw)) {
+      answers = raw.map((item, idx) => ({ id: `${submissionId}-${idx}`, question_index: idx, value: item?.answer_text ?? item }));
+    } else if (raw && typeof raw === 'object') {
+      const entries = Object.entries(raw);
+      answers = entries.map(([key, val], idx) => ({ id: `${submissionId}-${key}`, question_index: idx, value: val?.answer_text ?? val }));
+    }
 
     const schema = activity?.schema || {};
     const properties = schema?.properties || {};
@@ -57,7 +59,6 @@ export const autoGradeSubmission = async (submissionId) => {
     let totalEarned = 0;
     let needsReview = false;
 
-    const updates = [];
     for (const a of (answers || [])) {
       const idx = a.question_index;
       const fieldName = `question_${idx}`;
@@ -66,12 +67,7 @@ export const autoGradeSubmission = async (submissionId) => {
 
       // Determine if objective type
       const isObjective = ['select', 'checkboxes', 'number', 'date'].includes(qType);
-      if (!isObjective) {
-        // Non-objective types need manual review
-        needsReview = true;
-        updates.push({ id: a.id, is_correct: null, points_earned: 0 });
-        continue;
-      }
+      if (!isObjective) { needsReview = true; continue; }
 
       // Points for this question
       const points = typeof pointsMap[idx] === 'number' ? pointsMap[idx] : 1;
@@ -101,21 +97,7 @@ export const autoGradeSubmission = async (submissionId) => {
 
       const earned = isCorrect ? points : 0;
       totalEarned += earned;
-      updates.push({ id: a.id, is_correct: isCorrect, points_earned: earned });
     }
-
-    // Persist per-answer updates
-    await Promise.all(
-      updates.map(u => supabase
-        .from('answers')
-        .update({
-          is_correct: u.is_correct,
-          points_earned: u.points_earned,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', u.id)
-      )
-    );
 
     const finalGrade = totalPossible > 0 ? Math.round((totalEarned / totalPossible) * 100) : null;
     const status = needsReview ? 'submitted' : 'graded';
@@ -123,7 +105,7 @@ export const autoGradeSubmission = async (submissionId) => {
     const { data: updatedSubmission, error: updateError } = await supabase
       .from('submissions')
       .update({
-        final_grade: needsReview ? null : finalGrade,
+        grade: needsReview ? null : finalGrade,
         status,
         graded_at: needsReview ? null : new Date().toISOString(),
         feedback: needsReview ? 'Needs manual review' : 'Automatically graded',
@@ -192,20 +174,19 @@ export const getClassGradingStats = async (classId) => {
       .eq('class_id', classId);
 
     if (activitiesError) throw activitiesError;
-
     // Get submissions for each activity
     const activityStats = await Promise.all(
       activities.map(async (activity) => {
         const { data: submissions, error: subsError } = await supabase
           .from('submissions')
-          .select('id, status, final_grade, is_plagiarized, submitted_at')
+          .select('id, status, grade, is_plagiarized, submitted_at')
           .eq('activity_id', activity.id);
 
         if (subsError) throw subsError;
 
         const graded = submissions.filter(s => s.status === 'graded');
         const averageGrade = graded.length > 0
-          ? Math.round(graded.reduce((sum, s) => sum + (s.final_grade || 0), 0) / graded.length)
+          ? Math.round(graded.reduce((sum, s) => sum + (s.grade || 0), 0) / graded.length)
           : 0;
 
         return {
@@ -327,13 +308,13 @@ export const getSubmissionsNeedingGrading = async (teacherId) => {
  * @param {string} submissionId - The submission ID
  * @param {Object} feedbackData - The feedback data
  * @param {string} feedbackData.feedback - The feedback text
- * @param {number} [feedbackData.final_grade] - The final grade (if applicable)
+ * @param {number} [feedbackData.grade] - The final grade (if applicable)
  * @param {string} userId - The ID of the user providing feedback
  * @returns {Promise<Object>} The updated submission
  */
 export const provideFeedback = async (submissionId, feedbackData, userId) => {
   try {
-    const { feedback, final_grade } = feedbackData;
+    const { feedback, grade } = feedbackData;
     
     // Update the submission
     const updateData = {
@@ -341,9 +322,9 @@ export const provideFeedback = async (submissionId, feedbackData, userId) => {
       updated_at: new Date().toISOString()
     };
     
-    // If final_grade is provided, update the grade
-    if (typeof final_grade !== 'undefined') {
-      updateData.final_grade = final_grade;
+    // If grade is provided, update the grade
+    if (typeof grade !== 'undefined') {
+      updateData.grade = grade;
       updateData.graded_at = new Date().toISOString();
       updateData.status = 'graded';
     }
@@ -382,7 +363,7 @@ export const provideFeedback = async (submissionId, feedbackData, userId) => {
           user_id: submission.user_id,
           type: 'feedback_received',
           title: 'Feedback Received',
-          message: `You have received feedback on your submission. ${final_grade ? `Grade: ${final_grade}%` : ''}`,
+          message: `You have received feedback on your submission. ${typeof grade !== 'undefined' ? `Grade: ${grade}%` : ''}`,
           reference_id: submissionId,
           is_read: false,
           created_at: new Date().toISOString()

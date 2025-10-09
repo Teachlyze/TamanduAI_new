@@ -3,6 +3,7 @@
  * Gerenciador avançado de conexões Supabase para máxima robustez
  */
 import { createClient } from '@supabase/supabase-js';
+import { supabase as supabaseSingleton } from './supabaseClient';
 import { errorMonitor } from '../services/errorMonitoring.jsx';
 import { performanceOptimizer } from '../services/performanceOptimizer.jsx';
 
@@ -92,32 +93,9 @@ class SupabaseConnectionManager {
   async createClients() {
     const isProduction = import.meta.env.MODE === 'production';
 
-    // Cliente principal
-    this.client = createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: true,
-        storage: window.localStorage,
-        flowType: 'pkce',
-        debug: !isProduction,
-      },
-      global: {
-        headers: {
-          'X-Client-Info': 'tamanduai-platform',
-          'X-Client-Version': process.env.npm_package_version || '1.0.0',
-          'X-Environment': import.meta.env.MODE,
-        },
-      },
-      db: {
-        schema: 'public',
-      },
-      realtime: {
-        params: {
-          eventsPerSecond: isProduction ? 10 : 20,
-        },
-      },
-    });
+    // Use the singleton instance instead of creating a new one
+    console.log('🔗 Using existing Supabase singleton instance');
+    this.client = supabaseSingleton;
 
     // Cliente administrativo (se disponível)
     if (supabaseServiceKey) {
@@ -135,43 +113,23 @@ class SupabaseConnectionManager {
       });
     }
 
-    // Configurar listeners de eventos
     this.setupEventListeners();
   }
 
   /**
-   * Configura listeners para eventos de conexão
+   * Configura listeners de eventos
    */
   setupEventListeners() {
-    if (!this.client) return;
-
-    // Auth state changes
-    this.client.auth.onAuthStateChange((event, session) => {
-      switch (event) {
-        case 'SIGNED_IN':
-          this.onSignedIn(session);
-          break;
-        case 'SIGNED_OUT':
-          this.onSignedOut();
-          break;
-        case 'TOKEN_REFRESHED':
-          this.onTokenRefreshed(session);
-          break;
-        case 'USER_UPDATED':
-          this.onUserUpdated(session);
-          break;
-      }
-    });
+    // Skip auth state listeners since they're already handled by AuthContext
+    // This prevents duplicate event handling
+    console.log('[SupabaseConnectionManager] Skipping auth listeners (handled by AuthContext)');
 
     // Realtime connection events
+    // Note: Realtime events are handled through channels, not direct onOpen/onClose
+    // The realtime object doesn't expose onOpen/onClose methods directly
     if (this.client.realtime) {
-      this.client.realtime.onOpen(() => {
-        this.onRealtimeConnected();
-      });
-
-      this.client.realtime.onClose(() => {
-        this.onRealtimeDisconnected();
-      });
+      console.log('[SupabaseConnectionManager] Realtime client available');
+      // Realtime connection status is managed through channel subscriptions
     }
   }
 

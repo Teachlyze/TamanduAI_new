@@ -40,6 +40,7 @@ const Button = React.forwardRef(({
   leftIcon,
   rightIcon,
   fullWidth = false,
+  responsive = true,
   rounded = false,
   onClick,
   disabled,
@@ -111,6 +112,8 @@ const Button = React.forwardRef(({
       variantClasses[variant],
       sizeClasses[size],
       fullWidth && 'w-full',
+      // Make buttons responsive by default: full width on small screens, auto on larger
+      responsive && !fullWidth && 'w-full sm:w-auto',
       rounded && 'rounded-full',
       loading && 'cursor-wait',
       className
@@ -155,7 +158,7 @@ const Button = React.forwardRef(({
       )}
 
       {/* Button content */}
-      <span className="text-center whitespace-nowrap">
+      <span className="text-center whitespace-nowrap truncate min-w-0">
         {children}
       </span>
 
@@ -208,4 +211,6 @@ export const AccessibleButton = React.forwardRef(({
 
 AccessibleButton.displayName = 'AccessibleButton';
 
+// Export both named and default
+export { Button };
 export default Button;

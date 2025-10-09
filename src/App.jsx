@@ -4,7 +4,6 @@ import { I18nextProvider } from 'react-i18next';
 import { Toaster } from 'react-hot-toast';
 import i18n from './i18n';
 import ErrorBoundary from './components/ui/ErrorBoundary';
-import { ThemeProvider } from './contexts/ThemeContext';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import AccessibilityButton from './components/AccessibilityButton';
 import PrivacyButton from './components/PrivacyButton';
@@ -26,9 +25,8 @@ const AppContent = ({ children }) => {
   useKeyboardNavigation();
 
   return (
-    <ThemeProvider>
-      <I18nextProvider i18n={i18n}>
-        <ErrorBoundary>
+    <I18nextProvider i18n={i18n}>
+      <ErrorBoundary>
             <ScrollToTop />
             <div className="flex flex-col min-h-screen bg-background text-foreground">
               <Suspense
@@ -83,9 +81,8 @@ const AppContent = ({ children }) => {
                 }}
               />
             </div>
-        </ErrorBoundary>
-      </I18nextProvider>
-    </ThemeProvider>
+      </ErrorBoundary>
+    </I18nextProvider>
   );
 };
 

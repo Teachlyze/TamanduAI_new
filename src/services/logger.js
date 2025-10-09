@@ -3,6 +3,9 @@
 
 import { supabase } from '@/lib/supabaseClient';
 
+// Flag to disable DB logging when table is missing to avoid spam
+let dbLoggingDisabled = false;
+
 export const LOG_LEVELS = {
   DEBUG: 0,
   INFO: 1,
@@ -70,6 +73,7 @@ const formatLogMessage = (level, message, data = null) => {
 // Save log to Supabase
 const saveLogToDatabase = async (logEntry) => {
   try {
+    if (dbLoggingDisabled) return;
     // Only save ERROR and CRITICAL logs to database in production
     // In development, save only ERROR and CRITICAL logs for performance
     const shouldSaveToDB = import.meta.env.PROD
@@ -96,6 +100,14 @@ const saveLogToDatabase = async (logEntry) => {
       }]);
 
     if (error) {
+      const msg = (error?.message || '').toLowerCase();
+      const code = error?.code || '';
+      // If table is missing, disable further DB logging for this session
+      if (code === 'PGRST205' || msg.includes("could not find the table 'public.application_logs'")) {
+        dbLoggingDisabled = true;
+        console.warn('[Logger] application_logs table not found. Disabling DB logging for this session.');
+        return;
+      }
       console.error('[Logger] Failed to save log to database:', error);
     }
   } catch (error) {

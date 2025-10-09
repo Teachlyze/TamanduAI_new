@@ -64,13 +64,13 @@ const PerformanceIndicators = ({ userId, userRole }) => {
     // Get submissions
     const { data: submissions } = await supabase
       .from('submissions')
-      .select('final_grade, status, submitted_at')
+      .select('grade, status, submitted_at')
       .in('activity_id', activityIds);
 
     // Calculate metrics
-    const gradedSubmissions = (submissions || []).filter(s => s.final_grade !== null);
+    const gradedSubmissions = (submissions || []).filter(s => s.grade !== null);
     const averageGrade = gradedSubmissions.length > 0
-      ? gradedSubmissions.reduce((sum, s) => sum + s.final_grade, 0) / gradedSubmissions.length
+      ? gradedSubmissions.reduce((sum, s) => sum + s.grade, 0) / gradedSubmissions.length
       : null;
 
     const totalExpectedSubmissions = (students?.length || 0) * activityIds.length;
@@ -106,12 +106,12 @@ const PerformanceIndicators = ({ userId, userRole }) => {
     // Get student's submissions
     const { data: submissions } = await supabase
       .from('submissions')
-      .select('final_grade, status, activity_id')
+      .select('grade, status, activity_id')
       .eq('user_id', userId);
 
-    const gradedSubmissions = (submissions || []).filter(s => s.final_grade !== null);
+    const gradedSubmissions = (submissions || []).filter(s => s.grade !== null);
     const averageGrade = gradedSubmissions.length > 0
-      ? gradedSubmissions.reduce((sum, s) => sum + s.final_grade, 0) / gradedSubmissions.length
+      ? gradedSubmissions.reduce((sum, s) => sum + s.grade, 0) / gradedSubmissions.length
       : null;
 
     const lateSubmissions = (submissions || []).filter(s => s.status === 'late');
