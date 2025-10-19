@@ -1,1 +1,0 @@
-import{r as e}from"./main-BrBEgNdp.js";import"./useRedisCache-C62AIOz9.js";const i=e.createContext(),o=()=>{const t=e.useContext(i);return t===void 0?{activities:[],loading:!1,error:null,fetchActivities:()=>{},createActivity:()=>{},updateActivity:()=>{},deleteActivity:()=>{},clearError:()=>{}}:t};export{o as u};

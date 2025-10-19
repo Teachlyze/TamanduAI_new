@@ -786,6 +786,14 @@ const AppRoutes = () => {
           }
         />
         <Route
+          path="students/profile"
+          element={
+            <Suspense fallback={<Loading />}>
+              <StudentDetailPage />
+            </Suspense>
+          }
+        />
+        <Route
           path="missions"
           element={
             <Suspense fallback={<Loading />}>
