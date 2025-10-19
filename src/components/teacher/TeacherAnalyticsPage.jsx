@@ -413,13 +413,13 @@ const TeacherAnalyticsPage = () => {
             <p className="text-white/90">Métricas detalhadas e comparações</p>
           </div>
           <div className="flex gap-3">
-            <PremiumButton onClick={exportPDF} variant="secondary" className="flex items-center gap-2">
+            <PremiumButton onClick={exportPDF} variant="secondary" className="whitespace-nowrap inline-flex items-center gap-2">
               <Download className="w-4 h-4" />
-              PDF
+              <span>PDF</span>
             </PremiumButton>
-            <PremiumButton onClick={exportExcel} variant="secondary" className="flex items-center gap-2">
+            <PremiumButton onClick={exportExcel} variant="secondary" className="whitespace-nowrap inline-flex items-center gap-2">
               <Download className="w-4 h-4" />
-              Excel
+              <span>Excel</span>
             </PremiumButton>
           </div>
         </div>

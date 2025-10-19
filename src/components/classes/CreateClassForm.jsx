@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Logger } from '@/services/logger';
 import { ClassService } from '@/services/classService';
 import teacherSubscriptionService from '@/services/teacherSubscriptionService';
+import { supabase } from '@/lib/supabaseClient';
 
 // UI Components
 import { Button } from '@/components/ui/button';
@@ -769,9 +770,10 @@ const CreateClassForm = () => {
                                   variant="outline"
                                   onClick={() => addStudent(student)}
                                   disabled={isSubmitting}
+                                  className="whitespace-nowrap inline-flex items-center gap-2"
                                 >
-                                  <Plus className="w-3 h-3 mr-1" />
-                                  Adicionar
+                                  <Plus className="w-3 h-3" />
+                                  <span>Adicionar</span>
                                 </Button>
                               </div>
                             ))}
@@ -795,24 +797,24 @@ const CreateClassForm = () => {
                 variant="outline"
                 onClick={() => navigate('/dashboard/classes')}
                 disabled={isSubmitting}
-                className="bg-white/70 backdrop-blur-sm hover:bg-white/80"
+                className="whitespace-nowrap inline-flex items-center gap-2 bg-white/70 backdrop-blur-sm hover:bg-white/80"
               >
-                Cancelar
+                <span>Cancelar</span>
               </Button>
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white min-w-[140px] shadow-lg hover:shadow-xl transition-all duration-300"
+                className="whitespace-nowrap inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white min-w-[140px] shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Criando...
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Criando...</span>
                   </>
                 ) : (
                   <>
-                    <GraduationCap className="mr-2 h-4 w-4" />
-                    Criar Turma
+                    <GraduationCap className="h-4 w-4" />
+                    <span>Criar Turma</span>
                   </>
                 )}
               </Button>
@@ -862,16 +864,16 @@ const CreateClassForm = () => {
                 <div className="flex gap-3 pt-4">
                   <Button
                     variant="outline"
-                    className="flex-1"
+                    className="flex-1 whitespace-nowrap inline-flex items-center justify-center gap-2"
                     onClick={() => setShowLimitModal(false)}
                   >
-                    Voltar
+                    <span>Voltar</span>
                   </Button>
                   <Button
-                    className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600"
+                    className="flex-1 whitespace-nowrap inline-flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600"
                     onClick={() => navigate('/settings/subscription')}
                   >
-                    Ver Planos
+                    <span>Ver Planos</span>
                   </Button>
                 </div>
               </CardContent>

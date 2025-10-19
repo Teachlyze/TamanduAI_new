@@ -425,6 +425,7 @@ const TeacherActivitiesPage = () => {
                               e.stopPropagation();
                               navigate(`/dashboard/activities/${activity.id}`);
                             }}
+                            className="whitespace-nowrap inline-flex items-center gap-2"
                           >
                             Ver
                           </PremiumButton>
@@ -436,6 +437,7 @@ const TeacherActivitiesPage = () => {
                               e.stopPropagation();
                               navigate(`/dashboard/activities/edit/${activity.id}`);
                             }}
+                            className="whitespace-nowrap inline-flex items-center gap-2"
                           >
                             Editar
                           </PremiumButton>

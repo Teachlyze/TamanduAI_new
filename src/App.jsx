@@ -1,4 +1,5 @@
 import React, { Suspense, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n';
@@ -101,6 +102,22 @@ const AppContent = ({ children }) => {
           <XPNotificationProvider>
             <ScrollToTop />
             <div className="flex flex-col min-h-screen bg-background text-foreground">
+              <Helmet>
+                <title>TamanduAI — Plataforma EdTech Inteligente</title>
+                <meta name="description" content="Plataforma educacional com IA para alunos, professores e escolas: questões, atividades, correções, analytics e gestão." />
+                <link rel="canonical" href={import.meta.env.VITE_APP_URL || 'https://tamanduai.com'} />
+                <meta name="robots" content="index, follow" />
+                <meta property="og:type" content="website" />
+                <meta property="og:site_name" content="TamanduAI" />
+                <meta property="og:url" content={import.meta.env.VITE_APP_URL || 'https://tamanduai.com'} />
+                <meta property="og:title" content="TamanduAI — Plataforma EdTech Inteligente" />
+                <meta property="og:description" content="IA educacional: banco de questões, quizzes, correção automática, gamificação e gestão escolar." />
+                <meta property="og:image" content={(import.meta.env.VITE_APP_URL || 'https://tamanduai.com') + '/og-cover.jpg'} />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="TamanduAI — Plataforma EdTech Inteligente" />
+                <meta name="twitter:description" content="IA educacional para alunos, professores e escolas." />
+                <meta name="twitter:image" content={(import.meta.env.VITE_APP_URL || 'https://tamanduai.com') + '/og-cover.jpg'} />
+              </Helmet>
               {/* Premium Toast System */}
               <PremiumToaster />
               

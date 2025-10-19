@@ -146,7 +146,10 @@ export const ClassService = {
       course: course || null,
       period: period || null,
       grade_level: grade_level || null,
-      academic_year: academic_year || new Date().getFullYear(),
+      academic_year: (() => {
+        const ay = parseInt(academic_year, 10);
+        return Number.isFinite(ay) ? ay : new Date().getFullYear();
+      })(),
       color: color || '#6366f1',
       student_capacity: typeof student_capacity === 'number' ? student_capacity : 30,
       chatbot_enabled: !!chatbot_enabled,
@@ -251,11 +254,18 @@ export const ClassService = {
    * @returns {Promise<Object>} - The updated class
    */
   async updateClass(classId, updates, studentUpdates) {
+    // Normalize fields to DB schema
+    const safeUpdates = { ...(updates || {}) };
+    if (Object.prototype.hasOwnProperty.call(safeUpdates, 'academic_year')) {
+      const ay = parseInt(safeUpdates.academic_year, 10);
+      safeUpdates.academic_year = Number.isFinite(ay) ? ay : new Date().getFullYear();
+    }
+
     // Update class details
     const { error: updateError } = await supabase
       .from('classes')
       .update({
-        ...updates,
+        ...safeUpdates,
         updated_at: new Date().toISOString()
       })
       .eq('id', classId)

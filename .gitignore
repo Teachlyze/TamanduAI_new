@@ -3,13 +3,6 @@ node_modules/
 
 .env.local
 .env.example
-nginx.conf
-supabase/config.toml
-docker-compose.yml
-supabase/storage
-supabase/functions
-supabase/migrations
-supabase/migrations
 .env.development
 .env.production
 .env.test
@@ -23,7 +16,6 @@ supabase/migrations
 .vercel
 .vscode
 .next
-dockerfile.*
 database/*
 database
 docs

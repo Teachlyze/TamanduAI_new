@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from './contexts/AuthContext';
 import { XPProvider } from './contexts/XPContext';
 import ThemeProvider from './contexts/ThemeProvider';
@@ -16,9 +17,11 @@ const AppProviders = ({ children }) => (
       <XPProvider>
         <SmartCacheProvider>
           <ThemeProvider>
-            <TourProvider>
-              {children}
-            </TourProvider>
+            <HelmetProvider>
+              <TourProvider>
+                {children}
+              </TourProvider>
+            </HelmetProvider>
           </ThemeProvider>
         </SmartCacheProvider>
       </XPProvider>

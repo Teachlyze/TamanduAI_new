@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Seo from '@/components/Seo';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
@@ -127,6 +128,11 @@ const ContactPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <Seo
+        title="Contato — TamanduAI"
+        description="Fale com nossa equipe sobre planos para professores e escolas, integrações, suporte e programa Beta."
+        path="/contact"
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Header */}
         <div className="text-center mb-16">
@@ -168,7 +174,7 @@ const ContactPage = () => {
               
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-blue-100 dark:bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-blue-100 dark:bg-gray-800 rounded-xl flex items-center justify-center">
                     <EnvelopeIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
@@ -355,15 +361,15 @@ const ContactPage = () => {
                 type="submit"
                 disabled={loading}
                 variant="gradient"
-                className="w-full py-3"
+                className="w-full py-3 whitespace-nowrap inline-flex items-center justify-center gap-2"
               >
                 {loading ? (
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    Enviando...
-                  </div>
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    <span>Enviando...</span>
+                  </>
                 ) : (
-                  'Enviar Mensagem'
+                  <span>Enviar Mensagem</span>
                 )}
               </Button>
             </form>

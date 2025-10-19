@@ -1,4 +1,5 @@
 import React from 'react';
+import Seo from '@/components/Seo';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -100,6 +101,11 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <Seo
+        title="TamanduAI — Banco de Questões, Quizzes e Gestão Escolar com IA"
+        description="Encontre questões para estudar, crie quizzes, corrija automaticamente e gerencie turmas com analytics e gamificação. Plataforma para alunos, professores e escolas."
+        path="/"
+      />
       {/* Header */}
       <motion.header 
         initial={{ y: -100 }}

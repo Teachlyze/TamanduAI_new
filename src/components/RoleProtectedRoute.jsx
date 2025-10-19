@@ -49,10 +49,10 @@ const RoleProtectedRoute = ({ children, allowedRoles = ['teacher', 'student'] })
           return;
         }
 
-        // Fallback: buscar da tabela profiles
+        // Fallback: buscar da tabela profiles (role somente)
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
-          .select('role, school_id')
+          .select('role')
           .eq('id', user.id)
           .maybeSingle();
 
@@ -66,11 +66,7 @@ const RoleProtectedRoute = ({ children, allowedRoles = ['teacher', 'student'] })
           setUserRole(null);
           setError('Perfil de usuário não encontrado');
         } else {
-          let role = profile.role;
-          // Heurística: se usuário possui school_id e está acessando /school, tratar como 'school'
-          if (!role && profile?.school_id && location?.pathname?.startsWith('/school')) {
-            role = 'school';
-          }
+          const role = profile.role;
           if (!role) {
             console.error('[RoleProtected] Role vazio/null no profile');
             setUserRole(null);
@@ -83,7 +79,6 @@ const RoleProtectedRoute = ({ children, allowedRoles = ['teacher', 'student'] })
       } catch (err) {
         console.error('[RoleProtected] Erro inesperado:', err);
         setError(err.message);
-        setUserRole('student'); // Default seguro
       } finally {
         setLoading(false);
       }
