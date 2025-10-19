@@ -142,8 +142,6 @@ export const ClassService = {
       description: description || null,
       created_by: teacher_id,
       subject: subject || null,
-      course: course || null,
-      period: period || null,
       grade_level: grade_level || null,
       academic_year: (() => {
         const ay = parseInt(academic_year, 10);
@@ -252,6 +250,13 @@ export const ClassService = {
   async updateClass(classId, updates, studentUpdates) {
     // Normalize fields to DB schema
     const safeUpdates = { ...(updates || {}) };
+    // Remove non-existent columns to avoid schema errors
+    if (Object.prototype.hasOwnProperty.call(safeUpdates, 'course')) {
+      delete safeUpdates.course;
+    }
+    if (Object.prototype.hasOwnProperty.call(safeUpdates, 'period')) {
+      delete safeUpdates.period;
+    }
     if (Object.prototype.hasOwnProperty.call(safeUpdates, 'academic_year')) {
       const ay = parseInt(safeUpdates.academic_year, 10);
       safeUpdates.academic_year = Number.isFinite(ay) ? ay : new Date().getFullYear();
