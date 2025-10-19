@@ -468,6 +468,69 @@ class SchoolService {
       return null;
     }
   }
+
+  /**
+   * Busca todas as escolas onde o professor está afiliado
+   * @param {string} teacherId - ID do professor
+   * @returns {Promise<Array>} Lista de escolas
+   */
+  async getTeacherAffiliatedSchools(teacherId) {
+    try {
+      const { data, error } = await supabase
+        .from('school_teachers')
+        .select(`
+          school_id,
+          status,
+          joined_at,
+          schools:school_id (
+            id,
+            name,
+            logo_url,
+            status
+          )
+        `)
+        .eq('user_id', teacherId)
+        .eq('status', 'active')
+        .eq('schools.status', 'active')
+        .order('joined_at', { ascending: false });
+
+      if (error) throw error;
+
+      return (data || []).map(item => ({
+        id: item.schools.id,
+        name: item.schools.name,
+        logo_url: item.schools.logo_url,
+        joined_at: item.joined_at
+      }));
+    } catch (error) {
+      console.error('[SchoolService] Error getting teacher affiliated schools:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Verifica se um professor está afiliado a uma escola específica
+   * @param {string} teacherId - ID do professor
+   * @param {string} schoolId - ID da escola
+   * @returns {Promise<boolean>}
+   */
+  async isTeacherAffiliatedToSchool(teacherId, schoolId) {
+    try {
+      const { data, error } = await supabase
+        .from('school_teachers')
+        .select('id')
+        .eq('user_id', teacherId)
+        .eq('school_id', schoolId)
+        .eq('status', 'active')
+        .single();
+
+      if (error && error.code !== 'PGRST116') throw error;
+      return !!data;
+    } catch (error) {
+      console.error('[SchoolService] Error checking teacher affiliation:', error);
+      return false;
+    }
+  }
 }
 
 export default new SchoolService();

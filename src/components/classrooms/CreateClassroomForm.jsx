@@ -1,23 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { motion } from 'framer-motion';
-import { supabase } from '@/lib/supabaseClient';
-import { useAuth } from "@/hooks/useAuth";
-import { Logger } from '@/services/logger';
-import { ClassService } from '@/services/classService';
+import { useAuth } from '@/contexts/AuthContext';
+import ClassService from '@/services/classService';
+import schoolService from '@/services/schoolService';
+import { useToast } from '@/components/ui/use-toast';
+import { logger } from '@/utils/logger';
 
 // UI Components
-import Button from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { toast } from '@/components/ui/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -63,14 +62,19 @@ const classFormSchema = z.object({
   meeting_start_time: z.string().optional(),
   meeting_end_time: z.string().optional(),
   period: z.string().optional(),
+  school_id: z.string().optional(),
+  is_school_managed: z.boolean().default(false),
 });
 
 const CreateClassroomForm = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [error, setError] = useState(null);
+  const [affiliatedSchools, setAffiliatedSchools] = useState([]);
+  const [loadingSchools, setLoadingSchools] = useState(true);
 
   // Available colors for class
   const classColors = [
@@ -114,8 +118,34 @@ const CreateClassroomForm = () => {
       meeting_start_time: '',
       meeting_end_time: '',
       period: '',
+      school_id: '',
+      is_school_managed: false,
     }
   });
+
+  // Load affiliated schools on mount
+  useEffect(() => {
+    const loadAffiliatedSchools = async () => {
+      if (!user?.id) return;
+      
+      setLoadingSchools(true);
+      try {
+        const schools = await schoolService.getTeacherAffiliatedSchools(user.id);
+        setAffiliatedSchools(schools || []);
+      } catch (error) {
+        console.error('Erro ao carregar escolas:', error);
+        toast({
+          variant: 'destructive',
+          title: 'Erro',
+          description: 'Não foi possível carregar suas escolas afiliadas.',
+        });
+      } finally {
+        setLoadingSchools(false);
+      }
+    };
+
+    loadAffiliatedSchools();
+  }, [user]);
 
   // Handle form submission
   const onSubmit = async (data) => {
@@ -132,7 +162,7 @@ const CreateClassroomForm = () => {
     setError(null);
 
     try {
-      Logger.info('Iniciando criação de turma', {
+      logger.info('Iniciando criação de turma', {
         teacherId: user.id,
         className: data.name,
         subject: data.subject
@@ -143,6 +173,7 @@ const CreateClassroomForm = () => {
         name: data.name,
         description: data.description || '',
         teacher_id: user.id,
+        created_by: user.id,
         subject: data.subject,
         course: data.course || null,
         academic_year: data.academic_year,
@@ -158,12 +189,14 @@ const CreateClassroomForm = () => {
         meeting_start_time: data.meeting_start_time || null,
         meeting_end_time: data.meeting_end_time || null,
         period: data.period || null,
+        school_id: data.school_id || null,
+        is_school_managed: !!data.school_id,
         is_active: true
       };
 
       const created = await ClassService.createClass(classPayload);
 
-      Logger.info('Turma criada com sucesso', {
+      logger.info('Turma criada com sucesso', {
         classId: created.id,
         className: created.name
       });
@@ -177,7 +210,7 @@ const CreateClassroomForm = () => {
       navigate('/dashboard/classes');
 
     } catch (error) {
-      Logger.error('Erro ao criar turma', {
+      logger.error('Erro ao criar turma', {
         error: error.message,
         teacherId: user.id
       });
@@ -284,8 +317,66 @@ const CreateClassroomForm = () => {
                                 placeholder="Ex: Matemática 9A"
                                 {...field}
                                 disabled={isSubmitting}
+                                className="bg-white dark:bg-slate-900 text-foreground border-border"
                               />
                             </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* School Affiliation Select */}
+                      <FormField
+                        control={form.control}
+                        name="school_id"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="flex items-center gap-2">
+                              <School className="w-4 h-4 text-indigo-600" />
+                              Escola (Opcional)
+                            </FormLabel>
+                            <Select 
+                              onValueChange={(value) => {
+                                field.onChange(value);
+                                // Auto-set is_school_managed based on selection
+                                form.setValue('is_school_managed', !!value);
+                              }} 
+                              defaultValue={field.value} 
+                              disabled={isSubmitting || loadingSchools}
+                            >
+                              <FormControl>
+                                <SelectTrigger className="bg-white dark:bg-slate-900 text-foreground border-border">
+                                  <SelectValue placeholder={
+                                    loadingSchools 
+                                      ? "Carregando escolas..." 
+                                      : affiliatedSchools.length === 0
+                                      ? "Turma independente (sem escola)"
+                                      : "Selecione uma escola"
+                                  } />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="">
+                                  🏫 Turma Independente (só você)
+                                </SelectItem>
+                                {affiliatedSchools.map((school) => (
+                                  <SelectItem key={school.id} value={school.id}>
+                                    {school.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormDescription className="text-xs">
+                              {affiliatedSchools.length === 0 ? (
+                                <span className="text-muted-foreground">
+                                  Você não está afiliado a nenhuma escola. Esta será uma turma independente.
+                                </span>
+                              ) : (
+                                <span className="text-muted-foreground">
+                                  Selecione uma escola para compartilhar dados e analytics. Deixe vazio para turma independente.
+                                </span>
+                              )}
+                            </FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
