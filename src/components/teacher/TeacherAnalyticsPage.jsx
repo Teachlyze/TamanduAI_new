@@ -25,6 +25,9 @@ const TeacherAnalyticsPage = () => {
   const [dateRange, setDateRange] = useState(30); // days
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [searchStudentA, setSearchStudentA] = useState('');
+  const [searchStudentB, setSearchStudentB] = useState('');
+  const [searchStudentC, setSearchStudentC] = useState('');
 
   useEffect(() => {
     const load = async () => {
@@ -51,12 +54,26 @@ const TeacherAnalyticsPage = () => {
           return;
         }
 
-        // Membros (alunos)
+        // Membros (alunos) - Two-step para evitar PGRST201
         const { data: members } = await supabase
           .from('class_members')
-          .select('class_id, user_id, user:profiles(id, full_name)')
+          .select('class_id, user_id')
           .in('class_id', classIds)
           .eq('role', 'student');
+
+        // Buscar dados dos alunos separadamente
+        if (members && members.length > 0) {
+          const studentIds = [...new Set(members.map(m => m.user_id))];
+          const { data: profiles } = await supabase
+            .from('profiles')
+            .select('id, full_name, email')
+            .in('id', studentIds);
+
+          // Combinar dados
+          members.forEach(member => {
+            member.user = profiles?.find(p => p.id === member.user_id);
+          });
+        }
         setStudents(members || []);
 
         // Atividades
@@ -118,6 +135,16 @@ const TeacherAnalyticsPage = () => {
   };
     load();
   }, [user?.id, dateRange]);
+
+  // Alunos únicos (sem duplicatas) - um aluno pode estar em várias turmas
+  const uniqueStudents = useMemo(() => {
+    const seen = new Set();
+    return students.filter(s => {
+      if (seen.has(s.user_id)) return false;
+      seen.add(s.user_id);
+      return true;
+    });
+  }, [students]);
 
   // Filter data by date range
   const filteredSubmissions = useMemo(() => {
@@ -487,33 +514,80 @@ const TeacherAnalyticsPage = () => {
       {/* Comparação Manual - Aluno x Aluno */}
       <PremiumCard variant="elevated">
         <div className="p-6 space-y-4">
-          <h2 className="text-lg font-bold">Comparação Manual: Aluno x Aluno</h2>
+          <h2 className="text-lg font-bold mb-4">Comparação Manual: Aluno x Aluno</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <input list="students-list" placeholder="Buscar aluno A por nome" className="px-3 py-2 rounded-lg border border-border" onChange={(e) => {
-              const name = e.target.value.toLowerCase();
-              const match = students.find((s) => (s.user?.full_name || '').toLowerCase() === name);
-              setSelectedStudentA(match ? match.user_id : '');
-            }} />
-            <input list="students-list" placeholder="Buscar aluno B por nome" className="px-3 py-2 rounded-lg border border-border" onChange={(e) => {
-              const name = e.target.value.toLowerCase();
-              const match = students.find((s) => (s.user?.full_name || '').toLowerCase() === name);
-              setSelectedStudentB(match ? match.user_id : '');
-            }} />
-            <datalist id="students-list">
-              {students.map((s) => (
-                <option key={s.user_id} value={(s.user?.full_name || '').toLowerCase()} />
-              ))}
-            </datalist>
+            <div>
+              <input 
+                type="text"
+                placeholder="Filtrar aluno A por nome..." 
+                value={searchStudentA}
+                onChange={(e) => setSearchStudentA(e.target.value)}
+                className="w-full px-3 py-2 rounded-t-lg border border-b-0 border-border bg-white dark:bg-slate-900 text-foreground" 
+              />
+              <select 
+                className="w-full px-3 py-2 rounded-b-lg border border-border bg-white dark:bg-slate-900 text-foreground max-h-40" 
+                value={selectedStudentA} 
+                onChange={(e) => setSelectedStudentA(e.target.value)}
+                size="5"
+              >
+                <option value="">— Selecione Aluno A —</option>
+                {uniqueStudents
+                  .filter(s => !searchStudentA || (s.user?.full_name || '').toLowerCase().includes(searchStudentA.toLowerCase()))
+                  .map((s) => (
+                    <option key={s.user_id} value={s.user_id}>
+                      {s.user?.full_name || 'Aluno'}
+                    </option>
+                  ))}
+              </select>
+            </div>
+            <div>
+              <input 
+                type="text"
+                placeholder="Filtrar aluno B por nome..." 
+                value={searchStudentB}
+                onChange={(e) => setSearchStudentB(e.target.value)}
+                className="w-full px-3 py-2 rounded-t-lg border border-b-0 border-border bg-white dark:bg-slate-900 text-foreground" 
+              />
+              <select 
+                className="w-full px-3 py-2 rounded-b-lg border border-border bg-white dark:bg-slate-900 text-foreground" 
+                value={selectedStudentB} 
+                onChange={(e) => setSelectedStudentB(e.target.value)}
+                size="5"
+              >
+                <option value="">— Selecione Aluno B —</option>
+                {uniqueStudents
+                  .filter(s => !searchStudentB || (s.user?.full_name || '').toLowerCase().includes(searchStudentB.toLowerCase()))
+                  .map((s) => (
+                    <option key={s.user_id} value={s.user_id}>
+                      {s.user?.full_name || 'Aluno'}
+                    </option>
+                  ))}
+              </select>
+            </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-lg border border-border">
-              <div className="font-semibold mb-2">Aluno A</div>
+            <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
+              <div className="font-semibold mb-3 pb-2 border-b border-border">
+                Aluno A
+                {selectedStudentA && (
+                  <div className="text-sm font-normal text-muted-foreground mt-1">
+                    {uniqueStudents.find(s => s.user_id === selectedStudentA)?.user?.full_name || 'N/A'}
+                  </div>
+                )}
+              </div>
               {selectedStudentA ? (
                 renderStudentMetrics(selectedStudentA)
               ) : <div className="text-sm text-muted-foreground">Selecione um aluno</div>}
             </div>
-            <div className="p-4 rounded-lg border border-border">
-              <div className="font-semibold mb-2">Aluno B</div>
+            <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
+              <div className="font-semibold mb-3 pb-2 border-b border-border">
+                Aluno B
+                {selectedStudentB && (
+                  <div className="text-sm font-normal text-muted-foreground mt-1">
+                    {uniqueStudents.find(s => s.user_id === selectedStudentB)?.user?.full_name || 'N/A'}
+                  </div>
+                )}
+              </div>
               {selectedStudentB ? (
                 renderStudentMetrics(selectedStudentB)
               ) : <div className="text-sm text-muted-foreground">Selecione um aluno</div>}
@@ -525,15 +599,23 @@ const TeacherAnalyticsPage = () => {
       {/* Comparação Manual - Turma x Turma */}
       <PremiumCard variant="elevated">
         <div className="p-6 space-y-4">
-          <h2 className="text-lg font-bold">Comparação Manual: Turma x Turma</h2>
+          <h2 className="text-lg font-bold mb-4">Comparação Manual: Turma x Turma</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <select className="px-3 py-2 rounded-lg border border-border" value={selectedClassA} onChange={(e) => setSelectedClassA(e.target.value)}>
+            <select 
+              className="px-3 py-2 rounded-lg border border-border bg-white dark:bg-slate-900 text-foreground" 
+              value={selectedClassA} 
+              onChange={(e) => setSelectedClassA(e.target.value)}
+            >
               <option value="">Selecione Turma A</option>
               {classes.map((c) => (
                 <option key={c.id} value={c.id}>{c.name}</option>
               ))}
             </select>
-            <select className="px-3 py-2 rounded-lg border border-border" value={selectedClassB} onChange={(e) => setSelectedClassB(e.target.value)}>
+            <select 
+              className="px-3 py-2 rounded-lg border border-border bg-white dark:bg-slate-900 text-foreground" 
+              value={selectedClassB} 
+              onChange={(e) => setSelectedClassB(e.target.value)}
+            >
               <option value="">Selecione Turma B</option>
               {classes.map((c) => (
                 <option key={c.id} value={c.id}>{c.name}</option>
@@ -541,14 +623,28 @@ const TeacherAnalyticsPage = () => {
             </select>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-lg border border-border">
-              <div className="font-semibold mb-2">Turma A {selectedClassA && classMap.get(selectedClassA)?.name ? `- ${classMap.get(selectedClassA).name}` : ''}</div>
+            <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
+              <div className="font-semibold mb-3 pb-2 border-b border-border">
+                Turma A
+                {selectedClassA && classMap.get(selectedClassA)?.name && (
+                  <div className="text-sm font-normal text-muted-foreground mt-1">
+                    {classMap.get(selectedClassA).name}
+                  </div>
+                )}
+              </div>
               {selectedClassA ? (
                 renderClassMetrics(selectedClassA)
               ) : <div className="text-sm text-muted-foreground">Selecione uma turma</div>}
             </div>
-            <div className="p-4 rounded-lg border border-border">
-              <div className="font-semibold mb-2">Turma B {selectedClassB && classMap.get(selectedClassB)?.name ? `- ${classMap.get(selectedClassB).name}` : ''}</div>
+            <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
+              <div className="font-semibold mb-3 pb-2 border-b border-border">
+                Turma B
+                {selectedClassB && classMap.get(selectedClassB)?.name && (
+                  <div className="text-sm font-normal text-muted-foreground mt-1">
+                    {classMap.get(selectedClassB).name}
+                  </div>
+                )}
+              </div>
               {selectedClassB ? (
                 renderClassMetrics(selectedClassB)
               ) : <div className="text-sm text-muted-foreground">Selecione uma turma</div>}
@@ -560,34 +656,66 @@ const TeacherAnalyticsPage = () => {
       {/* Comparação Manual - Aluno x Turma */}
       <PremiumCard variant="elevated">
         <div className="p-6 space-y-4">
-          <h2 className="text-lg font-bold">Comparação Manual: Aluno x Turma</h2>
+          <h2 className="text-lg font-bold mb-4">Comparação Manual: Aluno x Turma</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <input list="students-list-2" placeholder="Buscar aluno por nome" className="px-3 py-2 rounded-lg border border-border" onChange={(e) => {
-              const name = e.target.value.toLowerCase();
-              const match = students.find((s) => (s.user?.full_name || '').toLowerCase() === name);
-              setSelectedStudentA(match ? match.user_id : '');
-            }} />
-            <select className="px-3 py-2 rounded-lg border border-border" value={selectedClassA} onChange={(e) => setSelectedClassA(e.target.value)}>
-              <option value="">Selecione Turma</option>
+            <div>
+              <input 
+                type="text"
+                placeholder="Filtrar aluno por nome..." 
+                value={searchStudentC}
+                onChange={(e) => setSearchStudentC(e.target.value)}
+                className="w-full px-3 py-2 rounded-t-lg border border-b-0 border-border bg-white dark:bg-slate-900 text-foreground" 
+              />
+              <select 
+                className="w-full px-3 py-2 rounded-b-lg border border-border bg-white dark:bg-slate-900 text-foreground" 
+                value={selectedStudentA} 
+                onChange={(e) => setSelectedStudentA(e.target.value)}
+                size="5"
+              >
+                <option value="">— Selecione Aluno —</option>
+                {uniqueStudents
+                  .filter(s => !searchStudentC || (s.user?.full_name || '').toLowerCase().includes(searchStudentC.toLowerCase()))
+                  .map((s) => (
+                    <option key={s.user_id} value={s.user_id}>
+                      {s.user?.full_name || 'Aluno'}
+                    </option>
+                  ))}
+              </select>
+            </div>
+            <select 
+              className="px-3 py-2 rounded-lg border border-border bg-white dark:bg-slate-900 text-foreground" 
+              value={selectedClassA} 
+              onChange={(e) => setSelectedClassA(e.target.value)}
+            >
+              <option value="">— Selecione Turma —</option>
               {classes.map((c) => (
                 <option key={c.id} value={c.id}>{c.name}</option>
               ))}
             </select>
-            <datalist id="students-list-2">
-              {students.map((s) => (
-                <option key={s.user_id} value={(s.user?.full_name || '').toLowerCase()} />
-              ))}
-            </datalist>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-lg border border-border">
-              <div className="font-semibold mb-2">Aluno</div>
+            <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
+              <div className="font-semibold mb-3 pb-2 border-b border-border">
+                Aluno
+                {selectedStudentA && (
+                  <div className="text-sm font-normal text-muted-foreground mt-1">
+                    {uniqueStudents.find(s => s.user_id === selectedStudentA)?.user?.full_name || 'N/A'}
+                  </div>
+                )}
+              </div>
               {selectedStudentA ? (
                 renderStudentMetrics(selectedStudentA)
               ) : <div className="text-sm text-muted-foreground">Selecione um aluno</div>}
             </div>
-            <div className="p-4 rounded-lg border border-border">
-              <div className="font-semibold mb-2">Turma {selectedClassA && classMap.get(selectedClassA)?.name ? `- ${classMap.get(selectedClassA).name}` : ''}</div>
+            <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
+              <div className="font-semibold mb-3 pb-2 border-b border-border">
+                Turma
+                {selectedClassA && classMap.get(selectedClassA)?.name && (
+                  <div className="text-sm font-normal text-muted-foreground mt-1">
+                    {classMap.get(selectedClassA).name}
+                  </div>
+                )}
+              </div>
               {selectedClassA ? (
                 renderClassMetrics(selectedClassA)
               ) : <div className="text-sm text-muted-foreground">Selecione uma turma</div>}

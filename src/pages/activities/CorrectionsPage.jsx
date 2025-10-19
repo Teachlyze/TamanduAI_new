@@ -59,16 +59,36 @@ const CorrectionsPage = () => {
       if (activityError) throw activityError;
       setActivity(activityData);
 
-      // Buscar submissões
+      // Buscar submissões (sem nested profiles para evitar PGRST201)
       const { data: submissionsData, error: submissionsError } = await supabase
         .from('submissions')
-        .select(`
-          *,
-          student:profiles!student_id(id, full_name, email, avatar_url),
-          plagiarism_reports(*)
-        `)
+        .select('*')
         .eq('activity_id', activityId)
         .order('submitted_at', { ascending: false });
+
+      if (submissionsError) throw submissionsError;
+
+      // Buscar dados dos alunos separadamente
+      if (submissionsData && submissionsData.length > 0) {
+        const studentIds = [...new Set(submissionsData.map(s => s.student_id))];
+        const { data: students } = await supabase
+          .from('profiles')
+          .select('id, full_name, email, avatar_url')
+          .in('id', studentIds);
+
+        // Buscar relatórios de plágio
+        const submissionIds = submissionsData.map(s => s.id);
+        const { data: plagiarismReports } = await supabase
+          .from('plagiarism_reports')
+          .select('*')
+          .in('submission_id', submissionIds);
+
+        // Combinar dados
+        submissionsData.forEach(sub => {
+          sub.student = students?.find(st => st.id === sub.student_id);
+          sub.plagiarism_reports = plagiarismReports?.filter(pr => pr.submission_id === sub.id) || [];
+        });
+      }
 
       if (submissionsError) throw submissionsError;
       setSubmissions(submissionsData || []);
@@ -104,8 +124,8 @@ const CorrectionsPage = () => {
         .update({
           grade: parseFloat(grade) || null,
           feedback: feedback || null,
-          corrected_at: new Date().toISOString(),
-          corrected_by: user.id
+          graded_at: new Date().toISOString(),
+          graded_by: user.id
         })
         .eq('id', selectedSubmission.id);
 

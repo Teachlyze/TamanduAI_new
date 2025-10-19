@@ -1,1 +1,0 @@
-import{r as e}from"./main-Bq8SWujy.js";import"./useRedisCache-rmpCT-4z.js";const i=e.createContext(),o=()=>{const t=e.useContext(i);return t===void 0?{activities:[],loading:!1,error:null,fetchActivities:()=>{},createActivity:()=>{},updateActivity:()=>{},deleteActivity:()=>{},clearError:()=>{}}:t};export{o as u};
