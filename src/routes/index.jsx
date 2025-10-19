@@ -41,6 +41,7 @@ const ContactPage = lazyLoad(() => import('../pages/ContactPage'));
 const BetaPage = lazyLoad(() => import('../pages/BetaPage'));
 const LogoutPage = lazyLoad(() => import('../pages/LogoutPage'));
 const JoinClassPage = lazyLoad(() => import('../pages/JoinClassPage'));
+const JoinClassWithCodePage = lazyLoad(() => import('../pages/JoinClassWithCodePage'));
 const UserProfilePage = lazyLoad(() => import('../pages/UserProfilePagePremium'));
 const StrategicPlanPage = lazyLoad(() => import('../pages/StrategicPlanPage'));
 
@@ -327,6 +328,22 @@ const AppRoutes = () => {
           </Suspense>
         }
       />
+      <Route
+        path="/join-class"
+        element={
+          <Suspense fallback={<Loading />}>
+            <JoinClassWithCodePage />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/join-class/:code"
+        element={
+          <Suspense fallback={<Loading />}>
+            <JoinClassWithCodePage />
+          </Suspense>
+        }
+      />
 
       {/* Development-only routes */}
       {import.meta.env.DEV && HMRTest && (
@@ -472,6 +489,14 @@ const AppRoutes = () => {
           element={
             <Suspense fallback={<Loading />}>
               <NotificationCenter />
+            </Suspense>
+          }
+        />
+        <Route
+          path="profile"
+          element={
+            <Suspense fallback={<Loading />}>
+              <StudentDetailPage />
             </Suspense>
           }
         />
@@ -935,6 +960,14 @@ const AppRoutes = () => {
           element={
             <Suspense fallback={<Loading />}>
               <RewardSettingsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="students/:studentId"
+          element={
+            <Suspense fallback={<Loading />}>
+              <StudentDetailPage />
             </Suspense>
           }
         />

@@ -46,14 +46,26 @@ export default function JoinClassWithCodePage() {
             full_name,
             email
           ),
-          _count:class_members(count)
+          school_classes!inner (
+            schools (
+              id,
+              name,
+              description
+            )
+          )
         `)
         .eq('invite_code', inviteCode.toUpperCase())
         .single();
 
       if (fetchError) throw new Error('Código de convite inválido');
 
-      setClassroom(data);
+      // Contar membros manualmente
+      const { count } = await supabase
+        .from('class_members')
+        .select('*', { count: 'exact', head: true })
+        .eq('class_id', data.id);
+
+      setClassroom({ ...data, memberCount: count || 0 });
     } catch (err) {
       console.error('Erro ao buscar turma:', err);
       setError(err.message);
@@ -65,8 +77,10 @@ export default function JoinClassWithCodePage() {
 
   const handleJoinClass = async () => {
     if (!user) {
-      toast.error('Você precisa estar logado');
-      navigate(`/login?redirect=/join-class/${codeToUse}`);
+      // Salvar código no sessionStorage para usar após login
+      sessionStorage.setItem('pendingClassCode', codeToUse);
+      toast.error('Faça login para entrar na turma');
+      navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
 
@@ -269,12 +283,39 @@ export default function JoinClassWithCodePage() {
             {/* Informações */}
             <div className="text-center mb-6">
               <h1 className="text-3xl font-bold mb-2">{classroom.name}</h1>
-              <p className="text-muted-foreground mb-4">{classroom.subject}</p>
+              <p className="text-lg text-muted-foreground mb-1">{classroom.subject}</p>
+              {classroom.grade_level && (
+                <p className="text-sm text-muted-foreground mb-4">📚 {classroom.grade_level}</p>
+              )}
               
-              <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
-                <span>👨‍🏫 {classroom.professor?.name}</span>
-                <span>•</span>
-                <span>👥 {classroom._count?.count || 0} alunos</span>
+              {/* Escola */}
+              {classroom.school_classes?.[0]?.schools && (
+                <div className="mb-4 p-3 bg-primary/5 rounded-lg border border-primary/10">
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                    <span className="text-xl">🏫</span>
+                    <span className="font-semibold text-primary">{classroom.school_classes[0].schools.name}</span>
+                  </div>
+                  {classroom.school_classes[0].schools.description && (
+                    <p className="text-xs text-muted-foreground">{classroom.school_classes[0].schools.description}</p>
+                  )}
+                </div>
+              )}
+              
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="p-3 bg-muted/50 rounded-lg">
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                    <span>👨‍🏫</span>
+                    <span className="font-medium">Professor</span>
+                  </div>
+                  <p className="text-muted-foreground">{classroom.profiles?.full_name || classroom.profiles?.email || 'N/A'}</p>
+                </div>
+                <div className="p-3 bg-muted/50 rounded-lg">
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                    <span>👥</span>
+                    <span className="font-medium">Alunos</span>
+                  </div>
+                  <p className="text-muted-foreground">{classroom.memberCount} matriculados</p>
+                </div>
               </div>
             </div>
 

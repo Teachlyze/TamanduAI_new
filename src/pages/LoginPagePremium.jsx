@@ -102,6 +102,22 @@ const LoginPagePremium = () => {
       const result = await signIn(email, password);
       toast.success('Login realizado com sucesso!');
       
+      // Verificar se há um código de turma pendente
+      const pendingClassCode = sessionStorage.getItem('pendingClassCode');
+      if (pendingClassCode) {
+        sessionStorage.removeItem('pendingClassCode');
+        navigate(`/join-class/${pendingClassCode}`);
+        return;
+      }
+
+      // Verificar se há redirect na URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectPath = urlParams.get('redirect');
+      if (redirectPath) {
+        navigate(redirectPath);
+        return;
+      }
+      
       // Get user role and navigate to appropriate home
       const role = result?.user?.user_metadata?.role || user?.user_metadata?.role || 'student';
       navigateToHome(navigate, role);
