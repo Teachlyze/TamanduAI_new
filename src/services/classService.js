@@ -102,7 +102,8 @@ export const ClassService = {
       color,
       student_capacity,
       school_id,
-      is_school_managed
+      is_school_managed,
+      grading_system
     } = classDataInput;
 
     // First, ensure the teacher has a profile
@@ -142,13 +143,20 @@ export const ClassService = {
       description: description || null,
       created_by: teacher_id,
       subject: subject || null,
+      course: course || null,
+      period: period || null,
       grade_level: grade_level || null,
       academic_year: (() => {
         const ay = parseInt(academic_year, 10);
         return Number.isFinite(ay) ? ay : new Date().getFullYear();
       })(),
+      grading_system: grading_system || '0-10',
       color: color || '#6366f1',
       student_capacity: typeof student_capacity === 'number' ? student_capacity : 30,
+      room_number: classDataInput.room_number || null,
+      is_online: !!classDataInput.is_online,
+      meeting_link: classDataInput.meeting_link || null,
+      chatbot_enabled: !!classDataInput.chatbot_enabled,
       school_id: school_id || null,
       is_school_managed: !!is_school_managed,
       is_active: true
@@ -250,13 +258,7 @@ export const ClassService = {
   async updateClass(classId, updates, studentUpdates) {
     // Normalize fields to DB schema
     const safeUpdates = { ...(updates || {}) };
-    // Remove non-existent columns to avoid schema errors
-    if (Object.prototype.hasOwnProperty.call(safeUpdates, 'course')) {
-      delete safeUpdates.course;
-    }
-    if (Object.prototype.hasOwnProperty.call(safeUpdates, 'period')) {
-      delete safeUpdates.period;
-    }
+    // Normalize academic_year to integer
     if (Object.prototype.hasOwnProperty.call(safeUpdates, 'academic_year')) {
       const ay = parseInt(safeUpdates.academic_year, 10);
       safeUpdates.academic_year = Number.isFinite(ay) ? ay : new Date().getFullYear();

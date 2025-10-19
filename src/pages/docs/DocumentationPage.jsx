@@ -1468,4 +1468,5 @@ const calculateXP = (score, maxScore) => {
 };
 
 export default DocumentationPagePremium;
+export { DocumentationPagePremium };
 
