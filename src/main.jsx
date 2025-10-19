@@ -6,6 +6,7 @@ import './index.css';
 import './styles/globals.scss';
 import './i18n/config'; // Initialize i18n
 import './polyfills/nodePolyfills'; // Node.js polyfills for browser
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 // Silenciar logs verbosos por padrão. Defina VITE_VERBOSE_LOGS=true para reabilitar.
 (() => {
@@ -39,6 +40,7 @@ if (!rootElement) {
     root.render(
       <React.StrictMode>
         <AppWithRouter />
+        <SpeedInsights />
       </React.StrictMode>
     );
   } catch (error) {
