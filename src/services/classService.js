@@ -101,7 +101,6 @@ export const ClassService = {
       academic_year,
       color,
       student_capacity,
-      chatbot_enabled,
       school_id,
       is_school_managed
     } = classDataInput;
@@ -152,7 +151,6 @@ export const ClassService = {
       })(),
       color: color || '#6366f1',
       student_capacity: typeof student_capacity === 'number' ? student_capacity : 30,
-      chatbot_enabled: !!chatbot_enabled,
       school_id: school_id || null,
       is_school_managed: !!is_school_managed,
       is_active: true
@@ -218,29 +216,27 @@ export const ClassService = {
       }
     }
 
-    // Initialize chatbot configuration if enabled
-    if (chatbot_enabled) {
-      try {
-        const { error: chatbotError } = await supabase
-          .from('chatbot_configurations')
-          .insert({
-            class_id: newClass.id,
-            enabled: true,
-            keywords: [],
-            themes: [],
-            scope_restrictions: [],
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          });
+    // Initialize or ensure chatbot configuration is enabled for every class
+    try {
+      const { error: chatbotError } = await supabase
+        .from('chatbot_configurations')
+        .upsert({
+          class_id: newClass.id,
+          enabled: true,
+          keywords: [],
+          themes: [],
+          scope_restrictions: [],
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'class_id' });
 
-        if (chatbotError && chatbotError.code !== '23505') {
-          console.warn('Erro ao criar configuração do chatbot:', chatbotError);
-        } else {
-          console.log('Chatbot configuration created for class:', newClass.id);
-        }
-      } catch (e) {
-        console.warn('Falha ao inicializar chatbot:', e);
+      if (chatbotError) {
+        console.warn('Erro ao garantir configuração do chatbot:', chatbotError);
+      } else {
+        console.log('Chatbot configuration ensured for class:', newClass.id);
       }
+    } catch (e) {
+      console.warn('Falha ao garantir chatbot para a turma:', e);
     }
 
     return this.getClassById(newClass.id);
