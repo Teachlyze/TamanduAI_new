@@ -19,39 +19,52 @@ export const AuthProvider = ({ children }) => {
     let timeoutId = null;
     
     const bootstrap = async () => {
-      console.log('[AuthContext] Starting bootstrap...');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[AuthContext] Starting bootstrap...');
+      }
       const startTime = performance.now();
-      
-      // Safety timeout - force loading to false after 5 seconds (reduced from 10)
+
+      // Safety timeout - force loading to false after 10 seconds (increased from 5)
       timeoutId = setTimeout(() => {
         if (mounted) {
           console.warn('[AuthContext] Bootstrap timeout - forcing loading to false');
           setLoading(false);
           setUser(null);
         }
-      }, 5000);
-      
+      }, 10000);
+
       try {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         const sessionTime = performance.now() - startTime;
-        console.log('[AuthContext] Session check:', { hasSession: !!session, error: sessionError, timeMs: sessionTime.toFixed(2) });
-        
+
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[AuthContext] Session check:', {
+            hasSession: !!session,
+            error: sessionError,
+            timeMs: sessionTime.toFixed(2)
+          });
+        }
+
         if (!mounted) return;
-        
+
         if (sessionError) {
           console.error('[AuthContext] Session error:', sessionError);
           throw sessionError;
         }
-        
+
         if (!session) {
-          console.log('[AuthContext] No session found, user not authenticated');
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[AuthContext] No session found, user not authenticated');
+          }
           setUser(null);
           setLoading(false);
           return;
         }
-        
+
         // Get user from session instead of making another API call
-        console.log('[AuthContext] User from session:', session.user?.email);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[AuthContext] User from session:', session.user?.email);
+        }
         setUser(session.user ?? null);
       } catch (err) {
         console.error('[AuthContext] Bootstrap auth error:', err);
@@ -63,7 +76,9 @@ export const AuthProvider = ({ children }) => {
         if (timeoutId) clearTimeout(timeoutId);
         if (mounted) {
           const totalTime = performance.now() - startTime;
-          console.log('[AuthContext] Bootstrap complete, setting loading to false (total time:', totalTime.toFixed(2), 'ms)');
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[AuthContext] Bootstrap complete, setting loading to false (total time:', totalTime.toFixed(2), 'ms)');
+          }
           setLoading(false);
         }
       }
@@ -320,6 +335,10 @@ export const AuthProvider = ({ children }) => {
     signUp,
     signOut,
     completeOnboarding,
+    // Aliases for backwards compatibility
+    login: signIn,
+    register: signUp,
+    logout: signOut,
     setNavigate: (navigate) => {
       navigateRef.current = navigate;
     }

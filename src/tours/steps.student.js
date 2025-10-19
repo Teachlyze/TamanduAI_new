@@ -1,0 +1,49 @@
+const steps = [
+  {
+    target: 'body',
+    placement: 'center',
+    title: 'Bem-vindo ao TamanduAI',
+    content:
+      'Vamos conhecer as principais áreas do aluno. Você pode pular a qualquer momento.',
+    disableBeacon: true,
+  },
+  {
+    target: '[data-tour-id="nav-student-dashboard"]',
+    title: 'Dashboard do Aluno',
+    content: 'Aqui você vê seu progresso e atalhos rápidos.',
+    placement: 'right',
+  },
+  {
+    target: '[data-tour-id="nav-student-activities"]',
+    title: 'Minhas Atividades',
+    content: 'Acesse e entregue suas atividades aqui.',
+    placement: 'right',
+  },
+  {
+    target: '[data-tour-id="nav-student-classes"]',
+    title: 'Minhas Turmas',
+    content: 'Veja e acesse as turmas das quais você participa.',
+    placement: 'right',
+  },
+  {
+    target: '[data-tour-id="nav-student-gamification"]',
+    title: 'Gamificação',
+    content: 'Veja seu nível, XP e conquistas.',
+    placement: 'right',
+  },
+  {
+    target: '[data-tour-id="nav-student-calendar"]',
+    title: 'Agenda',
+    content: 'Consulte prazos e eventos do seu calendário.',
+    placement: 'right',
+  },
+  {
+    target: 'body',
+    placement: 'center',
+    title: 'Dica',
+    content:
+      'Você pode reabrir este tour pelo menu de perfil (canto superior direito) na opção "Refazer tour".',
+  },
+];
+
+export default steps;

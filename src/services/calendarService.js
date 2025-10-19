@@ -4,16 +4,46 @@ import { addMinutes } from 'date-fns';
 
 const CalendarService = {
   // List events visible to a user (creator or attendee) within a date range
-  async getUserCalendar({ from, to }) {
-    const { data: events, error } = await supabase
-      .from('calendar_events')
-      .select('id, class_id, title, description, start_time, end_time, meeting_id, activity_id, type, color')
-      .gte('start_time', from.toISOString())
-      .lte('end_time', to.toISOString())
-      .order('start_time', { ascending: true });
+  async getUserCalendar({ from, to, userId = null, userRole = null }) {
+    try {
+      // Se é aluno: confiar nas policies RLS (turma e/ou participants) e filtrar apenas por intervalo
+      if (userId && userRole === 'student') {
+        const { data: events, error } = await supabase
+          .from('calendar_events')
+          .select('id, class_id, title, description, start_time, end_time, activity_id, type, created_by')
+          .gte('start_time', from.toISOString())
+          .lte('end_time', to.toISOString())
+          .order('start_time', { ascending: true });
+        if (error) {
+          console.error('CalendarService.getUserCalendar error:', error);
+          return [];
+        }
+        return events || [];
+      }
+      
+      // Professor: filtrar por created_by quando disponível
+      let query = supabase
+        .from('calendar_events')
+        .select('id, class_id, title, description, start_time, end_time, activity_id, type, created_by')
+        .gte('start_time', from.toISOString())
+        .lte('end_time', to.toISOString())
+        .order('start_time', { ascending: true });
 
-    if (error) throw error;
-    return events || [];
+      if (userRole === 'teacher' && userId) {
+        query = query.eq('created_by', userId);
+      }
+
+      const { data: events, error } = await query;
+
+      if (error) {
+        console.error('CalendarService.getUserCalendar error:', error);
+        return [];
+      }
+      return events || [];
+    } catch (err) {
+      console.error('CalendarService.getUserCalendar exception:', err);
+      return [];
+    }
   },
 
   // Create a calendar event (unified for meetings, deadlines, exams)
@@ -24,11 +54,12 @@ const CalendarService = {
     start_time,
     end_time,
     type = 'custom', // meeting | deadline | exam | custom
-    color = null,
-    meeting_id = null,
-    activity_id = null,
-    metadata = null,
+    activity_id = null
   }) {
+    // Resolve authenticated user for teacher_id
+    const { data: auth } = await supabase.auth.getUser();
+    const teacher_id = auth?.user?.id || null;
+
     const payload = {
       class_id,
       title,
@@ -36,10 +67,8 @@ const CalendarService = {
       start_time: start_time instanceof Date ? start_time.toISOString() : start_time,
       end_time: end_time instanceof Date ? end_time.toISOString() : end_time,
       type,
-      color,
-      meeting_id,
       activity_id,
-      metadata,
+      created_by: teacher_id,
     };
     const { data, error } = await supabase
       .from('calendar_events')
@@ -80,7 +109,7 @@ const CalendarService = {
   async getClassCalendar(classId, { from, to }) {
     const { data: events, error } = await supabase
       .from('calendar_events')
-      .select('id, class_id, title, description, start_time, end_time, meeting_id, activity_id')
+      .select('id, class_id, title, description, start_time, end_time, activity_id')
       .eq('class_id', classId)
       .gte('start_time', from.toISOString())
       .lte('end_time', to.toISOString())

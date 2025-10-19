@@ -40,7 +40,7 @@ const ActivitiesPage = () => {
   const handleAction = (action, activity = null) => {
     switch (action) {
       case 'create':
-        if (isTeacher) navigate('/dashboard/activities/create');
+        if (isTeacher) navigate('/dashboard/activities/new');
         break;
       case 'view':
         if (activity) {
@@ -175,7 +175,7 @@ const ActivitiesPage = () => {
                   </Button>
                   <Button 
                     className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-                    onClick={() => navigate('/dashboard/activities/create')}
+                    onClick={() => navigate('/dashboard/activities/new')}
                   >
                     <Plus className="mr-2 w-4 h-4" />
                     Nova Atividade
@@ -413,7 +413,9 @@ const ActivitiesPage = () => {
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white">Nenhuma atividade encontrada</h3>
                   <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 mb-6">
                     {searchTerm || selectedStatus !== 'all' 
-                      ? 'Tente ajustar sua busca'
+                      ? 'Tente ajustar sua busca' 
+                      : 'Nenhuma atividade criada ainda'
+                    }
                   </p>
                   {!searchTerm && selectedStatus === 'all' && isTeacher && (
                     <Button 

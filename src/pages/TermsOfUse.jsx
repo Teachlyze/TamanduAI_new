@@ -159,7 +159,7 @@ const TermsOfUse = () => {
                     Em caso de dúvidas sobre estes Termos de Uso, entre em contato conosco:
                   </p>
                   
-                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 max-w-lg">
+                  <div className="bg-blue-50 dark:bg-muted/30 rounded-xl p-6 max-w-lg">
                     <div className="flex items-start">
                       <div className="flex-shrink-0 bg-blue-100 dark:bg-blue-900/50 rounded-lg p-3">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -209,3 +209,4 @@ const TermsOfUse = () => {
 };
 
 export default TermsOfUse;
+

@@ -1,0 +1,17 @@
+{
+  "name": "upstash-exporter",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Prometheus exporter for Upstash Redis REST API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

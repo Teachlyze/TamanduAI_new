@@ -36,7 +36,7 @@ import {
 import { getPlagiarismCheckForSubmission } from '../../services/plagiarismService';
 import PlagiarismCheck from '../plagiarism/PlagiarismCheck';
 import RichTextEditor from '../common/RichTextEditor';
-import FileUpload from '../common/FileUpload';
+import FileUpload from '../ui/file-upload';
 import { formatFileSize } from '../../utils/fileUtils';
 
 const { Title, Text, Paragraph } = Typography;

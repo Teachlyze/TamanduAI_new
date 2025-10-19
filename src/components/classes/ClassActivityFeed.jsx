@@ -90,7 +90,7 @@ const ClassActivityFeed = () => {
         description: assignment.activities.description,
         type: undefined,
         due_date: assignment.activities.due_date,
-        max_points: assignment.activities.total_points,
+        max_score: assignment.activities.total_points,
         status: assignment.activities.status,
         published_at: assignment.activities.published_at,
         instructions: assignment.activities.instructions,

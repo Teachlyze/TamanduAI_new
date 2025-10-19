@@ -32,8 +32,12 @@ const Input = React.forwardRef(({
     ref,
     type,
     className: cn(
-      // daisyUI visual + accessible focus state to primary
-      "input input-bordered w-full h-10 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50",
+      // Neutral Tailwind styles to match design system (light/dark)
+      "w-full h-10 rounded-lg border border-border bg-white text-foreground placeholder:text-muted-foreground",
+      "dark:bg-gray-900 dark:text-gray-100",
+      "px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+      "disabled:cursor-not-allowed disabled:opacity-50",
       isInvalid && "border-red-500 focus-visible:outline-red-500",
       success && !isInvalid && "border-green-500 focus-visible:outline-green-500",
       className

@@ -1,0 +1,72 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { SearchX, ArrowLeft, Home } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAuth } from '@/hooks/useAuth';
+
+const NotFound = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const getHomeRoute = () => {
+    const role = user?.user_metadata?.role || user?.role;
+    switch (role) {
+      case 'student':
+        return '/students';
+      case 'teacher':
+        return '/dashboard';
+      case 'school':
+        return '/school';
+      default:
+        return '/';
+    }
+  };
+
+  const handleGoHome = () => {
+    const homeRoute = user ? getHomeRoute() : '/';
+    navigate(homeRoute);
+  };
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
+      <Card className="max-w-md w-full">
+        <CardHeader className="text-center pb-4">
+          <div className="mx-auto w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center mb-4">
+            <SearchX className="w-10 h-10 text-white" />
+          </div>
+          <CardTitle className="text-2xl font-bold">Página Não Encontrada</CardTitle>
+          <p className="text-6xl font-bold text-muted-foreground/20 mt-4">404</p>
+        </CardHeader>
+        <CardContent className="space-y-4 text-center">
+          <p className="text-muted-foreground">
+            A página que você está procurando não existe ou foi movida.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 pt-4">
+            <Button
+              variant="outline"
+              onClick={handleGoBack}
+              className="flex-1"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Voltar
+            </Button>
+            <Button
+              onClick={handleGoHome}
+              className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+            >
+              <Home className="w-4 h-4 mr-2" />
+              Ir para Início
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default NotFound;

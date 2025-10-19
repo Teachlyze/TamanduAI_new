@@ -208,7 +208,7 @@ const ClassActivitiesPage = () => {
             points: activity.total_points || 10,
             status: activity.status || 'pending',
             submissionCount: 0, // TODO: Get from submissions table
-            totalStudents: 25, // TODO: Get from class_students table
+            totalStudents: 25, // TODO: Get from class_members table
             createdAt: activity.created_at || new Date().toISOString(),
             attachments: activity.instructions ? [{ id: 'file1', name: 'instructions.txt', type: 'text', size: '1 KB' }] : [],
             isGraded: false,

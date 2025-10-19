@@ -406,11 +406,21 @@ export const useAsyncOperation = (asyncFn, options = {}) => {
   };
 };
 
-export {
-  useEnhancedState,
-  useOptimizedEffect,
-  useSafeMemo,
-  useOptimizedCallback,
-  useFormState,
-  useAsyncOperation,
+/**
+ * Debounce a changing value
+ * @param {*} value The input value to debounce
+ * @param {number} delay Delay in ms (default 300)
+ * @returns {*} Debounced value
+ */
+export const useDebounce = (value, delay = 300) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+
+  return debouncedValue;
 };
+
+// No additional exports needed - all functions are exported individually

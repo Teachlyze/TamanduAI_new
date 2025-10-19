@@ -1,13 +1,71 @@
 import React, { Suspense, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
-import { Toaster } from 'react-hot-toast';
 import i18n from './i18n';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import AccessibilityButton from './components/AccessibilityButton';
-import PrivacyButton from './components/PrivacyButton';
 import useKeyboardNavigation from '@/hooks/useKeyboardNavigation';
+import { GlobalAccessibility } from './components/ui/GlobalAccessibility';
+import { PremiumToaster, CommandPalette } from '@/components/ui';
+import { monitorPerformance } from '@/utils/performance';
+import { useAuth } from '@/hooks/useAuth';
+import XPNotificationProvider from '@/components/gamification/XPNotificationProvider';
+
+// Componente para aplicar configurações de acessibilidade globalmente
+const AccessibilityProvider = ({ children }) => {
+  useEffect(() => {
+    // Aplicar configurações salvas no localStorage
+    const applyAccessibilitySettings = () => {
+      try {
+        const settings = localStorage.getItem('accessibility-settings');
+        if (settings) {
+          const parsed = JSON.parse(settings);
+
+          // Aplicar configurações no documentElement
+          const root = document.documentElement;
+
+          if (parsed.fontSize) {
+            root.style.fontSize = `${parsed.fontSize}px`;
+          }
+
+          if (parsed.lineSpacing) {
+            root.style.lineHeight = parsed.lineSpacing;
+          }
+
+          if (parsed.letterSpacing !== undefined) {
+            root.style.letterSpacing = `${parsed.letterSpacing}px`;
+          }
+
+          if (parsed.highContrast) {
+            root.classList.add('high-contrast');
+          } else {
+            root.classList.remove('high-contrast');
+          }
+        }
+      } catch (error) {
+        console.warn('Erro ao aplicar configurações de acessibilidade:', error);
+      }
+    };
+
+    applyAccessibilitySettings();
+
+    // Ouvir mudanças no localStorage
+    const handleStorageChange = (e) => {
+      if (e.key === 'accessibility-settings') {
+        applyAccessibilitySettings();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  return <>{children}</>;
+};
 
 // Scroll to top on route change
 const ScrollToTop = () => {
@@ -21,14 +79,34 @@ const ScrollToTop = () => {
 };
 
 const AppContent = ({ children }) => {
+  const { user } = useAuth();
+  const location = useLocation();
+  
   // Initialize global keyboard navigation
   useKeyboardNavigation();
+
+  // Initialize performance monitoring
+  useEffect(() => {
+    monitorPerformance();
+  }, []);
+
+  // Mostrar botão de acessibilidade apenas na landing page (não logado)
+  const isLandingPage = !user && (location.pathname === '/' || location.pathname === '/login' || location.pathname === '/register');
 
   return (
     <I18nextProvider i18n={i18n}>
       <ErrorBoundary>
+        <GlobalAccessibility />
+        <AccessibilityProvider>
+          <XPNotificationProvider>
             <ScrollToTop />
             <div className="flex flex-col min-h-screen bg-background text-foreground">
+              {/* Premium Toast System */}
+              <PremiumToaster />
+              
+              {/* Command Palette (⌘K) */}
+              <CommandPalette />
+
               <Suspense
                 fallback={
                   <div className="flex items-center justify-center min-h-screen">
@@ -39,48 +117,15 @@ const AppContent = ({ children }) => {
                 {children}
               </Suspense>
 
-              {/* Accessibility and Privacy Buttons */}
-              <div className="fixed bottom-6 right-6 z-50 flex flex-col space-y-3 items-end">
-                <AccessibilityButton />
-                <PrivacyButton />
-              </div>
-
-              {/* Toast Configuration */}
-              <Toaster 
-                position="top-center"
-                containerStyle={{
-                  top: '5.5rem',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  zIndex: 1000,
-                  position: 'fixed'
-                }}
-                toastOptions={{
-                  className: '!bg-background !text-foreground !border !border-border !shadow-lg',
-                  duration: 5000,
-                  style: {
-                    maxWidth: '32rem',
-                    width: '90vw',
-                    margin: '0 auto',
-                    borderRadius: '0.5rem',
-                    border: '1px solid hsl(var(--border))',
-                    backgroundColor: 'hsl(var(--background))',
-                    color: 'hsl(var(--foreground))',
-                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
-                  },
-                  success: {
-                    className: '!bg-green-50 dark:!bg-green-900/20 !text-green-700 dark:!text-green-300 !border-green-200 dark:!border-green-800',
-                    iconTheme: {
-                      primary: '#10B981',
-                      secondary: 'white',
-                    },
-                  },
-                  error: {
-                    className: '!bg-red-50 dark:!bg-red-900/20 !text-red-700 dark:!text-red-300 !border-red-200 dark:!border-red-800',
-                  },
-                }}
-              />
+              {/* Accessibility Button - Apenas na landing page (não logado) */}
+              {isLandingPage && (
+                <div className="fixed bottom-6 left-6 z-40">
+                  <AccessibilityButton />
+                </div>
+              )}
             </div>
+          </XPNotificationProvider>
+        </AccessibilityProvider>
       </ErrorBoundary>
     </I18nextProvider>
   );

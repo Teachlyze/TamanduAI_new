@@ -53,7 +53,7 @@ const ClassDetailsPage = () => {
       }
 
       // Verificar se o usuário atual é o professor
-      const userIsTeacher = data.teacher_id === user.id;
+      const userIsTeacher = data.created_by === user.id;
       setIsTeacher(userIsTeacher);
       
       // Set the class details

@@ -72,46 +72,57 @@ export default async function handler(req, res) {
 // Fallback function if RPC doesn't exist
 async function getPerformanceFallback(studentId, res) {
   try {
-    // Get student's classes and activities
+    // Get student's classes
     const { data: classes, error: classesError } = await supabase
-      .from('class_students')
+      .from('class_members')
       .select(`
         classes (
           id,
           name,
-          subject,
-          class_activities (
-            id,
-            title,
-            type,
-            is_published,
-            created_at,
-            due_date
-          )
+          subject
         )
       `)
-      .eq('student_id', studentId)
-      .eq('status', 'active');
+      .eq('user_id', studentId)
+      .eq('role', 'student');
 
     if (classesError) throw classesError;
+
+    // Get activities for enrolled classes
+    const classIds = classes?.map(c => c.classes?.id).filter(Boolean) || [];
+    
+    const { data: classActivities, error: activitiesError } = classIds.length > 0
+      ? await supabase
+          .from('activity_class_assignments')
+          .select(`
+            activity_id,
+            class_id,
+            activities (
+              id,
+              title,
+              activity_type,
+              status,
+              created_at,
+              due_date
+            )
+          `)
+          .in('class_id', classIds)
+      : { data: [], error: null };
+    
+    if (activitiesError) throw activitiesError;
 
     // Get student's submissions
     const { data: submissions, error: submissionsError } = await supabase
       .from('submissions')
       .select(`
         id,
+        activity_id,
         grade,
         submitted_at,
         status,
-        class_activities (
+        activities (
           id,
           title,
-          type,
-          classes (
-            id,
-            name,
-            subject
-          )
+          activity_type
         )
       `)
       .eq('student_id', studentId)
@@ -121,8 +132,9 @@ async function getPerformanceFallback(studentId, res) {
     if (submissionsError) throw submissionsError;
 
     // Calculate performance metrics
-    const totalActivities = classes?.reduce((sum, item) =>
-      sum + (item.classes?.class_activities?.filter(a => a.is_published).length || 0), 0) || 0;
+    const totalActivities = classActivities?.filter(ca => 
+      ca.activities?.status === 'published' || ca.activities?.status === 'active'
+    ).length || 0;
 
     const completedActivities = submissions?.length || 0;
 
@@ -135,7 +147,10 @@ async function getPerformanceFallback(studentId, res) {
     // Group by subject
     const bySubject = {};
     submissions?.forEach(sub => {
-      const subject = sub.class_activities?.classes?.subject || 'Outros';
+      // Find which class this activity belongs to
+      const activityAssignment = classActivities?.find(ca => ca.activity_id === sub.activity_id);
+      const classData = activityAssignment ? classes?.find(c => c.classes?.id === activityAssignment.class_id)?.classes : null;
+      const subject = classData?.subject || 'Outros';
       if (!bySubject[subject]) {
         bySubject[subject] = { total: 0, completed: 0, average: 0, grades: [] };
       }
@@ -164,12 +179,17 @@ async function getPerformanceFallback(studentId, res) {
         subject,
         ...data
       })),
-      recentGrades: submissions?.slice(0, 10).map(sub => ({
-        subject: sub.class_activities?.classes?.name || 'Turma',
-        activity: sub.class_activities?.title || 'Atividade',
-        grade: sub.grade || 0,
-        date: sub.submitted_at
-      })) || [],
+      recentGrades: submissions?.slice(0, 10).map(sub => {
+        const activityAssignment = classActivities?.find(ca => ca.activity_id === sub.activity_id);
+        const className = activityAssignment ? classes?.find(c => c.classes?.id === activityAssignment.class_id)?.classes?.name : 'Turma';
+        
+        return {
+          subject: className || 'Turma',
+          activity: sub.activities?.title || 'Atividade',
+          grade: sub.grade || 0,
+          date: sub.submitted_at
+        };
+      }) || [],
       trends: {
         last30Days: 0, // Would need more complex calculation
         last7Days: 0,

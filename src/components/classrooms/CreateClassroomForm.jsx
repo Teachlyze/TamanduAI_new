@@ -137,7 +137,6 @@ const CreateClassroomForm = () => {
             semester: data.semester,
             start_date: data.startDate,
             end_date: data.endDate,
-            teacher_id: user.id,
             status: 'active',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()

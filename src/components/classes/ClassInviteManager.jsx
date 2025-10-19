@@ -43,15 +43,23 @@ const ClassInviteManager = ({ classId, className }) => {
     }
   };
 
-  const handleCopyInviteLink = (token) => {
-    const inviteLink = `${window.location.origin}/join/${token}`;
+  const handleCopyInviteLink = (invitationCode) => {
+    const inviteLink = `${window.location.origin}/join/${invitationCode}`;
     navigator.clipboard.writeText(inviteLink);
-    setCopiedInviteId(token);
+    setCopiedInviteId(invitationCode);
     setTimeout(() => setCopiedInviteId(null), 2000);
     
     toast({
       title: 'Link copiado!',
       description: 'O link de convite foi copiado para a área de transferência.',
+    });
+  };
+
+  const handleCopyInviteCode = (invitationCode) => {
+    navigator.clipboard.writeText(invitationCode);
+    toast({
+      title: 'Código copiado!',
+      description: 'O código de convite foi copiado para a área de transferência.',
     });
   };
 
@@ -153,67 +161,97 @@ const ClassInviteManager = ({ classId, className }) => {
                 {invites.map((invite) => (
                   <div 
                     key={invite.id}
-                    className="border rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                    className="border rounded-lg p-4 space-y-3"
                   >
-                    <div className="space-y-1 flex-1 min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                      <div className="space-y-2 flex-1 min-w-0">
+                        {/* Invitation Code */}
+                        <div className="space-y-1">
+                          <Label className="text-xs text-muted-foreground">Código do convite</Label>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-lg font-bold tracking-wider">
+                              {invite.invitation_code}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleCopyInviteCode(invite.invitation_code)}
+                            >
+                              <Copy className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+
+                        {/* Invitation Link */}
+                        <div className="space-y-1">
+                          <Label className="text-xs text-muted-foreground">Link do convite</Label>
+                          <div className="flex items-center gap-2">
+                            <LinkIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                            <span className="font-mono text-sm truncate text-muted-foreground">
+                              {`${window.location.origin}/join/${invite.invitation_code}`}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        {/* Metadata */}
+                        <div className="flex flex-wrap gap-4 text-sm text-muted-foreground pt-2">
+                          <div className="flex items-center gap-1">
+                            <Clock className="h-3.5 w-3.5" />
+                            <span>{formatExpiration(invite.expires_at)}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Users className="h-3.5 w-3.5" />
+                            <span>{invite.current_uses || 0} de {invite.max_uses} usos</span>
+                          </div>
+                          {invite.role && (
+                            <div className="flex items-center gap-1">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs">
+                                {invite.role === 'student' ? 'Aluno' : 'Professor'}
+                              </span>
+                            </div>
+                          )}
+                          {invite.status && invite.status !== 'active' && (
+                            <div className="flex items-center gap-1">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded bg-red-50 text-red-700 text-xs">
+                                {invite.status === 'cancelled' ? 'Cancelado' : 
+                                 invite.status === 'expired' ? 'Expirado' : 
+                                 invite.status === 'depleted' ? 'Esgotado' : invite.status}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
                       <div className="flex items-center gap-2">
-                        <LinkIcon className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-mono text-sm truncate">
-                          {`${window.location.origin}/join/${invite.token}`}
-                        </span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleCopyInviteLink(invite.invitation_code)}
+                          disabled={copiedInviteId === invite.invitation_code}
+                        >
+                          {copiedInviteId === invite.invitation_code ? (
+                            <>
+                              <Check className="mr-2 h-4 w-4" />
+                              Copiado!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="mr-2 h-4 w-4" />
+                              Copiar Link
+                            </>
+                          )}
+                        </Button>
+                        
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => handleRevokeInvite(invite.id)}
+                          disabled={isLoading || invite.status !== 'active'}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
-                      
-                      <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-3.5 w-3.5" />
-                          <span>{formatExpiration(invite.expires_at)}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Users className="h-3.5 w-3.5" />
-                          <span>{invite.uses} de {invite.max_uses} usos</span>
-                        </div>
-                        {invite.role && (
-                          <div className="flex items-center gap-1">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded bg-blue-50 text-blue-700">Role: {invite.role}</span>
-                          </div>
-                        )}
-                        {invite.revoked_at && (
-                          <div className="flex items-center gap-1">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded bg-red-50 text-red-700">Revogado</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleCopyInviteLink(invite.token)}
-                        disabled={copiedInviteId === invite.token}
-                      >
-                        {copiedInviteId === invite.token ? (
-                          <>
-                            <Check className="mr-2 h-4 w-4" />
-                            Copiado!
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="mr-2 h-4 w-4" />
-                            Copiar
-                          </>
-                        )}
-                      </Button>
-                      
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-destructive hover:text-destructive"
-                        onClick={() => handleRevokeInvite(invite.id)}
-                        disabled={isLoading}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
                     </div>
                   </div>
                 ))}

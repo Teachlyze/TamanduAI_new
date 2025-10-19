@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, Search } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -9,25 +9,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel
 } from '@/components/ui/dropdown-menu';
-import Button from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from 'react-router-dom';
-import NotificationDropdown from './NotificationDropdown';
-import LanguageSelector from '@/components/ui/LanguageSelector';
-import AccessibilityPanel from '@/components/ui/AccessibilityPanel';
+import { NotificationCenter } from '@/components/notifications/NotificationCenter';
 import { ConnectionIndicator } from '@/components/admin/ConnectionMonitor';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Settings } from 'lucide-react';
+import NotificationDropdown from '@/components/dashboard/NotificationDropdown';
 
-const Header = ({ setSidebarOpen }) => {
+const Header = ({ onMenuClick }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isAccessibilityPanelOpen, setIsAccessibilityPanelOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -43,66 +37,22 @@ const Header = ({ setSidebarOpen }) => {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-background/80 backdrop-blur-xl border-b border-border/50 px-4 sm:px-6 py-4 sticky top-0 z-30 shadow-sm h-16 flex items-center"
+      className="bg-background/80 backdrop-blur-xl border-b border-border/50 px-4 sm:px-6 py-3 sticky top-0 z-30 shadow-sm h-16 flex items-center"
     >
-      <div className="flex items-center justify-between w-full">
+      <div className="flex items-center justify-between w-full gap-4">
         {/* Left Section */}
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden hover:bg-secondary transition-colors"
-            onClick={() => {
-              if (typeof setSidebarOpen === 'function') {
-                setSidebarOpen(prev => !prev);
-              }
-            }}
+        <div className="flex items-center gap-3">
+          <button
+            className="lg:hidden p-2 rounded-md hover:bg-muted transition-colors"
+            onClick={onMenuClick}
             aria-label="Abrir menu"
           >
             <Menu className="h-5 w-5 text-muted-foreground" />
-          </Button>
-
-          {/* Search Bar */}
-          <div className="hidden md:flex relative">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder={t('dashboard.search.placeholder', 'Buscar alunos, turmas, atividades...')}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 w-80 bg-background border-border focus:border-ring focus:ring-ring rounded-xl"
-              />
-            </div>
-          </div>
+          </button>
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center space-x-3">
-          {/* Search Button for Mobile */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden hover:bg-secondary transition-colors"
-            aria-label="Buscar"
-          >
-            <Search className="h-5 w-5 text-muted-foreground" />
-          </Button>
-
-          {/* Language Selector */}
-          <LanguageSelector variant="minimal" />
-
-          {/* Accessibility Settings */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsAccessibilityPanelOpen(true)}
-            aria-label="Configurações de acessibilidade"
-            title="Acessibilidade"
-          >
-            <Settings className="h-5 w-5 text-muted-foreground" />
-          </Button>
-
+        <div className="flex items-center gap-2">
           {/* Connection Status */}
           <ConnectionIndicator />
 
@@ -112,11 +62,8 @@ const Header = ({ setSidebarOpen }) => {
           {/* User Menu */}
           <DropdownMenu open={isProfileMenuOpen} onOpenChange={setIsProfileMenuOpen}>
             <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className={`h-10 w-10 p-0 rounded-full transition-all hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 ${
-                  isProfileMenuOpen ? 'ring-2 ring-blue-500 ring-offset-2' : ''
-                }`}
+              <button 
+                className="h-10 w-10 p-0 rounded-full transition-all focus:outline-none"
                 aria-label="Menu do usuário"
               >
                 <Avatar className="h-10 w-10 border-2 border-border">
@@ -125,11 +72,11 @@ const Header = ({ setSidebarOpen }) => {
                     alt={user?.name || user?.email}
                     className="object-cover"
                   />
-                  <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium">
+                  <AvatarFallback className="bg-gradient-to-r from-primary to-primary/80 text-white font-medium">
                     {(user?.name || user?.email)?.charAt(0)?.toUpperCase() || 'U'}
                   </AvatarFallback>
                 </Avatar>
-              </Button>
+              </button>
             </DropdownMenuTrigger>
               <DropdownMenuContent 
               className="w-64 rounded-xl shadow-xl border border-border bg-background/95 backdrop-blur-xl"
@@ -144,7 +91,7 @@ const Header = ({ setSidebarOpen }) => {
                         alt={user?.name || user?.email} 
                         className="object-cover"
                       />
-                      <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium">
+                      <AvatarFallback className="bg-gradient-to-r from-primary to-primary/80 text-white font-medium">
                         {(user?.name || user?.email)?.charAt(0)?.toUpperCase() || 'U'}
                       </AvatarFallback>
                     </Avatar>
@@ -155,35 +102,35 @@ const Header = ({ setSidebarOpen }) => {
                       <p className="text-xs text-muted-foreground">
                         {user?.email || 'email@exemplo.com'}
                       </p>
-                      <div className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 mt-1">
+                      <div className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-primary/10 text-primary mt-1">
                         Plano Premium
                       </div>
                     </div>
                   </div>
                 </div>
               </DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
+              <DropdownMenuSeparator />
               <DropdownMenuItem 
-                className="cursor-pointer focus:bg-blue-50 dark:focus:bg-blue-900/20 rounded-lg mx-2 my-1"
+                className="cursor-pointer focus:bg-muted rounded-lg mx-2 my-1"
                 onClick={() => navigate('/profile')}
               >
                 <span>{t('common.profile', 'Meu Perfil')}</span>
               </DropdownMenuItem>
               <DropdownMenuItem 
-                className="cursor-pointer focus:bg-blue-50 dark:focus:bg-blue-900/20 rounded-lg mx-2 my-1"
+                className="cursor-pointer focus:bg-muted rounded-lg mx-2 my-1"
                 onClick={() => navigate('/dashboard/settings')}
               >
                 <span>{t('common.settings', 'Configurações')}</span>
               </DropdownMenuItem>
               <DropdownMenuItem 
-                className="cursor-pointer focus:bg-blue-50 dark:focus:bg-blue-900/20 rounded-lg mx-2 my-1"
+                className="cursor-pointer focus:bg-muted rounded-lg mx-2 my-1"
                 onClick={() => navigate('/docs')}
               >
                 <span>{t('common.help', 'Ajuda & Suporte')}</span>
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
+              <DropdownMenuSeparator />
               <DropdownMenuItem 
-                className="cursor-pointer text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-900/20 rounded-lg mx-2 my-1"
+                className="cursor-pointer text-destructive focus:bg-destructive/10 rounded-lg mx-2 my-1"
                 onClick={handleLogout}
               >
                 <span>{t('common.logout', 'Sair da Conta')}</span>
@@ -192,12 +139,6 @@ const Header = ({ setSidebarOpen }) => {
           </DropdownMenu>
         </div>
       </div>
-
-      {/* Accessibility Panel */}
-      <AccessibilityPanel
-        isOpen={isAccessibilityPanelOpen}
-        onClose={() => setIsAccessibilityPanelOpen(false)}
-      />
     </motion.header>
   );
 };

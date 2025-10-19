@@ -121,23 +121,45 @@ export const checkSubmissionForPlagiarism = async (submissionId, text, options =
     // Perform plagiarism check
     const plagiarismResult = await checkTextForPlagiarism(text, options);
 
+    // Get class_id from activity
+    const { data: activityData } = await supabase
+      .from('activity_class_assignments')
+      .select('class_id')
+      .eq('activity_id', submission.activity_id)
+      .limit(1)
+      .single();
+
     // Store the result in the database
     const { data: checkResult, error: insertError } = await supabase
       .from('plagiarism_checks_v2')
       .insert([
         {
           submission_id: submissionId,
-          content_hash: await generateContentHash(text),
-          winston_score: plagiarismResult.score,
-          plagiarism_severity: plagiarismResult.severity,
-          ai_detected: plagiarismResult.aiDetected,
-          similarity_sources: plagiarismResult.sources,
-          raw_response: plagiarismResult.rawResponse,
-          checked_at: new Date().toISOString(),
+          activity_id: submission.activity_id,
+          class_id: null, // Will be populated by trigger or separate query
+          plag_percent: plagiarismResult.score,
+          unique_percent: plagiarismResult.rawResponse?.unique_percent || (100 - plagiarismResult.score),
+          rephrased_percent: plagiarismResult.rawResponse?.rephrased_percent || 0,
+          exact_matched_percent: plagiarismResult.rawResponse?.exact_matched_percent || 0,
+          severity: plagiarismResult.severity,
+          sources_detected: plagiarismResult.sources,
+          winston_api_response: plagiarismResult.rawResponse,
+          status: 'completed',
         }
       ])
       .select()
       .single();
+
+    if (insertError) throw insertError;
+
+    // Update submission plagiarism check status
+    await supabase
+      .from('submissions')
+      .update({
+        plagiarism_check_status: 'completed',
+        plagiarism_checked_at: new Date().toISOString()
+      })
+      .eq('id', submissionId);
 
     if (insertError) throw insertError;
 
@@ -205,6 +227,50 @@ export const getPlagiarismChecksForActivity = async (activityId) => {
     return data || [];
   } catch (error) {
     console.error('Error getting plagiarism checks for activity:', error);
+    return [];
+  }
+};
+
+/**
+ * Get all plagiarism checks for a class (across all activities in the class)
+ * @param {string} classId - The class ID
+ * @returns {Promise<Array>} - Array of plagiarism checks
+ */
+export const getPlagiarismChecksForClass = async (classId) => {
+  try {
+    // 1) Fetch all activity IDs for the class
+    const { data: activities, error: activitiesError } = await supabase
+      .from('activities')
+      .select('id')
+      .eq('class_id', classId);
+
+    if (activitiesError) throw activitiesError;
+
+    const activityIds = (activities || []).map((a) => a.id);
+    if (activityIds.length === 0) {
+      return [];
+    }
+
+    // 2) Fetch checks for submissions that belong to those activities
+    const { data, error } = await supabase
+      .from('plagiarism_checks_v2')
+      .select(`
+        *,
+        submissions (
+          id,
+          activity_id,
+          user_id,
+          profiles (full_name)
+        )
+      `)
+      .in('submissions.activity_id', activityIds)
+      .order('checked_at', { ascending: false });
+
+    if (error) throw error;
+
+    return data || [];
+  } catch (error) {
+    console.error('Error getting plagiarism checks for class:', error);
     return [];
   }
 };
@@ -284,43 +350,64 @@ const notifyTeacherOfPlagiarism = async (submission, plagiarismResult) => {
   try {
     const { activities, user_id } = submission;
 
-    if (!activities?.class_id) return;
+    if (!activities?.id) return;
 
-    // Get class and teacher info
-    const [{ data: classData }, { data: studentProfile }] = await Promise.all([
-      supabase.from('classes').select('id, name, created_by').eq('id', activities.class_id).single(),
-      supabase.from('profiles').select('full_name').eq('id', user_id).single()
-    ]);
+    // Get class info from activity_class_assignments
+    const { data: classAssignments } = await supabase
+      .from('activity_class_assignments')
+      .select(`
+        class_id,
+        classes (
+          id,
+          name,
+          created_by,
+          professor_id
+        )
+      `)
+      .eq('activity_id', activities.id);
 
-    if (!classData?.created_by) return;
+    if (!classAssignments?.length) return;
 
-    // Get notification settings
-    const settings = await getPlagiarismNotificationSettings(activities.class_id);
+    // Get student profile
+    const { data: studentProfile } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('id', user_id)
+      .single();
 
-    // Check if we should notify based on severity thresholds
-    if (settings && !shouldNotifyForSeverity(plagiarismResult.severity, settings)) {
-      return;
-    }
+    // Notify teachers of all classes this activity is assigned to
+    for (const assignment of classAssignments) {
+      const classData = assignment.classes;
+      if (!classData?.created_by) continue;
 
-    // Send notification
-    await NotificationOrchestrator.send('plagiarismDetected', {
-      userId: classData.created_by,
-      variables: {
-        studentName: studentProfile?.full_name || 'Aluno',
-        activityName: activities.title || 'Atividade',
-        severity: plagiarismResult.severity,
-        score: Math.round(plagiarismResult.score),
-      },
-      channelOverride: settings?.notify_push !== false ? 'push' : undefined,
-      email: settings?.notify_email !== false ? true : undefined,
-      metadata: {
-        submissionId: submission.id,
-        activityId: activities.id,
-        classId: activities.class_id,
-        severity: plagiarismResult.severity,
-        score: plagiarismResult.score,
+      // Get notification settings
+      const settings = await getPlagiarismNotificationSettings(assignment.class_id);
+
+      // Check if we should notify based on severity thresholds
+      if (settings && !shouldNotifyForSeverity(plagiarismResult.severity, settings)) {
+        continue;
       }
-    });
+
+      // Send notification
+      await NotificationOrchestrator.send('plagiarismDetected', {
+        userId: classData.created_by,
+        variables: {
+          studentName: studentProfile?.full_name || 'Aluno',
+          activityName: activities.title || 'Atividade',
+          severity: plagiarismResult.severity,
+          score: Math.round(plagiarismResult.score),
+        },
+        channelOverride: settings?.notify_push !== false ? 'push' : undefined,
+        email: settings?.notify_email !== false ? true : undefined,
+        metadata: {
+          submissionId: submission.id,
+          activityId: activities.id,
+          classId: assignment.class_id,
+          severity: plagiarismResult.severity,
+          score: plagiarismResult.score,
+        }
+      });
+    }
 
   } catch (error) {
     console.error('Error notifying teacher of plagiarism:', error);
@@ -371,7 +458,7 @@ export const getPlagiarismStatsForClass = async (classId) => {
         )
       `)
       .in('submissions.activity_id',
-        supabase.from('activities').select('id').eq('class_id', classId)
+        supabase.from('activity_class_assignments').select('activity_id').eq('class_id', classId)
       );
 
     if (error) throw error;

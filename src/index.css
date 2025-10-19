@@ -1,4 +1,6 @@
-/* Import contrast fixes for dark mode */
+/* Import global theme system */
+@import './styles/theme-variables.css';
+@import './styles/premium-animations.css';
 @import './styles/contrast-fix.css';
 
 /* Importações do Tailwind */
@@ -77,9 +79,14 @@
     @apply bg-background text-foreground border-border rounded-md border p-2 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none;
   }
   
-  /* Estilos para botões */
-  button {
-    @apply bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:opacity-90 transition-opacity;
+  /* Estilos para botões - removidos para evitar conflitos */
+  button:focus {
+    outline: none;
+  }
+  
+  button:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
   }
   
   /* Estilos para links */
@@ -177,16 +184,11 @@ button:-moz-focusring,
   outline: 1px dotted ButtonText;
 }
 
-/* Remove a seta padrão do select no IE 10+ */
+/* Remove custom select arrow to avoid blue accents */
 select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.7rem top 50%;
-  background-size: 0.65rem auto;
-  padding-right: 2.5rem;
 }
 
 /* Remove o estilo padrão do IE 10+ */
@@ -339,3 +341,37 @@ input[type=number] {
 }
 
 /* Theme variables are now consolidated - duplicates removed */
+
+/* Remove contornos azuis indesejados de botões e ícones */
+@layer utilities {
+  button, 
+  button:focus,
+  button:active,
+  [role="button"],
+  [role="button"]:focus,
+  [role="button"]:active {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* Remove backgrounds azuis de botões ghost */
+  .btn-ghost,
+  button[class*="ghost"] {
+    background-color: transparent !important;
+  }
+  
+  .btn-ghost:hover,
+  button[class*="ghost"]:hover {
+    background-color: hsl(var(--muted)) !important;
+  }
+  
+  /* Remove rings azuis de focus padrão */
+  *:focus {
+    outline: none;
+  }
+  
+  *:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+}

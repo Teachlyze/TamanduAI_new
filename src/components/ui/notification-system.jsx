@@ -14,9 +14,9 @@ import {
   Volume2,
   VolumeX
 } from 'lucide-react';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { ScrollArea } from './ui/scroll-area';
+import { Button } from './button';
+import { Badge } from './badge';
+import { ScrollArea } from './scroll-area';
 
 /**
  * Enhanced Notification System for TamanduAI
@@ -310,7 +310,7 @@ export const NotificationItem = ({
       [NOTIFICATION_TYPES.SUCCESS]: 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200',
       [NOTIFICATION_TYPES.ERROR]: 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200',
       [NOTIFICATION_TYPES.WARNING]: 'bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200',
-      [NOTIFICATION_TYPES.INFO]: 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200',
+      [NOTIFICATION_TYPES.INFO]: 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-muted/30 dark:border-blue-800 dark:text-blue-200',
       [NOTIFICATION_TYPES.SYSTEM]: 'bg-gray-50 border-gray-200 text-gray-800 dark:bg-gray-900/20 dark:border-gray-800 dark:text-gray-200',
     };
 
@@ -625,11 +625,3 @@ export const showInfo = (title, message, options = {}) => {
   return showNotification(NOTIFICATION_TYPES.INFO, title, message, options);
 };
 
-export {
-  NotificationItem,
-  NotificationContainer,
-  NotificationBell,
-  NotificationSettings,
-  useNotifications,
-  useNotificationSettings,
-};

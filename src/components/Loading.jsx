@@ -89,17 +89,7 @@ export default function Loading({
     }
   }, [timeout, onTimeout, hasTimedOut]);
 
-  // Auto retry logic
-  useEffect(() => {
-    if (autoRetry && hasTimedOut && retryCount < retryAttempts) {
-      const retryTimer = setTimeout(() => {
-        handleRetry();
-      }, 2000 + (retryCount * 1000)); // Increasing delay
-
-      return () => clearTimeout(retryTimer);
-    }
-  }, [hasTimedOut, retryCount, autoRetry, retryAttempts, handleRetry]);
-
+  // Retry handler must be defined before effects that depend on it
   const handleRetry = useCallback(async () => {
     if (isRetrying || retryCount >= retryAttempts) return;
 
@@ -121,6 +111,17 @@ export default function Loading({
       setIsRetrying(false);
     }
   }, [isRetrying, retryCount, retryAttempts, onRetry]);
+
+  // Auto retry logic
+  useEffect(() => {
+    if (autoRetry && hasTimedOut && retryCount < retryAttempts) {
+      const retryTimer = setTimeout(() => {
+        handleRetry();
+      }, 2000 + (retryCount * 1000)); // Increasing delay
+
+      return () => clearTimeout(retryTimer);
+    }
+  }, [hasTimedOut, retryCount, autoRetry, retryAttempts, handleRetry]);
 
   // Memoized loading component based on type
   const LoadingComponent = useMemo(() => {
@@ -147,9 +148,8 @@ export default function Loading({
     switch (type) {
       case LOADING_TYPES.SPINNER: {
         return (
-          <div className={`relative ${sizeClass}`}>
-            <Loader2 className={`w-full h-full animate-spin ${colorClass}`} />
-            <div className={`absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white to-transparent opacity-20 animate-pulse`}></div>
+          <div className={`relative flex items-center justify-center ${sizeClass}`}>
+            <Loader2 className={`animate-spin ${colorClass}`} style={{ width: '100%', height: '100%' }} />
           </div>
         );
       }

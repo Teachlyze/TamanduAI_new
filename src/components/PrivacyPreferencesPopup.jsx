@@ -196,7 +196,7 @@ const PrivacyPreferencesPopup = () => {
                         key={cookie.key}
                         className={`p-4 rounded-lg border ${
                           preferences[cookie.key] 
-                            ? 'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20' 
+                            ? 'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-muted/30' 
                             : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
                         }`}
                       >
@@ -331,3 +331,4 @@ const PrivacyPreferencesPopup = () => {
 };
 
 export default PrivacyPreferencesPopup;
+

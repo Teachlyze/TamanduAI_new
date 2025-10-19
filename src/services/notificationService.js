@@ -1,4 +1,8 @@
 import { supabase } from '@/lib/supabaseClient';
+import { 
+  createAndSendNotification,
+  processNotificationsBatch 
+} from '@/services/edgeFunctions';
 
 /**
  * Notification Service
@@ -44,8 +48,27 @@ class NotificationService {
     // Administrative
     ANNOUNCEMENT: 'announcement',
     REMINDER: 'reminder',
-    ALERT: 'alert'
+    ALERT: 'alert',
+    
+    // Plagiarism & AI Detection
+    PLAGIARISM_ALERT: 'plagiarism_alert',
+    AI_DETECTION: 'ai_detection'
   });
+
+  /**
+   * Send multiple notifications in batch using Edge Functions
+   * @param {Array<Object>} notifications - Array of notifications to send
+   * @returns {Promise<Object>} - Result of batch operation
+   */
+  static async sendNotificationsBatch(notifications) {
+    try {
+      const result = await processNotificationsBatch(notifications);
+      return result;
+    } catch (error) {
+      console.error('Error sending notifications in batch:', error);
+      throw error;
+    }
+  }
 
   static NotificationStatus = Object.freeze({
     UNREAD: 'unread',
@@ -233,7 +256,7 @@ class NotificationService {
   }
 
   /**
-   * Send a notification immediately
+   * Send a notification immediately using Edge Functions
    * @param {Object} notification - The notification to send
    * @param {string} notification.title - Notification title
    * @param {string} notification.message - Notification message
@@ -275,28 +298,41 @@ class NotificationService {
       if (!userId) throw new Error('No user is currently signed in');
     }
 
+    // Usar Edge Function para criar e enviar notificação
     const notificationData = {
+      type,
       title,
       message,
-      type,
-      category: category || null,
-      priority,
-      reference_id: referenceId || null,
-      reference_type: referenceType || null,
-      action_url: actionUrl || null,
-      metadata: Object.keys(metadata).length > 0 ? metadata : null,
-      user_id: userId
+      data: {
+        category: category || null,
+        priority,
+        referenceId: referenceId || null,
+        referenceType: referenceType || null,
+        actionUrl: actionUrl || null,
+        ...metadata
+      }
     };
 
-    const { data, error } = await supabase
-      .from('notifications')
-      .insert(notificationData)
-      .select()
-      .single();
+    try {
+      const result = await createAndSendNotification(userId, notificationData);
+      return result;
+    } catch (error) {
+      console.error('Error using Edge Function, falling back to direct insert:', error);
+      
+      // Fallback: inserir diretamente no banco
+      const { data, error: insertError } = await supabase
+        .from('notifications')
+        .insert({
+          ...notificationData,
+          user_id: userId,
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single();
 
-    if (error) throw error;
-
-    return data;
+      if (insertError) throw insertError;
+      return data;
+    }
   }
 
   /**
@@ -310,15 +346,17 @@ class NotificationService {
     const userId = userData.user?.id;
     if (!userId) return 0;
 
-    const { count, error } = await supabase
+    // Use GET-based approach to avoid HEAD issues under strict RLS
+    const { data, error } = await supabase
       .from('notifications')
-      .select('*', { count: 'exact', head: true })
+      .select('id')
       .eq('user_id', userId)
-      .eq('is_read', false);
+      .eq('is_read', false)
+      .range(0, 999);
 
     if (error) throw error;
 
-    return count || 0;
+    return data?.length || 0;
   }
 
   /**
@@ -331,7 +369,7 @@ class NotificationService {
     const userId = user?.id;
 
     if (!userId) {
-      return () => {};
+      return { unsubscribe: () => {} };
     }
 
     const subscription = supabase
@@ -352,10 +390,42 @@ class NotificationService {
       )
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(subscription);
+    return {
+      unsubscribe: () => {
+        try { supabase.removeChannel(subscription); } catch (e) { /* noop */ }
+      }
     };
+  }
+
+  async subscribeToNotifications(callback) {
+    return await NotificationService.subscribeToNotifications(callback);
+  }
+
+  // Instance wrappers for compatibility with default instance export
+  async getNotifications(options = {}) {
+    const data = await NotificationService.getNotifications(options);
+    return { data };
+  }
+
+  async markAsRead(notificationIds, opts = {}) {
+    return await NotificationService.markAsRead(notificationIds, opts);
+  }
+
+  async deleteNotification(notificationIds, opts = {}) {
+    return await NotificationService.deleteNotification(notificationIds, opts);
+  }
+
+  async markAllAsRead() {
+    return await NotificationService.markAllAsRead();
+  }
+
+  async getUnreadCount() {
+    return await NotificationService.getUnreadCount();
+  }
+
+  async sendNotification(payload, userId = null) {
+    return await NotificationService.sendNotification(payload, userId);
   }
 }
 
-export default NotificationService;
+export default new NotificationService();

@@ -1,0 +1,65 @@
+const steps = [
+  {
+    target: 'body',
+    placement: 'center',
+    title: 'Bem-vindo à área da Escola',
+    content: 'Um tour rápido pelas principais áreas administrativas.',
+    disableBeacon: true,
+  },
+  {
+    target: '[data-tour-id="nav-school-dashboard"]',
+    title: 'Dashboard da Escola',
+    content: 'Visão geral com indicadores institucionais.',
+    placement: 'right',
+  },
+  {
+    target: '[data-tour-id="nav-school-teachers"]',
+    title: 'Professores',
+    content: 'Gerencie professores vinculados à escola.',
+    placement: 'right',
+  },
+  {
+    target: '[data-tour-id="nav-school-classes"]',
+    title: 'Turmas',
+    content: 'Crie e administre turmas da instituição.',
+    placement: 'right',
+  },
+  {
+    target: '[data-tour-id="nav-school-teachers"]',
+    title: 'Professores',
+    content: 'Gerencie professores vinculados à escola.',
+    placement: 'right',
+  },
+  {
+    target: '[data-tour-id="nav-school-classes"]',
+    title: 'Turmas',
+    content: 'Crie e administre turmas da instituição.',
+    placement: 'right',
+  },
+  {
+    target: '[data-tour-id="nav-school-reports"]',
+    title: 'Relatórios',
+    content: 'Gere relatórios consolidados da escola.',
+    placement: 'right',
+  },
+  {
+    target: '[data-tour-id="nav-school-comms"]',
+    title: 'Comunicações',
+    content: 'Envie comunicados institucionais.',
+    placement: 'right',
+  },
+  {
+    target: '[data-tour-id="nav-school-settings"]',
+    title: 'Configurações',
+    content: 'Ajuste preferências e dados institucionais.',
+    placement: 'right',
+  },
+  {
+    target: 'body',
+    placement: 'center',
+    title: 'Dica',
+    content: 'Você pode reabrir o tour pelo menu de perfil (Refazer tour).',
+  },
+];
+
+export default steps;

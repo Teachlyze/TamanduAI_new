@@ -25,15 +25,8 @@ export default async function handler(req, res) {
         created_at,
         class_members (
           id,
-          student_id,
-          status
-        ),
-        class_activities (
-          id,
-          title,
-          type,
-          is_published,
-          created_at
+          user_id,
+          role
         )
       `)
       .eq('created_by', userId)
@@ -41,16 +34,37 @@ export default async function handler(req, res) {
 
     if (classesError) throw classesError;
 
+    // Get activities for these classes
+    const classIds = classes?.map(c => c.id) || [];
+    const { data: classActivities, error: activitiesError } = classIds.length > 0
+      ? await supabase
+          .from('activity_class_assignments')
+          .select(`
+            activity_id,
+            class_id,
+            activities (
+              id,
+              title,
+              activity_type,
+              status,
+              created_at
+            )
+          `)
+          .in('class_id', classIds)
+      : { data: [], error: null };
+
+    if (activitiesError) throw activitiesError;
+
     // Calculate stats
     const totalStudents = classes.reduce((sum, cls) =>
-      sum + cls.class_members.filter(cs => cs.status === 'active').length, 0
+      sum + cls.class_members.filter(cm => cm.role === 'student').length, 0
     );
 
     const totalClasses = classes.length;
 
-    const totalActivities = classes.reduce((sum, cls) =>
-      sum + cls.class_activities.filter(ca => ca.is_published).length, 0
-    );
+    const totalActivities = classActivities?.filter(ca => 
+      ca.activities?.status === 'published' || ca.activities?.status === 'active'
+    ).length || 0;
 
     const avgCompletion = totalActivities > 0 ? Math.round((totalActivities / (totalClasses * 10)) * 100) : 0;
 
@@ -58,7 +72,7 @@ export default async function handler(req, res) {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    const { data: recentActivitiesData, error: activitiesError } = await supabase
+    const { data: recentActivitiesData, error: recentActivitiesError } = await supabase
       .from('activities')
       .select(`
         id,
@@ -80,7 +94,7 @@ export default async function handler(req, res) {
       .order('created_at', { ascending: false })
       .limit(10);
 
-    if (activitiesError) throw activitiesError;
+    if (recentActivitiesError) throw recentActivitiesError;
 
     // Get upcoming deadlines (next 30 days)
     const thirtyDaysFromNow = new Date();

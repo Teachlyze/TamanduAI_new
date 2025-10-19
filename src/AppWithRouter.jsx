@@ -1,21 +1,27 @@
 import React from 'react';
-import { RouterProvider } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { XPProvider } from './contexts/XPContext';
 import ThemeProvider from './contexts/ThemeProvider';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 import SmartCacheProvider from './providers/SmartCacheProvider';
 import App from './App';
-import router from './routes/router-wrapper';
+import TourProvider from './providers/TourProvider';
+import AppRoutes from './routes/index';
 
 // Create a wrapper component that provides all necessary contexts
 const AppProviders = ({ children }) => (
   <ErrorBoundary>
     <AuthProvider>
-      <SmartCacheProvider>
-        <ThemeProvider>
-          {children}
-        </ThemeProvider>
-      </SmartCacheProvider>
+      <XPProvider>
+        <SmartCacheProvider>
+          <ThemeProvider>
+            <TourProvider>
+              {children}
+            </TourProvider>
+          </ThemeProvider>
+        </SmartCacheProvider>
+      </XPProvider>
     </AuthProvider>
   </ErrorBoundary>
 );
@@ -25,7 +31,11 @@ function AppWithRouter() {
   
   return (
     <AppProviders>
-      <RouterProvider router={router} future={{ v7_startTransition: true }} />
+      <BrowserRouter future={{ v7_startTransition: true }}>
+        <App>
+          <AppRoutes />
+        </App>
+      </BrowserRouter>
     </AppProviders>
   );
 }

@@ -14,7 +14,7 @@ import {
   Loader2,
   ChevronDown,
   Command,
-  K
+  
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
@@ -832,17 +832,6 @@ export const AdvancedSearch = ({
       )}
     </div>
   );
-};
-
-export {
-  SearchInput,
-  SearchSuggestions,
-  SearchFilterPanel,
-  SearchResultItem,
-  SearchResults,
-  useSearch,
-  useSearchFilters,
-  useRecentSearches,
 };
 
 export default AdvancedSearch;

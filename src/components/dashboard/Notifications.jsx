@@ -213,7 +213,7 @@ const Notifications = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   className={`p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer ${
-                    !notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-gray-900'
+                    !notification.read ? 'bg-blue-50 dark:bg-muted/30' : 'bg-white dark:bg-gray-900'
                   }`}
                   onClick={() => handleNotificationClick(notification)}
                 >
@@ -272,3 +272,4 @@ const Notifications = () => {
 };
 
 export default Notifications;
+

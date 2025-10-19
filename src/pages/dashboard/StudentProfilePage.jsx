@@ -26,46 +26,112 @@ import {
   Loader2,
   MessageCircle
 } from 'lucide-react';
-import { useStudentPerformance } from '@/hooks/useRedisCache';
+import { supabase } from '@/lib/supabaseClient';
+import { useToast } from '@/components/ui/use-toast';
 
 const StudentProfilePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [student, setStudent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // eslint-disable-next-line no-unused-vars
   const [activeTab, setActiveTab] = useState('overview');
-
-  // Use Redis cache for student performance data
-  const { data: performanceData, loading: performanceLoading, error: performanceError } = useStudentPerformance(id);
+  const [submissions, setSubmissions] = useState([]);
+  const [classes, setClasses] = useState([]);
 
   useEffect(() => {
-    // Fetch student profile data from API
     const fetchStudentData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`/api/students/${id}/profile`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch student profile');
+        // Buscar dados do perfil do aluno
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (profileError) throw profileError;
+
+        // Buscar turmas do aluno
+        const { data: classData, error: classError } = await supabase
+          .from('class_members')
+          .select(`
+            class_id,
+            joined_at,
+            classes (
+              id,
+              name,
+              subject,
+              grade_level,
+              color,
+              created_by
+            )
+          `)
+          .eq('user_id', id)
+          .eq('role', 'student');
+
+        if (classError) {
+          console.warn('⚠️ Erro ao buscar turmas:', classError);
+          toast({
+            variant: 'warning',
+            title: 'Aviso',
+            description: 'Não foi possível carregar todas as turmas do aluno'
+          });
         }
 
-        const studentData = await response.json();
-        setStudent(studentData);
+        // Buscar submissões/atividades do aluno
+        const { data: submissionsData, error: submissionsError } = await supabase
+          .from('submissions')
+          .select(`
+            id,
+            grade,
+            submitted_at,
+            status,
+            feedback,
+            activities (
+              id,
+              title,
+              max_score,
+              due_date,
+              activity_type,
+              classes (
+                name,
+                subject
+              )
+            )
+          `)
+          .eq('student_id', id)
+          .order('submitted_at', { ascending: false });
 
-        // Log successful data fetch
-        console.log(`📊 Student profile loaded for: ${studentData.name}`);
+        if (submissionsError) {
+          console.warn('⚠️ Erro ao buscar submissões:', submissionsError);
+          toast({
+            variant: 'warning',
+            title: 'Aviso',
+            description: 'Não foi possível carregar todas as atividades do aluno'
+          });
+        }
+
+        // Processar dados
+        setStudent(profileData);
+        setClasses(classData?.map(cm => cm.classes) || []);
+        setSubmissions(submissionsData || []);
+
+        console.log(`📊 Dados do aluno carregados:`, {
+          nome: profileData.full_name || profileData.email,
+          turmas: classData?.length || 0,
+          submissões: submissionsData?.length || 0
+        });
       } catch (err) {
-        console.error('❌ Error fetching student profile:', err);
+        console.error('❌ Erro ao buscar dados do aluno:', err);
         setError(err.message);
-
-        // Log error details for debugging
-        console.error('🔍 Error details:', {
-          studentId: id,
-          error: err.message,
-          timestamp: new Date().toISOString()
+        toast({
+          variant: 'destructive',
+          title: 'Erro ao carregar dados',
+          description: 'Não foi possível carregar os dados do aluno. Tente novamente.'
         });
       } finally {
         setLoading(false);
@@ -75,23 +141,9 @@ const StudentProfilePage = () => {
     if (id) {
       fetchStudentData();
     }
-  }, [id]);
+  }, [id, toast]);
 
-  // Log performance data when it loads
-  useEffect(() => {
-    if (performanceData && !performanceLoading) {
-      console.log(`📈 Student performance loaded for: ${student?.name || id}`);
-    }
-  }, [performanceData, performanceLoading, student, id]);
-
-  // Log errors
-  useEffect(() => {
-    if (performanceError) {
-      console.error('❌ Performance data error:', performanceError);
-    }
-  }, [performanceError]);
-
-  if (loading || performanceLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="flex flex-col items-center gap-4">
@@ -102,45 +154,41 @@ const StudentProfilePage = () => {
     );
   }
 
-  if (error || performanceError) {
+  if (error || !student) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 gap-4">
-        <AlertCircle className="h-12 w-12 text-destructive" />
-        <div className="text-center">
-          <h3 className="text-lg font-medium text-destructive">Erro ao carregar dados</h3>
-          <p className="text-sm text-muted-foreground mt-1">
-            {error || performanceError || 'Ocorreu um erro inesperado'}
-          </p>
+      <div className="flex items-center justify-center h-64">
+        <div className="flex flex-col items-center gap-4">
+          <AlertCircle className="h-12 w-12 text-destructive" />
+          <div className="text-center">
+            <h3 className="text-lg font-semibold">Erro ao carregar dados</h3>
+            <p className="text-muted-foreground">{error || 'Aluno não encontrado'}</p>
+            <div className="flex gap-2 mt-4">
+              <Button onClick={() => navigate('/dashboard/students')} variant="outline">
+                Voltar para Alunos
+              </Button>
+              <Button onClick={() => window.location.reload()}>
+                Tentar novamente
+              </Button>
+            </div>
+          </div>
         </div>
-        <Button onClick={() => navigate(-1)} variant="outline" className="mt-2">
-          Voltar
-        </Button>
       </div>
     );
   }
 
-  if (!student) {
-    return (
-      <div className="flex flex-col items-center justify-center h-64 gap-4">
-        <AlertCircle className="h-12 w-12 text-muted-foreground/50" />
-        <div className="text-center">
-          <h3 className="text-lg font-medium">Aluno não encontrado</h3>
-          <p className="text-sm text-muted-foreground mt-1">
-            O aluno que você está procurando não foi encontrado ou não existe.
-          </p>
-        </div>
-        <Button onClick={() => navigate(-1)} variant="outline" className="mt-2">
-          Voltar
-        </Button>
-      </div>
-    );
-  }
+  // Calcular métricas reais
+  const totalSubmissions = submissions.length;
+  const gradedSubmissions = submissions.filter(s => s.grade !== null);
+  const avgGrade = gradedSubmissions.length > 0
+    ? (gradedSubmissions.reduce((sum, s) => sum + (s.grade || 0), 0) / gradedSubmissions.length).toFixed(1)
+    : 0;
+  const completionRate = totalSubmissions > 0
+    ? Math.round((gradedSubmissions.length / totalSubmissions) * 100)
+    : 0;
 
-  // Calculate stats from real data
-  const averageGrade = student.stats?.averageGrade || 0;
-  const totalActivities = student.stats?.totalActivities || 0;
-  const completedActivities = student.stats?.completedActivities || 0;
-  const progressPercentage = student.stats?.overallProgress || 0;
+  // Usar nome do aluno
+  const studentName = student.full_name || student.email?.split('@')[0] || 'Aluno';
+  const studentEmail = student.email || 'Email não disponível';
 
   return (
     <div className="w-full h-full p-6">
@@ -178,7 +226,7 @@ const StudentProfilePage = () => {
               <div className="relative">
                 <Avatar className="h-24 w-24 border-2 border-primary/20 shadow-sm">
                   <AvatarFallback className="text-2xl font-medium bg-gradient-to-br from-primary/10 to-primary/20 text-primary">
-                    {student.name.split(' ').map(n => n[0]).join('')}
+                    {studentName.split(' ').map(n => n[0]).join('').toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-green-500 border-2 border-background flex items-center justify-center">
@@ -186,10 +234,10 @@ const StudentProfilePage = () => {
                 </div>
               </div>
               <div className="text-center md:text-left">
-                <h2 className="text-xl font-bold">{student.name}</h2>
-                <p className="text-sm text-muted-foreground">{student.email}</p>
+                <h2 className="text-xl font-bold">{studentName}</h2>
+                <p className="text-sm text-muted-foreground">{studentEmail}</p>
                 <Badge variant="outline" className="mt-2">
-                  {student.status === 'active' ? 'Ativo' : 'Inativo'}
+                  {student.role === 'student' ? 'Aluno' : 'Usuário'}
                 </Badge>
               </div>
             </div>
@@ -198,32 +246,30 @@ const StudentProfilePage = () => {
               <StatCard
                 icon={<BarChart2 className="h-5 w-5" />}
                 label="Média Geral"
-                value={averageGrade.toFixed(1)}
+                value={avgGrade || '0.0'}
                 description={`de 10.0 pontos`}
-                trend="up"
-                trendValue={2.5}
               />
 
               <StatCard
                 icon={<BookCheck className="h-5 w-5" />}
                 label="Atividades"
-                value={`${completedActivities}/${totalActivities}`}
-                description={`${progressPercentage}% concluído`}
-                progress={progressPercentage}
+                value={`${gradedSubmissions.length}/${totalSubmissions}`}
+                description={`${completionRate}% concluído`}
+                progress={completionRate}
               />
 
               <StatCard
                 icon={<Users className="h-5 w-5" />}
                 label="Turmas"
-                value={student.stats?.totalClasses || 0}
-                description={`${student.stats?.totalClasses || 0} turma${(student.stats?.totalClasses || 0) !== 1 ? 's' : ''} ativa${(student.stats?.totalClasses || 0) !== 1 ? 's' : ''}`}
+                value={classes.length}
+                description={`${classes.length} turma${classes.length !== 1 ? 's' : ''} ativa${classes.length !== 1 ? 's' : ''}`}
               />
 
               <StatCard
                 icon={<Calendar className="h-5 w-5" />}
                 label="Membro desde"
-                value={new Date(student.joinDate).toLocaleDateString('pt-BR')}
-                description={`${Math.floor((new Date() - new Date(student.joinDate)) / (1000 * 60 * 60 * 24 * 30))} meses`}
+                value={student.created_at ? new Date(student.created_at).toLocaleDateString('pt-BR') : 'N/A'}
+                description={student.created_at ? `${Math.floor((new Date() - new Date(student.created_at)) / (1000 * 60 * 60 * 24 * 30))} meses` : ''}
               />
             </div>
           </div>

@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useState, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,10 @@ import HCaptchaWidget from '@/components/HCaptchaWidget';
 
 // Regras de validação de exemplo
 const validationRules = {
+  name: [
+    (value) => !value ? 'Nome é obrigatório' : true,
+    (value) => value.length < 3 ? 'Nome deve ter pelo menos 3 caracteres' : true,
+  ],
   email: [
     (value) => !value ? 'Email é obrigatório' : true,
     (value) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? 'Email inválido' : true,
@@ -17,13 +21,9 @@ const validationRules = {
     (value) => !value ? 'Senha é obrigatória' : true,
     (value) => value.length < 8 ? 'Senha deve ter pelo menos 8 caracteres' : true,
   ],
-  name: [
-    (value) => !value ? 'Nome é obrigatório' : true,
-    (value) => value.length < 2 ? 'Nome deve ter pelo menos 2 caracteres' : true,
-  ],
 };
 
-const PerformanceDemo = () => {
+const PerformanceDemo = React.memo(() => {
   const [loading, setLoading] = useState(false);
   const [showCaptcha, setShowCaptcha] = useState(false);
   const [captchaRef, setCaptchaRef] = useState(null);
@@ -39,13 +39,12 @@ const PerformanceDemo = () => {
     isValid,
     hasErrors,
   } = useValidation(validationRules, {
-    debounceMs: 300,
     validateOnChange: true,
     validateOnBlur: true,
     showSuccessState: true,
   });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     if (isValid && captchaRef?.getResponse()) {
       setLoading(true);
@@ -56,12 +55,22 @@ const PerformanceDemo = () => {
       resetAll();
       setShowCaptcha(false);
     }
-  };
+  }, [isValid, captchaRef, resetAll]);
 
-  const simulateLoading = () => {
+  const simulateLoading = useCallback(() => {
     setLoading(true);
     setTimeout(() => setLoading(false), 3000);
-  };
+  }, []);
+
+  const toggleCaptcha = useCallback(() => {
+    setShowCaptcha(prev => !prev);
+  }, []);
+
+  // Memoize the list items to prevent unnecessary re-renders
+  const listItems = useMemo(() =>
+    ['Item 1', 'Item 2', 'Item 3', 'Item 4'],
+    []
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 p-8">
@@ -125,7 +134,7 @@ const PerformanceDemo = () => {
                 <SkeletonList items={4} />
               ) : (
                 <div className="space-y-3">
-                  {['Item 1', 'Item 2', 'Item 3', 'Item 4'].map((item, i) => (
+                  {listItems.map((item, i) => (
                     <div key={i} className="flex items-center space-x-4 p-4 border rounded-lg">
                       <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white text-sm">
                         {i + 1}
@@ -238,7 +247,7 @@ const PerformanceDemo = () => {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setShowCaptcha(!showCaptcha)}
+                onClick={toggleCaptcha}
               >
                 {showCaptcha ? 'Ocultar' : 'Mostrar'} Captcha
               </Button>
@@ -263,7 +272,7 @@ const PerformanceDemo = () => {
               O captcha só é carregado quando necessário, reduzindo o tempo de carregamento inicial.
             </p>
 
-            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <div className="p-4 bg-blue-50 dark:bg-muted/30 rounded-lg">
               <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
                 Benefícios:
               </h4>
@@ -280,6 +289,7 @@ const PerformanceDemo = () => {
       </div>
     </div>
   );
-};
+});
 
 export default PerformanceDemo;
+

@@ -140,14 +140,15 @@ class SupabaseConnectionManager {
     try {
       const startTime = performance.now();
 
-      // Teste básico de conectividade
+      // Teste básico de conectividade (evitar HEAD para reduzir 406)
       const { error } = await this.client
         .from('profiles')
-        .select('count', { count: 'exact', head: true });
+        .select('id', { count: 'exact', head: false })
+        .limit(1);
 
       const duration = performance.now() - startTime;
 
-      if (error) {
+      if (error && error?.status !== 406) {
         throw error;
       }
 
@@ -159,7 +160,7 @@ class SupabaseConnectionManager {
         duration,
         status: 200,
         timestamp: startTime,
-        method: 'HEAD',
+        method: 'GET',
       });
 
     } catch (error) {
@@ -192,7 +193,10 @@ class SupabaseConnectionManager {
   async performHeartbeat() {
     try {
       // Consulta simples para manter conexão ativa
-      await this.client.from('profiles').select('id').limit(1);
+      const { error } = await this.client.from('profiles').select('id').limit(1);
+      if (error && error?.status !== 406) {
+        throw error;
+      }
     } catch (error) {
       // Heartbeat falhou - tentar reconectar
       if (this.state === CONNECTION_STATES.CONNECTED) {
@@ -217,19 +221,18 @@ class SupabaseConnectionManager {
     try {
       const startTime = performance.now();
 
-      // Teste rápido de conectividade
+      // Teste rápido de conectividade (evitar single para não forçar linha)
       const { error } = await this.client
         .from('profiles')
         .select('id')
-        .limit(1)
-        .single();
+        .limit(1);
 
       const duration = performance.now() - startTime;
 
       // Se erro mas duração baixa, pode ser problema de dados, não conexão
-      if (error && duration < 1000) {
+      if (error && error?.status !== 406 && duration < 1000) {
         // Ignorar erros de "não encontrado" que são esperados
-        if (!error.message.includes('No rows found')) {
+        if (!error.message?.includes('No rows found')) {
           this.handleConnectionError(error);
         }
       }
@@ -347,7 +350,11 @@ class SupabaseConnectionManager {
    */
   getAdminClient() {
     if (!this.adminClient) {
-      console.warn('⚠️ Admin client not available - service role key not configured');
+      // Avoid noisy warnings in production. Service role key should never be exposed client-side.
+      if (import.meta.env.MODE !== 'production') {
+        console.warn('⚠️ Admin client not available - service role key not configured');
+      }
+      return null;
     }
     return this.adminClient;
   }

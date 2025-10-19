@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Accessibility, Eye, Type, Palette, Moon, Sun,
   Settings, Globe, Minus, Plus, RotateCcw, Check
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useLanguageDetection } from '../hooks/useLanguageDetection';

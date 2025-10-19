@@ -1,45 +1,44 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
+import { translations } from './i18n/translations';
 
-// Basic translations
-const pt = {
-  translation: {
-    // Common
-    "common.loading": "Carregando...",
-    "common.save": "Salvar",
-    "common.cancel": "Cancelar",
-
-    // Accessibility
-    "accessibility.title": "Acessibilidade",
-    "accessibility.subtitle": "Personalize sua experiência",
-    "accessibility.reset": "Resetar",
-    "accessibility.done": "Pronto",
-    "accessibility.lightMode": "Modo Claro",
-    "accessibility.darkMode": "Modo Escuro",
-    "accessibility.themeDesc": "Alternar entre modo claro e escuro",
-    "accessibility.light": "Claro",
-    "accessibility.dark": "Escuro",
-    "accessibility.languageDesc": "Selecione seu idioma preferido",
-    "accessibility.fontSize": "Tamanho do Texto",
-    "accessibility.fontSizeDesc": "Ajuste o tamanho da fonte",
-    "accessibility.highContrast": "Alto Contraste",
-    "accessibility.highContrastDesc": "Melhore a visibilidade com cores mais fortes",
-    "accessibility.dyslexiaFont": "Fonte para Dislexia",
-    "accessibility.dyslexiaFontDesc": "Use fonte otimizada para leitura",
-    "accessibility.reducedMotion": "Reduzir Animações",
-    "accessibility.reducedMotionDesc": "Diminua movimentos para reduzir enjoo",
-    "accessibility.autoSave": "Suas configurações são salvas automaticamente"
+// Get saved language from localStorage or use browser default
+const getSavedLanguage = () => {
+  const saved = localStorage.getItem('tamanduai-language');
+  if (saved && ['pt', 'en', 'es'].includes(saved)) {
+    return saved;
   }
+  
+  // Detect browser language
+  const browserLang = navigator.language.split('-')[0];
+  return ['pt', 'en', 'es'].includes(browserLang) ? browserLang : 'pt';
 };
 
+// Language detector configuration
+const languageDetector = new LanguageDetector();
+languageDetector.addDetector({
+  name: 'tamanduaiStorage',
+  lookup() {
+    return getSavedLanguage();
+  },
+  cacheUserLanguage(lng) {
+    localStorage.setItem('tamanduai-language', lng);
+  }
+});
+
 i18n
+  .use(languageDetector)
   .use(initReactI18next)
   .init({
-    resources: {
-      pt: pt,
-    },
-    lng: 'pt',
+    resources: translations,
     fallbackLng: 'pt',
+    supportedLngs: ['pt', 'en', 'es'],
+    detection: {
+      order: ['tamanduaiStorage', 'navigator'],
+      caches: ['localStorage'],
+      lookupLocalStorage: 'tamanduai-language'
+    },
     interpolation: {
       escapeValue: false,
     },
@@ -47,5 +46,34 @@ i18n
       useSuspense: false,
     },
   });
+
+// Subscribe to language changes and save to localStorage
+i18n.on('languageChanged', (lng) => {
+  localStorage.setItem('tamanduai-language', lng);
+  document.documentElement.setAttribute('lang', lng);
+});
+
+// Set initial lang attribute
+document.documentElement.setAttribute('lang', i18n.language);
+
+// Export the changeLanguage function for external use
+export const changeLanguage = async (languageCode) => {
+  try {
+    await i18n.changeLanguage(languageCode);
+    return true;
+  } catch (error) {
+    console.error('Erro ao alterar idioma:', error);
+    return false;
+  }
+};
+
+// Get available languages
+export const getAvailableLanguages = () => {
+  return [
+    { code: 'pt', name: 'Português', nativeName: 'Português', flag: '🇧🇷' },
+    { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
+    { code: 'es', name: 'Español', nativeName: 'Español', flag: '🇪🇸' },
+  ];
+};
 
 export default i18n;

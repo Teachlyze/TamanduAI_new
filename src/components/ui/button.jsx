@@ -2,33 +2,35 @@ import { cn } from '@/lib/utils';
 import { Slot } from '@radix-ui/react-slot';
 import React, { useMemo, useCallback } from 'react';
 
-// Enhanced variant classes with more options
+// Variant classes using neutral Tailwind tokens
 const variantClasses = {
-  default: 'btn btn-primary',
-  secondary: 'btn btn-secondary',
-  outline: 'btn btn-outline',
-  ghost: 'btn btn-ghost',
-  destructive: 'btn btn-error',
-  link: 'btn btn-link text-primary no-underline hover:underline',
-  soft: 'btn bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20',
-  success: 'btn bg-green-500 hover:bg-green-600 text-white border-green-500',
-  warning: 'btn bg-yellow-500 hover:bg-yellow-600 text-white border-yellow-500',
-  info: 'btn bg-blue-500 hover:bg-blue-600 text-white border-blue-500',
-  loading: 'btn btn-primary loading',
+  default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+  secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+  outline: 'border border-input bg-transparent hover:bg-accent hover:text-accent-foreground',
+  ghost: 'hover:bg-accent hover:text-accent-foreground',
+  destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+  link: 'text-primary underline-offset-4 hover:underline',
+  soft: 'bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20',
+  success: 'bg-green-500 text-white hover:bg-green-600',
+  warning: 'bg-yellow-500 text-white hover:bg-yellow-600',
+  info: 'bg-blue-500 text-white hover:bg-blue-600',
+  loading: 'bg-primary text-primary-foreground opacity-90',
+  gradient: 'text-white border-0 shadow-lg hover:shadow-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700',
+  gradientOutline: 'bg-transparent border-2 border-transparent text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:opacity-90',
 };
 
 const sizeClasses = {
-  xs: 'btn-xs',
-  sm: 'btn-sm',
-  default: 'btn-md',
-  lg: 'btn-lg',
-  xl: 'btn-xl',
-  icon: 'btn-square',
-  'icon-sm': 'btn-square btn-sm',
-  'icon-lg': 'btn-square btn-lg',
+  xs: 'h-8 px-2 text-xs',
+  sm: 'h-9 px-3 text-sm',
+  default: 'h-10 px-4 py-2',
+  lg: 'h-11 px-6 text-base',
+  xl: 'h-12 px-8 text-lg',
+  icon: 'h-10 w-10',
+  'icon-sm': 'h-9 w-9',
+  'icon-lg': 'h-11 w-11',
 };
 
-const baseClasses = 'btn inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60 disabled:cursor-not-allowed active:translate-y-px';
+const baseClasses = 'inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ring-offset-background disabled:opacity-60 disabled:cursor-not-allowed active:translate-y-px';
 
 const Button = React.forwardRef(({
   className,

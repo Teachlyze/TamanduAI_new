@@ -42,8 +42,7 @@ const TeacherDashboard = () => {
     upcomingDeadlines: 0
   });
   const [recentActivities, setRecentActivities] = useState([]);
-  const [loading, setLoading] = useState(true);
-
+  const [loading, setLoading] = useState(false);  // Changed to false - render first!
   // Use Redis cache for teacher's classes
   const { data: teacherClasses, loading: classesLoading } = useUserClasses(user?.id, 'teacher');
 
@@ -51,8 +50,80 @@ const TeacherDashboard = () => {
     const loadTeacherData = async () => {
       if (!user?.id) return;
       
-      // If classes finished loading but there are no classes, set loading to false
-      if (!classesLoading && (!teacherClasses || teacherClasses.length === 0)) {
+      setLoading(true); // Only show loading for data updates, not initial render
+      
+      try {
+        // Load data in parallel for better performance
+        const [classesResult, activitiesResult, submissionsResult] = await Promise.all([
+          // Get classes data
+          teacherClasses?.length > 0 ? Promise.resolve(teacherClasses) : Promise.reject('No classes'),
+          
+          // Get activities data
+          teacherClasses?.length > 0 ? supabase
+            .from('activity_class_assignments')
+            .select(`
+              activity_id,
+              class_id,
+              activities!inner(
+                id,
+                title,
+                activity_type,
+                created_at,
+                due_date,
+                status
+              ),
+              classes!inner(name)
+            `)
+            .in('class_id', teacherClasses.map(cls => cls.id))
+            .order('created_at', { ascending: false })
+            .limit(5) : Promise.resolve([]),
+            
+          // Get submissions data
+          supabase
+            .from('submissions')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'submitted')
+            .is('grade', null)
+        ]);
+        
+        if (activitiesResult.error) {
+          Logger.error('Error fetching recent activities:', activitiesResult.error);
+        }
+        
+        if (submissionsResult.error) {
+          Logger.error('Error fetching pending submissions:', submissionsResult.error);
+        }
+        
+        // Transform activities data
+        const activities = activitiesResult.data?.map(assignment => ({
+          id: assignment.activities.id,
+          title: assignment.activities.title,
+          type: assignment.activities.activity_type,
+          created_at: assignment.activities.created_at,
+          due_date: assignment.activities.due_date,
+          status: assignment.activities.status,
+        })) || [];
+
+        // Calculate stats
+        const totalStudents = teacherClasses.reduce((sum, cls) => sum + (cls.students_count || 0), 0);
+        setRecentActivities(formattedActivities);
+      } catch (error) {
+        Logger.error('Error loading teacher dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    // Only load data if we have user and classes
+    if (user?.id && teacherClasses && !classesLoading) {
+      loadTeacherData();
+    }
+  }, [user?.id, teacherClasses, classesLoading]);
+
+  // safety net: if classesLoading never resolves (e.g., due to network/RLS), stop showing spinner after a timeout
+  useEffect(() => {
+    if (classesLoading) {
+      const timer = setTimeout(() => {
         setLoading(false);
         setTeacherStats({
           totalStudents: 0,
@@ -62,108 +133,10 @@ const TeacherDashboard = () => {
           pendingSubmissions: 0,
           upcomingDeadlines: 0
         });
-        return;
-      }
-      
-      if (!teacherClasses || classesLoading) return;
-
-      try {
-        setLoading(true);
-
-        // Calculate stats from cached classes data
-        const totalStudents = teacherClasses.reduce((sum, cls) => sum + (cls.students_count || 0), 0);
-        const activeClasses = teacherClasses.length;
-        const totalActivities = teacherClasses.reduce((sum, cls) => sum + (cls.activities_count || 0), 0);
-
-        // Get recent activities through activity_class_assignments
-        const { data: activityAssignments, error: activitiesError } = await supabase
-          .from('activity_class_assignments')
-          .select(`
-            activity_id,
-            class_id,
-            activities!inner(
-              id,
-              title,
-              activity_type,
-              created_at,
-              due_date,
-              status
-            ),
-            classes!inner(name)
-          `)
-          .in('class_id', teacherClasses.map(cls => cls.id))
-          .order('created_at', { ascending: false })
-          .limit(5);
-        
-        // Transform the data
-        const activities = activityAssignments?.map(assignment => ({
-          id: assignment.activities.id,
-          title: assignment.activities.title,
-          type: assignment.activities.activity_type,
-          created_at: assignment.activities.created_at,
-          due_date: assignment.activities.due_date,
-          status: assignment.activities.status,
-          class_id: assignment.class_id,
-          class_name: assignment.classes.name
-        })) || [];
-
-        if (activitiesError) {
-          Logger.error('Error fetching recent activities:', activitiesError);
-        }
-
-        // Get pending submissions count
-        const { count: pendingCount, error: pendingError } = await supabase
-          .from('submissions')
-          .select('*', { count: 'exact', head: true })
-          .in('activity_id',
-            activities?.map(activity => activity.id) || []
-          )
-          .eq('status', 'submitted')
-          .is('grade', null);
-
-        if (pendingError) {
-          Logger.error('Error fetching pending submissions:', pendingError);
-        }
-
-        // Calculate completion rate (simplified)
-        const completionRate = totalActivities > 0 ? Math.round((totalActivities / (activeClasses * 8)) * 100) : 0;
-
-        setTeacherStats({
-          totalStudents,
-          activeClasses,
-          totalActivities,
-          completionRate,
-          pendingSubmissions: pendingCount || 0,
-          upcomingDeadlines: activities?.filter(a => a.due_date && new Date(a.due_date) > new Date()).length || 0
-        });
-
-        // Format recent activities
-        const formattedActivities = activities?.map(activity => ({
-          id: activity.id,
-          type: activity.type || 'assignment',
-          title: activity.title,
-          description: `Turma: ${activity.class_name || 'N/A'}`,
-          time: new Date(activity.created_at).toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit'
-          }),
-          icon: FileText,
-          color: 'blue',
-          classId: activity.class_id
-        })) || [];
-
-        setRecentActivities(formattedActivities);
-      } catch (error) {
-        Logger.error('Error loading teacher dashboard data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadTeacherData();
-  }, [user?.id, teacherClasses, classesLoading]);
+      }, 7000);
+      return () => clearTimeout(timer);
+    }
+  }, [classesLoading]);
 
   const stats = [
     {
@@ -213,7 +186,7 @@ const TeacherDashboard = () => {
       label: 'Nova Atividade',
       description: 'Criar atividade interativa',
       gradient: 'from-green-500 to-emerald-500',
-      action: () => navigate('/dashboard/activities/create')
+      action: () => navigate('/dashboard/activities/new')
     },
     {
       icon: Brain,
@@ -251,7 +224,7 @@ const TeacherDashboard = () => {
     { title: 'Apresentação de Ciências', class: '7C', date: '2023-10-20', daysLeft: 8, priority: 'low' },
   ];
 
-  if (loading || classesLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="flex flex-col items-center gap-4">
@@ -385,7 +358,7 @@ const TeacherDashboard = () => {
                     <Button
                       variant="outline"
                       className="mt-4"
-                      onClick={() => navigate('/dashboard/activities/create')}
+                      onClick={() => navigate('/dashboard/activities/new')}
                     >
                       Criar Primeira Atividade
                     </Button>
@@ -461,7 +434,7 @@ const TeacherDashboard = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
-                  className="group p-6 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all transform hover:-translate-y-1"
+                  className="group p-6 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-muted/30 transition-all transform hover:-translate-y-1"
                   onClick={action.action}
                 >
                   <div className={`w-16 h-16 bg-gradient-to-r ${action.gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
@@ -518,3 +491,4 @@ const TeacherDashboard = () => {
 };
 
 export default TeacherDashboard;
+

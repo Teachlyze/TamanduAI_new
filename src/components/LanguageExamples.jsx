@@ -6,8 +6,8 @@
  */
 
 import React from 'react';
-import LanguageSelector, { LanguageSelectorSelect } from './components/LanguageSelector';
-import LanguageSettings from './components/LanguageSettings';
+import LanguageSelector, { LanguageSelectorSelect } from './LanguageSelector';
+import LanguageSettings from './LanguageSettings';
 
 /**
  * EXEMPLO 1: Uso básico do LanguageSelector (recomendado para header/navbar)

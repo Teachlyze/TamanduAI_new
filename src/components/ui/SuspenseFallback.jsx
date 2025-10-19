@@ -1,5 +1,7 @@
 import React from 'react';
 import { Skeleton } from './skeleton';
+import { AlertCircle } from 'lucide-react';
+import { Button } from './button';
 
 export const SuspenseFallback = () => (
   <div className="space-y-4 p-4">
@@ -22,9 +24,9 @@ export const ErrorFallback = ({ error, resetErrorBoundary }) => (
       <h3 className="font-medium">Ocorreu um erro</h3>
     </div>
     <p className="text-sm mb-4">{error.message}</p>
-    <Button 
-      variant="outline" 
-      size="sm" 
+    <Button
+      variant="outline"
+      size="sm"
       onClick={resetErrorBoundary}
       className="text-red-700 border-red-300 hover:bg-red-100"
     >
@@ -32,3 +34,6 @@ export const ErrorFallback = ({ error, resetErrorBoundary }) => (
     </Button>
   </div>
 );
+
+// Default export for compatibility with index.js
+export default SuspenseFallback;

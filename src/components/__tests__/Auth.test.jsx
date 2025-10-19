@@ -1,7 +1,7 @@
 // src/components/__tests__/Auth.test.jsx
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import LoginPage from '../../pages/LoginPage';
+import LoginPage from '../../pages/LoginPagePremium';
 
 describe('Authentication Flow', () => {
   it('renders login form correctly', () => {

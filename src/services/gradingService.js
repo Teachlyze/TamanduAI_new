@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabaseClient';
 import { v4 as uuidv4 } from 'uuid';
+import gamificationService from './gamificationService';
 
 // Helpers to detect objective type from schema property
 const getPropType = (prop) => {
@@ -115,6 +116,17 @@ export const autoGradeSubmission = async (submissionId) => {
       .select()
       .single();
     if (updateError) throw updateError;
+    
+    // ✅ ADICIONAR XP ao receber nota automaticamente
+    if (!needsReview && finalGrade !== null) {
+      try {
+        await gamificationService.trackGradeAssigned(submission.user_id, finalGrade);
+        console.log('[GradingService] XP awarded for grade:', finalGrade);
+      } catch (xpError) {
+        console.error('[GradingService] Error awarding XP:', xpError);
+        // Não bloquear o fluxo se gamificação falhar
+      }
+    }
     
     // Add to feedback history
     if (!needsReview && finalGrade !== null) {
@@ -250,14 +262,33 @@ export const getSubmissionsNeedingGrading = async (teacherId) => {
     const classIds = classes.map(c => c.class_id);
 
     // Get activities for these classes
-    const { data: activities, error: activitiesError } = await supabase
-      .from('activities')
-      .select('id, class_id, title, classes(name)')
+    const { data: activityAssignments, error: activitiesError } = await supabase
+      .from('activity_class_assignments')
+      .select(`
+        activity_id,
+        class_id,
+        activities (
+          id,
+          title
+        ),
+        classes (
+          name
+        )
+      `)
       .in('class_id', classIds);
 
     if (activitiesError) throw activitiesError;
     
-    if (!activities.length) return [];
+    if (!activityAssignments?.length) return [];
+
+    // Flatten to activities with class info
+    const activities = activityAssignments.map(assignment => ({
+      id: assignment.activities.id,
+      title: assignment.activities.title,
+      class_id: assignment.class_id,
+      classes: { name: assignment.classes.name }
+    }));
+
 
     // Get submissions that need grading
     const submissionsNeedingGrading = [];
@@ -267,13 +298,12 @@ export const getSubmissionsNeedingGrading = async (teacherId) => {
         .from('submissions')
         .select(`
           id,
-          user_id,
+          student_id,
           status,
           submitted_at,
-          users (
+          profiles:student_id (
             id,
-            email,
-            raw_user_meta_data->>'name' as name
+            full_name
           )
         `)
         .eq('activity_id', activity.id)
@@ -288,8 +318,8 @@ export const getSubmissionsNeedingGrading = async (teacherId) => {
           activity_title: activity.title,
           class_id: activity.class_id,
           class_name: activity.classes?.name || 'Unknown Class',
-          user_id: sub.user_id,
-          user_name: sub.users?.name || sub.users?.email || 'Unknown User',
+          user_id: sub.student_id,
+          user_name: sub.profiles?.full_name || 'Unknown User',
           submitted_at: sub.submitted_at,
           status: sub.status
         });
@@ -337,6 +367,17 @@ export const provideFeedback = async (submissionId, feedbackData, userId) => {
       .single();
 
     if (updateError) throw updateError;
+    
+    // ✅ ADICIONAR XP ao receber nota manualmente
+    if (typeof grade !== 'undefined' && grade !== null) {
+      try {
+        await gamificationService.trackGradeAssigned(submission.user_id, grade);
+        console.log('[GradingService] XP awarded for manual grade:', grade);
+      } catch (xpError) {
+        console.error('[GradingService] Error awarding XP:', xpError);
+        // Não bloquear o fluxo se gamificação falhar
+      }
+    }
     
     // Add to feedback history
     const { error: historyError } = await supabase

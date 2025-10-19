@@ -345,7 +345,7 @@ ActivitiesListPage → CreateActivityPage, ActivityPage`}
               <div>
                 <h3 className="font-semibold mb-4">Estratégias de Carregamento</h3>
                 <div className="space-y-3">
-                  <div className="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <div className="flex items-center gap-3 p-3 bg-blue-50 dark:bg-muted/30 rounded-lg">
                     <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                     <div>
                       <div className="font-medium text-sm">Intersection Observer</div>
@@ -394,7 +394,7 @@ ActivitiesListPage → CreateActivityPage, ActivityPage`}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="text-center">
-            <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-blue-100 dark:bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
@@ -471,3 +471,4 @@ ActivitiesListPage → CreateActivityPage, ActivityPage`}
 };
 
 export default PerformanceMonitor;
+

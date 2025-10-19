@@ -2,6 +2,9 @@
 /**
  * Sistema avançado de monitoramento de erros e alertas
  */
+// Feature flag to control admin alert notifications in dev/prod
+const ENABLE_ALERT_NOTIFICATIONS = (import.meta?.env?.VITE_ENABLE_ALERT_NOTIFICATIONS || '').toString().toLowerCase() === 'true';
+
 export class ErrorMonitor {
   constructor() {
     this.errors = new Map();
@@ -149,7 +152,9 @@ export class ErrorMonitor {
     this.alerts.push(alert);
 
     // Enviar notificação para administradores
-    this.sendAlertNotification(alert);
+    if (ENABLE_ALERT_NOTIFICATIONS) {
+      this.sendAlertNotification(alert);
+    }
 
     // Log do alerta
     console.warn('Alert generated:', alert);
@@ -160,7 +165,8 @@ export class ErrorMonitor {
    */
   async sendAlertNotification(alert) {
     try {
-      // Enviar para serviço de notificações interno
+      // Enviar para serviço de notificações interno (habilitado por flag)
+      if (!ENABLE_ALERT_NOTIFICATIONS) return;
       await fetch('/api/alerts', {
         method: 'POST',
         headers: {

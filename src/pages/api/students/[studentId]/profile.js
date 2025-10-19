@@ -35,50 +35,61 @@ export default async function handler(req, res) {
 
     // Get student's classes with statistics
     const { data: classes, error: classesError } = await supabase
-      .from('class_students')
+      .from('class_members')
       .select(`
         id,
-        status,
-        enrolled_at,
+        role,
+        created_at,
         classes (
           id,
           name,
           subject,
           teacher_id,
           is_active,
-          created_at,
-          class_activities (
-            id,
-            title,
-            type,
-            is_published,
-            due_date,
-            created_at
-          )
+          created_at
         )
       `)
-      .eq('student_id', studentId)
-      .eq('status', 'active');
+      .eq('user_id', studentId)
+      .eq('role', 'student');
 
     if (classesError) throw classesError;
+
+    // Get student's activities for enrolled classes
+    const classIds = classes?.map(c => c.classes?.id).filter(Boolean) || [];
+    
+    const { data: classActivities, error: activitiesError } = classIds.length > 0
+      ? await supabase
+          .from('activity_class_assignments')
+          .select(`
+            activity_id,
+            class_id,
+            activities (
+              id,
+              title,
+              activity_type,
+              status,
+              due_date,
+              created_at
+            )
+          `)
+          .in('class_id', classIds)
+      : { data: [], error: null };
+    
+    if (activitiesError) throw activitiesError;
 
     // Get student's grades
     const { data: grades, error: gradesError } = await supabase
       .from('submissions')
       .select(`
         id,
+        activity_id,
         grade,
         submitted_at,
         status,
-        class_activities (
+        activities (
           id,
           title,
-          type,
-          classes (
-            id,
-            name,
-            subject
-          )
+          activity_type
         )
       `)
       .eq('student_id', studentId)
@@ -90,22 +101,18 @@ export default async function handler(req, res) {
 
     // Get teacher's feedback
     const { data: feedbacks, error: feedbackError } = await supabase
-      .from('feedback')
+      .from('student_feedback_history')
       .select(`
         id,
-        comment,
+        activity_id,
+        feedback_text,
         created_at,
-        type,
-        class_activities (
+        feedback_type,
+        activities (
           id,
-          title,
-          classes (
-            id,
-            name,
-            subject
-          )
+          title
         ),
-        profiles!feedback_teacher_id_fkey (
+        profiles!student_feedback_history_given_by_fkey (
           id,
           username,
           full_name
@@ -119,16 +126,19 @@ export default async function handler(req, res) {
 
     // Process classes data
     const processedClasses = classes?.map(item => {
-      const activities = item.classes?.class_activities || [];
-      const totalActivities = activities.filter(a => a.is_published).length;
+      // Get activities for this class
+      const activities = classActivities?.filter(ca => ca.class_id === item.classes?.id)
+        .map(ca => ca.activities)
+        .filter(Boolean) || [];
+      
+      const totalActivities = activities.filter(a => a.status === 'published' || a.status === 'active').length;
       const completedActivities = activities.filter(a =>
-        grades?.some(g => g.class_activities?.id === a.id)
+        grades?.some(g => g.activity_id === a.id)
       ).length;
 
       // Calculate average grade for this class
-      const classGrades = grades?.filter(g =>
-        g.class_activities?.classes?.id === item.classes.id
-      ) || [];
+      const activityIds = activities.map(a => a.id);
+      const classGrades = grades?.filter(g => activityIds.includes(g.activity_id)) || [];
 
       const average = classGrades.length > 0
         ? classGrades.reduce((sum, g) => sum + (g.grade || 0), 0) / classGrades.length
@@ -146,24 +156,36 @@ export default async function handler(req, res) {
     }) || [];
 
     // Process grades data
-    const processedGrades = grades?.map(grade => ({
-      id: grade.id,
-      subject: grade.class_activities?.classes?.name || 'Turma',
-      activity: grade.class_activities?.title || 'Atividade',
-      grade: grade.grade || 0,
-      date: grade.submitted_at,
-      type: grade.class_activities?.type || 'Atividade'
-    })) || [];
+    const processedGrades = grades?.map(grade => {
+      // Find which class this activity belongs to
+      const activityAssignment = classActivities?.find(ca => ca.activity_id === grade.activity_id);
+      const className = activityAssignment ? classes?.find(c => c.classes?.id === activityAssignment.class_id)?.classes?.name : 'Turma';
+      
+      return {
+        id: grade.id,
+        subject: className || 'Turma',
+        activity: grade.activities?.title || 'Atividade',
+        grade: grade.grade || 0,
+        date: grade.submitted_at,
+        type: grade.activities?.activity_type || 'Atividade'
+      };
+    }) || [];
 
     // Process feedback data
-    const processedFeedbacks = feedbacks?.map(feedback => ({
-      id: feedback.id,
-      subject: feedback.class_activities?.classes?.name || 'Turma',
-      teacher: feedback.profiles?.full_name || 'Professor',
-      comment: feedback.comment,
-      date: feedback.created_at,
-      type: feedback.type || 'Feedback'
-    })) || [];
+    const processedFeedbacks = feedbacks?.map(feedback => {
+      // Find which class this activity belongs to
+      const activityAssignment = classActivities?.find(ca => ca.activity_id === feedback.activity_id);
+      const className = activityAssignment ? classes?.find(c => c.classes?.id === activityAssignment.class_id)?.classes?.name : 'Turma';
+      
+      return {
+        id: feedback.id,
+        subject: className || 'Turma',
+        teacher: feedback.profiles?.full_name || 'Professor',
+        comment: feedback.feedback_text,
+        date: feedback.created_at,
+        type: feedback.feedback_type || 'Feedback'
+      };
+    }) || [];
 
     const studentProfile = {
       id: profile.id,

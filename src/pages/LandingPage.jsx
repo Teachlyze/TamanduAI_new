@@ -1,15 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import Button from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import SkipLinks from '@/components/SkipLinks';
+import LanguageSelector from '@/components/ui/LanguageSelector';
+import CookieBanner from '@/components/CookieBanner';
 import {
   BookOpen, Users, Sparkles, TrendingUp, Brain,
   Clock, Lightbulb, Target, Rocket, Calendar, Shield,
   Star, Heart, CheckCircle, ArrowRight, Globe, Award,
   Zap, MessageSquare, FileText, BarChart3, Video,
   CheckCircle2, XCircle, Play, ChevronRight, Mail,
-  Lock, Smartphone, Laptop, Headphones, BadgeCheck
+  Lock, Smartphone, Laptop, Headphones, BadgeCheck, Trophy, Bell, DollarSign
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -18,10 +20,14 @@ export default function LandingPage() {
   const { t } = useTranslation();
 
   const features = [
-    { icon: Brain, title: t('landing.features.advancedAI', 'IA Educacional Avançada'), description: t('landing.features.aiChatbot', 'Chatbot inteligente treinado para cada turma'), gradient: "from-violet-500 to-purple-500" },
-    { icon: Users, title: t('landing.features.smartManagement', 'Gestão Inteligente'), description: t('landing.features.organizeClasses', 'Organize turmas e professores com facilidade'), gradient: "from-blue-500 to-cyan-500" },
-    { icon: Sparkles, title: t('landing.features.dynamicActivities', 'Atividades Dinâmicas'), description: t('landing.features.createInteractive', 'Crie atividades interativas sem limitações'), gradient: "from-indigo-500 to-purple-500" },
-    { icon: TrendingUp, title: t('landing.features.intelligentAnalytics', 'Analytics Inteligente'), description: t('landing.features.detailedReports', 'Relatórios detalhados sobre progresso'), gradient: "from-emerald-500 to-teal-500" }
+    { icon: Brain, title: 'Chatbot com RAG v2.0', description: 'Treine o chatbot com seus materiais (PDF, Word, PPT, URLs) para responder dúvidas 24/7', gradient: "from-violet-500 to-purple-500", badge: 'Até 200 msgs/dia (Pro)' },
+    { icon: Shield, title: 'Antiplágio Winston AI', description: 'Detecção automática de plágio com IA de última geração integrada', gradient: "from-red-500 to-pink-500", badge: '100 verificações/hora' },
+    { icon: BarChart3, title: 'Analytics com ML', description: '4 modelos de Machine Learning: previsão de desempenho, clustering, sentimento e recomendações', gradient: "from-indigo-500 to-purple-500", badge: 'Inteligência Artificial' },
+    { icon: Bell, title: 'Notificações Inteligentes', description: 'Lembretes automáticos de prazos, reuniões e aulas ao vivo via Push + Email', gradient: "from-emerald-500 to-teal-500", badge: 'Push + Email' },
+    { icon: Calendar, title: 'Agenda Integrada', description: 'Agende reuniões, aulas ao vivo - integre com Google Meet e Zoom (links externos)', gradient: "from-blue-500 to-cyan-500", badge: 'Links externos' },
+    { icon: Trophy, title: 'Gamificação Completa', description: 'Sistema de XP, níveis, badges e rankings que aumenta participação em 40%', gradient: "from-yellow-500 to-orange-500", badge: '+40% engajamento' },
+    { icon: Users, title: 'Gestão Inteligente', description: 'Organize turmas, professores e alunos com facilidade', gradient: "from-purple-500 to-indigo-500", badge: 'Turmas ilimitadas' },
+    { icon: Sparkles, title: 'Atividades Dinâmicas', description: 'Crie atividades interativas com correção automática', gradient: "from-pink-500 to-rose-500", badge: 'Correção automática' }
   ];
 
   const benefits = [
@@ -38,21 +44,25 @@ export default function LandingPage() {
   ];
 
   const stats = [
-    { number: "10K+", label: "Professores Ativos" },
-    { number: "50K+", label: "Alunos Beneficiados" },
-    { number: "1M+", label: "Atividades Criadas" },
-    { number: "99%", label: "Satisfação" }
+    { number: "15K+", label: "Professores Ativos" },
+    { number: "80K+", label: "Alunos Beneficiados" },
+    { number: "2M+", label: "Atividades Criadas" },
+    { number: "98.5%", label: "Satisfação" }
   ];
 
   const allFeatures = [
-    { icon: Brain, title: "Chatbot IA Personalizado", description: "Assistente inteligente treinado com seu conteúdo", color: "violet" },
-    { icon: MessageSquare, title: "Chat em Tempo Real", description: "Comunicação instantânea com alunos e pais", color: "blue" },
-    { icon: FileText, title: "Criação de Atividades", description: "Editor poderoso com múltiplos tipos de questões", color: "indigo" },
-    { icon: BarChart3, title: "Relatórios Avançados", description: "Analytics completo de desempenho", color: "emerald" },
-    { icon: Video, title: "Videoconferências", description: "Aulas ao vivo integradas na plataforma", color: "pink" },
-    { icon: Calendar, title: "Agenda Inteligente", description: "Calendário sincronizado com todas atividades", color: "orange" },
-    { icon: Users, title: "Gestão de Turmas", description: "Organize alunos, professores e coordenadores", color: "cyan" },
-    { icon: Shield, title: "Segurança Total", description: "Criptografia e proteção de dados LGPD", color: "red" },
+    { icon: Brain, title: "Chatbot com RAG v2.0", description: "Treine o chatbot com seus materiais (PDF, Word, PPT, URLs) para responder dúvidas 24/7", color: "violet" },
+    { icon: Shield, title: "Antiplágio Winston AI", description: "Detecção automática com IA (100 checks/hora) + backup Copyleaks", color: "red" },
+    { icon: BarChart3, title: "Previsão de Desempenho", description: "ML prevê próxima nota e tendência do aluno com regressão linear", color: "indigo" },
+    { icon: Brain, title: "Clustering de Alunos", description: "Agrupa alunos por desempenho automaticamente (K-Means)", color: "purple" },
+    { icon: Target, title: "Análise de Sentimento", description: "Detecta feedbacks negativos automaticamente", color: "pink" },
+    { icon: Lightbulb, title: "Recomendações IA", description: "Sugere materiais baseado em dificuldades do aluno", color: "yellow" },
+    { icon: Bell, title: "Lembretes Automáticos", description: "Notificações 1h e 5min antes de prazos via cron", color: "emerald" },
+    { icon: Trophy, title: "Gamificação Completa", description: "XP, níveis, badges e rankings (16 níveis)", color: "orange" },
+    { icon: Calendar, title: "Agenda Sincronizada", description: "Calendário com todas atividades e eventos", color: "blue" },
+    { icon: Users, title: "Gestão Multi-perfil", description: "Professor, Aluno e Escola em um só lugar", color: "cyan" },
+    { icon: MessageSquare, title: "Banco de Questões", description: "Milhares de questões contribuídas por professores", color: "indigo" },
+    { icon: DollarSign, title: "Programa de Descontos", description: "Até 30% OFF contribuindo questões ao banco", color: "green" },
   ];
 
   const howItWorks = [
@@ -72,12 +82,14 @@ export default function LandingPage() {
   ];
 
   const faqs = [
-    { q: "O TamanduAI é gratuito?", a: "Sim! Oferecemos 3 meses grátis no programa Beta. Depois, planos a partir de R$ 49/mês." },
-    { q: "Preciso de conhecimento técnico?", a: "Não! A interface é intuitiva e oferecemos tutoriais completos para começar." },
-    { q: "Meus dados estão seguros?", a: "Absolutamente! Usamos criptografia de ponta e somos 100% compatíveis com a LGPD." },
-    { q: "Posso usar em qualquer dispositivo?", a: "Sim! O TamanduAI funciona perfeitamente em computadores, tablets e smartphones." },
-    { q: "Como funciona o chatbot IA?", a: "Você treina o chatbot com seu material didático e ele responde dúvidas dos alunos 24/7." },
-    { q: "Tem limite de alunos?", a: "Não! Você pode adicionar quantos alunos e turmas precisar." },
+    { q: "O TamanduAI é gratuito?", a: "Sim! Oferecemos 3 meses grátis no programa Beta com acesso completo. Depois, planos a partir de R$ 49/mês com desconto de até 30% ao contribuir questões." },
+    { q: "Preciso de conhecimento técnico?", a: "Não! A interface é intuitiva e oferecemos tutoriais completos, documentação detalhada e suporte por chat para começar em minutos." },
+    { q: "Meus dados estão seguros?", a: "Absolutamente! Usamos criptografia de ponta (AES-256), somos 100% compatíveis com a LGPD e seus dados ficam em servidores seguros no Brasil." },
+    { q: "Posso usar em qualquer dispositivo?", a: "Sim! O TamanduAI é 100% responsivo e funciona perfeitamente em computadores, tablets e smartphones (iOS e Android)." },
+    { q: "Como funciona o chatbot IA?", a: "Você treina o chatbot fazendo upload de PDFs, Word, PowerPoint ou URLs. Ele usa RAG v2.0 para responder dúvidas dos alunos 24/7 com precisão." },
+    { q: "Tem limite de alunos ou turmas?", a: "Não! Você pode adicionar quantos alunos, turmas e professores precisar. Escalamos conforme seu crescimento." },
+    { q: "Como funciona o sistema antiplágio?", a: "Usamos Winston AI (100 checks/hora) para detectar plágio e conteúdo gerado por IA automaticamente em todas as submissões." },
+    { q: "Posso integrar com outras plataformas?", a: "Sim! Integramos com Google Meet, Zoom (via links) e estamos trabalhando em integrações com Google Classroom e Microsoft Teams." },
   ];
 
   const useCases = [
@@ -89,19 +101,31 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
-      <header className="w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+      <motion.header 
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50 shadow-lg"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-9 h-9 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
                 <BookOpen className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900 dark:text-white">TamanduAI</span>
+              <motion.span 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent"
+              >
+                TamanduAI
+              </motion.span>
               <nav className="hidden md:flex space-x-6 ml-6">
-                <a href="#features" className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('landing.navigation.features', 'Recursos')}</a>
-                <a href="#benefits" className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('landing.navigation.benefits', 'Benefícios')}</a>
-                <a href="#testimonials" className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('landing.navigation.testimonials', 'Depoimentos')}</a>
-                <Link to="/docs" className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('landing.navigation.docs', 'Docs')}</Link>
+                <a href="#features" className="text-sm text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:underline underline-offset-4 font-medium transition-colors">{t('landing.navigation.features', 'Recursos')}</a>
+                <a href="/pricing" className="text-sm text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:underline underline-offset-4 font-medium transition-colors">{t('landing.navigation.pricing', 'Preços')}</a>
+                <a href="#testimonials" className="text-sm text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:underline underline-offset-4 font-medium transition-colors">{t('landing.navigation.testimonials', 'Depoimentos')}</a>
+                <Link to="/docs" className="text-sm text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:underline underline-offset-4 font-medium transition-colors">{t('landing.navigation.docs', 'Docs')}</Link>
               </nav>
             </div>
             <div className="flex items-center space-x-3">
@@ -112,7 +136,7 @@ export default function LandingPage() {
                 <Button 
                   size="sm"
                   rightIcon={<ArrowRight className="w-4 h-4" />} 
-                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-200"
+                  variant="gradient"
                 >
                   {t('landing.navigation.startFree', 'Começar Grátis')}
                 </Button>
@@ -120,31 +144,70 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       {/* Main */}
       <main id="main-content" className="flex-grow w-full">
         <SkipLinks />
         {/* Hero */}
-        <section className="relative overflow-hidden py-16 lg:py-24 bg-gradient-to-b from-blue-50/50 to-white dark:from-gray-900 dark:to-background">
+        <section className="relative overflow-hidden py-16 lg:py-24 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-background">
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+            <motion.div 
+              animate={{ 
+                scale: [1, 1.2, 1],
+                rotate: [0, 90, 0]
+              }}
+              transition={{ 
+                duration: 20,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+              className="absolute top-0 right-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"
+            />
+            <motion.div
+              animate={{ 
+                scale: [1, 1.3, 1],
+                rotate: [0, -90, 0]
+              }}
+              transition={{ 
+                duration: 15,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+              className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"
+            />
+            <motion.div
+              animate={{ 
+                scale: [1, 1.1, 1],
+                x: [0, 100, 0]
+              }}
+              transition={{ 
+                duration: 25,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute top-1/2 left-1/2 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl"
+            />
           </div>
           
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-center lg:text-left">
-                <div className="inline-flex items-center px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-full text-xs font-semibold text-blue-700 dark:text-blue-300 mb-6">
+                <motion.div 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.3, type: "spring" }}
+                  className="inline-flex items-center px-3 py-1.5 bg-blue-100 dark:bg-gray-800 rounded-full text-xs font-semibold text-blue-700 dark:text-blue-300 mb-6"
+                >
                   <Sparkles className="w-3.5 h-3.5 mr-1.5" />{t('landing.hero.subtitle', 'Revolucione sua forma de ensinar')}
-                </div>
+                </motion.div>
                 
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white leading-tight mb-6">
-                  {t('landing.hero.title', 'O futuro da')} <span className="text-blue-600">{t('landing.hero.title2', 'educação')}</span> {t('landing.hero.title3', 'é agora')}
+                  Educação Inteligente com <span className="inline-block bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent text-5xl sm:text-6xl lg:text-7xl">Inteligência Artificial</span>
                 </h1>
                 
                 <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                  {t('landing.hero.description', 'Plataforma educacional com IA que reduz sobrecarga administrativa e potencializa o aprendizado. Junte-se a milhares de educadores!')}
+                  <strong className="text-indigo-600 dark:text-indigo-400">Versão 2.0:</strong> Chatbot com RAG, Antiplágio Winston AI, Analytics com Machine Learning, Gamificação e Notificações Inteligentes. Tudo em uma plataforma!
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-3 mb-12">
@@ -152,25 +215,25 @@ export default function LandingPage() {
                     size="lg" 
                     onClick={() => navigate('/register')} 
                     leftIcon={<Rocket className="w-5 h-5" />}
-                    className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                    variant="gradient"
                   >
                     {t('landing.hero.joinBeta', 'Participar do Beta')}
                   </Button>
                   <Button 
                     size="lg" 
-                    variant="outline" 
-                    onClick={() => navigate('/docs')} 
-                    leftIcon={<Play className="w-5 h-5" />}
-                    className="border-2 border-gray-300 dark:border-gray-600 hover:border-blue-600 dark:hover:border-blue-500 transition-all duration-200"
+                    onClick={() => navigate('/pricing')} 
+                    leftIcon={<Zap className="w-5 h-5" />}
+                    variant="gradientOutline"
+                    className="border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50"
                   >
-                    {t('landing.hero.viewDocs', 'Ver Demonstração')}
+                    {t('landing.hero.viewPricing', 'Ver Preços')}
                   </Button>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
                   {stats.map((stat, i) => (
                     <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }} className="text-center">
-                      <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{stat.number}</div>
+                      <div className="text-3xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">{stat.number}</div>
                       <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{stat.label}</div>
                     </motion.div>
                   ))}
@@ -222,14 +285,17 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Features */}
+        {/* Features v2.0 */}
         <section id="features" className="py-20 bg-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-16">
+              <div className="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-full text-xs font-semibold text-white shadow-sm mb-4">
+                <Sparkles className="w-3.5 h-3.5 mr-1.5" />Novidades Versão 2.0
+              </div>
               <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
-                Recursos que fazem a <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">diferença</span>
+                Novas funcionalidades com <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">Inteligência Artificial</span>
               </h2>
-              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">Ferramentas modernas desenvolvidas para educadores</p>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">Chatbot RAG, Antiplágio, Analytics ML, Gamificação e muito mais</p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -240,7 +306,13 @@ export default function LandingPage() {
                       <f.icon className="w-8 h-8 text-white" />
                     </div>
                     <h3 className="text-lg font-bold text-foreground mb-3">{f.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed flex-grow">{f.description}</p>
+                    <p className="text-muted-foreground leading-relaxed flex-grow mb-4">{f.description}</p>
+                    {f.badge && (
+                      <div className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-full text-xs font-semibold text-indigo-700 dark:text-indigo-300">
+                        <Zap className="w-3 h-3 mr-1" />
+                        {f.badge}
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               ))}
@@ -253,7 +325,7 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-16">
               <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
-                Resultados <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">comprovados</span>
+                Resultados <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">comprovados</span>
               </h2>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">Veja o impacto real na sua prática educacional</p>
             </motion.div>
@@ -263,10 +335,10 @@ export default function LandingPage() {
                 <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: i * 0.1 }} className="group h-full">
                   <div className="p-6 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-border">
                     <div className="flex items-center justify-between mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+                      <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
                         <b.icon className="w-6 h-6 text-white" />
                       </div>
-                      <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{b.stat}</div>
+                      <div className="text-2xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">{b.stat}</div>
                     </div>
                     <h3 className="text-lg font-bold text-foreground mb-3">{b.title}</h3>
                     <p className="text-muted-foreground leading-relaxed flex-grow">{b.description}</p>
@@ -277,162 +349,13 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Pricing Section */}
-        <section id="pricing" className="py-24 bg-gradient-to-b from-white to-blue-50/30 dark:from-background dark:to-blue-950/10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-center mb-16">
-              <div className="inline-flex items-center px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-full text-xs font-semibold text-blue-700 dark:text-blue-300 mb-6">
-                <Zap className="w-3.5 h-3.5 mr-1.5" />Oferta Especial de Lançamento
-              </div>
-              <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white mb-6">
-                Planos que <span className="text-blue-600">cabem no seu bolso</span>
-              </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-                Escolha o plano ideal para você. Sem taxas ocultas, cancele quando quiser.
-              </p>
-            </motion.div>
-
-            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {/* Plano Gratuito */}
-              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="relative">
-                <div className="h-full bg-white dark:bg-gray-800 rounded-2xl border-2 border-gray-200 dark:border-gray-700 p-8 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300">
-                  <div className="mb-6">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Gratuito</h3>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">Para começar</p>
-                  </div>
-                  <div className="mb-6">
-                    <span className="text-5xl font-extrabold text-gray-900 dark:text-white">R$ 0</span>
-                    <span className="text-gray-600 dark:text-gray-400">/mês</span>
-                  </div>
-                  <Button onClick={() => navigate('/register')} variant="outline" className="w-full mb-6">
-                    Começar Grátis
-                  </Button>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">Até 30 alunos</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">1 turma</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">Atividades básicas</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">Suporte por email</span>
-                    </li>
-                  </ul>
-                </div>
-              </motion.div>
-
-              {/* Plano Pro - Destaque */}
-              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="relative">
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">
-                    MAIS POPULAR
-                  </span>
-                </div>
-                <div className="h-full bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-8 shadow-2xl transform hover:scale-105 transition-all duration-300">
-                  <div className="mb-6">
-                    <h3 className="text-xl font-bold text-white mb-2">Pro</h3>
-                    <p className="text-blue-100 text-sm">Para profissionais</p>
-                  </div>
-                  <div className="mb-6">
-                    <span className="text-5xl font-extrabold text-white">R$ 49</span>
-                    <span className="text-blue-100">/mês</span>
-                    <div className="mt-2">
-                      <span className="text-sm text-blue-100 line-through">R$ 99/mês</span>
-                      <span className="ml-2 text-xs bg-yellow-400 text-gray-900 px-2 py-0.5 rounded-full font-bold">50% OFF</span>
-                    </div>
-                  </div>
-                  <Button onClick={() => navigate('/register')} className="w-full mb-6 bg-white text-blue-600 hover:bg-blue-50">
-                    Começar Agora
-                  </Button>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-white font-medium">Alunos ilimitados</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-white font-medium">Turmas ilimitadas</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-white font-medium">Chatbot IA personalizado</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-white font-medium">Videoconferências</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-white font-medium">Analytics avançado</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-white font-medium">Suporte prioritário</span>
-                    </li>
-                  </ul>
-                </div>
-              </motion.div>
-
-              {/* Plano Instituição */}
-              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="relative">
-                <div className="h-full bg-white dark:bg-gray-800 rounded-2xl border-2 border-gray-200 dark:border-gray-700 p-8 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300">
-                  <div className="mb-6">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Instituição</h3>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">Para escolas</p>
-                  </div>
-                  <div className="mb-6">
-                    <span className="text-5xl font-extrabold text-gray-900 dark:text-white">Custom</span>
-                  </div>
-                  <Button onClick={() => navigate('/contact')} variant="outline" className="w-full mb-6">
-                    Falar com Vendas
-                  </Button>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">Tudo do Pro</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">Múltiplos professores</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">Gestão centralizada</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">Treinamento dedicado</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">SLA garantido</span>
-                    </li>
-                  </ul>
-                </div>
-              </motion.div>
-            </div>
-
-            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.4 }} className="text-center mt-12">
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                🎉 <span className="font-semibold">Oferta Beta:</span> Primeiros 1000 usuários ganham 3 meses grátis no plano Pro!
-              </p>
-            </motion.div>
-          </div>
-        </section>
 
         {/* All Features Grid */}
         <section className="py-20 bg-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-16">
               <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
-                Tudo que você <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">precisa</span>
+                Tudo que você <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">precisa</span>
               </h2>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">Uma plataforma completa para modernizar sua educação</p>
             </motion.div>
@@ -447,7 +370,9 @@ export default function LandingPage() {
                   pink: 'from-pink-400 to-pink-600',
                   orange: 'from-orange-400 to-orange-600',
                   cyan: 'from-cyan-400 to-cyan-600',
-                  red: 'from-red-400 to-red-600'
+                  red: 'from-red-400 to-red-600',
+                  purple: 'from-purple-400 to-purple-600',
+                  yellow: 'from-yellow-400 to-yellow-600'
                 };
                 return (
                   <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: i * 0.05 }} className="group">
@@ -470,7 +395,7 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-16">
               <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
-                {t('landing.navigation.howItWorks', 'Como')} <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">funciona</span>
+                {t('landing.navigation.howItWorks', 'Como')} <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">funciona</span>
               </h2>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">{t('landing.navigation.startInSteps', 'Comece em 4 passos simples')}</p>
             </motion.div>
@@ -484,13 +409,13 @@ export default function LandingPage() {
                   transition={{ duration: 0.6, delay: i * 0.1 }} 
                   className="relative group"
                 >
-                  <div className="text-center bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-blue-500/50 hover:scale-105">
+                  <div className="text-center bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-purple-500/50 hover:scale-105">
                     <div className="relative inline-block mb-6">
-                      <div className="w-20 h-20 bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-500 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                      <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
                         <span className="text-3xl font-bold text-white">{step.step}</span>
                       </div>
-                      <div className="absolute -bottom-3 -right-3 w-12 h-12 bg-white dark:bg-gray-700 rounded-xl flex items-center justify-center shadow-lg border-2 border-blue-200 dark:border-blue-800 group-hover:scale-110 transition-transform">
-                        <step.icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                      <div className="absolute -bottom-3 -right-3 w-12 h-12 bg-white dark:bg-gray-700 rounded-xl flex items-center justify-center shadow-lg border-2 border-purple-200 dark:border-purple-800 group-hover:scale-110 transition-transform">
+                        <step.icon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                       </div>
                     </div>
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{step.title}</h3>
@@ -498,7 +423,7 @@ export default function LandingPage() {
                   </div>
                   {i < howItWorks.length - 1 && (
                     <div className="hidden lg:flex absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
-                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                      <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
                         <ChevronRight className="w-5 h-5 text-white" />
                       </div>
                     </div>
@@ -514,7 +439,7 @@ export default function LandingPage() {
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-16">
               <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
-                {t('landing.navigation.beforeAfter', 'Antes vs')} <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Depois</span>
+                {t('landing.navigation.beforeAfter', 'Antes vs')} <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">Depois</span>
               </h2>
               <p className="text-xl text-muted-foreground">{t('landing.navigation.seeTransformation', 'Veja a transformação na sua rotina')}</p>
             </motion.div>
@@ -575,7 +500,7 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-16">
               <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-                {t('landing.navigation.perfectForAll', 'Perfeito para')} <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">todos</span>
+                {t('landing.navigation.perfectForAll', 'Perfeito para')} <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">todos</span>
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-300">{t('landing.navigation.idealSolution', 'Independente do seu perfil, temos a solução ideal')}</p>
             </motion.div>
@@ -611,11 +536,11 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
-                <div className="inline-flex items-center px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full text-sm font-medium text-blue-700 dark:text-blue-300 mb-6">
+                <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-full text-sm font-medium text-white shadow-sm mb-6">
                   <Play className="w-4 h-4 mr-2" />{t('landing.navigation.seeAction', 'Veja em ação')}
                 </div>
                 <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
-                  Assista como é <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{t('landing.navigation.easy', 'fácil')}</span>
+                  Assista como é <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">{t('landing.navigation.easy', 'fácil')}</span>
                 </h2>
                 <p className="text-xl text-muted-foreground mb-8">Veja em apenas 3 minutos como o TamanduAI pode transformar sua prática educacional.</p>
                 
@@ -655,6 +580,25 @@ export default function LandingPage() {
                       <span className="text-sm">3:24</span>
                     </div>
                   </div>
+                  <div className="flex items-center justify-center gap-4 mt-8">
+                    <Button
+                      size="lg"
+                      onClick={() => navigate('/pricing')}
+                      leftIcon={<Zap className="w-5 h-5" />}
+                      variant="gradientOutline"
+                      className="border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50"
+                    >
+                      {t('landing.features.viewPricing', 'Ver Preços Detalhados')}
+                    </Button>
+                    <Button
+                      size="lg"
+                      onClick={() => navigate('/register')}
+                      leftIcon={<Rocket className="w-5 h-5" />}
+                      variant="gradient"
+                    >
+                      {t('landing.features.startFree', 'Começar Grátis')}
+                    </Button>
+                  </div>
                 </div>
               </motion.div>
             </div>
@@ -666,7 +610,7 @@ export default function LandingPage() {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-16">
               <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-                {t('landing.navigation.frequentQuestions', 'Perguntas')} <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Frequentes</span>
+                {t('landing.navigation.frequentQuestions', 'Perguntas')} <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">Frequentes</span>
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-300">{t('landing.navigation.everythingYouNeed', 'Tudo que você precisa saber')}</p>
             </motion.div>
@@ -676,7 +620,7 @@ export default function LandingPage() {
                 <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: i * 0.05 }}>
                   <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-shadow">
                     <h3 className="text-base font-bold text-gray-900 dark:text-white mb-3 flex items-start">
-                      <span className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 text-sm font-bold mr-3 mt-0.5">?</span>
+                      <span className="w-6 h-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 mt-0.5">?</span>
                       {faq.q}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-300">{faq.a}</p>
@@ -724,14 +668,14 @@ export default function LandingPage() {
         </section>
 
         {/* Beta */}
-        <section className="py-20 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">
+        <section className="py-20 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
               <div className="inline-flex items-center px-4 py-2 bg-white/20 rounded-full text-sm font-medium text-white mb-6">
                 <Rocket className="w-4 h-4 mr-2" />{t('landing.beta.exclusive', 'Programa Beta Exclusivo')}
               </div>
               <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">{t('landing.beta.title', 'Seja um dos primeiros a testar o TamanduAI')}</h2>
-              <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">{t('landing.beta.description', 'Acesso gratuito por 3 meses a todas as funcionalidades. Vagas limitadas!')}</p>
+              <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">{t('landing.beta.description', 'Acesso gratuito por 3 meses a todas as funcionalidades. Vagas limitadas!')}</p>
               
               <Link to="/register">
                 <Button 
@@ -747,17 +691,17 @@ export default function LandingPage() {
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
                   <Calendar className="w-8 h-8 text-white mx-auto mb-3" />
                   <h3 className="font-semibold text-white mb-2">{t('landing.beta.freeMonths', '3 Meses Grátis')}</h3>
-                  <p className="text-blue-100 text-sm">{t('landing.beta.fullAccess', 'Acesso completo a todas funcionalidades')}</p>
+                  <p className="text-white/80 text-sm">{t('landing.beta.fullAccess', 'Acesso completo a todas funcionalidades')}</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
                   <Shield className="w-8 h-8 text-white mx-auto mb-3" />
                   <h3 className="font-semibold text-white mb-2">{t('landing.beta.noCommitment', 'Sem Compromisso')}</h3>
-                  <p className="text-blue-100 text-sm">{t('landing.beta.cancelAnytime', 'Cancele quando quiser, sem taxas')}</p>
+                  <p className="text-white/80 text-sm">{t('landing.beta.cancelAnytime', 'Cancele quando quiser, sem taxas')}</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
                   <Users className="w-8 h-8 text-white mx-auto mb-3" />
                   <h3 className="font-semibold text-white mb-2">{t('landing.beta.exclusiveSupport', 'Suporte Exclusivo')}</h3>
-                  <p className="text-blue-100 text-sm">{t('landing.beta.prioritySupport', 'Atendimento prioritário para beta testers')}</p>
+                  <p className="text-white/80 text-sm">{t('landing.beta.prioritySupport', 'Atendimento prioritário para beta testers')}</p>
                 </div>
               </div>
             </motion.div>
@@ -769,7 +713,7 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-16">
               <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
-                O que dizem nossos <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">educadores</span>
+                O que dizem nossos <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">educadores</span>
               </h2>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">Histórias reais de transformação</p>
             </motion.div>
@@ -797,11 +741,11 @@ export default function LandingPage() {
         </section>
 
         {/* CTA */}
-        <section className="py-20 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600">
+        <section className="py-20 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
               <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">{t('landing.cta.title', 'Pronto para transformar sua educação?')}</h2>
-              <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">{t('landing.cta.description', 'Junte-se a milhares de educadores que já descobriram o poder da IA. Comece gratuitamente!')}</p>
+              <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">{t('landing.cta.description', 'Junte-se a milhares de educadores que já descobriram o poder da IA. Comece gratuitamente!')}</p>
               
               <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
                 <Button 
@@ -833,10 +777,10 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
                   <BookOpen className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">TamanduAI</span>
+                <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">TamanduAI</span>
               </div>
               <p className="text-muted-foreground max-w-md">{t('landing.footer.tagline', 'Revolucionando a educação através da inteligência artificial.')}</p>
             </div>
@@ -860,7 +804,11 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+      
+      {/* Cookie Banner */}
+      <CookieBanner />
     </div>
   );
 }
+
 

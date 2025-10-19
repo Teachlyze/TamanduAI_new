@@ -4,10 +4,81 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, CheckCircle, Eye, EyeOff, Info } from 'lucide-react';
 
 /**
+ * Botão aprimorado com estados visuais
+ */
+export const EnhancedButton = ({
+  children,
+  variant = 'primary',
+  size = 'md',
+  loading = false,
+  disabled = false,
+  fullWidth = false,
+  leftIcon: LeftIcon,
+  rightIcon: RightIcon,
+  onClick,
+  className = '',
+  type = 'button',
+  ...props
+}) => {
+  const sizes = {
+    xs: 'btn-xs',
+    sm: 'btn-sm',
+    md: '',
+    lg: 'btn-lg',
+  };
+
+  const variants = {
+    primary: 'btn btn-primary',
+    secondary: 'btn btn-secondary',
+    accent: 'btn btn-accent',
+    neutral: 'btn btn-neutral',
+    ghost: 'btn btn-ghost',
+    link: 'btn btn-link',
+    outline: 'btn btn-outline',
+    success: 'btn btn-success',
+    warning: 'btn btn-warning',
+    error: 'btn btn-error',
+    info: 'btn btn-info',
+  };
+
+  const baseClasses = [
+    'btn transition-all duration-200',
+    variants[variant],
+    sizes[size],
+    fullWidth ? 'btn-block' : '',
+    loading ? 'loading' : '',
+    disabled ? 'btn-disabled' : '',
+    className,
+  ].filter(Boolean).join(' ');
+
+  return (
+    <button
+      type={type}
+      className={baseClasses}
+      disabled={disabled || loading}
+      onClick={onClick}
+      {...props}
+    >
+      {loading ? (
+        <>
+          <span className="loading loading-spinner loading-sm"></span>
+          Carregando...
+        </>
+      ) : (
+        <>
+          {LeftIcon && <LeftIcon className="h-4 w-4 mr-2" />}
+          {children}
+          {RightIcon && <RightIcon className="h-4 w-4 ml-2" />}
+        </>
+      )}
+    </button>
+  );
+};
+
+/**
  * Campo de formulário aprimorado com validação visual
  */
 export const EnhancedInput = ({
-  label,
   type = 'text',
   placeholder,
   value,

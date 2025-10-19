@@ -7,7 +7,11 @@ export const NotificationType = {
   PLAGIARISM: 'plagiarism',
   SYSTEM: 'system',
   CHATBOT: 'chatbot',
-  ANALYTICS: 'analytics'
+  ANALYTICS: 'analytics',
+  GAMIFICATION: 'gamification',
+  FEEDBACK: 'feedback',
+  MEETING: 'meeting',
+  LIVE_CLASS: 'live_class'
 };
 
 export const NotificationPriority = {

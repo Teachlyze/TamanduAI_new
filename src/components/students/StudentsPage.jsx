@@ -302,7 +302,7 @@ const StudentsPage = () => {
                     </h1>
                   </div>
                   <p className="text-gray-600 dark:text-gray-300">
-                    Visualize e gerencie os alunos da sua instituição
+                    Alunos aparecem automaticamente ao aceitar convites de turmas
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -315,13 +315,6 @@ const StudentsPage = () => {
                   >
                     <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
                     <span className="hidden sm:inline ml-2">Atualizar</span>
-                  </Button>
-                  <Button 
-                    onClick={() => handleAction('invite')}
-                    className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-                  >
-                    <UserPlus className="h-4 w-4" />
-                    <span className="hidden sm:inline ml-2">Novo Aluno</span>
                   </Button>
                 </div>
               </div>

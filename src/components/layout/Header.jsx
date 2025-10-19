@@ -16,14 +16,14 @@ export const Header = ({ onMenuClick }) => {
   const { user, signOut } = useAuth();
 
   return (
-    <header className="bg-white shadow-sm">
+    <header className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 shadow-lg sticky top-0 z-50">
       <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
         {/* Mobile menu button */}
         <div className="flex items-center">
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="md:hidden text-white hover:bg-white/20"
             onClick={onMenuClick}
           >
             <Menu className="h-6 w-6" />
@@ -39,7 +39,7 @@ export const Header = ({ onMenuClick }) => {
               <Input
                 type="text"
                 placeholder="Pesquisar..."
-                className="pl-10 w-64"
+                className="pl-10 w-64 bg-white/10 border-white/20 text-white placeholder:text-white/60"
               />
             </div>
           </div>
@@ -47,7 +47,7 @@ export const Header = ({ onMenuClick }) => {
 
         <div className="flex items-center space-x-4">
           {/* Notifications */}
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
             <Bell className="h-5 w-5" />
             <span className="sr-only">Notificações</span>
           </Button>
@@ -55,7 +55,7 @@ export const Header = ({ onMenuClick }) => {
           {/* User dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
                 <User className="h-5 w-5" />
                 <span className="sr-only">Perfil do usuário</span>
               </Button>
@@ -70,8 +70,8 @@ export const Header = ({ onMenuClick }) => {
                 <a href="/settings">Configurações</a>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={signOut}>
-                Sair
+              <DropdownMenuItem onClick={signOut} className="text-right">
+                <span className="w-full text-right">Sair</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

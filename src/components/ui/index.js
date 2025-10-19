@@ -1,4 +1,5 @@
 // UI Components
+export * from './table';
 export * from './alert-dialog';
 export * from './avatar';
 export * from './badge';
@@ -32,3 +33,74 @@ export { default as ResponsiveImage } from './ResponsiveImage';
 export { default as OptimizedImage } from './OptimizedImage';
 export { default as SearchInput } from './SearchInput';
 export { default as SuspenseFallback } from './SuspenseFallback';
+
+// Premium Components
+export { 
+  PremiumCard, 
+  PremiumCardHeader, 
+  PremiumCardContent, 
+  PremiumCardFooter,
+  PremiumCardTitle,
+  PremiumCardDescription,
+  StatsCard,
+  FeatureCard,
+  TestimonialCard 
+} from './PremiumCard';
+
+export { 
+  PremiumButton, 
+  IconButton, 
+  ButtonGroup, 
+  FAB 
+} from './PremiumButton';
+
+export { 
+  PremiumInput, 
+  PremiumTextarea, 
+  PremiumSelect 
+} from './PremiumInput';
+
+export { 
+  PremiumModal, 
+  ConfirmationModal, 
+  FormModal 
+} from './PremiumModal';
+
+export { 
+  LoadingScreen, 
+  InlineLoading, 
+  SkeletonScreen 
+} from './LoadingScreen';
+
+export { 
+  EmptyState, 
+  NoDataEmpty, 
+  NoSearchResults, 
+  NoClasses, 
+  NoStudents, 
+  ErrorState 
+} from './EmptyState';
+
+export { 
+  PremiumTable 
+} from './PremiumTable';
+
+export { 
+  ProgressBar, 
+  CircularProgress, 
+  StepProgress, 
+  UploadProgress 
+} from './ProgressIndicator';
+
+export { 
+  toast, 
+  PremiumToaster 
+} from './PremiumToast';
+
+// Advanced Components
+export { OnboardingTour, useOnboarding } from '../OnboardingTour';
+export { CommandPalette } from '../CommandPalette';
+export { LazyImage } from '../LazyImage';
+export { HeaderPremium } from './HeaderPremium';
+export { SidebarPremium } from './SidebarPremium';
+export { default as ChatbotWidget } from './ChatbotWidget';

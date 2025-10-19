@@ -1,5 +1,5 @@
 import React from 'react';
-import { sanitizeText, validateTextSafety } from '@/utils/securityUtils';
+import { sanitizeText, validateTextSafety, SafeHtml } from '@/utils/securityUtils';
 
 /**
  * Input component with built-in XSS protection and sanitization
@@ -154,7 +154,6 @@ export const SecureContent = ({
 
   if (allowHtml) {
     // Use SafeHtml for HTML content
-    const { SafeHtml } = require('@/utils/securityUtils');
     return <SafeHtml html={safeContent} className={className} {...props} />;
   }
 
@@ -247,7 +246,7 @@ export const useSecureForm = (initialValues = {}) => {
     }));
   }, []);
 
-  const setTouched = React.useCallback((field, isTouched = true) => {
+  const setFieldTouched = React.useCallback((field, isTouched = true) => {
     setTouched(prev => ({
       ...prev,
       [field]: isTouched
@@ -286,7 +285,7 @@ export const useSecureForm = (initialValues = {}) => {
     touched,
     setValue,
     setError,
-    setTouched,
+    setFieldTouched,
     validateField,
     validateForm,
     isValid: Object.keys(errors).length === 0

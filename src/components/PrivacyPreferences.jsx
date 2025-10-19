@@ -124,7 +124,7 @@ const PrivacyPreferences = () => {
                           <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                             {category.title}
                             {category.required && (
-                              <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 rounded-full">
+                              <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 dark:bg-gray-100 dark:bg-gray-800 dark:text-blue-300 rounded-full">
                                 Sempre ativo
                               </span>
                             )}
@@ -216,3 +216,4 @@ const PrivacyPreferences = () => {
 };
 
 export default PrivacyPreferences;
+

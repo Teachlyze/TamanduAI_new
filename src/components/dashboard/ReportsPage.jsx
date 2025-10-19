@@ -358,7 +358,7 @@ const ReportsPage = () => {
             <Button 
               variant="outline" 
               onClick={() => handleAction('filter')} 
-              className="rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20"
+              className="rounded-xl hover:bg-blue-50 dark:hover:bg-muted/30"
             >
               <Eye className="w-4 h-4 mr-2" />
               Aplicar Filtros
@@ -502,3 +502,4 @@ const ReportsPage = () => {
 };
 
 export default ReportsPage;
+

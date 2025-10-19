@@ -7,11 +7,14 @@ import { motion } from 'framer-motion';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { SkeletonDashboard } from '@/components/ui/skeleton';
 
-// Teacher Dashboard Components
-import TeacherDashboard from './TeacherDashboard';
+// Teacher Dashboard Components (Premium)
+import TeacherDashboardPremium from './TeacherDashboardPremium';
 
-// Student Dashboard Components
-import StudentDashboard from './StudentDashboard';
+// Student Dashboard Components (Premium)
+import StudentDashboardPremium from './StudentDashboardPremium';
+
+// School Dashboard Component (Premium)
+import SchoolDashboardPremium from './SchoolDashboardPremium';
 
 const RoleBasedDashboard = () => {
   const { user } = useAuth();
@@ -104,9 +107,11 @@ const RoleBasedDashboard = () => {
       transition={{ duration: 0.6 }}
     >
       {userRole === 'teacher' ? (
-        <TeacherDashboard />
+        <TeacherDashboardPremium />
       ) : userRole === 'student' ? (
-        <StudentDashboard />
+        <StudentDashboardPremium />
+      ) : userRole === 'school' ? (
+        <SchoolDashboardPremium />
       ) : (
         <div className="flex items-center justify-center h-64">
           <Alert className="max-w-md">

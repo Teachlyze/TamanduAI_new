@@ -21,8 +21,30 @@ export function LoginForm() {
     setIsLoading(true);
 
     try {
-      await login(email, password);
-      navigate('/dashboard');
+      const result = await login(email, password);
+      
+      // Verificar se houve erro
+      if (result?.error) {
+        setError(result.error.message || 'Falha ao fazer login. Verifique suas credenciais.');
+        setIsLoading(false);
+        return;
+      }
+
+      // Redirecionar baseado no role do usuário
+      const role = result?.user?.user_metadata?.role || result?.user?.role;
+      switch (role) {
+        case 'student':
+          navigate('/students');
+          break;
+        case 'teacher':
+          navigate('/dashboard');
+          break;
+        case 'school':
+          navigate('/school');
+          break;
+        default:
+          navigate('/');
+      }
     } catch (err) {
       setError(err.message || 'Falha ao fazer login. Verifique suas credenciais.');
     } finally {
@@ -72,6 +94,7 @@ export function LoginForm() {
               <Input
                 id="password"
                 type="password"
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required

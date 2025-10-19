@@ -120,4 +120,8 @@ const NotificationOrchestrator = {
   }
 };
 
+// Named export para compatibilidade
+export { NotificationOrchestrator };
+
+// Default export
 export default NotificationOrchestrator;

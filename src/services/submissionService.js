@@ -42,27 +42,43 @@ export const createSubmission = async (submissionData, submit = false) => {
         // Get activity and class info
         const { data: activity } = await supabase
           .from('activities')
-          .select('id, title, class_id')
+          .select('id, title')
           .eq('id', activity_id)
           .single();
 
-        if (activity?.class_id) {
-          const [{ data: cls }, { data: studentProfile }] = await Promise.all([
-            supabase.from('classes').select('id, name, created_by').eq('id', activity.class_id).single(),
-            supabase.from('profiles').select('full_name').eq('id', user_id).single()
-          ]);
+        // Get classes this activity is assigned to
+        const { data: classAssignments } = await supabase
+          .from('activity_class_assignments')
+          .select(`
+            class_id,
+            classes (
+              id,
+              name,
+              created_by
+            )
+          `)
+          .eq('activity_id', activity_id);
 
-          if (cls?.created_by) {
-            await NotificationOrchestrator.send('activitySubmitted', {
-              userId: cls.created_by,
-              variables: {
-                studentName: studentProfile?.full_name || 'Aluno',
-                activityName: activity?.title || 'Atividade'
-              },
-              channelOverride: 'push',
-              metadata: { activityId: activity_id, classId: cls?.id }
-            });
-          }
+        const { data: studentProfile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user_id)
+          .single();
+
+        // Notify teachers of all classes
+        for (const assignment of classAssignments || []) {
+          const cls = assignment.classes;
+          if (!cls?.created_by) continue;
+
+          await NotificationOrchestrator.send('activitySubmitted', {
+            userId: cls.created_by,
+            variables: {
+              studentName: studentProfile?.full_name || 'Aluno',
+              activityName: activity?.title || 'Atividade'
+            },
+            channelOverride: 'push',
+            metadata: { activityId: activity_id, classId: cls.id }
+          });
         }
       } catch (e) {
         console.warn('Falha ao notificar submissão de atividade:', e);
@@ -72,7 +88,7 @@ export const createSubmission = async (submissionData, submit = false) => {
       try {
         const { data: activityCfg } = await supabase
           .from('activities')
-          .select('id, class_id, plagiarism_enabled')
+          .select('id, plagiarism_enabled')
           .eq('id', activity_id)
           .single();
 
@@ -89,7 +105,7 @@ export const createSubmission = async (submissionData, submit = false) => {
             const res = await invokeEdgeCheck({
               submissionId: submission.id,
               activityId: activityCfg.id,
-              classId: activityCfg.class_id,
+              classId: null, // Will be handled by plagiarism service
               text: textAnswers,
               rephrased: true,
             });
@@ -156,7 +172,7 @@ export const getSubmissionsForActivity = async (activityId, options = {}) => {
       .from('submissions')
       .select(`
         *,
-        user:user_id (id, email, raw_user_meta_data->>'name' as name),
+        profiles:student_id (id, full_name),
         activities (id, title)
       `)
       .eq('activity_id', activityId)
@@ -239,7 +255,7 @@ export const gradeSubmission = async (submissionId, gradingData) => {
       // get activity title
       const { data: activity } = await supabase
         .from('activities')
-        .select('id, title, total_points')
+        .select('id, title, max_score')
         .eq('id', submission.activity_id)
         .single();
 
@@ -257,7 +273,7 @@ export const gradeSubmission = async (submissionId, gradingData) => {
         variables: {
           activityName: activity?.title || 'Atividade',
           grade: updateData.grade ?? submission.grade ?? 0,
-          maxGrade: activity?.total_points || 100,
+          maxGrade: activity?.max_score || 100,
           viewUrl: `/dashboard/activities/${submission.activity_id}/submissions/${submissionId}`
         },
         metadata: { submissionId, activityId: submission.activity_id }
@@ -303,19 +319,13 @@ export const gradeSubmission = async (submissionId, gradingData) => {
  */
 export const getSubmissionStats = async (activityId) => {
   try {
-    // Get total students in the class
-    const { data: activity, error: activityError } = await supabase
-      .from('activities')
-      .select('class_id')
-      .eq('id', activityId)
-      .single();
-
-    if (activityError) throw activityError;
-
+    // Get total students in classes where this activity is assigned
     const { count: totalStudents, error: countError } = await supabase
       .from('class_members')
       .select('*', { count: 'exact', head: true })
-      .eq('class_id', activity.class_id);
+      .in('class_id', 
+        supabase.from('activity_class_assignments').select('class_id').eq('activity_id', activityId)
+      );
 
     if (countError) throw countError;
 
@@ -439,7 +449,7 @@ export const submitDraft = async (submissionId) => {
           const res = await invokeEdgeCheck({
             submissionId,
             activityId: subActivity.id,
-            classId: subActivity.class_id,
+            classId: null, // Will be handled by plagiarism service
             text: textContent,
             rephrased: true,
           });

@@ -1,32 +1,32 @@
-// src/pages/api/invites/[token].js
+// src/pages/api/invites/[invitationCode].js
 import { supabase } from '@/lib/supabaseClient';
 import { redisCache } from '@/services/redisService';
 
 export default async function handler(req, res) {
-  const { token } = req.query;
+  const { invitationCode } = req.query;
 
-  if (!token) {
-    return res.status(400).json({ message: 'Invite token is required' });
+  if (!invitationCode) {
+    return res.status(400).json({ message: 'Invitation code is required' });
   }
 
   if (req.method === 'GET') {
-    return await handleGetInvite(req, res, token);
+    return await handleGetInvite(req, res, invitationCode);
   } else if (req.method === 'POST') {
-    return await handleAcceptInvite(req, res, token);
+    return await handleAcceptInvite(req, res, invitationCode);
   } else {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 }
 
-async function handleGetInvite(req, res, token) {
+async function handleGetInvite(req, res, invitationCode) {
   try {
     // Check cache first
-    const cachedInvite = await redisCache.get(`invite:${token}`);
+    const cachedInvite = await redisCache.get(`invite:${invitationCode}`);
 
     if (cachedInvite) {
       return res.status(200).json({
         invite: {
-          token,
+          invitationCode,
           classId: cachedInvite.classId,
           email: cachedInvite.email,
           expiresAt: cachedInvite.expiresAt,
@@ -37,22 +37,22 @@ async function handleGetInvite(req, res, token) {
 
     // Check database
     const { data: invite, error } = await supabase
-      .from('class_invites')
+      .from('class_invitations')
       .select(`
         *,
-        classes (
+        class:classes (
           id,
           name,
-          subject,
-          teacher_id,
-          profiles!classes_teacher_id_fkey (
+          description,
+          created_by,
+          teacher:profiles!created_by (
             id,
-            username,
-            full_name
+            full_name,
+            avatar_url
           )
         )
       `)
-      .eq('token', token)
+      .eq('invitation_code', invitationCode)
       .eq('status', 'active')
       .single();
 
@@ -64,7 +64,7 @@ async function handleGetInvite(req, res, token) {
     if (new Date() > new Date(invite.expires_at)) {
       // Update status to expired
       await supabase
-        .from('class_invites')
+        .from('class_invitations')
         .update({ status: 'expired' })
         .eq('id', invite.id);
 
@@ -72,20 +72,22 @@ async function handleGetInvite(req, res, token) {
     }
 
     // Cache the invite
-    await redisCache.set(`invite:${token}`, {
+    await redisCache.set(`invite:${invitationCode}`, {
       classId: invite.class_id,
-      email: invite.email,
+      email: invite.target_email,
       expiresAt: invite.expires_at,
       status: invite.status
     }, Math.ceil((new Date(invite.expires_at) - new Date()) / 1000));
 
     res.status(200).json({
       invite: {
-        token,
+        invitationCode,
         classId: invite.class_id,
-        className: invite.classes?.name,
-        subject: invite.classes?.subject,
-        teacherName: invite.classes?.profiles?.full_name,
+        className: invite.class?.name,
+        description: invite.class?.description,
+        teacherName: invite.class?.teacher?.full_name,
+        teacherAvatar: invite.class?.teacher?.avatar_url,
+        role: invite.role,
         expiresAt: invite.expires_at,
         status: invite.status
       }
@@ -100,7 +102,7 @@ async function handleGetInvite(req, res, token) {
   }
 }
 
-async function handleAcceptInvite(req, res, token) {
+async function handleAcceptInvite(req, res, invitationCode) {
   try {
     const { userId } = req.body;
 
@@ -109,7 +111,7 @@ async function handleAcceptInvite(req, res, token) {
     }
 
     // Get invite info
-    const inviteInfo = await redisCache.get(`invite:${token}`);
+    const inviteInfo = await redisCache.get(`invite:${invitationCode}`);
 
     if (!inviteInfo) {
       return res.status(404).json({ message: 'Invite not found' });
@@ -117,66 +119,49 @@ async function handleAcceptInvite(req, res, token) {
 
     // Check if user is already in the class
     const { data: existingMember, error: memberCheckError } = await supabase
-      .from('class_students')
-      .select('id, status')
+      .from('class_members')
+      .select('id')
       .eq('class_id', inviteInfo.classId)
-      .eq('student_id', userId)
-      .single();
+      .eq('user_id', userId)
+      .maybeSingle();
 
-    if (memberCheckError && memberCheckError.code !== 'PGRST116') {
+    if (memberCheckError) {
       throw memberCheckError;
     }
 
     if (existingMember) {
-      if (existingMember.status === 'active') {
-        return res.status(409).json({ message: 'Already a member of this class' });
-      } else {
-        // Reactivate membership
-        const { error: reactivateError } = await supabase
-          .from('class_students')
-          .update({ status: 'active', enrolled_at: new Date().toISOString() })
-          .eq('id', existingMember.id);
-
-        if (reactivateError) throw reactivateError;
-
-        // Update invite status
-        await supabase
-          .from('class_invites')
-          .update({ status: 'used' })
-          .eq('token', token);
-
-        // Clear cache
-        await redisCache.delete(`invite:${token}`);
-
-        return res.status(200).json({
-          message: 'Successfully rejoined the class',
-          classId: inviteInfo.classId
-        });
-      }
+      return res.status(409).json({ 
+        message: 'Already a member of this class',
+        alreadyMember: true,
+        classId: inviteInfo.classId
+      });
     }
 
     // Add user to class
     const { data: newMember, error: joinError } = await supabase
-      .from('class_students')
+      .from('class_members')
       .insert({
         class_id: inviteInfo.classId,
-        student_id: userId,
-        status: 'active',
-        enrolled_at: new Date().toISOString()
+        user_id: userId,
+        role: inviteInfo.role || 'student'
       })
       .select()
       .single();
 
     if (joinError) throw joinError;
 
-    // Update invite status
-    await supabase
-      .from('class_invites')
-      .update({ status: 'used' })
-      .eq('token', token);
+    // Increment invitation usage
+    const { error: usageError } = await supabase
+      .from('invitation_usages')
+      .insert({
+        invitation_id: inviteInfo.invitationId,
+        user_id: userId
+      });
+
+    if (usageError) console.warn('Failed to record usage:', usageError);
 
     // Clear cache
-    await redisCache.delete(`invite:${token}`);
+    await redisCache.delete(`invite:${invitationCode}`);
 
     // Invalidate related caches
     await redisCache.invalidateUserCache(userId);
@@ -184,6 +169,7 @@ async function handleAcceptInvite(req, res, token) {
 
     res.status(201).json({
       message: 'Successfully joined the class',
+      success: true,
       classId: inviteInfo.classId,
       memberId: newMember.id
     });

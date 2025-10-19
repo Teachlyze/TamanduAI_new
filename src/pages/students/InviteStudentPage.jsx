@@ -135,7 +135,7 @@ const InviteStudentPage = () => {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 h-1" />
               <CardHeader className="pt-8 pb-6">
-                <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-blue-100 dark:bg-gray-100 dark:bg-gray-800 text-blue-600 dark:text-blue-400">
                   <Send className="h-8 w-8" />
                 </div>
                 <CardTitle className="text-2xl font-bold text-center text-gray-900 dark:text-white">
@@ -292,3 +292,4 @@ const InviteStudentPage = () => {
 };
 
 export default InviteStudentPage;
+

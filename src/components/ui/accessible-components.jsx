@@ -177,7 +177,7 @@ export const AccessibleList = ({
           tabIndex={focusedIndex === index ? 0 : -1}
           className={cn(
             'focus:outline-none focus:ring-4 focus:ring-blue-500/25 rounded-md transition-all',
-            isSelected(index) && 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800',
+            isSelected(index) && 'bg-blue-50 border-blue-200 dark:bg-muted/30 dark:border-blue-800',
             focusedIndex === index && 'ring-2 ring-blue-500'
           )}
           onClick={() => selectionMode !== 'none' && handleSelectionChange(index, item)}
@@ -436,3 +436,4 @@ export default {
   AccessibleRadioGroup,
   useAccessibleList,
 };
+

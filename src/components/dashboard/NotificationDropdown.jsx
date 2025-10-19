@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Bell, BellRing, Check, X, Clock as ClockIcon, AlertTriangle, Info, Calendar as CalendarIcon } from 'lucide-react';
-import Button from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/components/ui/use-toast';
 import NotificationService from '@/services/notificationService';
@@ -9,7 +8,7 @@ import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabaseClient';
 
-export const NotificationDropdown = () => {
+function NotificationDropdown() {
   const [notifications, setNotifications] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -150,22 +149,20 @@ export const NotificationDropdown = () => {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="relative rounded-full"
+      <button
+        className="relative p-2 rounded-md hover:bg-muted transition-colors focus:outline-none"
         onClick={toggleDropdown}
         aria-label="Notificações"
       >
         <div className="relative">
-          <Bell className="h-5 w-5" />
+          <Bell className="h-5 w-5 text-muted-foreground" />
           {notifications.length > 0 && (
             <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-medium text-primary-foreground flex items-center justify-center">
               {notifications.length > 9 ? '9+' : notifications.length}
             </span>
           )}
         </div>
-      </Button>
+      </button>
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg overflow-hidden z-50 border border-gray-200 dark:border-gray-700 dark:bg-gray-800">
@@ -173,23 +170,19 @@ export const NotificationDropdown = () => {
             <h3 className="font-medium text-gray-900 dark:text-gray-100">Notificações</h3>
             <div className="flex space-x-2">
               {notifications.some(n => !n.is_read) && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-xs h-7 px-2"
+                <button
+                  className="text-xs h-7 px-2 rounded hover:bg-muted transition-colors"
                   onClick={markAllAsRead}
                 >
                   Marcar todas como lidas
-                </Button>
+                </button>
               )}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-xs h-7 px-2"
+              <button
+                className="text-xs h-7 px-2 rounded hover:bg-muted transition-colors"
                 onClick={() => window.location.href = '/notifications'}
               >
                 Ver todas
-              </Button>
+              </button>
             </div>
           </div>
 
@@ -209,7 +202,7 @@ export const NotificationDropdown = () => {
                     key={notification.id}
                     className={cn(
                       'p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors',
-                      !notification.is_read && 'bg-blue-50 dark:bg-blue-900/20'
+                      !notification.is_read && 'bg-blue-50 dark:bg-muted/30'
                     )}
                     onClick={() => {
                       if (notification.link) {
@@ -260,14 +253,12 @@ export const NotificationDropdown = () => {
           </ScrollArea>
 
           <div className="p-2 border-t border-gray-200 dark:border-gray-700 text-center">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full text-sm"
+            <button
+              className="w-full text-sm py-2 rounded hover:bg-muted transition-colors"
               onClick={() => window.location.href = '/notifications'}
             >
               Ver todas as notificações
-            </Button>
+            </button>
           </div>
         </div>
       )}
@@ -276,3 +267,4 @@ export const NotificationDropdown = () => {
 };
 
 export default NotificationDropdown;
+

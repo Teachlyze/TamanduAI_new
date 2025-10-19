@@ -66,6 +66,19 @@ export const useAccessibility = () => {
   const savePreferences = useCallback((newPreferences) => {
     try {
       const updated = { ...preferences, ...newPreferences };
+
+      // Evitar atualizações desnecessárias que causam re-render em loop
+      const prev = preferences;
+      const keys = Object.keys(updated);
+      let changed = false;
+      for (const k of keys) {
+        if (updated[k] !== prev[k]) {
+          changed = true;
+          break;
+        }
+      }
+      if (!changed) return; // nada mudou
+
       setPreferences(updated);
       localStorage.setItem('accessibility_preferences', JSON.stringify(updated));
 
@@ -81,17 +94,21 @@ export const useAccessibility = () => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     const handleChange = (e) => {
-      savePreferences({ reducedMotion: e.matches });
+      if (preferences.reducedMotion !== e.matches) {
+        savePreferences({ reducedMotion: e.matches });
+      }
     };
 
-    // Aplicar preferência inicial
-    savePreferences({ reducedMotion: mediaQuery.matches });
+    // Aplicar preferência inicial somente se diferente
+    if (preferences.reducedMotion !== mediaQuery.matches) {
+      savePreferences({ reducedMotion: mediaQuery.matches });
+    }
 
     // Ouvir mudanças
     mediaQuery.addEventListener('change', handleChange);
 
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [savePreferences]);
+  }, [preferences.reducedMotion, savePreferences]);
 
   return {
     preferences,

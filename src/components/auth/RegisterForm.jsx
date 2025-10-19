@@ -7,12 +7,16 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Icons } from '@/components/icons';
 import HCaptchaWidget from '@/components/HCaptchaWidget';
+import { formatCPF, formatCNPJ, validateCPF, validateCNPJ } from '@/utils/validators';
 
 export function RegisterForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState('student');
+  const [cpf, setCpf] = useState('');
+  const [cnpj, setCnpj] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [captchaToken, setCaptchaToken] = useState('');
@@ -40,12 +44,38 @@ export function RegisterForm() {
     captchaRef.current?.execute();
   }, []);
 
+  const handleCpfChange = (e) => {
+    const formatted = formatCPF(e.target.value);
+    setCpf(formatted);
+  };
+
+  const handleCnpjChange = (e) => {
+    const formatted = formatCNPJ(e.target.value);
+    setCnpj(formatted);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
     if (password !== confirmPassword) {
       return setError('As senhas não coincidem');
+    }
+
+    // Password strength: at least 1 lowercase, 1 uppercase, 1 number, 1 special char, min 8
+    const strongPwd = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"|,.<>/?`~]).{8,}$/;
+    if (!strongPwd.test(password)) {
+      return setError('A senha deve ter no mínimo 8 caracteres e incluir letra maiúscula, minúscula, número e caractere especial.');
+    }
+
+    // Validar CPF para aluno e professor
+    if ((role === 'student' || role === 'teacher') && !validateCPF(cpf)) {
+      return setError('CPF inválido');
+    }
+
+    // Validar CNPJ para escola
+    if (role === 'school' && !validateCNPJ(cnpj)) {
+      return setError('CNPJ inválido');
     }
 
     if (!isLocalhost && !captchaToken) {
@@ -57,7 +87,19 @@ export function RegisterForm() {
     setIsLoading(true);
 
     try {
-      await register(email, password, name, captchaToken);
+      const result = await register({
+        email,
+        password,
+        name,
+        role,
+        cpf: role !== 'school' ? cpf.replace(/\D/g, '') : null,
+        cnpj: role === 'school' ? cnpj.replace(/\D/g, '') : null
+      }, captchaToken);
+      
+      if (result?.error) {
+        throw result.error;
+      }
+      
       // Email verification will be handled via Supabase
       navigate('/verify-email');
     } catch (err) {
@@ -85,22 +127,76 @@ export function RegisterForm() {
             )}
             
             <div className="space-y-2">
-              <Label htmlFor="name">Nome Completo</Label>
+              <Label htmlFor="role">Tipo de Conta</Label>
+              <select
+                id="role"
+                value={role}
+                onChange={(e) => {
+                  setRole(e.target.value);
+                  setCpf('');
+                  setCnpj('');
+                }}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                required
+              >
+                <option value="student">👨‍🎓 Aluno - Acessar atividades e desempenho</option>
+                <option value="teacher">👨‍🏫 Professor - Gerenciar turmas e atividades</option>
+                <option value="school">🏫 Escola - Administração institucional</option>
+              </select>
+              <p className="text-xs text-muted-foreground">
+                Selecione o tipo de conta que melhor se adequa ao seu uso.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="name">{role === 'school' ? 'Nome da Escola' : 'Nome Completo'}</Label>
               <Input
                 id="name"
                 type="text"
-                placeholder="Seu nome completo"
+                autoComplete="name"
+                placeholder={role === 'school' ? 'Nome da instituição' : 'Seu nome completo'}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
               />
             </div>
+
+            {(role === 'student' || role === 'teacher') && (
+              <div className="space-y-2">
+                <Label htmlFor="cpf">CPF</Label>
+                <Input
+                  id="cpf"
+                  type="text"
+                  placeholder="000.000.000-00"
+                  value={cpf}
+                  onChange={handleCpfChange}
+                  maxLength={14}
+                  required
+                />
+              </div>
+            )}
+
+            {role === 'school' && (
+              <div className="space-y-2">
+                <Label htmlFor="cnpj">CNPJ</Label>
+                <Input
+                  id="cnpj"
+                  type="text"
+                  placeholder="00.000.000/0000-00"
+                  value={cnpj}
+                  onChange={handleCnpjChange}
+                  maxLength={18}
+                  required
+                />
+              </div>
+            )}
             
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
+                autoComplete="username"
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -113,6 +209,7 @@ export function RegisterForm() {
               <Input
                 id="password"
                 type="password"
+                autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -128,6 +225,7 @@ export function RegisterForm() {
               <Input
                 id="confirmPassword"
                 type="password"
+                autoComplete="new-password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required

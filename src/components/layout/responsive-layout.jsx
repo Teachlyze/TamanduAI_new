@@ -2,10 +2,10 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Bell, Search, User, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { ScrollArea } from './ui/scroll-area';
-import { NotificationBell, NotificationContainer } from './ui/notification-system';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { ScrollArea } from '../ui/scroll-area';
+import { NotificationBell, NotificationContainer } from '../ui/notification-system';
 
 /**
  * Advanced Responsive Layout Component for TamanduAI
@@ -508,18 +508,5 @@ export const useResponsiveContent = () => {
 // ============================================
 // EXPORT COMPONENTS
 // ============================================
-
-export {
-  Sidebar,
-  Header,
-  MainLayout,
-  ContentArea,
-  GridLayout,
-  ResponsiveContainer,
-  useResponsive,
-  useSidebar,
-  useLayout,
-  useResponsiveContent,
-};
 
 export default MainLayout;

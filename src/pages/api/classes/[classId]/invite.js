@@ -37,22 +37,25 @@ async function handleCreateInvite(req, res, classId) {
       return res.status(404).json({ message: 'Class not found' });
     }
 
-    // Generate unique invite token
-    const inviteToken = generateInviteToken();
+    // Generate unique invitation code
+    const invitationCode = generateInvitationCode();
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + expiresIn);
 
     // Create invite record
     const { data: invite, error: inviteError } = await supabase
-      .from('class_invites')
+      .from('class_invitations')
       .insert({
         class_id: classId,
-        token: inviteToken,
-        invite_type: inviteType,
-        email: email || null,
+        created_by: classData.teacher_id,
+        invitation_code: invitationCode,
+        invitation_type: inviteType,
+        target_email: email || null,
+        role: 'student',
+        max_uses: inviteType === 'email' ? 1 : 10,
+        current_uses: 0,
         expires_at: expiresAt.toISOString(),
-        status: 'active',
-        created_at: new Date().toISOString()
+        status: 'active'
       })
       .select()
       .single();
@@ -65,12 +68,14 @@ async function handleCreateInvite(req, res, classId) {
     if (inviteType === 'link') {
       // Generate invite URL
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-      inviteUrl = `${baseUrl}/join-class?token=${inviteToken}&classId=${classId}`;
+      inviteUrl = `${baseUrl}/join/${invitationCode}`;
 
       // Cache the invite for quick lookup
-      await redisCache.set(`invite:${inviteToken}`, {
+      await redisCache.set(`invite:${invitationCode}`, {
+        invitationId: invite.id,
         classId,
-        email: invite.email,
+        email: invite.target_email,
+        role: invite.role,
         expiresAt: expiresAt.toISOString(),
         status: 'active'
       }, expiresIn * 24 * 60 * 60); // Cache for the duration of the invite
@@ -85,9 +90,10 @@ async function handleCreateInvite(req, res, classId) {
       success: true,
       invite: {
         id: invite.id,
-        token: inviteToken,
-        inviteType,
-        email: invite.email,
+        invitationCode,
+        invitationType: inviteType,
+        targetEmail: invite.target_email,
+        role: invite.role,
         expiresAt: expiresAt.toISOString(),
         inviteUrl,
         emailSent
@@ -106,7 +112,7 @@ async function handleCreateInvite(req, res, classId) {
 async function handleGetInvites(req, res, classId) {
   try {
     const { data: invites, error } = await supabase
-      .from('class_invites')
+      .from('class_invitations')
       .select('*')
       .eq('class_id', classId)
       .order('created_at', { ascending: false });
@@ -123,10 +129,14 @@ async function handleGetInvites(req, res, classId) {
   }
 }
 
-function generateInviteToken() {
-  return 'invite_' + Math.random().toString(36).substring(2, 15) +
-         Math.random().toString(36).substring(2, 15) +
-         Date.now().toString(36);
+function generateInvitationCode() {
+  // Generate 8-character code (uppercase letters and numbers, excluding similar looking chars)
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 8; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
 }
 
 async function sendInviteEmail(invite, classData) {
@@ -134,12 +144,12 @@ async function sendInviteEmail(invite, classData) {
     // This will be implemented with Supabase Edge Functions + Resend
     // For now, we'll just log it
     console.log('Sending invite email:', {
-      to: invite.email,
+      to: invite.target_email,
       className: classData.name,
-      inviteUrl: `${process.env.NEXT_PUBLIC_APP_URL}/join-class?token=${invite.token}&classId=${invite.class_id}`
+      inviteUrl: `${process.env.NEXT_PUBLIC_APP_URL}/join/${invite.invitation_code}`
     });
 
-    // TODO: Implement actual email sending with Resend
+    // TODO: Implement actual email sending with EmailTemplateService
     return true;
   } catch (error) {
     console.error('Send invite email error:', error);

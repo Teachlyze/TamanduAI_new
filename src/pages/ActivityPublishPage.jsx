@@ -54,6 +54,13 @@ const ActivityPublishPage = () => {
     try {
       setLoading(true);
 
+      // Guardas: precisa de user e templateId
+      if (!user || !user.id || !templateId) {
+        setTemplate(null);
+        setClasses([]);
+        return;
+      }
+
       // Carregar atividade (atua como template)
       const { data: templateData, error: templateError } = await supabase
         .from('activities')

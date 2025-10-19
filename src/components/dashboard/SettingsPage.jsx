@@ -23,8 +23,10 @@ import {
   Smartphone,
   Mail,
   Eye,
-  UserCheck
+  UserCheck,
+  Accessibility
 } from 'lucide-react';
+import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
 
 const SettingsPage = () => {
   const [settings, setSettings] = useState({
@@ -188,7 +190,7 @@ const SettingsPage = () => {
         transition={{ duration: 0.6, delay: 0.1 }}
       >
         <Tabs defaultValue="account" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 bg-gray-100 dark:bg-gray-800 rounded-2xl p-2 h-auto">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 bg-gray-100 dark:bg-gray-800 rounded-2xl p-2 h-auto gap-2">
             <TabsTrigger 
               value="account"
               className="flex items-center gap-3 rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-sm transition-all py-3"
@@ -197,6 +199,15 @@ const SettingsPage = () => {
                 <User className="w-4 h-4 text-white" />
               </div>
               <span className="font-medium">Conta</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="accessibility"
+              className="flex items-center gap-3 rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-sm transition-all py-3"
+            >
+              <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
+                <Accessibility className="w-4 h-4 text-white" />
+              </div>
+              <span className="font-medium">Acessibilidade</span>
             </TabsTrigger>
             <TabsTrigger 
               value="notifications"
@@ -217,6 +228,10 @@ const SettingsPage = () => {
               <span className="font-medium">Privacidade</span>
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="accessibility">
+            <AccessibilitySettings />
+          </TabsContent>
 
           <TabsContent value="account">
             <div className="grid gap-6">
@@ -349,7 +364,7 @@ const SettingsPage = () => {
                 <div className="space-y-6">
                   <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                      <div className="w-10 h-10 bg-blue-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
                         <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                       </div>
                       <div className="space-y-0.5">
@@ -466,7 +481,7 @@ const SettingsPage = () => {
                   <div className="space-y-6">
                     <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                        <div className="w-10 h-10 bg-blue-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
                           <Eye className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div className="space-y-0.5 flex-1">
@@ -561,7 +576,7 @@ const SettingsPage = () => {
                   <Button 
                     variant="outline" 
                     onClick={handleExportData}
-                    className="border-blue-300 text-blue-700 hover:bg-blue-100 dark:border-blue-600 dark:text-blue-300 dark:hover:bg-blue-900/20 rounded-xl"
+                    className="border-blue-300 text-blue-700 hover:bg-blue-100 dark:border-blue-600 dark:text-blue-300 dark:hover:bg-muted/30 rounded-xl"
                   >
                     <Download className="w-4 h-4 mr-2" />
                     Solicitar exportação
@@ -613,3 +628,4 @@ const SettingsPage = () => {
 };
 
 export default SettingsPage;
+

@@ -589,13 +589,13 @@ export const useActivitySubmissions = (activityId, options = {}) => {
           
           // Se os dados não estão obsoletos, retorna do cache
           if (age < staleTime) {
-            metrics.cacheHit('activity_submissions');
+            metrics.cacheHit('submissions');
             cacheHit = true;
             return data;
           }
           // Se os dados estão obsoletos, retorna do cache mas inicia um refresh em segundo plano
           if (age < (ttl * 1000) && autoRefresh) {
-            metrics.cacheStale('activity_submissions');
+            metrics.cacheStale('submissions');
             cacheHit = true;
             // Inicia o refresh em segundo plano
             fetchSubmissions(signal, true).catch(err => {
@@ -667,7 +667,7 @@ export const useActivitySubmissions = (activityId, options = {}) => {
       
     } catch (error) {
       if (error.name !== 'AbortError') {
-        metrics.apiError('activity_submissions');
+        metrics.apiError('submissions');
         const logData = {
           activityId,
           error: error.message,

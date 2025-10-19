@@ -1,4 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { navigateToHome } from '@/utils/roleNavigation';
 import { supabase } from '@/lib/supabaseClient';
 
 /**
@@ -8,6 +10,7 @@ import { supabase } from '@/lib/supabaseClient';
 export const useAppNavigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
 
   /**
    * Navigate to a route with state
@@ -37,10 +40,11 @@ export const useAppNavigation = () => {
   };
 
   /**
-   * Navigate to dashboard
+   * Navigate to dashboard (role-based)
    */
   const goToDashboard = () => {
-    navigate('/dashboard');
+    const role = user?.user_metadata?.role || 'student';
+    navigateToHome(navigate, role);
   };
 
   /**

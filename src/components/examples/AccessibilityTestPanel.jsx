@@ -283,7 +283,7 @@ const AccessibilityTestPanel = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-8 border border-blue-200 dark:border-blue-800"
+        className="bg-blue-50 dark:bg-muted/30 rounded-2xl p-8 border border-blue-200 dark:border-blue-800"
       >
         <h2 className="text-xl font-bold mb-4 text-blue-900 dark:text-blue-100">
           Como Testar Acessibilidade
@@ -375,3 +375,4 @@ const AccessibilityTestPanel = () => {
 };
 
 export default AccessibilityTestPanel;
+

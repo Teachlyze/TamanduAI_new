@@ -216,7 +216,7 @@ export const StudentOverviewTab = ({
                     <div className={`p-2 rounded-md ${
                       activity.status === 'late' 
                         ? 'bg-red-100 text-red-600 dark:bg-red-900/30' 
-                        : 'bg-blue-100 text-blue-600 dark:bg-blue-900/30'
+                        : 'bg-blue-100 text-blue-600 dark:bg-gray-100 dark:bg-gray-800'
                     }`}>
                       {activity.status === 'late' ? (
                         <ClockIcon className="h-5 w-5" />
@@ -252,3 +252,4 @@ export const StudentOverviewTab = ({
 };
 
 export default StudentOverviewTab;
+

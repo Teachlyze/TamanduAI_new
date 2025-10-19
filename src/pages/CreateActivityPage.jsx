@@ -1,298 +1,626 @@
-import { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from '@/lib/supabaseClient';
-import { Loader2, FileText, Code, List, CheckSquare, UploadCloud, Image as ImageIcon, ArrowLeft, CheckCircle2, BookOpen } from 'lucide-react';
+import { 
+  ArrowLeft, 
+  FileText, 
+  Save, 
+  X, 
+  Plus, 
+  Trash2, 
+  Clock, 
+  Users, 
+  BookOpen,
+  CheckCircle,
+  Circle,
+  Type,
+  AlignLeft
+} from 'lucide-react';
 import { motion } from 'framer-motion';
-import ActivityForm from '@/components/ActivityForm/ActivityForm';
-import Button from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useActivityDrafts } from '../hooks/useActivityDrafts';
+import { PremiumCard } from '@/components/ui/PremiumCard';
+import { PremiumButton } from '@/components/ui/PremiumButton';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
+import { supabase } from '@/lib/supabaseClient';
+import toast from 'react-hot-toast';
 
-const CreateActivityPage = () => {
-  const { toast } = useToast();
+const CreateActivityPageEnhanced = () => {
   const { user, loading: authLoading } = useAuth();
   const { classId } = useParams();
   const navigate = useNavigate();
-  const [isPageReady, setIsPageReady] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Use Redis cache for drafts
-  const { drafts, saveDraft, loading: draftsLoading } = useActivityDrafts(user?.id);
-
-  // Auto-save functionality
-  const [autoSaveTimer, setAutoSaveTimer] = useState(null);
-  const [_, setLastSaved] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [classes, setClasses] = useState([]);
+  
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     instructions: '',
     dueDate: '',
-    points: 10,
+    maxGrade: 100,
+    type: 'assignment',
+    isPublished: false,
+    selectedClasses: classId ? [classId] : [],
     questions: [],
-    image: null,
+    enablePlagiarismCheck: false,
+    allowBatchGrading: false
   });
 
-  // Auto-save functionality
+  const [currentQuestion, setCurrentQuestion] = useState({
+    type: 'multiple_choice',
+    question: '',
+    options: ['', '', '', ''],
+    correctAnswer: 0,
+    points: 1
+  });
+
   useEffect(() => {
-    if (autoSaveTimer) {
-      clearTimeout(autoSaveTimer);
+    if (!authLoading && user) {
+      loadClasses();
     }
+  }, [authLoading, user]);
 
-    const timer = setTimeout(async () => {
-      if (formData.title || formData.description || formData.questions.length > 0) {
-        try {
-          await saveDraft({
-            id: `draft_${user?.id}_${Date.now()}`,
-            ...formData,
-            classId: classId || null,
-            lastModified: new Date().toISOString(),
-          });
-          setLastSaved(new Date());
-        } catch (error) {
-          console.error('Auto-save failed:', error);
-        }
-      }
-    }, 30000); // 30 seconds
-
-    setAutoSaveTimer(timer);
-
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [formData, classId, user?.id, saveDraft, autoSaveTimer]);
-
-  // Load draft on component mount
-  useEffect(() => {
-    const loadExistingDraft = async () => {
-      if (drafts.length > 0) {
-        // Load the most recent draft
-        const latestDraft = drafts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))[0];
-        if (latestDraft) {
-          setFormData({
-            title: latestDraft.title || '',
-            description: latestDraft.description || '',
-            instructions: latestDraft.instructions || '',
-            dueDate: latestDraft.dueDate || '',
-            points: latestDraft.points || 10,
-            questions: latestDraft.questions || [],
-            image: latestDraft.image || null,
-          });
-        }
-      }
-    };
-
-    if (!draftsLoading && user?.id) {
-      loadExistingDraft();
-    }
-  }, [drafts, draftsLoading, user?.id]);
-
-  // Handle authentication and page readiness
-  useEffect(() => {
-    if (authLoading) return;
-
-    if (!user) {
-      return;
-    } else if (!classId) {
-      console.log('Creating activity without specific class');
-    }
-
-    setIsPageReady(true);
-  }, [user, authLoading, classId]);
-
-  const handleSubmit = useCallback(async (submittedFormData) => {
-    setIsSubmitting(true);
+  const loadClasses = async () => {
     try {
-      const { image, ...activityData } = submittedFormData;
-      
-      // Handle image upload if needed
-      if (image?.file) {
-        // Image processing would go here
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('classes')
+        .select('id, name, subject')
+        .eq('created_by', user.id)
+        .eq('is_active', true);
 
-      const activityRow = {
-        title: activityData.title || 'Nova Atividade',
-        description: activityData.description || null,
-        instructions: activityData.instructions || null,
-        schema: activityData.questions ? {
-          title: activityData.title || 'Nova Atividade',
-          type: 'object',
-          properties: {},
-          required: []
-        } : null,
-        created_by: user.id,
-        total_points: activityData.points || 100,
-        due_date: activityData.dueDate || null,
-        status: 'draft',
-        is_draft: true,
-        draft_saved_at: new Date().toISOString()
-      };
+      if (error) throw error;
+      setClasses(data || []);
+    } catch (error) {
+      console.error('Erro ao carregar turmas:', error);
+      toast.error('Erro ao carregar turmas');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      const { data: template, error: templateError } = await supabase
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleClassToggle = (classId) => {
+    setFormData(prev => ({
+      ...prev,
+      selectedClasses: prev.selectedClasses.includes(classId)
+        ? prev.selectedClasses.filter(id => id !== classId)
+        : [...prev.selectedClasses, classId]
+    }));
+  };
+
+  const handleQuestionChange = (field, value) => {
+    setCurrentQuestion(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleOptionChange = (index, value) => {
+    setCurrentQuestion(prev => ({
+      ...prev,
+      options: prev.options.map((opt, i) => i === index ? value : opt)
+    }));
+  };
+
+  const addQuestion = () => {
+    if (!currentQuestion.question.trim()) {
+      toast.error('Digite a pergunta');
+      return;
+    }
+
+    if (currentQuestion.type === 'multiple_choice' && currentQuestion.options.some(opt => !opt.trim())) {
+      toast.error('Preencha todas as opções');
+      return;
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      questions: [...prev.questions, { ...currentQuestion, id: Date.now() }]
+    }));
+
+    setCurrentQuestion({
+      type: 'multiple_choice',
+      question: '',
+      options: ['', '', '', ''],
+      correctAnswer: 0,
+      points: 1
+    });
+  };
+
+  const removeQuestion = (questionId) => {
+    setFormData(prev => ({
+      ...prev,
+      questions: prev.questions.filter(q => q.id !== questionId)
+    }));
+  };
+
+  const handleSave = async () => {
+    if (!formData.title.trim()) {
+      toast.error('Título é obrigatório');
+      return;
+    }
+
+    if (formData.selectedClasses.length === 0) {
+      toast.error('Selecione pelo menos uma turma');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      // Criar atividade
+      const { data: activity, error: activityError } = await supabase
         .from('activities')
-        .insert([activityRow])
+        .insert({
+          title: formData.title,
+          description: formData.description,
+          content: {
+            instructions: formData.instructions,
+            questions: formData.questions,
+            enablePlagiarismCheck: formData.enablePlagiarismCheck,
+            allowBatchGrading: formData.allowBatchGrading
+          },
+          type: formData.type,
+          max_grade: formData.maxGrade,
+          due_date: formData.dueDate || null,
+          created_by: user.id,
+          is_published: formData.isPublished
+        })
         .select()
         .single();
 
-      if (templateError) throw templateError;
+      if (activityError) throw activityError;
 
-      if (classId) {
-        // Mark as published
-        const { error: publishError } = await supabase
-          .from('activities')
-          .update({ status: 'published', published_at: new Date().toISOString() })
-          .eq('id', template.id)
-          .eq('created_by', user.id);
+      // Associar às turmas
+      const assignments = formData.selectedClasses.map(classId => ({
+        activity_id: activity.id,
+        class_id: classId
+      }));
 
-        if (publishError) {
-          console.warn('Error publishing activity:', publishError);
-        } else {
-          // Link to class
-          const { error: assignError } = await supabase
-            .from('activity_class_assignments')
-            .insert([{ activity_id: template.id, class_id: classId, assigned_at: new Date().toISOString() }]);
+      const { error: assignmentError } = await supabase
+        .from('activity_class_assignments')
+        .insert(assignments);
 
-          if (assignError) {
-            console.warn('Error assigning activity to class:', assignError);
-          }
-        }
-      }
+      if (assignmentError) throw assignmentError;
 
-      toast({
-        title: '✅ Atividade criada com sucesso!',
-        description: 'Sua atividade foi salva e está disponível para os alunos.',
-      });
-
+      toast.success('Atividade criada com sucesso!');
       navigate('/dashboard/activities');
     } catch (error) {
-      console.error('[CreateActivityPage] Error creating activity:', error);
-
-      let errorMessage = 'Ocorreu um erro ao tentar salvar a atividade.';
-
-      if (error.message.includes('Database error')) {
-        errorMessage = 'Erro no banco de dados. Verifique sua conexão com a internet e tente novamente.';
-      } else if (error.message.includes('User not authenticated')) {
-        errorMessage = 'Você precisa estar logado para criar uma atividade.';
-      } else if (error.message.includes('network')) {
-        errorMessage = 'Problema de conexão. Verifique sua internet e tente novamente.';
-      }
-
-      toast({
-        title: '❌ Erro ao criar atividade',
-        description: errorMessage,
-        variant: 'destructive',
-        duration: 5000,
-      });
+      console.error('Erro ao criar atividade:', error);
+      toast.error('Erro ao criar atividade');
     } finally {
-      setIsSubmitting(false);
+      setSaving(false);
     }
-  }, [classId, toast, navigate, user]);
+  };
 
-  // Show loading state while checking auth or page is not ready
-  if (authLoading || !isPageReady) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex justify-center items-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-4"
-        >
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-xl" />
-            <Loader2 className="relative h-16 w-16 text-blue-500 animate-spin mx-auto" />
-          </div>
-          <p className="text-gray-600 dark:text-gray-300 text-lg font-medium">
-            {authLoading ? 'Verificando autenticação...' : 'Preparando ambiente...'}
-          </p>
-        </motion.div>
-      </div>
-    );
+  if (loading) {
+    return <LoadingScreen message="Carregando turmas..." />;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-2xl blur-xl" />
-            <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/20 shadow-xl">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl">
-                    <BookOpen className="h-8 w-8 text-white" />
+    <div className="p-6 max-w-6xl mx-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <PremiumButton
+            variant="outline"
+            size="sm"
+            leftIcon={ArrowLeft}
+            onClick={() => navigate('/dashboard/activities')}
+          >
+            Voltar
+          </PremiumButton>
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Nova Atividade
+            </h1>
+            <p className="text-muted-foreground">Crie uma nova atividade para seus alunos</p>
+          </div>
+        </div>
+        
+        <div className="flex gap-3">
+          <PremiumButton
+            variant="outline"
+            leftIcon={X}
+            onClick={() => navigate('/dashboard/activities')}
+          >
+            Cancelar
+          </PremiumButton>
+          <PremiumButton
+            leftIcon={Save}
+            onClick={handleSave}
+            loading={saving}
+            className="bg-gradient-to-r from-blue-600 to-purple-600"
+          >
+            Criar Atividade
+          </PremiumButton>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Formulário Principal */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Informações Básicas */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <PremiumCard className="p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+                  <FileText className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-foreground">Informações Básicas</h2>
+                  <p className="text-muted-foreground">Configure os detalhes principais da atividade</p>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-foreground">
+                    Título da Atividade *
+                  </label>
+                  <Input
+                    value={formData.title}
+                    onChange={(e) => handleInputChange('title', e.target.value)}
+                    placeholder="Ex: Exercícios de Matemática - Capítulo 5"
+                    className="w-full bg-background text-foreground"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-foreground">
+                    Tipo de Atividade
+                  </label>
+                  <Select value={formData.type} onValueChange={(value) => handleInputChange('type', value)}>
+                    <SelectTrigger className="bg-background text-foreground">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="assignment">Tarefa</SelectItem>
+                      <SelectItem value="quiz">Quiz</SelectItem>
+                      <SelectItem value="project">Projeto</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-foreground">
+                    Descrição
+                  </label>
+                  <Textarea
+                    value={formData.description}
+                    onChange={(e) => handleInputChange('description', e.target.value)}
+                    placeholder="Descreva brevemente o objetivo da atividade..."
+                    className="w-full min-h-[100px] bg-background text-foreground"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-foreground">
+                    Instruções Detalhadas
+                  </label>
+                  <Textarea
+                    value={formData.instructions}
+                    onChange={(e) => handleInputChange('instructions', e.target.value)}
+                    placeholder="Instruções detalhadas para os alunos..."
+                    className="w-full min-h-[120px] bg-background text-foreground"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-foreground">
+                      Data de Entrega
+                    </label>
+                    <Input
+                      type="datetime-local"
+                      value={formData.dueDate}
+                      onChange={(e) => handleInputChange('dueDate', e.target.value)}
+                      className="w-full bg-background text-foreground"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-foreground">
+                      Pontuação Máxima
+                    </label>
+                    <Input
+                      type="number"
+                      min="1"
+                      max="1000"
+                      value={formData.maxGrade}
+                      onChange={(e) => handleInputChange('maxGrade', parseInt(e.target.value) || 100)}
+                      className="w-full bg-background text-foreground"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                  <div>
+                    <label className="text-sm font-medium text-foreground">Publicar Imediatamente</label>
+                    <p className="text-xs text-muted-foreground">A atividade ficará visível para os alunos</p>
+                  </div>
+                  <Switch
+                    checked={formData.isPublished}
+                    onCheckedChange={(checked) => handleInputChange('isPublished', checked)}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-blue-50 dark:bg-blue-950/20">
+                  <div>
+                    <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                      🔍 Verificação de Plágio
+                    </label>
+                    <p className="text-xs text-muted-foreground">Ativar detecção automática de plágio nas submissões</p>
+                  </div>
+                  <Switch
+                    checked={formData.enablePlagiarismCheck}
+                    onCheckedChange={(checked) => handleInputChange('enablePlagiarismCheck', checked)}
+                  />
+                </div>
+
+                {formData.type === 'quiz' && formData.questions.length > 0 && (
+                  <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-purple-50 dark:bg-purple-950/20">
+                    <div>
+                      <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                        ⚡ Correção Automática
+                      </label>
+                      <p className="text-xs text-muted-foreground">Permitir correção em lote com base no gabarito</p>
+                    </div>
+                    <Switch
+                      checked={formData.allowBatchGrading}
+                      onCheckedChange={(checked) => handleInputChange('allowBatchGrading', checked)}
+                    />
+                  </div>
+                )}
+              </div>
+            </PremiumCard>
+          </motion.div>
+
+          {/* Questões (apenas para Quiz) */}
+          {formData.type === 'quiz' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <PremiumCard className="p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-500 rounded-xl flex items-center justify-center">
+                    <BookOpen className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                      Criar Nova Atividade
-                    </h1>
-                    <p className="text-gray-600 dark:text-gray-300 mt-1">
-                      {classId
-                        ? 'Crie uma atividade interativa para seus alunos'
-                        : 'Crie uma atividade geral ou selecione uma turma específica'
-                      }
-                    </p>
+                    <h2 className="text-xl font-bold text-foreground">Questões do Quiz</h2>
+                    <p className="text-muted-foreground">Adicione questões para o quiz</p>
                   </div>
                 </div>
-                <Button
-                  variant="outline"
-                  onClick={() => navigate('/dashboard/activities')}
-                  className="flex items-center gap-2"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Voltar
-                </Button>
-              </div>
-            </div>
-          </div>
-        </motion.div>
 
-        {/* Tips Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mb-6"
-        >
-          <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
-            <CardContent className="p-4">
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
-                <div>
-                  <h3 className="font-semibold text-green-800 mb-1">Dicas para uma boa atividade</h3>
-                  <ul className="text-sm text-green-700 space-y-1">
-                    <li>• Use títulos claros e descritivos</li>
-                    <li>• Adicione perguntas variadas para engajar os alunos</li>
-                    <li>• Defina uma data de entrega realista</li>
-                    <li>• Inclua instruções detalhadas quando necessário</li>
-                  </ul>
+                {/* Lista de Questões */}
+                {formData.questions.length > 0 && (
+                  <div className="space-y-4 mb-6">
+                    {formData.questions.map((question, index) => (
+                      <div key={question.id} className="p-4 border border-border rounded-lg bg-muted/50">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <p className="font-medium text-foreground">
+                              {index + 1}. {question.question}
+                            </p>
+                            {question.type === 'multiple_choice' && (
+                              <div className="mt-2 space-y-1">
+                                {question.options.map((option, optIndex) => (
+                                  <div key={optIndex} className="flex items-center gap-2">
+                                    {optIndex === question.correctAnswer ? (
+                                      <CheckCircle className="w-4 h-4 text-green-500" />
+                                    ) : (
+                                      <Circle className="w-4 h-4 text-muted-foreground" />
+                                    )}
+                                    <span className="text-sm text-foreground">{option}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            <Badge variant="secondary" className="mt-2">
+                              {question.points} ponto{question.points !== 1 ? 's' : ''}
+                            </Badge>
+                          </div>
+                          <PremiumButton
+                            variant="outline"
+                            size="sm"
+                            leftIcon={Trash2}
+                            onClick={() => removeQuestion(question.id)}
+                            className="text-red-500 hover:text-red-600"
+                          >
+                            Remover
+                          </PremiumButton>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Adicionar Nova Questão */}
+                <div className="space-y-4 p-4 border border-dashed border-border rounded-lg">
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-foreground">
+                      Tipo de Questão
+                    </label>
+                    <Select 
+                      value={currentQuestion.type} 
+                      onValueChange={(value) => handleQuestionChange('type', value)}
+                    >
+                      <SelectTrigger className="bg-background text-foreground">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="multiple_choice">Múltipla Escolha</SelectItem>
+                        <SelectItem value="open">Questão Aberta</SelectItem>
+                        <SelectItem value="true_false">Verdadeiro/Falso</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-foreground">
+                      Pergunta
+                    </label>
+                    <Textarea
+                      value={currentQuestion.question}
+                      onChange={(e) => handleQuestionChange('question', e.target.value)}
+                      placeholder="Digite a pergunta..."
+                      className="w-full bg-background text-foreground"
+                    />
+                  </div>
+
+                  {currentQuestion.type === 'multiple_choice' && (
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-foreground">
+                        Opções de Resposta
+                      </label>
+                      <div className="space-y-2">
+                        {currentQuestion.options.map((option, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <input
+                              type="radio"
+                              name="correctAnswer"
+                              checked={currentQuestion.correctAnswer === index}
+                              onChange={() => handleQuestionChange('correctAnswer', index)}
+                              className="text-blue-600"
+                            />
+                            <Input
+                              value={option}
+                              onChange={(e) => handleOptionChange(index, e.target.value)}
+                              placeholder={`Opção ${index + 1}`}
+                              className="flex-1 bg-background text-foreground"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Selecione a opção correta marcando o círculo
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-foreground">
+                        Pontos
+                      </label>
+                      <Input
+                        type="number"
+                        min="1"
+                        max="10"
+                        value={currentQuestion.points}
+                        onChange={(e) => handleQuestionChange('points', parseInt(e.target.value) || 1)}
+                        className="w-20 bg-background text-foreground"
+                      />
+                    </div>
+                    <PremiumButton
+                      leftIcon={Plus}
+                      onClick={addQuestion}
+                      className="bg-gradient-to-r from-green-500 to-teal-500"
+                    >
+                      Adicionar Questão
+                    </PremiumButton>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+              </PremiumCard>
+            </motion.div>
+          )}
+        </div>
 
-        {/* Activity Form */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <ActivityForm
-            initialData={formData}
-            onSubmit={handleSubmit}
-            isSubmitting={isSubmitting}
-          />
-        </motion.div>
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Turmas */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <PremiumCard className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Users className="w-5 h-5 text-blue-500" />
+                <h3 className="font-bold text-foreground">Turmas</h3>
+              </div>
+              
+              {classes.length === 0 ? (
+                <p className="text-muted-foreground text-sm">Nenhuma turma encontrada</p>
+              ) : (
+                <div className="space-y-2">
+                  {classes.map((cls) => (
+                    <div
+                      key={cls.id}
+                      className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                        formData.selectedClasses.includes(cls.id)
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
+                          : 'border-border hover:border-blue-300'
+                      }`}
+                      onClick={() => handleClassToggle(cls.id)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium text-foreground">{cls.name}</p>
+                          <p className="text-xs text-muted-foreground">{cls.subject}</p>
+                        </div>
+                        {formData.selectedClasses.includes(cls.id) && (
+                          <CheckCircle className="w-5 h-5 text-blue-500" />
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </PremiumCard>
+          </motion.div>
+
+          {/* Preview */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <PremiumCard className="p-6">
+              <h3 className="font-bold mb-4 text-foreground">Preview</h3>
+              <div className="border border-border rounded-lg p-4 bg-muted/30">
+                <h4 className="font-bold text-lg mb-2 text-foreground">
+                  {formData.title || 'Título da Atividade'}
+                </h4>
+                {formData.description && (
+                  <p className="text-muted-foreground mb-3">{formData.description}</p>
+                )}
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    {formData.dueDate ? new Date(formData.dueDate).toLocaleString('pt-BR') : 'Sem prazo'}
+                  </span>
+                  <span>🎯 {formData.maxGrade} pts</span>
+                </div>
+                {formData.questions.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-border">
+                    <p className="text-sm text-muted-foreground">
+                      {formData.questions.length} questão{formData.questions.length !== 1 ? 'ões' : ''}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </PremiumCard>
+          </motion.div>
+        </div>
       </div>
     </div>
   );
 };
 
-export default CreateActivityPage;
+export default CreateActivityPageEnhanced;

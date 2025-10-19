@@ -2,6 +2,9 @@
 import { supabase } from '@/lib/supabaseClient';
 import Logger from './logger';
 
+// Feature flag to control DB metrics writes (avoid 404 when table doesn't exist)
+const ENABLE_DB_METRICS = (import.meta?.env?.VITE_ENABLE_DB_METRICS || '').toString().toLowerCase() === 'true';
+
 /**
  * Service for tracking application metrics including API calls, cache performance,
  * and user interactions.
@@ -346,8 +349,8 @@ class MetricsService {
         userAgent: navigator?.userAgent
       };
       
-      // Log to Supabase if available
-      if (supabase) {
+      // Log to Supabase if enabled and available
+      if (ENABLE_DB_METRICS && supabase) {
         const { error } = await supabase
           .from('metrics')
           .insert([metrics]);

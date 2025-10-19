@@ -31,6 +31,7 @@ import {
   AlertTriangle,
   FolderOpen
 } from 'lucide-react';
+import { supabase } from '@/lib/supabaseClient';
 
 const ChatbotPage = () => {
   const [message, setMessage] = useState('');
@@ -46,6 +47,9 @@ const ChatbotPage = () => {
   const { user } = useAuth();
   // Estados para carregamento não-bloqueante
   const [isPageLoading, setIsPageLoading] = useState(true);
+  // Estados locais faltantes
+  const [teacherClasses, setTeacherClasses] = useState([]);
+  const [loadingClasses, setLoadingClasses] = useState(false);
 
   // Prefetch classes for fast dropdown
   useEffect(() => {
@@ -56,7 +60,7 @@ const ChatbotPage = () => {
         const { data, error } = await supabase
           .from('classes')
           .select('id, name')
-          .eq('teacher_id', user.id)
+          .eq('created_by', user.id)
           .order('name', { ascending: true })
           .limit(200);
         if (error) throw error;
@@ -268,9 +272,9 @@ const ChatbotPage = () => {
               <div className="flex items-center gap-4 flex-wrap">
                 <div className="min-w-[240px]">
                   <Select
-                    value={selectedClass?.id || ''}
+                    value={selectedClass?.id ? String(selectedClass.id) : ''}
                     onValueChange={(classId) => {
-                      const cls = teacherClasses.find(c => c.id === classId);
+                      const cls = teacherClasses.find(c => String(c.id) === classId);
                       if (cls) selectClass(cls);
                     }}
                   >
@@ -279,7 +283,7 @@ const ChatbotPage = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {teacherClasses.map((cls) => (
-                        <SelectItem key={cls.id} value={cls.id}>
+                        <SelectItem key={cls.id} value={String(cls.id)}>
                           {cls.name}
                         </SelectItem>
                       ))}

@@ -7,29 +7,12 @@ import * as Yup from 'yup';
 import { useAuth } from "@/hooks/useAuth";
 
 // Import tab components
-const AssignmentSettingsTab = ({ formik }) => (
-  <div>Configurações da Atividade</div>
-);
+import AssignmentDetailsTab from './tabs/AssignmentDetailsTab';
+import AssignmentSettingsTab from './tabs/AssignmentSettingsTab';
+import QuestionBankTab from './tabs/QuestionBankTab';
+import MaterialDetailsTab from './tabs/MaterialDetailsTab';
+import PublishTab from './tabs/PublishTab';
 
-const QuestionBankTab = ({ formik }) => (
-  <div>Banco de Questões</div>
-);
-
-const MaterialDetailsTab = ({ formik }) => (
-  <div>Detalhes do Material</div>
-);
-
-const PublishTab = ({ formik, onPublish, isPublishing }) => (
-  <div>
-    <h3>Publicar Atividade</h3>
-    <button 
-      onClick={() => onPublish('published')}
-      disabled={isPublishing}
-    >
-      {isPublishing ? 'Publicando...' : 'Publicar Agora'}
-    </button>
-  </div>
-);
 import {
   Box,
   Button,
@@ -109,16 +92,8 @@ import {
   Visibility as VisibilityIcon,
   Warning as WarningIcon,
 } from '@mui/icons-material';
-import { useAuth } from '../../contexts/AuthContext';
-import PageHeader from '../common/PageHeader';
+import PageHeader from '../PageHeader';
 import RichTextEditor from '../common/RichTextEditor';
-
-// Componentes de etapas do formulário
-import AssignmentDetailsTab from './tabs/AssignmentDetailsTab';
-import AssignmentSettingsTab from './tabs/AssignmentSettingsTab';
-import QuestionBankTab from './tabs/QuestionBankTab';
-import MaterialDetailsTab from './tabs/MaterialDetailsTab';
-import PublishTab from './tabs/PublishTab';
 
 // Esquema de validação
 const validationSchema = Yup.object().shape({

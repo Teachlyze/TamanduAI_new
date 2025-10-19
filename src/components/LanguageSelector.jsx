@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe, ChevronDown, Check } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 // Supported languages with their metadata
 const SUPPORTED_LANGUAGES = [
@@ -63,7 +64,7 @@ const LanguageSelector = () => {
                   onClick={() => handleLanguageChange(language.code)}
                   className={`w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150 ${
                     i18n.language === language.code
-                      ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                      ? 'bg-blue-50 dark:bg-muted/30 text-blue-600 dark:text-blue-400'
                       : 'text-gray-700 dark:text-gray-300'
                   }`}
                 >
@@ -97,4 +98,55 @@ const LanguageSelector = () => {
   );
 };
 
+/**
+ * Language selector using Radix UI Select components (more accessible)
+ */
+export const LanguageSelectorSelect = () => {
+  const { i18n } = useTranslation();
+
+  const handleLanguageChange = async (languageCode) => {
+    try {
+      await i18n.changeLanguage(languageCode);
+    } catch (error) {
+      console.error('Erro ao alterar idioma:', error);
+    }
+  };
+
+  const currentLanguage = SUPPORTED_LANGUAGES.find(lang => lang.code === i18n.language) || SUPPORTED_LANGUAGES[0];
+
+  return (
+    <Select value={i18n.language} onValueChange={handleLanguageChange}>
+      <SelectTrigger className="w-48">
+        <SelectValue>
+          <div className="flex items-center gap-2">
+            <Globe className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              {currentLanguage.flag}
+            </span>
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              {currentLanguage.nativeName}
+            </span>
+          </div>
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        {SUPPORTED_LANGUAGES.map((language) => (
+          <SelectItem key={language.code} value={language.code}>
+            <div className="flex items-center gap-2">
+              <span className="text-base">{language.flag}</span>
+              <div className="flex flex-col items-start">
+                <span className="font-medium">{language.nativeName}</span>
+                <span className="text-xs text-muted-foreground">
+                  {language.name}
+                </span>
+              </div>
+            </div>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+};
+
 export default LanguageSelector;
+

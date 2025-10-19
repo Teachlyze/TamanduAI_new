@@ -134,7 +134,7 @@ const CreateInviteDialog = ({ classId, className, onInviteCreated }) => {
                   <div
                     className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
                       inviteType === 'link'
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                        ? 'border-blue-500 bg-blue-50 dark:bg-muted/30'
                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
                     }`}
                     onClick={() => setInviteType('link')}
@@ -283,3 +283,4 @@ const CreateInviteDialog = ({ classId, className, onInviteCreated }) => {
 };
 
 export default CreateInviteDialog;
+

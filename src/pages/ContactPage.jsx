@@ -168,7 +168,7 @@ const ContactPage = () => {
               
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-blue-100 dark:bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center">
                     <EnvelopeIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
@@ -368,7 +368,7 @@ const ContactPage = () => {
               </Button>
             </form>
 
-            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div className="mt-6 p-4 bg-blue-50 dark:bg-muted/30 rounded-lg border border-blue-200 dark:border-blue-800">
               <div className="flex items-start space-x-3">
                 <ExclamationTriangleIcon className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                 <div className="text-sm text-blue-800 dark:text-blue-200">
@@ -385,3 +385,4 @@ const ContactPage = () => {
 };
 
 export default ContactPage;
+

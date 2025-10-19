@@ -92,6 +92,24 @@ const StudentDashboard = () => {
           classes: { name: assignment.classes.name }
         })) || [];
 
+        // Buscar submissões do aluno
+        const { data: submissions, error: submissionsError } = await supabase
+          .from('submissions')
+          .select(`
+            *,
+            activity_id,
+            status,
+            grade,
+            submitted_at,
+            activities(
+              id,
+              title,
+              classes(name)
+            )
+          `)
+          .eq('student_id', user.id)
+          .order('submitted_at', { ascending: false });
+
         if (submissionsError) {
           Logger.error('Error fetching student submissions:', submissionsError);
         }
@@ -518,7 +536,7 @@ const StudentDashboard = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <div className="text-center p-4 bg-blue-50 dark:bg-muted/30 rounded-lg">
                   <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                     {studentStats.enrolledClasses}
                   </div>
@@ -568,7 +586,7 @@ const StudentDashboard = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
-                  className="group p-6 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all transform hover:-translate-y-1"
+                  className="group p-6 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-muted/30 transition-all transform hover:-translate-y-1"
                   onClick={action.action}
                 >
                   <div className={`w-16 h-16 bg-gradient-to-r ${action.gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
@@ -589,3 +607,4 @@ const StudentDashboard = () => {
 };
 
 export default StudentDashboard;
+

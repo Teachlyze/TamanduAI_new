@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { message } from 'antd';
 import { whiteboardService } from '../services/agora/whiteboardService';
-import api from '../services/api';
+import api from '../services/apiSupabase';
 
 /**
  * Custom hook for managing whiteboard state and interactions

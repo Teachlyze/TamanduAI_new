@@ -37,7 +37,7 @@ const LanguageSettings = () => {
               onClick={() => handleLanguageChange(language.code)}
               className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-200 ${
                 i18n.language === language.code
-                  ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-100'
+                  ? 'bg-blue-50 dark:bg-muted/30 border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-100'
                   : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
             >
@@ -57,7 +57,7 @@ const LanguageSettings = () => {
           ))}
         </div>
 
-        <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+        <div className="mt-4 p-3 bg-blue-50 dark:bg-muted/30 border border-blue-200 dark:border-blue-800 rounded-lg">
           <div className="flex items-start gap-2">
             <Globe className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
             <div className="text-sm text-blue-800 dark:text-blue-200">
@@ -75,3 +75,4 @@ const LanguageSettings = () => {
 };
 
 export default LanguageSettings;
+

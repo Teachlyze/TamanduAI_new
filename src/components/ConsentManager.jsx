@@ -53,13 +53,17 @@ const ConsentManager = {
 
   async deleteUserData(userId) {
     try {
-      // Deletar dados do usuário
-      const { error: userError } = await supabase
-        .from('users')
-        .delete()
+      // Marcar perfil como deletado (não podemos deletar da tabela auth.users)
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ 
+          full_name: '[DELETED]',
+          avatar_url: null,
+          is_active: false 
+        })
         .eq('id', userId);
 
-      if (userError) throw userError;
+      if (profileError) throw profileError;
 
       // Deletar consentimentos
       const { error: consentError } = await supabase

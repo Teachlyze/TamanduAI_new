@@ -1,7 +1,14 @@
 import { useState, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from '../lib/supabaseClient';
-import { BUCKETS, removeFile, moveFile } from '../services/storageService';
+import { 
+  BUCKETS, 
+  removeFile, 
+  moveFile, 
+  uploadFileWithThumbnail,
+  getMultipleThumbnails,
+  isImage 
+} from '../services/storageService';
 
 /**
  * Hook para gerenciar arquivos de atividades
@@ -29,9 +36,9 @@ const useActivityFiles = (activityId, userId, isDraft = false) => {
   }, [activityId, userId]);
 
   /**
-   * Faz upload de um arquivo para a atividade
+   * Faz upload de um arquivo para a atividade (com thumbnails automáticos para imagens)
    * @param {File} file - Arquivo para upload
-   * @returns {Promise<{id: string, name: string, url: string, path: string, size: number, type: string}>}
+   * @returns {Promise<{id: string, name: string, url: string, path: string, size: number, type: string, thumbnails?: Object}>}
    */
   const uploadActivityFile = useCallback(async (file) => {
     if (!file) return null;
@@ -65,16 +72,24 @@ const useActivityFiles = (activityId, userId, isDraft = false) => {
         .from(bucket)
         .getPublicUrl(filePath);
       
-      // Retorna os metadados do arquivo
-      return {
+      // Prepara os metadados do arquivo
+      const fileMetadata = {
         id: uuidv4(),
         name: file.name,
         url: publicUrl,
         path: data.path,
         size: file.size,
         type: file.type,
-        isNew: true
+        isNew: true,
+        isImage: isImage(file.type)
       };
+
+      // Se for uma imagem, gera URLs de thumbnails em diferentes tamanhos
+      if (fileMetadata.isImage) {
+        fileMetadata.thumbnails = getMultipleThumbnails(bucket, data.path);
+      }
+      
+      return fileMetadata;
     } catch (err) {
       console.error('Erro ao fazer upload do arquivo:', err);
       setError(err.message || 'Erro ao fazer upload do arquivo');
@@ -173,10 +188,10 @@ const useActivityFiles = (activityId, userId, isDraft = false) => {
   }, [activityId, isDraft, userId]);
 
   /**
-   * Faz upload de uma submissão de aluno
+   * Faz upload de uma submissão de aluno (com thumbnails automáticos para imagens)
    * @param {File} file - Arquivo da submissão
    * @param {string} submissionId - ID da submissão
-   * @returns {Promise<{id: string, name: string, url: string, path: string, size: number, type: string}>}
+   * @returns {Promise<{id: string, name: string, url: string, path: string, size: number, type: string, thumbnails?: Object}>}
    */
   const uploadSubmission = useCallback(async (file, submissionId) => {
     if (!file || !submissionId) {
@@ -212,16 +227,24 @@ const useActivityFiles = (activityId, userId, isDraft = false) => {
         .from(bucket)
         .getPublicUrl(filePath);
       
-      // Retorna os metadados do arquivo
-      return {
+      // Prepara os metadados do arquivo
+      const fileMetadata = {
         id: uuidv4(),
         name: file.name,
         url: publicUrl,
         path: data.path,
         size: file.size,
         type: file.type,
-        isNew: true
+        isNew: true,
+        isImage: isImage(file.type)
       };
+
+      // Se for uma imagem, gera URLs de thumbnails em diferentes tamanhos
+      if (fileMetadata.isImage) {
+        fileMetadata.thumbnails = getMultipleThumbnails(bucket, data.path);
+      }
+      
+      return fileMetadata;
     } catch (err) {
       console.error('Erro ao fazer upload da submissão:', err);
       setError(err.message || 'Erro ao fazer upload da submissão');

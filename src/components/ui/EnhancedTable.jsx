@@ -12,8 +12,100 @@ import {
   Trash2,
   Download,
   RefreshCw,
+  AlertTriangle,
 } from 'lucide-react';
 import { Button } from './button';
+
+/**
+ * Card aprimorado com funcionalidades avançadas
+ */
+export const EnhancedCard = ({
+  title,
+  subtitle,
+  children,
+  actions,
+  loading = false,
+  error = null,
+  className = '',
+  hover = true,
+  clickable = false,
+  onClick,
+  ...props
+}) => {
+  const handleClick = () => {
+    if (clickable && onClick) {
+      onClick();
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (clickable && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      onClick?.();
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={hover && clickable ? { scale: 1.02, y: -2 } : {}}
+      className={`
+        card bg-base-100 shadow-lg border border-base-200
+        ${hover ? 'hover:shadow-xl transition-all duration-200' : ''}
+        ${clickable ? 'cursor-pointer' : ''}
+        ${className}
+      `}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={clickable ? 0 : undefined}
+      role={clickable ? 'button' : undefined}
+      {...props}
+    >
+      {(title || subtitle || actions) && (
+        <div className="card-header flex items-center justify-between p-6 pb-4">
+          <div className="flex-1">
+            {title && (
+              <h3 className="card-title text-xl font-bold text-base-content">
+                {title}
+              </h3>
+            )}
+            {subtitle && (
+              <p className="card-subtitle text-sm text-base-content/70 mt-1">
+                {subtitle}
+              </p>
+            )}
+          </div>
+
+          {actions && (
+            <div className="flex items-center gap-2">
+              {actions}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="card-body p-6 pt-0">
+        {loading ? (
+          <div className="space-y-3">
+            <div className="skeleton h-4 w-3/4"></div>
+            <div className="skeleton h-4 w-1/2"></div>
+            <div className="skeleton h-4 w-5/6"></div>
+          </div>
+        ) : error ? (
+          <div className="text-center py-8">
+            <div className="text-error mb-2">
+              <AlertTriangle className="h-8 w-8 mx-auto" />
+            </div>
+            <p className="text-base-content/70">{error}</p>
+          </div>
+        ) : (
+          children
+        )}
+      </div>
+    </motion.div>
+  );
+};
 
 /**
  * Tabela aprimorada com funcionalidades avançadas

@@ -5,6 +5,97 @@ import { supabase } from '@/lib/supabaseClient';
 // and should not create any new instances of the Supabase client.
 
 // ============================================
+// API CLIENT OBJECT (for default export)
+// ============================================
+
+/**
+ * API client object that provides HTTP-like methods for Supabase operations
+ */
+const api = {
+  /**
+   * Make a GET request (SELECT operation)
+   */
+  async get(path, options = {}) {
+    // Parse path like '/table/id' or '/table'
+    const [table, id] = path.replace(/^\//, '').split('/');
+    const { params = {}, select = '*' } = options;
+
+    let query = supabase.from(table).select(select);
+
+    // Add filters from params
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        if (key.endsWith('_eq')) {
+          const field = key.replace('_eq', '');
+          query = query.eq(field, value);
+        } else if (key.endsWith('_neq')) {
+          const field = key.replace('_neq', '');
+          query = query.neq(field, value);
+        } else if (key.endsWith('_gt')) {
+          const field = key.replace('_gt', '');
+          query = query.gt(field, value);
+        } else if (key.endsWith('_gte')) {
+          const field = key.replace('_gte', '');
+          query = query.gte(field, value);
+        } else if (key.endsWith('_lt')) {
+          const field = key.replace('_lt', '');
+          query = query.lt(field, value);
+        } else if (key.endsWith('_lte')) {
+          const field = key.replace('_lte', '');
+          query = query.lte(field, value);
+        } else if (key.endsWith('_like')) {
+          const field = key.replace('_like', '');
+          query = query.like(field, value);
+        } else if (key.endsWith('_ilike')) {
+          const field = key.replace('_ilike', '');
+          query = query.ilike(field, value);
+        } else {
+          query = query.eq(key, value);
+        }
+      }
+    });
+
+    if (id) {
+      query = query.eq('id', id).single();
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return { data };
+  },
+
+  /**
+   * Make a POST request (INSERT operation)
+   */
+  async post(path, data) {
+    const [table] = path.replace(/^\//, '').split('/');
+    const { data: result, error } = await supabase.from(table).insert(data).select();
+    if (error) throw error;
+    return { data: result };
+  },
+
+  /**
+   * Make a PUT request (UPDATE operation)
+   */
+  async put(path, data) {
+    const [table, id] = path.replace(/^\//, '').split('/');
+    const { data: result, error } = await supabase.from(table).update(data).eq('id', id).select();
+    if (error) throw error;
+    return { data: result };
+  },
+
+  /**
+   * Make a DELETE request (DELETE operation)
+   */
+  async delete(path) {
+    const [table, id] = path.replace(/^\//, '').split('/');
+    const { error } = await supabase.from(table).delete().eq('id', id);
+    if (error) throw error;
+    return { data: null };
+  }
+};
+
+// ============================================
 // SECURITY & VALIDATION HELPERS
 // ============================================
 
@@ -1032,3 +1123,6 @@ export const updateActivity = updateActivityTemplate;
  * @deprecated Use deleteActivityTemplate instead
  */
 export const deleteActivity = deleteActivityTemplate;
+
+// Export the API client as default
+export default api;

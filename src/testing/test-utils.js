@@ -41,7 +41,7 @@ export const mockGenerators = {
     type: 'quiz',
     class_id: `class_${Math.random().toString(36).substr(2, 9)}`,
     created_by: `teacher_${Math.random().toString(36).substr(2, 9)}`,
-    max_points: 100,
+    max_score: 100,
     due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     created_at: new Date().toISOString(),
     ...overrides,
@@ -617,7 +617,7 @@ export const testDataFactories = {
       ],
 
       activities: [
-        { ...mockGenerators.activity(), max_points: -1 }, // Negative points
+        { ...mockGenerators.activity(), max_score: -1 }, // Negative points
         { ...mockGenerators.activity(), due_date: 'invalid-date' }, // Invalid date
       ],
     };

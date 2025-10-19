@@ -1,0 +1,1 @@
+import{r as e}from"./main-Bujpyeg-.js";import"./useRedisCache-CW6qvIqY.js";const i=e.createContext(),o=()=>{const t=e.useContext(i);return t===void 0?{activities:[],loading:!1,error:null,fetchActivities:()=>{},createActivity:()=>{},updateActivity:()=>{},deleteActivity:()=>{},clearError:()=>{}}:t};export{o as u};

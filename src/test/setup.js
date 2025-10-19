@@ -3,15 +3,6 @@ import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
 // Mock de módulos externos
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key, fallback) => fallback || key,
-    i18n: {
-      changeLanguage: vi.fn(),
-      language: 'pt',
-    },
-  }),
-}));
 
 vi.mock('@supabase/supabase-js', () => ({
   createClient: vi.fn(() => ({

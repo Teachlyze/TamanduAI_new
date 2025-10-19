@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Shield, Cookie, Settings, CheckCircle,
   ExternalLink, Info, Heart, Lock
@@ -9,37 +9,40 @@ import Button from '@/components/ui/button';
 
 const PrivacyButton = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [hasAcceptedCookies, setHasAcceptedCookies] = useState(false);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    // Verificar se já aceitou cookies
-    const consent = localStorage.getItem('cookie-consent');
-    if (consent) {
-      const { accepted } = JSON.parse(consent);
-      setHasAcceptedCookies(accepted);
+  const handleManagePreferences = () => {
+    // Open cookie banner again by clearing storage temporarily
+    const currentPrefs = localStorage.getItem('cookie-consent');
+    if (currentPrefs) {
+      // Store temporarily
+      sessionStorage.setItem('temp-cookie-consent', currentPrefs);
+      localStorage.removeItem('cookie-consent');
+      // Reload to show banner
+      window.location.reload();
     }
-  }, []);
+  };
 
   const quickActions = [
     {
       icon: Settings,
-      title: "Preferências",
+      title: "Preferências de Cookies",
       description: "Gerencie seus cookies",
-      link: "/privacy-preferences",
+      action: handleManagePreferences,
       color: "blue"
     },
     {
       icon: Info,
       title: "Política de Privacidade",
       description: "Como protegemos seus dados",
-      link: "/privacy",
+      link: "/privacy-policy",
       color: "purple"
     },
     {
       icon: Lock,
       title: "Termos de Uso",
       description: "Regras da plataforma",
-      link: "/terms",
+      link: "/terms-of-use",
       color: "green"
     }
   ];
@@ -68,21 +71,6 @@ const PrivacyButton = () => {
           </motion.div>
         </div>
         <span className="hidden sm:inline font-medium">Privacidade</span>
-
-        {/* Notification dot for new users */}
-        {!hasAcceptedCookies && (
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"
-          >
-            <motion.div
-              animate={{ scale: [1, 1.3, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-full h-full bg-red-500 rounded-full"
-            />
-          </motion.div>
-        )}
       </motion.button>
 
       {/* Privacy Panel */}
@@ -161,26 +149,49 @@ const PrivacyButton = () => {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
                     >
-                      <Link to={action.link} onClick={() => setIsOpen(false)}>
-                        <div className={`group p-4 bg-gradient-to-r from-${action.color}-50 to-${action.color}-100 dark:from-${action.color}-900/20 dark:to-${action.color}-800/20 rounded-2xl border-2 border-${action.color}-200 dark:border-${action.color}-800 hover:shadow-lg hover:shadow-${action.color}-100/50 dark:hover:shadow-${action.color}-900/20 transition-all duration-300 cursor-pointer transform hover:-translate-y-0.5`}>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <div className={`w-10 h-10 bg-gradient-to-r from-${action.color}-100 to-${action.color}-200 dark:from-${action.color}-900/30 dark:to-${action.color}-800/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-200 shadow-lg`}>
-                                <action.icon className={`w-5 h-5 text-${action.color}-600 dark:text-${action.color}-400`} />
+                      {action.link ? (
+                        <Link to={action.link} onClick={() => setIsOpen(false)}>
+                          <div className="group p-4 bg-white dark:bg-gray-700 rounded-2xl border-2 border-gray-200 dark:border-gray-600 hover:shadow-lg hover:border-blue-500 transition-all duration-300 cursor-pointer transform hover:-translate-y-0.5">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-gray-100 dark:bg-gray-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                                  <action.icon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                                </div>
+                                <div>
+                                  <h5 className="font-semibold text-gray-900 dark:text-white text-sm">
+                                    {action.title}
+                                  </h5>
+                                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                                    {action.description}
+                                  </p>
+                                </div>
                               </div>
-                              <div>
-                                <h5 className={`font-semibold text-${action.color}-800 dark:text-${action.color}-300 text-sm`}>
-                                  {action.title}
-                                </h5>
-                                <p className={`text-xs text-${action.color}-700 dark:text-${action.color}-400`}>
-                                  {action.description}
-                                </p>
-                              </div>
+                              <ExternalLink className="w-4 h-4 text-gray-500 dark:text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                             </div>
-                            <ExternalLink className={`w-4 h-4 text-${action.color}-500 dark:text-${action.color}-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200`} />
                           </div>
-                        </div>
-                      </Link>
+                        </Link>
+                      ) : (
+                        <button onClick={() => { action.action(); setIsOpen(false); }} className="w-full">
+                          <div className="group p-4 bg-white dark:bg-gray-700 rounded-2xl border-2 border-gray-200 dark:border-gray-600 hover:shadow-lg hover:border-blue-500 transition-all duration-300 cursor-pointer transform hover:-translate-y-0.5">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-gray-100 dark:bg-gray-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                                  <action.icon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                                </div>
+                                <div className="text-left">
+                                  <h5 className="font-semibold text-gray-900 dark:text-white text-sm">
+                                    {action.title}
+                                  </h5>
+                                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                                    {action.description}
+                                  </p>
+                                </div>
+                              </div>
+                              <Settings className="w-4 h-4 text-gray-500 dark:text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                            </div>
+                          </div>
+                        </button>
+                      )}
                     </motion.div>
                   ))}
                 </div>

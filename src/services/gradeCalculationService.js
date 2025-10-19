@@ -78,7 +78,7 @@ export const calculateClassWeightedGrades = async (classId) => {
     // Get all students in class
     const { data: members } = await supabase
       .from('class_members')
-      .select('user_id, profiles(id, name)')
+      .select('user_id, profiles(id, full_name)')
       .eq('class_id', classId)
       .eq('role', 'student');
 
@@ -91,7 +91,7 @@ export const calculateClassWeightedGrades = async (classId) => {
       const calculation = await calculateWeightedGrade(member.user_id, classId);
       results.push({
         studentId: member.user_id,
-        studentName: member.profiles?.name || 'Aluno',
+        studentName: member.profiles?.full_name || 'Aluno',
         ...calculation
       });
     }

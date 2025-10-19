@@ -435,7 +435,7 @@ const DocumentationPage = () => {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               <div className="bg-card text-card-foreground p-6 rounded-xl shadow-sm border border-border">
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-blue-100 dark:bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center mb-4">
                   <Brain className="w-6 h-6 text-blue-600" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">IA Avançada</h3>
@@ -556,7 +556,7 @@ const DocumentationPage = () => {
               </div>
             </div>
 
-            <div className="mt-8 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+            <div className="mt-8 p-6 bg-blue-50 dark:bg-muted/30 rounded-xl">
               <h2 className="text-xl font-bold mb-4">🚀 Production-Ready & Enterprise-Grade</h2>
               <p className="mb-4">
                 Esta plataforma foi desenvolvida seguindo as <strong>melhores práticas da indústria</strong>
@@ -591,7 +591,7 @@ const DocumentationPage = () => {
                 </h2>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <div className="text-center p-4 bg-blue-50 dark:bg-muted/30 rounded-lg border border-blue-200 dark:border-blue-800">
                     <BarChart className="w-8 h-8 mx-auto mb-2 text-blue-600" />
                     <h4 className="font-semibold">Prometheus</h4>
                     <p className="text-sm text-muted-foreground">
@@ -632,7 +632,7 @@ const DocumentationPage = () => {
                 </h2>
 
                 <div className="space-y-6">
-                  <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                  <div className="bg-blue-50 dark:bg-muted/30 p-4 rounded-lg">
                     <h3 className="font-semibold mb-2">Vantagens dos Dashboards Python</h3>
                     <ul className="space-y-2 text-sm">
                       <li>• <strong>Flexibilidade total</strong>: Dashboards completamente customizáveis</li>
@@ -736,7 +736,7 @@ const DocumentationPage = () => {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-3">
-                    <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <div className="p-4 bg-blue-50 dark:bg-muted/30 rounded-lg">
                       <h4 className="font-semibold">Visão Geral da Plataforma</h4>
                       <p className="text-sm text-muted-foreground">
                         Health checks, usuários ativos, performance geral
@@ -769,7 +769,7 @@ const DocumentationPage = () => {
                 </div>
               </div>
 
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl">
+              <div className="bg-blue-50 dark:bg-muted/30 p-6 rounded-xl">
                 <h3 className="text-lg font-bold mb-4">🔗 Acesso aos Dashboards</h3>
                 <div className="grid md:grid-cols-3 gap-4">
                   <div className="text-center p-3 bg-card text-card-foreground rounded-lg border border-border">
@@ -1127,3 +1127,4 @@ const DocumentationPage = () => {
 };
 
 export default DocumentationPage;
+

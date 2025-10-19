@@ -29,8 +29,8 @@ export const getClassAlerts = async (classId, includeResolved = false) => {
     .from('student_alerts')
     .select(`
       *,
-      student:profiles!student_alerts_student_id_fkey(id, name, email),
-      resolved_by_user:profiles!student_alerts_resolved_by_fkey(id, name)
+      student:profiles!student_alerts_student_id_fkey(id, full_name, email),
+      resolved_by_user:profiles!student_alerts_resolved_by_fkey(id, full_name)
     `)
     .eq('class_id', classId)
     .order('created_at', { ascending: false });

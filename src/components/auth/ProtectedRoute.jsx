@@ -30,32 +30,23 @@ export const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     if (!loading && user) {
-      // Check if user needs onboarding (check user_metadata)
+      // Legacy onboarding redirect removed: tour will guide first-time users.
       const metadata = user.user_metadata || {};
       const needsOnboarding = !(
         metadata.role &&
         metadata.terms_accepted &&
         metadata.privacy_accepted
       );
-      
-      console.log('[ProtectedRoute] Onboarding check:', { 
-        hasRole: !!metadata.role, 
+
+      console.log('[ProtectedRoute] Onboarding check (no redirect):', {
+        hasRole: !!metadata.role,
         termsAccepted: !!metadata.terms_accepted,
         privacyAccepted: !!metadata.privacy_accepted,
-        needsOnboarding 
+        needsOnboarding
       });
 
-      if (needsOnboarding) {
-        // If already on onboarding, do not redirect or set spinner
-        if (location.pathname !== '/onboarding') {
-          setCheckingOnboarding(true);
-          navigate('/onboarding', { replace: true });
-        } else {
-          setCheckingOnboarding(false);
-        }
-      } else {
-        setCheckingOnboarding(false);
-      }
+      // Do not redirect; just clear any checking state so content renders
+      setCheckingOnboarding(false);
     } else if (!loading && !user) {
       // If not loading and no user, redirect to login
       const from = typeof window !== 'undefined' ? window.location.pathname : '/';
@@ -63,7 +54,7 @@ export const ProtectedRoute = ({ children }) => {
     }
   }, [user, loading, navigate, location.pathname]);
 
-  if (loading || (checkingOnboarding && location.pathname !== '/onboarding')) {
+  if (loading || checkingOnboarding) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
         <motion.div

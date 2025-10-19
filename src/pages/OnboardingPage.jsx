@@ -1,26 +1,28 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Button from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { supabase } from '@/lib/supabaseClient';
 import TermsAuditService from '@/services/termsAuditService';
-import { useTranslation } from 'react-i18next';
-import { BookOpen, CheckCircle, AlertCircle, User, GraduationCap, Users, Sparkles } from 'lucide-react';
+import { navigateToHome } from '@/utils/roleNavigation';
+import { BookOpen, CheckCircle, AlertCircle, User, GraduationCap, Users, Sparkles, Building2 } from 'lucide-react';
+import gamificationService from '@/services/gamificationService';
+import missionsService from '@/services/missionsService';
 
 // Current versions of terms and privacy
 const CURRENT_TERMS_VERSION = '1.0';
 const CURRENT_PRIVACY_VERSION = '1.0';
 
 const OnboardingPage = () => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     full_name: '',
     role: '',
     age: '',
     cpf: '',
+    school_name: '',
     terms_accepted: false,
     privacy_accepted: false,
   });
@@ -32,7 +34,12 @@ const OnboardingPage = () => {
     setError('');
 
     if (!form.full_name || !form.role || !form.terms_accepted || !form.privacy_accepted) {
-      setError(t('onboarding.errors.required', 'Preencha nome, papel e aceite os termos e a privacidade.'));
+      setError('Preencha nome, papel e aceite os termos e a privacidade.');
+      return;
+    }
+
+    if (form.role === 'school' && !form.school_name) {
+      setError('Por favor, informe o nome da escola.');
       return;
     }
 
@@ -90,15 +97,64 @@ const OnboardingPage = () => {
           }
         );
       } catch (auditError) {
-        console.warn('Failed to log terms acceptance:', auditError);
-        // Don't fail the onboarding for audit errors
+        console.error('[Onboarding] Failed to log terms acceptance:', auditError);
       }
 
-      console.log('[Onboarding] Onboarding completed successfully, redirecting to dashboard...');
-      navigate('/dashboard', { replace: true });
+      // Inicializar gamificação para alunos
+      if (form.role === 'student') {
+        console.log('[Onboarding] Initializing gamification for student...');
+        try {
+          await gamificationService.initializeProfile(userId);
+          await missionsService.initializeMissions(userId);
+          console.log('[Onboarding] Gamification initialized successfully!');
+        } catch (gamError) {
+          console.error('[Onboarding] Error initializing gamification:', gamError);
+          // Não bloquear o fluxo se gamificação falhar
+        }
+      }
+
+      // Criar escola e vincular admin
+      if (form.role === 'school') {
+        console.log('[Onboarding] Creating school...');
+        try {
+          const { data: school, error: schoolError } = await supabase
+            .from('schools')
+            .insert({ 
+              name: form.school_name,
+              created_at: new Date().toISOString(),
+            })
+            .select()
+            .single();
+
+          if (schoolError) throw schoolError;
+
+          console.log('[Onboarding] School created:', school.id);
+
+          // Vincular como admin
+          const { error: adminError } = await supabase
+            .from('school_admins')
+            .insert({
+              school_id: school.id,
+              user_id: userId,
+              role: 'owner',
+            });
+
+          if (adminError) throw adminError;
+
+          console.log('[Onboarding] User linked as school admin!');
+        } catch (schoolError) {
+          console.error('[Onboarding] Error creating school:', schoolError);
+          // Não bloquear o fluxo
+        }
+      }
+
+      console.log('[Onboarding] Onboarding completed successfully!');
+      // Navigate based on user role
+      const role = form.role || 'student';
+      navigateToHome(navigate, role);
     } catch (err) {
       console.error('[Onboarding] Error:', err);
-      setError(err?.message || t('onboarding.errors.generic', 'Falha ao concluir onboarding'));
+      setError(err?.message || 'Falha ao concluir onboarding');
     } finally {
       setSubmitting(false);
     }
@@ -127,11 +183,11 @@ const OnboardingPage = () => {
             <div className="p-3 rounded bg-red-50 text-red-700 text-sm">{error}</div>
           )}
           <div className="space-y-2">
-            <Label htmlFor="full_name">{t('onboarding.fields.fullName', 'Nome completo')}</Label>
+            <Label htmlFor="full_name">Nome completo</Label>
             <Input id="full_name" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} required />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="role">{t('onboarding.fields.role', 'Papel')}</Label>
+            <Label htmlFor="role">Papel</Label>
             <select
               className="w-full border rounded h-10 px-3"
               value={form.role}
@@ -144,9 +200,27 @@ const OnboardingPage = () => {
               <option value="school">Escola</option>
             </select>
           </div>
+          
+          {/* Campo Nome da Escola (apenas se role='school') */}
+          {form.role === 'school' && (
+            <div className="space-y-2">
+              <Label htmlFor="school_name">
+                <Building2 className="mr-1 inline h-4 w-4" />
+                Nome da Escola
+              </Label>
+              <Input 
+                id="school_name" 
+                value={form.school_name} 
+                onChange={(e) => setForm({ ...form, school_name: e.target.value })} 
+                placeholder="Ex: Colégio XYZ"
+                required={form.role === 'school'}
+              />
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="age">{t('onboarding.fields.age', 'Idade')} <span className="text-base-content/50">({t('common.optional', 'opcional')})</span></Label>
+              <Label htmlFor="age">Idade <span className="text-base-content/50">(opcional)</span></Label>
               <Input id="age" type="number" min="1" max="120" value={form.age} onChange={(e) => setForm({ ...form, age: e.target.value })} />
             </div>
             <div className="space-y-2">

@@ -338,11 +338,8 @@ export const ConnectionIndicator = () => {
   };
 
   return (
-    <div className="flex items-center space-x-2" title={getTooltipText()}>
+    <div className="flex items-center gap-2 px-2" title={getTooltipText()}>
       <div className={`w-2 h-2 rounded-full ${getIndicatorColor()}`} />
-      <span className="text-sm text-muted-foreground capitalize hidden sm:inline">
-        {connectionState}
-      </span>
     </div>
   );
 };

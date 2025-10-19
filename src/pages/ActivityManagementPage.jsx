@@ -208,7 +208,7 @@ const ActivityManagementPage = () => {
               <h1 className="text-xl font-bold text-gray-800">TamanduAI</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <Button onClick={() => navigate('/dashboard/activities/create')}>
+              <Button onClick={() => navigate('/dashboard/activities/new')}>
                 <Plus className="w-4 h-4 mr-2" />
                 Nova Atividade
               </Button>
@@ -332,7 +332,7 @@ const ActivityManagementPage = () => {
                   : 'Comece criando sua primeira atividade.'}
               </p>
               <div className="mt-6">
-                <Button onClick={() => navigate('/dashboard/activities/create')}>
+                <Button onClick={() => navigate('/dashboard/activities/new')}>
                   <Plus className="h-4 w-4 mr-2" />
                   Criar Nova Atividade
                 </Button>

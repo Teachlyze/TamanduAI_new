@@ -1,20 +1,30 @@
-// Simple AI service placeholder. Replace with real Edge Function or external API as needed.
+// AI service using ChatGPT/OpenAI integration
 import { supabase } from '@/lib/supabaseClient';
 
 /**
- * Ask the class-contextual AI assistant a question.
- * If an Edge Function named 'class-ai' exists, this will invoke it; otherwise returns a mock.
+ * Ask the class-contextual AI assistant a question using ChatGPT.
  */
 export async function askClassAI({ classId, question }) {
   try {
-    // Try Edge Function if present
-    const { data, error } = await supabase.functions.invoke('class-ai', {
+    // Use ChatGPT Edge Function
+    const { data, error } = await supabase.functions.invoke('chatgpt-assistant', {
       body: { classId, question },
     });
-    if (!error && data) return data;
-  } catch (e) {
-    // ignore; fallback below
+    
+    if (error) {
+      console.error('AI Service Error:', error);
+      return { 
+        answer: 'Desculpe, o assistente IA está temporariamente indisponível. Tente novamente em alguns minutos.',
+        error: true 
+      };
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('AI Service Error:', error);
+    return { 
+      answer: 'Desculpe, o assistente IA está temporariamente indisponível. Tente novamente em alguns minutos.',
+      error: true 
+    };
   }
-  // Fallback mock to avoid breaking UI
-  return { answer: 'Assistente IA (demo): esta é uma resposta simulada baseada no contexto da turma.' };
 }

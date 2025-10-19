@@ -34,7 +34,10 @@ export const ActivityProvider = ({ children, classId }) => {
   const { data: cachedActivities, loading: cacheLoading, error: cacheError, invalidateCache } = useClassActivities(classId);
 
   const fetchActivities = useCallback(async (classId) => {
-    if (authLoading || !user) return;
+    if (authLoading || !user) {
+      setLoading(false);
+      return;
+    }
 
     try {
       setLoading(true);
@@ -42,6 +45,7 @@ export const ActivityProvider = ({ children, classId }) => {
 
       if (typeof classId === 'undefined') {
         setActivities([]);
+        setLoading(false);
         setError('Nenhuma turma selecionada (classId indefinido).');
         Logger.warn('fetchActivities chamado com classId indefinido');
         return;
@@ -50,6 +54,7 @@ export const ActivityProvider = ({ children, classId }) => {
       // Use cache first, fallback to direct API call if needed
       if (cachedActivities) {
         setActivities(cachedActivities);
+        setLoading(false);
         Logger.info('Atividades carregadas do cache Redis', {
           classId,
           count: cachedActivities?.length || 0
@@ -57,6 +62,7 @@ export const ActivityProvider = ({ children, classId }) => {
       } else {
         const data = await getClassActivities(classId);
         setActivities(data || []);
+        setLoading(false);
         Logger.info('Atividades carregadas da API (cache miss)', {
           classId,
           count: data?.length || 0

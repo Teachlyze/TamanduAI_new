@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
  * Layout aprimorado com melhor responsividade e acessibilidade
  * Usa princípios de design system com Tailwind + DaisyUI
  */
-const EnhancedLayout = ({
+export const EnhancedLayout = ({
   children,
   title,
   subtitle,

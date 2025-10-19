@@ -5,8 +5,15 @@ import { supabase } from '@/lib/supabaseClient';
 import { Logger } from '@/services/logger';
 import ChatbotSkeleton from '@/components/ui/chatbot-skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Bot, Upload, Brain, MessageSquare, GraduationCap, Lightbulb, User, Send, FileText, FolderOpen, Zap, CheckCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Checkbox } from '@/components/ui/checkbox';
+import { toast } from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 const ChatbotPageWrapper = () => {
   const { user } = useAuth();
@@ -30,7 +37,7 @@ const ChatbotPageWrapper = () => {
         const { data: classesData, error: classesError } = await supabase
           .from('classes')
           .select('id, name')
-          .eq('teacher_id', user.id)
+          .eq('created_by', user.id)
           .order('name', { ascending: true })
           .limit(200);
 
@@ -104,11 +111,22 @@ const ChatbotPageContent = ({ teacherClasses, isLoading }) => {
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [showMaterialDialog, setShowMaterialDialog] = useState(false);
   const [trainingMaterials, setTrainingMaterials] = useState([]);
-
-  const { selectedClass, selectClass, materials, addMaterial, setTrainingMaterials: setGlobalTrainingMaterials } = useClass();
+  const [selectedClass, setSelectedClass] = useState(null);
+  const [materials, setMaterials] = useState({});
 
   // Get current class materials
   const currentClassMaterials = selectedClass ? materials[selectedClass.id] || [] : [];
+
+  const selectClass = (cls) => setSelectedClass(cls);
+  const addMaterial = (classId, material) => {
+    setMaterials(prev => ({
+      ...prev,
+      [classId]: [...(prev[classId] || []), material]
+    }));
+  };
+  const setGlobalTrainingMaterials = (classId, mats) => {
+    setTrainingMaterials(mats);
+  };
 
   const handleSendMessage = () => {
     if (!message.trim()) return;

@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from "@/hooks/useAuth";
 import { Logger } from '@/services/logger';
 import { ClassService } from '@/services/classService';
+import teacherSubscriptionService from '@/services/teacherSubscriptionService';
 
 // UI Components
 import { Button } from '@/components/ui/button';
@@ -47,10 +48,12 @@ const classFormSchema = z.object({
   course: z.string().optional(),
   period: z.string().optional(),
   academic_year: z.string().min(1, 'Ano letivo é obrigatório'),
-  grade_level: z.string().min(1, 'Série é obrigatória'),
+  grade_level: z.string().min(1, 'Nível é obrigatório'),
   student_capacity: z.number().min(1, 'Capacidade deve ser pelo menos 1').max(100, 'Capacidade máxima é 100'),
   color: z.string().min(1, 'Selecione uma cor'),
-  chatbot_enabled: z.boolean().default(false),
+  room_number: z.string().optional(),
+  is_online: z.boolean().default(false),
+  meeting_link: z.string().optional(),
   school_id: z.string().optional(),
   is_school_managed: z.boolean().default(false),
 });
@@ -61,6 +64,10 @@ const CreateClassForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [error, setError] = useState(null);
+  const [showLimitModal, setShowLimitModal] = useState(false);
+  const [limitInfo, setLimitInfo] = useState(null);
+  const [linkedSchools, setLinkedSchools] = useState([]);
+  const [loadingSchools, setLoadingSchools] = useState(true);
 
   // Available colors for class
   const classColors = [
@@ -95,12 +102,49 @@ const CreateClassForm = () => {
       academic_year: new Date().getFullYear().toString(),
       grade_level: '',
       student_capacity: 30,
+      room_number: '',
+      is_online: false,
+      meeting_link: '',
       color: 'blue',
-      chatbot_enabled: false,
       school_id: '',
       is_school_managed: false,
     }
   });
+
+  // Carregar escolas vinculadas ao professor
+  React.useEffect(() => {
+    const loadLinkedSchools = async () => {
+      if (!user) return;
+      
+      try {
+        setLoadingSchools(true);
+        
+        // Buscar escolas onde o professor está vinculado
+        const { data: schoolTeachers, error } = await supabase
+          .from('school_teachers')
+          .select('school_id, schools(id, name)')
+          .eq('user_id', user.id)
+          .eq('status', 'active');
+        
+        if (error) throw error;
+        
+        const schools = (schoolTeachers || []).map(st => st.schools).filter(Boolean);
+        setLinkedSchools(schools);
+        
+        // Se tiver apenas 1 escola, selecionar automaticamente
+        if (schools.length === 1) {
+          form.setValue('school_id', schools[0].id);
+          form.setValue('is_school_managed', true);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar escolas:', error);
+      } finally {
+        setLoadingSchools(false);
+      }
+    };
+    
+    loadLinkedSchools();
+  }, [user]);
 
   // Handle form submission
   const onSubmit = async (data) => {
@@ -117,24 +161,42 @@ const CreateClassForm = () => {
     setError(null);
 
     try {
+      // Verificar limites de plano antes de criar
+      const canCreate = await teacherSubscriptionService.checkCanCreateClass(user.id);
+      
+      if (!canCreate) {
+        // Buscar estatísticas para mostrar no modal
+        const stats = await teacherSubscriptionService.getUsageStats(user.id);
+        setLimitInfo(stats);
+        setShowLimitModal(true);
+        setIsSubmitting(false);
+        return;
+      }
       Logger.info('Iniciando criação de turma', { teacherId: user.id, className: data.name, subject: data.subject });
 
-      // Create class via service (v2 fields)
-      const created = await ClassService.createClass({
+      // Create class via service with all required fields
+      const classData = {
         name: data.name,
-        description: data.description || null,
-        teacher_id: user.id,
+        description: data.description || '',
+        created_by: user.id,
         subject: data.subject,
-        course: data.course || null,
-        period: data.period || null,
+        course: data.course || '',
+        period: data.period || '',
         grade_level: data.grade_level,
         academic_year: data.academic_year,
         color: data.color,
         student_capacity: data.student_capacity,
-        chatbot_enabled: !!data.chatbot_enabled,
+        room_number: data.room_number || '',
+        is_online: data.is_online || false,
+        meeting_link: data.meeting_link || '',
+        chatbot_enabled: false,
         school_id: data.school_id || null,
         is_school_managed: !!data.is_school_managed,
-      });
+        is_active: true
+      };
+
+      Logger.info('Dados da turma para criação:', classData);
+      const created = await ClassService.createClass(classData);
 
       Logger.info('Turma criada com sucesso', { classId: created.id, className: created.name });
 
@@ -291,26 +353,16 @@ const CreateClassForm = () => {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Matéria</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Selecione a matéria" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="matematica">Matemática</SelectItem>
-                                <SelectItem value="portugues">Português</SelectItem>
-                                <SelectItem value="ciencias">Ciências</SelectItem>
-                                <SelectItem value="historia">História</SelectItem>
-                                <SelectItem value="geografia">Geografia</SelectItem>
-                                <SelectItem value="fisica">Física</SelectItem>
-                                <SelectItem value="quimica">Química</SelectItem>
-                                <SelectItem value="biologia">Biologia</SelectItem>
-                                <SelectItem value="ingles">Inglês</SelectItem>
-                                <SelectItem value="educacao_fisica">Educação Física</SelectItem>
-                                <SelectItem value="artes">Artes</SelectItem>
-                              </SelectContent>
-                            </Select>
+                            <FormControl>
+                              <Input
+                                placeholder="Ex: Matemática, Educação Física, Yoga..."
+                                {...field}
+                                disabled={isSubmitting}
+                              />
+                            </FormControl>
+                            <FormDescription className="text-xs">
+                              Digite o nome da matéria ou atividade que você ensina
+                            </FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -363,6 +415,61 @@ const CreateClassForm = () => {
                           )}
                         />
                       </div>
+
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="room_number"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Número da Sala (Opcional)</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Ex: Sala 12, Lab A" {...field} disabled={isSubmitting} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="is_online"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                              <div className="space-y-0.5">
+                                <FormLabel>Aula Online</FormLabel>
+                                <FormDescription className="text-xs">
+                                  Marque se a turma é online
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <input
+                                  type="checkbox"
+                                  checked={field.value}
+                                  onChange={field.onChange}
+                                  disabled={isSubmitting}
+                                  className="w-4 h-4"
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      {form.watch('is_online') && (
+                        <FormField
+                          control={form.control}
+                          name="meeting_link"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Link da Reunião</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Ex: https://meet.google.com/..." {...field} disabled={isSubmitting} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -408,17 +515,27 @@ const CreateClassForm = () => {
                               <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
                                 <FormControl>
                                   <SelectTrigger>
-                                    <SelectValue placeholder="Selecione a série" />
+                                    <SelectValue placeholder="Selecione o nível" />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  <SelectItem value="6ano">6º Ano</SelectItem>
-                                  <SelectItem value="7ano">7º Ano</SelectItem>
-                                  <SelectItem value="8ano">8º Ano</SelectItem>
-                                  <SelectItem value="9ano">9º Ano</SelectItem>
-                                  <SelectItem value="1medio">1º Médio</SelectItem>
-                                  <SelectItem value="2medio">2º Médio</SelectItem>
-                                  <SelectItem value="3medio">3º Médio</SelectItem>
+                                  <SelectItem value="infantil">Educação Infantil</SelectItem>
+                                  <SelectItem value="1ano">1º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="2ano">2º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="3ano">3º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="4ano">4º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="5ano">5º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="6ano">6º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="7ano">7º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="8ano">8º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="9ano">9º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="1medio">1º Ano - Ensino Médio</SelectItem>
+                                  <SelectItem value="2medio">2º Ano - Ensino Médio</SelectItem>
+                                  <SelectItem value="3medio">3º Ano - Ensino Médio</SelectItem>
+                                  <SelectItem value="tecnico">Técnico/Profissionalizante</SelectItem>
+                                  <SelectItem value="superior">Ensino Superior</SelectItem>
+                                  <SelectItem value="pos">Pós-Graduação</SelectItem>
+                                  <SelectItem value="livre">Curso Livre</SelectItem>
                                 </SelectContent>
                               </Select>
                               <FormMessage />
@@ -472,50 +589,74 @@ const CreateClassForm = () => {
                           name="school_id"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>School ID (Opcional)</FormLabel>
-                              <FormControl>
-                                <Input placeholder="UUID da escola" {...field} disabled={isSubmitting} />
-                              </FormControl>
+                              <FormLabel>Escola Vinculada</FormLabel>
+                              {loadingSchools ? (
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                  Carregando escolas...
+                                </div>
+                              ) : linkedSchools.length === 0 ? (
+                                <div className="text-sm text-muted-foreground">
+                                  Nenhuma escola vinculada
+                                </div>
+                              ) : linkedSchools.length === 1 ? (
+                                <div className="flex items-center gap-2 px-3 py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                                  <CheckCircle className="w-4 h-4 text-green-600" />
+                                  <span className="text-sm font-medium text-green-900 dark:text-green-100">{linkedSchools[0].name}</span>
+                                </div>
+                              ) : (
+                                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
+                                  <FormControl>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Selecione a escola" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    {linkedSchools.map((school) => (
+                                      <SelectItem key={school.id} value={school.id}>
+                                        {school.name}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              )}
+                              <FormDescription className="text-xs">
+                                {linkedSchools.length === 0 
+                                  ? 'Você pode criar turmas independentes ou aguardar convite de uma escola'
+                                  : 'Turma será vinculada automaticamente a esta escola'
+                                }
+                              </FormDescription>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
                       </div>
 
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="chatbot_enabled"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Chatbot Enabled</FormLabel>
-                              <FormControl>
-                                <div className="flex items-center gap-2">
-                                  <input type="checkbox" checked={field.value} onChange={(e)=>field.onChange(e.target.checked)} disabled={isSubmitting} />
-                                  <span className="text-sm text-muted-foreground">Ativar assistente para a turma</span>
-                                </div>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                      {linkedSchools.length > 0 && (
                         <FormField
                           control={form.control}
                           name="is_school_managed"
                           render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>School Managed</FormLabel>
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                              <div className="space-y-0.5">
+                                <FormLabel>Turma Gerenciada pela Escola</FormLabel>
+                                <FormDescription className="text-xs">
+                                  A escola terá acesso total aos dados e relatórios desta turma
+                                </FormDescription>
+                              </div>
                               <FormControl>
-                                <div className="flex items-center gap-2">
-                                  <input type="checkbox" checked={field.value} onChange={(e)=>field.onChange(e.target.checked)} disabled={isSubmitting} />
-                                  <span className="text-sm text-muted-foreground">Gerida pela escola</span>
-                                </div>
+                                <input
+                                  type="checkbox"
+                                  checked={field.value}
+                                  onChange={field.onChange}
+                                  disabled={isSubmitting}
+                                  className="w-4 h-4"
+                                />
                               </FormControl>
-                              <FormMessage />
                             </FormItem>
                           )}
                         />
-                      </div>
+                      )}
 
                       <FormField
                         control={form.control}
@@ -678,6 +819,65 @@ const CreateClassForm = () => {
             </motion.div>
           </form>
         </Form>
+
+        {/* Modal de Limite de Plano */}
+        {showLimitModal && limitInfo && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <Card className="w-full max-w-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-orange-600">
+                  <AlertTriangle className="h-5 w-5" />
+                  Limite de Turmas Atingido
+                </CardTitle>
+                <CardDescription>
+                  Você atingiu o limite do seu plano atual
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                  <p className="font-semibold text-gray-900 mb-2">
+                    Plano Atual: <span className="text-orange-600 uppercase">{limitInfo.plan}</span>
+                  </p>
+                  <p className="text-gray-700">
+                    Turmas criadas: <span className="font-bold">{limitInfo.currentClasses}/{limitInfo.maxClasses}</span>
+                  </p>
+                  {limitInfo.linkedSchools > 0 && (
+                    <p className="text-gray-600 text-sm mt-2">
+                      💼 Você está vinculado a {limitInfo.linkedSchools} escola(s)
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <p className="font-medium text-gray-900">Para criar mais turmas, você pode:</p>
+                  <ul className="list-disc list-inside space-y-1 text-gray-700">
+                    <li>Remover uma turma antiga</li>
+                    <li>Fazer upgrade para um plano superior</li>
+                    {limitInfo.linkedSchools === 0 && (
+                      <li>Vincular-se a uma escola (turmas ilimitadas)</li>
+                    )}
+                  </ul>
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => setShowLimitModal(false)}
+                  >
+                    Voltar
+                  </Button>
+                  <Button
+                    className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600"
+                    onClick={() => navigate('/settings/subscription')}
+                  >
+                    Ver Planos
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );

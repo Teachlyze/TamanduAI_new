@@ -68,13 +68,9 @@ const AgendaPageWrapper = () => {
                 const mapEntries = await Promise.allSettled(
                   eventsData.slice(0, 50).map(async (e) => {
                     try {
-                      if (e.meeting_id) {
-                        const list = await AttachmentService.getMeetingAttachments(e.meeting_id);
-                        return [`meeting:${e.meeting_id}`, list];
-                      } else {
-                        const list = await AttachmentService.getEventAttachments(e.id);
-                        return [`event:${e.id}`, list];
-                      }
+                      // meeting_id não existe em calendar_events - sempre usar event_id
+                      const list = await AttachmentService.getEventAttachments(e.id);
+                      return [`event:${e.id}`, list];
                     } catch {
                       return null;
                     }
@@ -245,13 +241,12 @@ const AgendaPageContent = ({ events, attachmentsByEvent, isTeacher, user, onRefr
                     </div>
                     <div className="text-xs text-muted-foreground mt-1 flex gap-3">
                       {e.class_id && <span>Turma: {e.class_id.slice(0, 8)}…</span>}
-                      {e.meeting_id && <span>Reunião</span>}
                       {e.activity_id && <span>Prazo de Atividade</span>}
                     </div>
                     {/* Attachments indicator + preview (lazy, best-effort) */}
                     <div className="mt-2 text-xs">
                       {(() => {
-                        const key = e.meeting_id ? `meeting:${e.meeting_id}` : `event:${e.id}`;
+                        const key = `event:${e.id}`;
                         const list = attachmentsByEvent[key] || [];
                         if (!list.length) return null;
                         return (
@@ -280,15 +275,9 @@ const AgendaPageContent = ({ events, attachmentsByEvent, isTeacher, user, onRefr
                     {/* Upload anexos (somente professor; se role lookup falhar, mantemos visível para não bloquear fluxo) */}
                     <div className="inline-flex items-center">
                       {isTeacher && (
-                        e.meeting_id ? (
-                          <div className="ml-2">
-                            <MeetingAttachmentUploader meetingId={e.meeting_id} userId={user?.id} onUploaded={() => onRefresh()} />
-                          </div>
-                        ) : (
-                          <div className="ml-2">
-                            <EventAttachmentUploader eventId={e.id} userId={user?.id} onUploaded={() => onRefresh()} />
-                          </div>
-                        )
+                        <div className="ml-2">
+                          <EventAttachmentUploader eventId={e.id} userId={user?.id} onUploaded={() => onRefresh()} />
+                        </div>
                       )}
                     </div>
                   </div>

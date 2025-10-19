@@ -5,6 +5,9 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 
+// Explicitly set NODE_ENV if not set
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode }) => {
@@ -14,6 +17,9 @@ export default defineConfig(({ mode }) => {
   return {
     // Configuração do diretório raiz
     root: '.',
+    
+    // Base URL - importante para produção
+    base: '/',
     
     define: {
       'process.env.NODE_ENV': `"${mode}"`,
@@ -48,6 +54,13 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react({
         jsxRuntime: 'automatic',
+        fastRefresh: true,
+        babel: {
+          plugins: [
+            ['@babel/plugin-transform-react-jsx', { runtime: 'automatic' }],
+            // Add any other Babel plugins you need
+          ],
+        },
       }),
       nodePolyfills({
         globals: {
@@ -98,125 +111,11 @@ export default defineConfig(({ mode }) => {
           warn(warning);
         },
         output: {
-          manualChunks: (id) => {
-            if (id.includes('node_modules')) {
-              if (id.includes('react/') || id.includes('react-dom/') || id.includes('react-router-dom/')) {
-                return 'react-vendor';
-              }
-              if (id.includes('@supabase/')) {
-                return 'supabase-vendor';
-              }
-              if (id.includes('@radix-ui/')) {
-                return 'ui-vendor';
-              }
-              if (id.includes('recharts') || id.includes('chart.js')) {
-                return 'chart-vendor';
-              }
-              if (id.includes('pdfkit') || id.includes('blob-stream')) {
-                return 'pdf-vendor';
-              }
-              if (id.includes('agora-rtm-sdk') || id.includes('agora-rtc-sdk')) {
-                return 'agora-vendor';
-              }
-              if (id.includes('react-hook-form') || id.includes('zod')) {
-                return 'form-vendor';
-              }
-              if (id.includes('date-fns') || id.includes('lodash') || id.includes('es-toolkit')) {
-                return 'utils-vendor';
-              }
-              if (id.includes('i18next') || id.includes('react-i18next')) {
-                return 'i18n-vendor';
-              }
-              if (id.includes('exceljs')) {
-                return 'exceljs-vendor';
-              }
-              if (id.includes('lucide-react')) {
-                return 'icons-vendor';
-              }
-              if (id.includes('antd/') || (id.includes('rc-') && !id.includes('rc-component'))) {
-                return 'antd-vendor';
-              }
-              if (id.includes('@mui/')) {
-                return 'mui-vendor';
-              }
-              if (id.includes('fontkit')) {
-                return 'fontkit-vendor';
-              }
-              if (id.includes('@react-pdf/')) {
-                return 'react-pdf-vendor';
-              }
-              if (id.includes('framer-motion') || id.includes('motion-dom')) {
-                return 'motion-vendor';
-              }
-              if (id.includes('crypto-js')) {
-                return 'crypto-vendor';
-              }
-              
-              if (['clsx', 'class-variance-authority', 'tailwind-merge'].some(pkg => id.includes(pkg))) {
-                return 'utils-small';
-              }
-              
-              const skipPackages = [
-                'dayjs', 'prop-types', 'uuid', 'tiny-warning', 'tiny-invariant',
-                'detect-node-es', 'void-elements', 'dom-helpers', 'hoist-non-react-statics',
-                'html-parse-stringify', 'json2mq', 'set-cookie-parser', 'string-convert',
-                'rc-cascader', 'rc-collapse', 'rc-dialog', 'rc-drawer', 'rc-field-form',
-                'rc-image', 'rc-input-number', 'rc-mentions', 'rc-progress', 'rc-rate',
-                'rc-segmented', 'rc-slider', 'rc-steps', 'rc-switch', 'rc-tree-select',
-                'rc-upload', 'compute-scroll-into-view', 'scroll-into-view-if-needed', 
-                'popperjs', 'prismjs', 'get-nonce', 'redux-thunk', 'toggle-selection'
-              ];
-              
-              const packageName = id.split('node_modules/')[1]?.split('/')[0];
-              
-              if (packageName && !skipPackages.includes(packageName)) {
-                const largePrefixes = ['vendor-', '@', 'react-', 'd3-', 'babel', 'emotion', 'formik'];
-                
-                if (largePrefixes.some(prefix => packageName.startsWith(prefix) || packageName.includes(prefix))) {
-                  if (packageName.startsWith('@')) {
-                    const scopedName = packageName.substring(1).split('/')[0];
-                    return `vendor-${scopedName}`;
-                  }
-                  return `vendor-${packageName}`;
-                }
-              }
-              
-              return undefined;
-            }
-            
-            if (id.includes('src/pages/')) {
-              const page = id.split('src/pages/')[1]?.split('/')[0];
-              if (page) {
-                const heavyPages = [
-                  'DocumentationPage',
-                  'Dashboard',
-                  'CreateActivityPage',
-                  'MeetingRoomPage',
-                  'ReportsPage'
-                ];
-                
-                if (heavyPages.some(p => id.includes(p))) {
-                  return `lazy-${page}`;
-                }
-                
-                return `page-${page}`;
-              }
-            }
-          },
+          // Deixar Vite fazer code splitting automaticamente
           chunkFileNames: 'assets/[name]-[hash].js',
           entryFileNames: 'assets/[name]-[hash].js',
           assetFileNames: 'assets/[name]-[hash][extname]',
-          experimentalMinChunkSize: 20000,
-          hoistTransitiveImports: false,
         },
-        
-        treeshake: {
-          moduleSideEffects: false,
-          propertyReadSideEffects: false,
-          tryCatchDeoptimization: false,
-        },
-        
-        external: ['fs', 'path', 'os', 'crypto', 'http', 'https', 'url', 'zlib', 'tty', 'util', 'net', 'tls', 'child_process', 'dns'],
       },
     },
     
@@ -224,9 +123,6 @@ export default defineConfig(({ mode }) => {
       esbuildOptions: {
         define: {
           global: 'globalThis',
-        },
-        loader: {
-          '.js': 'jsx',
         },
         target: 'es2022',
         treeShaking: true,
@@ -257,6 +153,7 @@ export default defineConfig(({ mode }) => {
         '@radix-ui/react-alert-dialog',
         '@radix-ui/react-tabs',
         '@radix-ui/react-checkbox',
+        'uuid',
         'chart.js',
         'lodash',
         'tailwindcss',

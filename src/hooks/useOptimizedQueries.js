@@ -26,10 +26,10 @@ export const useOptimizedTeacherDashboard = (teacherId) => {
             activity_type,
             updated_at
           ),
-          class_students:class_students!inner(
+          class_members:class_members!inner(
             id,
-            student_id,
-            status,
+            user_id,
+            role,
             student_progress:student_progress(
               score,
               status,
@@ -46,7 +46,7 @@ export const useOptimizedTeacherDashboard = (teacherId) => {
       // Processar dados no frontend para calcular métricas
       return data.map(classData => {
         const activities = classData.activities || [];
-        const students = classData.class_students || [];
+        const students = classData.class_members?.filter(m => m.role === 'student') || [];
 
         // Calcular métricas da turma
         const activeActivities = activities.filter(a => a.status === 'active').length;
@@ -114,7 +114,7 @@ export const useOptimizedClassActivities = (classId, options = {}) => {
           updated_at,
           max_score,
           teacher_id,
-          profiles!activities_created_by_fkey(name),
+          profiles!activities_created_by_fkey(full_name),
           student_progress(
             id,
             student_id,
@@ -179,11 +179,13 @@ export const useOptimizedStudentProgress = (studentId, options = {}) => {
             title,
             activity_type,
             max_score,
-            class_id,
-            classes!inner(
-              id,
-              name,
-              subject
+            activity_class_assignments!inner(
+              class_id,
+              classes!inner(
+                id,
+                name,
+                subject
+              )
             )
           )
         `)
@@ -193,7 +195,7 @@ export const useOptimizedStudentProgress = (studentId, options = {}) => {
         .limit(limit);
 
       if (classId) {
-        query = query.eq('activities.class_id', classId);
+        query = query.eq('activities.activity_class_assignments.class_id', classId);
       }
 
       const { data, error } = await query;
@@ -394,11 +396,11 @@ export const useOptimizedMetrics = (teacherId, dateRange = {}) => {
               time_spent_minutes
             )
           ),
-          class_students(
+          class_members(
             id,
-            joined_at,
-            last_activity_at,
-            current_grade
+            user_id,
+            role,
+            created_at
           )
         `)
         .eq('created_by', teacherId)
@@ -440,7 +442,7 @@ export const useOptimizedMetrics = (teacherId, dateRange = {}) => {
         });
 
         // Contar alunos ativos hoje
-        cls.class_students?.forEach(student => {
+        cls.class_members?.filter(m => m.role === 'student').forEach(student => {
           if (student.last_activity_at) {
             const lastActivity = new Date(student.last_activity_at);
             const today = new Date();

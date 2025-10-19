@@ -89,7 +89,7 @@ export const ClassService = {
    * @param {Array<string>} [studentIds=[]] - Array of student IDs to enroll
    * @returns {Promise<Object>} - The created class
    */
-  async createClass(classData, studentIds = []) {
+  async createClass(classDataInput, studentIds = []) {
     const { 
       name, 
       description, 
@@ -104,26 +104,25 @@ export const ClassService = {
       chatbot_enabled,
       school_id,
       is_school_managed
-    } = classData;
+    } = classDataInput;
 
     // First, ensure the teacher has a profile
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('id')
       .eq('id', teacher_id)
-      .single();
+      .maybeSingle();
 
     // If no profile exists, create one with minimal required fields
-    if (!profile) {
-      // Ensure there is an authenticated user; ignore return here
-      await supabase.auth.getUser();
+    if (!profile && !profileError) {
+      console.log('Profile not found for teacher, creating one...');
       
       const { error: createProfileError } = await supabase
         .from('profiles')
         .insert([
           {
             id: teacher_id,
-            // Only include fields that exist in the profiles table
+            role: 'teacher',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           }
@@ -131,40 +130,51 @@ export const ClassService = {
 
       if (createProfileError) {
         console.error('Error creating teacher profile:', createProfileError);
-        throw createProfileError;
+        // Não lançar erro se profile já existe (erro de unique constraint)
+        if (createProfileError.code !== '23505') {
+          throw new Error(`Erro ao criar perfil do professor: ${createProfileError.message}`);
+        }
       }
     }
 
     // Create the class (v2.0: use created_by instead of teacher_id)
+    const classData = {
+      name,
+      description: description || null,
+      created_by: teacher_id,
+      subject: subject || null,
+      course: course || null,
+      period: period || null,
+      grade_level: grade_level || null,
+      academic_year: academic_year || new Date().getFullYear(),
+      color: color || '#6366f1',
+      student_capacity: typeof student_capacity === 'number' ? student_capacity : 30,
+      chatbot_enabled: !!chatbot_enabled,
+      school_id: school_id || null,
+      is_school_managed: !!is_school_managed,
+      is_active: true
+    };
+
+    console.log('Creating class with data:', classData);
+
     const { data: newClass, error: classError } = await supabase
       .from('classes')
-      .insert([
-        {
-          name,
-          description,
-          created_by: teacher_id,
-          subject,
-          course: course ?? null,
-          period: period ?? null,
-          grade_level,
-          academic_year,
-          color: color ?? null,
-          student_capacity: typeof student_capacity === 'number' ? student_capacity : null,
-          chatbot_enabled: !!chatbot_enabled,
-          school_id: school_id ?? null,
-          is_school_managed: !!is_school_managed,
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }
-      ])
+      .insert([classData])
       .select()
       .single();
 
     if (classError) {
       console.error('Error creating class:', classError);
-      throw classError;
+      console.error('Error details:', {
+        code: classError.code,
+        message: classError.message,
+        details: classError.details,
+        hint: classError.hint
+      });
+      throw new Error(`Erro ao criar turma: ${classError.message}. Detalhes: ${classError.hint || classError.details || 'Nenhum detalhe adicional'}`);
     }
+
+    console.log('Class created successfully:', newClass);
 
     // Notificar professor: nova turma criada
     try {
@@ -178,9 +188,56 @@ export const ClassService = {
       console.warn('Falha ao notificar criação de turma:', e);
     }
 
+    // Adicionar professor como membro da turma
+    try {
+      const { error: memberError } = await supabase
+        .from('class_members')
+        .insert([{
+          class_id: newClass.id,
+          user_id: teacher_id,
+          role: 'teacher',
+          joined_at: new Date().toISOString()
+        }]);
+
+      if (memberError && memberError.code !== '23505') {
+        console.warn('Erro ao adicionar professor como membro:', memberError);
+      }
+    } catch (e) {
+      console.warn('Falha ao adicionar professor como membro da turma:', e);
+    }
+
     // Add students if any
     if (studentIds && studentIds.length > 0) {
-      await this.addStudentsToClass(newClass.id, studentIds);
+      try {
+        await this.addStudentsToClass(newClass.id, studentIds);
+      } catch (e) {
+        console.warn('Falha ao adicionar alunos:', e);
+      }
+    }
+
+    // Initialize chatbot configuration if enabled
+    if (chatbot_enabled) {
+      try {
+        const { error: chatbotError } = await supabase
+          .from('chatbot_configurations')
+          .insert({
+            class_id: newClass.id,
+            enabled: true,
+            keywords: [],
+            themes: [],
+            scope_restrictions: [],
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
+
+        if (chatbotError && chatbotError.code !== '23505') {
+          console.warn('Erro ao criar configuração do chatbot:', chatbotError);
+        } else {
+          console.log('Chatbot configuration created for class:', newClass.id);
+        }
+      } catch (e) {
+        console.warn('Falha ao inicializar chatbot:', e);
+      }
     }
 
     return this.getClassById(newClass.id);
@@ -270,7 +327,7 @@ export const ClassService = {
           class_id: classId,
           user_id: studentId,
           role: 'student',
-          created_at: new Date().toISOString()
+          joined_at: new Date().toISOString()
         }))
       )
       .select();

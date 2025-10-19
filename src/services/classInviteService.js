@@ -3,16 +3,22 @@ import NotificationOrchestrator from '@/services/notificationOrchestrator';
 import EmailTemplateService from '@/services/emailTemplateService';
 
 class ClassInviteService {
-  // Generate a new invite for a class (v2: class_invitations with role)
+  // Generate a new invite for a class
   static async createInvite(classId, options = {}) {
-    const { maxUses = 10, expiresInHours = 24 * 7, recipientEmail, role = 'student' } = options; // Default 1 week, student role
+    const { 
+      maxUses = 10, 
+      expiresInHours = 24 * 7, 
+      recipientEmail, 
+      role = 'student',
+      invitationType = recipientEmail ? 'email' : 'link'
+    } = options; // Default 1 week, student role
     
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
-    // Authorization (v2): owner or teacher member of the class
+    // Authorization: owner or teacher member of the class
     const [{ data: cls }, { data: teacherMember }] = await Promise.all([
-      supabase.from('classes').select('id, created_by, name').eq('id', classId).single(),
+      supabase.from('classes').select('id, created_by, name, description').eq('id', classId).single(),
       supabase
         .from('class_members')
         .select('id')
@@ -30,18 +36,24 @@ class ClassInviteService {
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + expiresInHours);
 
-    // Create the invite (v2: class_invitations)
+    // Generate invitation code
+    const invitationCode = this.generateInvitationCode();
+
+    // Create the invite
     const { data: invite, error } = await supabase
       .from('class_invitations')
       .insert([
         {
           class_id: classId,
           created_by: user.id,
-          token: this.generateToken(),
+          invitation_code: invitationCode,
+          invitation_type: invitationType,
+          target_email: recipientEmail || null,
           role,
           max_uses: maxUses,
-          uses: 0,
+          current_uses: 0,
           expires_at: expiresAt.toISOString(),
+          status: 'active'
         }
       ])
       .select()
@@ -64,7 +76,7 @@ class ClassInviteService {
           .eq('id', cls?.created_by)
           .single();
 
-        const acceptUrl = `${window?.location?.origin || ''}/join/${invite.token}`;
+        const acceptUrl = `${window?.location?.origin || ''}/join/${invite.invitation_code}`;
 
         // Use new email template system
         await EmailTemplateService.sendClassInvite({
@@ -93,32 +105,66 @@ class ClassInviteService {
     return data;
   }
 
-  // Revoke an invite (v2: soft revoke via revoked_at)
+  // Revoke an invite
   static async revokeInvite(inviteId) {
     const { error } = await supabase
       .from('class_invitations')
-      .update({ revoked_at: new Date().toISOString() })
+      .update({ status: 'cancelled' })
       .eq('id', inviteId);
 
     if (error) throw error;
     return true;
   }
 
-  // Accept an invite token to join a class (v2)
-  static async acceptInvite(token, userId, reqMeta = {}) {
-    // Get the invite
+  // Get invite details by code (for preview before accepting)
+  static async getInviteDetails(invitationCode) {
     const { data: invite, error: inviteError } = await supabase
       .from('class_invitations')
-      .select('*')
-      .eq('token', token)
+      .select(`
+        *,
+        class:classes (
+          id,
+          name,
+          description,
+          created_by,
+          teacher:profiles!created_by (
+            id,
+            full_name,
+            avatar_url
+          )
+        )
+      `)
+      .eq('invitation_code', invitationCode)
       .single();
 
-    if (inviteError) throw new Error('Invalid or expired invite');
+    if (inviteError) throw new Error('Invalid invitation code');
 
     // validity checks
-    if (invite.revoked_at) throw new Error('Invite revoked');
-    if (new Date(invite.expires_at) < new Date()) throw new Error('Invite has expired');
-    if (invite.max_uses != null && invite.uses >= invite.max_uses) throw new Error('Invite has reached maximum uses');
+    if (invite.status !== 'active') throw new Error('Invitation is no longer active');
+    if (new Date(invite.expires_at) < new Date()) throw new Error('Invitation has expired');
+    if (invite.max_uses != null && invite.current_uses >= invite.max_uses) {
+      throw new Error('Invitation has reached maximum uses');
+    }
+
+    return invite;
+  }
+
+  // Accept an invite code to join a class
+  static async acceptInvite(invitationCode, userId, reqMeta = {}) {
+    // Get the invite details
+    const invite = await this.getInviteDetails(invitationCode);
+
+    // Check if user is already in the class
+    const { data: existingMember } = await supabase
+      .from('class_members')
+      .select('id')
+      .eq('class_id', invite.class_id)
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (existingMember) {
+      return { success: true, alreadyMember: true, classId: invite.class_id };
+    }
 
     // Add user to class with role from invite
     const { error: enrollError } = await supabase
@@ -128,39 +174,23 @@ class ClassInviteService {
           class_id: invite.class_id,
           user_id: userId,
           role: invite.role || 'student',
-          created_at: new Date().toISOString(),
+          invited_by: invite.created_by,
+          joined_at: new Date().toISOString(),
         }
       ]);
 
-    if (enrollError) {
-      // If user is already in the class, just continue
-      if (enrollError.code === '23505') {
-        // still count usage
-      } else {
-        throw enrollError;
-      }
-    }
+    if (enrollError) throw enrollError;
 
     // Record usage
     const { error: usageErr } = await supabase
       .from('invitation_usages')
       .insert([
         {
-          invite_id: invite.id,
+          invitation_id: invite.id,
           user_id: userId,
-          used_at: new Date().toISOString(),
-          ip_address: reqMeta.ip_address || null,
-          user_agent: reqMeta.user_agent || null,
         }
       ]);
     if (usageErr) console.warn('Failed to record invitation usage', usageErr);
-
-    // Increment uses on invitation
-    const { error: updateError } = await supabase
-      .from('class_invitations')
-      .update({ uses: (invite.uses || 0) + 1 })
-      .eq('id', invite.id);
-    if (updateError) console.warn('Failed to increment invitation uses', updateError);
 
     // Notify owner
     try {
@@ -210,11 +240,20 @@ class ClassInviteService {
     return { success: true };
   }
 
-  // Generate a random token
-  static generateToken() {
-    return Array.from(crypto.getRandomValues(new Uint8Array(16)))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
+  // Generate a random invitation code (8 characters, easy to type)
+  static generateInvitationCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Exclude similar looking characters
+    let code = '';
+    for (let i = 0; i < 8; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+  }
+
+  // Get invite link
+  static getInviteLink(invitationCode) {
+    const baseUrl = window?.location?.origin || 'https://tamanduai.com';
+    return `${baseUrl}/join/${invitationCode}`;
   }
 }
 

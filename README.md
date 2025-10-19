@@ -1410,6 +1410,35 @@ npm i -g vercel
 vercel --prod
 ```
 
+#### 2.1. Deploy Frontend com Docker (Alternativa)
+```bash
+# Quick Start
+docker-compose up --build frontend
+
+# Ou com Docker direto
+docker build \
+  --build-arg VITE_SUPABASE_URL=$SUPABASE_URL \
+  --build-arg VITE_SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY \
+  --build-arg VITE_APP_URL=$APP_URL \
+  -f Dockerfile.frontend \
+  -t tamanduai-frontend .
+
+docker run -p 3000:3000 tamanduai-frontend
+```
+
+**📚 Guias Docker Completos:**
+- `DOCKER_QUICKSTART.md` - Guia rápido de início (5 minutos)
+- `DOCKER_TROUBLESHOOTING.md` - Troubleshooting completo
+- Scripts de teste: `test-docker-deployment.ps1` (Windows) ou `test-docker-deployment.sh` (Linux/Mac)
+
+**Configuração Incluída:**
+- ✅ Nginx otimizado para SPA React
+- ✅ MIME types corretos para JS/CSS
+- ✅ Gzip compression
+- ✅ Health check endpoint
+- ✅ Multi-stage build (otimizado)
+- ✅ Cache strategies
+
 #### 3. Deploy Edge Functions
 ```bash
 # Login no Supabase

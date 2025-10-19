@@ -8,6 +8,7 @@ import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import { FiFileText, FiUpload, FiDownload, FiUsers, FiAlertCircle, FiCheck } from 'react-icons/fi';
 import { autoGradeSubmission } from '@/services/gradingService';
+import { useGamification } from '@/hooks/useGamification';
 
 const ActivityView = ({ activityId, isTeacher = false, userId }) => {
   const [activity, setActivity] = useState(null);
@@ -16,6 +17,7 @@ const ActivityView = ({ activityId, isTeacher = false, userId }) => {
   const [submissions, setSubmissions] = useState([]);
   const [tabIndex, setTabIndex] = useState(0);
   const [assignedClasses, setAssignedClasses] = useState([]);
+  const { trackSubmission } = useGamification();
   
   // Carrega os dados da atividade
   useEffect(() => {
@@ -196,6 +198,21 @@ const ActivityView = ({ activityId, isTeacher = false, userId }) => {
         await autoGradeSubmission(submissionId);
       } catch (gradeErr) {
         // Non-blocking; may require manual grading
+      }
+
+      // Gamificação: adicionar XP e atualizar missões (somente para alunos)
+      if (!isTeacher && userId) {
+        try {
+          await trackSubmission({
+            activityId,
+            dueDate: activity?.due_date,
+            submittedAt: payload.submitted_at,
+            grade: null, // Nota será adicionada depois quando professor corrigir
+          });
+        } catch (gamErr) {
+          console.error('Erro ao registrar gamificação:', gamErr);
+          // Não bloqueia a submissão
+        }
       }
 
       // Recarrega as submissões se for professor
