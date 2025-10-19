@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from "@/hooks/useAuth";
 import { Logger } from '@/services/logger';
+import { ClassService } from '@/services/classService';
 
 // UI Components
 import Button from '@/components/ui/button';
@@ -19,6 +20,8 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { toast } from '@/components/ui/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 // Icons
@@ -36,22 +39,30 @@ import {
   GraduationCap,
   School,
   AlertTriangle,
-  CheckCircle
+  CheckCircle,
+  Video,
+  Link as LinkIcon
 } from 'lucide-react';
 
 // Form validation schema
 const classFormSchema = z.object({
   name: z.string().min(3, 'Nome da turma deve ter pelo menos 3 caracteres'),
-  subject: z.string().min(2, 'Matéria é obrigatória'),
+  subject: z.string().min(2, 'Disciplina é obrigatória'),
+  course: z.string().min(2, 'Curso é obrigatório'),
   description: z.string().optional(),
-  schedule: z.string().min(1, 'Horário é obrigatório'),
-  room: z.string().optional(),
-  capacity: z.number().min(1, 'Capacidade deve ser pelo menos 1').max(100, 'Capacidade máxima é 100'),
+  academic_year: z.string().min(1, 'Ano letivo é obrigatório'),
+  grade_level: z.string().min(1, 'Nível/Série é obrigatório'),
+  student_capacity: z.number().min(1, 'Capacidade deve ser pelo menos 1').max(100, 'Capacidade máxima é 100'),
+  grading_system: z.string().min(1, 'Selecione um sistema de notas'),
   color: z.string().min(1, 'Selecione uma cor'),
-  grade: z.string().min(1, 'Série é obrigatória'),
-  semester: z.string().min(1, 'Semestre é obrigatório'),
-  startDate: z.string().min(1, 'Data de início é obrigatória'),
-  endDate: z.string().min(1, 'Data de término é obrigatória'),
+  room_number: z.string().optional(),
+  address: z.string().optional(),
+  is_online: z.boolean().default(false),
+  meeting_link: z.string().optional(),
+  meeting_days: z.array(z.string()).optional(),
+  meeting_start_time: z.string().optional(),
+  meeting_end_time: z.string().optional(),
+  period: z.string().optional(),
 });
 
 const CreateClassroomForm = () => {
@@ -88,15 +99,21 @@ const CreateClassroomForm = () => {
     defaultValues: {
       name: '',
       subject: '',
+      course: '',
       description: '',
-      schedule: '',
-      room: '',
-      capacity: 30,
+      academic_year: new Date().getFullYear().toString(),
+      grade_level: '',
+      student_capacity: 30,
+      grading_system: '0-10',
       color: 'blue',
-      grade: '',
-      semester: '',
-      startDate: '',
-      endDate: '',
+      room_number: '',
+      address: '',
+      is_online: false,
+      meeting_link: '',
+      meeting_days: [],
+      meeting_start_time: '',
+      meeting_end_time: '',
+      period: '',
     }
   });
 
@@ -121,41 +138,34 @@ const CreateClassroomForm = () => {
         subject: data.subject
       });
 
-      // Create class in database with correct column names
-      const { data: classData, error: classError } = await supabase
-        .from('classes')
-        .insert([
-          {
-            name: data.name,
-            subject: data.subject,
-            description: data.description,
-            schedule: data.schedule,
-            room: data.room,
-            capacity: data.capacity,
-            color: data.color,
-            grade: data.grade,
-            semester: data.semester,
-            start_date: data.startDate,
-            end_date: data.endDate,
-            status: 'active',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }
-        ])
-        .select()
-        .single();
+      // Create class via service using valid schema columns
+      const classPayload = {
+        name: data.name,
+        description: data.description || '',
+        teacher_id: user.id,
+        subject: data.subject,
+        course: data.course || null,
+        academic_year: data.academic_year,
+        grade_level: data.grade_level || null,
+        student_capacity: data.student_capacity,
+        grading_system: data.grading_system,
+        color: data.color,
+        room_number: data.room_number || null,
+        address: data.address || null,
+        is_online: !!data.is_online,
+        meeting_link: data.meeting_link || null,
+        meeting_days: data.meeting_days && data.meeting_days.length > 0 ? data.meeting_days : null,
+        meeting_start_time: data.meeting_start_time || null,
+        meeting_end_time: data.meeting_end_time || null,
+        period: data.period || null,
+        is_active: true
+      };
 
-      if (classError) {
-        Logger.error('Erro ao criar turma no banco', {
-          error: classError.message,
-          teacherId: user.id
-        });
-        throw classError;
-      }
+      const created = await ClassService.createClass(classPayload);
 
       Logger.info('Turma criada com sucesso', {
-        classId: classData.id,
-        className: classData.name
+        classId: created.id,
+        className: created.name
       });
 
       toast({
@@ -281,36 +291,47 @@ const CreateClassroomForm = () => {
                         )}
                       />
 
-                      <FormField
-                        control={form.control}
-                        name="subject"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Matéria</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="subject"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Disciplina</FormLabel>
                               <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Selecione a matéria" />
-                                </SelectTrigger>
+                                <Input
+                                  placeholder="Ex: Matemática, Empreendedorismo, etc."
+                                  {...field}
+                                  disabled={isSubmitting}
+                                  className="bg-white dark:bg-slate-900 text-foreground border-border"
+                                />
                               </FormControl>
-                              <SelectContent>
-                                <SelectItem value="matematica">Matemática</SelectItem>
-                                <SelectItem value="portugues">Português</SelectItem>
-                                <SelectItem value="ciencias">Ciências</SelectItem>
-                                <SelectItem value="historia">História</SelectItem>
-                                <SelectItem value="geografia">Geografia</SelectItem>
-                                <SelectItem value="fisica">Física</SelectItem>
-                                <SelectItem value="quimica">Química</SelectItem>
-                                <SelectItem value="biologia">Biologia</SelectItem>
-                                <SelectItem value="ingles">Inglês</SelectItem>
-                                <SelectItem value="educacao_fisica">Educação Física</SelectItem>
-                                <SelectItem value="artes">Artes</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                              <FormDescription className="text-xs">Digite qualquer disciplina</FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="course"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Curso</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Ex: Ciências da Computação, Direito, etc."
+                                  {...field}
+                                  disabled={isSubmitting}
+                                  className="bg-white dark:bg-slate-900 text-foreground border-border"
+                                />
+                              </FormControl>
+                              <FormDescription className="text-xs">Curso a que pertence</FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
 
                       <FormField
                         control={form.control}
@@ -334,6 +355,264 @@ const CreateClassroomForm = () => {
                   </Card>
                 </motion.div>
 
+                {/* Card de Aulas Online */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.15 }}
+                >
+                  <Card className="bg-white/80 backdrop-blur-sm border-white/50 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-gradient-to-r from-violet-500 to-purple-600 rounded-lg flex items-center justify-center">
+                          <Video className="w-4 h-4 text-white" />
+                        </div>
+                        Formato e Horários das Aulas
+                      </CardTitle>
+                      <CardDescription>
+                        Configure se a turma é online ou presencial e defina os horários
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {/* Toggle Aula Online */}
+                      <FormField
+                        control={form.control}
+                        name="is_online"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-center justify-between rounded-lg border-2 border-border p-4 bg-white dark:bg-slate-900">
+                            <div className="space-y-1 flex-1">
+                              <FormLabel className="text-base font-semibold flex items-center gap-2 cursor-pointer">
+                                <Video className="w-5 h-5 text-violet-600" />
+                                Aula Online
+                              </FormLabel>
+                              <FormDescription className="text-sm">
+                                Ative para configurar link e horários de aulas ao vivo
+                              </FormDescription>
+                            </div>
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                disabled={isSubmitting}
+                                className="ml-4"
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Campo de endereço (só para presencial) */}
+                      {!form.watch('is_online') && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          className="space-y-4 pt-2"
+                        >
+                          <FormField
+                            control={form.control}
+                            name="address"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="flex items-center gap-2">
+                                  <MapPin className="w-4 h-4 text-red-600" />
+                                  Endereço da Aula Presencial
+                                </FormLabel>
+                                <FormControl>
+                                  <Input 
+                                    placeholder="Ex: Av. Paulista, 1000 - São Paulo, SP" 
+                                    {...field} 
+                                    disabled={isSubmitting}
+                                    className="bg-white dark:bg-slate-900 text-foreground border-border"
+                                  />
+                                </FormControl>
+                                <FormDescription className="text-xs">
+                                  Endereço completo onde as aulas presenciais acontecerão
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <Separator />
+                        </motion.div>
+                      )}
+
+                      {/* Link da reunião (só para online) */}
+                      {form.watch('is_online') && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          className="space-y-4 pt-2"
+                        >
+                          {/* Link da Reunião */}
+                          <FormField
+                            control={form.control}
+                            name="meeting_link"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="flex items-center gap-2">
+                                  <LinkIcon className="w-4 h-4 text-blue-600" />
+                                  Link da Reunião
+                                </FormLabel>
+                                <FormControl>
+                                  <Input 
+                                    placeholder="Ex: https://meet.google.com/abc-defg-hij" 
+                                    {...field} 
+                                    disabled={isSubmitting}
+                                    className="bg-white dark:bg-slate-900"
+                                  />
+                                </FormControl>
+                                <FormDescription className="text-xs">
+                                  Os alunos verão este link na agenda no horário da aula
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <Separator />
+                        </motion.div>
+                      )}
+
+                      {/* Dias da Semana e Horários - Aparecem SEMPRE (online ou presencial) */}
+                      <div className="space-y-4 pt-2">
+                        <FormField
+                            control={form.control}
+                            name="meeting_days"
+                            render={() => (
+                              <FormItem>
+                                <div className="mb-4">
+                                  <FormLabel className="text-base flex items-center gap-2">
+                                    <Calendar className="w-4 h-4 text-green-600" />
+                                    Dias da Semana
+                                  </FormLabel>
+                                  <FormDescription className="text-xs">
+                                    Selecione os dias em que a aula ocorre
+                                  </FormDescription>
+                                </div>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                                  {[
+                                    { value: 'monday', label: 'Segunda' },
+                                    { value: 'tuesday', label: 'Terça' },
+                                    { value: 'wednesday', label: 'Quarta' },
+                                    { value: 'thursday', label: 'Quinta' },
+                                    { value: 'friday', label: 'Sexta' },
+                                    { value: 'saturday', label: 'Sábado' },
+                                    { value: 'sunday', label: 'Domingo' },
+                                  ].map((day) => (
+                                    <FormField
+                                      key={day.value}
+                                      control={form.control}
+                                      name="meeting_days"
+                                      render={({ field }) => {
+                                        return (
+                                          <FormItem
+                                            key={day.value}
+                                            className="flex flex-row items-center space-x-2 space-y-0 rounded-lg border-2 border-border p-3 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                          >
+                                            <FormControl>
+                                              <Checkbox
+                                                checked={field.value?.includes(day.value)}
+                                                onCheckedChange={(checked) => {
+                                                  return checked
+                                                    ? field.onChange([...(field.value || []), day.value])
+                                                    : field.onChange(
+                                                        field.value?.filter(
+                                                          (value) => value !== day.value
+                                                        )
+                                                      )
+                                                }}
+                                                disabled={isSubmitting}
+                                              />
+                                            </FormControl>
+                                            <FormLabel className="font-normal cursor-pointer text-sm">
+                                              {day.label}
+                                            </FormLabel>
+                                          </FormItem>
+                                        )
+                                      }}
+                                    />
+                                  ))}
+                                </div>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Horários */}
+                          <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                              control={form.control}
+                              name="meeting_start_time"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="flex items-center gap-2">
+                                    <Clock className="w-4 h-4 text-orange-600" />
+                                    Horário de Início
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input 
+                                      type="time" 
+                                      {...field} 
+                                      disabled={isSubmitting}
+                                      className="bg-white dark:bg-slate-900"
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="meeting_end_time"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="flex items-center gap-2">
+                                    <Clock className="w-4 h-4 text-red-600" />
+                                    Horário de Término
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input 
+                                      type="time" 
+                                      {...field} 
+                                      disabled={isSubmitting}
+                                      className="bg-white dark:bg-slate-900"
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          {/* Preview */}
+                          {form.watch('meeting_days')?.length > 0 && form.watch('meeting_start_time') && (
+                            <Alert className="bg-violet-50 dark:bg-violet-950 border-violet-200 dark:border-violet-800">
+                              <Video className="h-4 w-4 text-violet-600" />
+                              <AlertDescription className="text-sm">
+                                <span className="font-semibold">Aulas ao vivo:</span>{' '}
+                                {form.watch('meeting_days').map((day) => {
+                                  const dayLabel = {
+                                    monday: 'Seg',
+                                    tuesday: 'Ter',
+                                    wednesday: 'Qua',
+                                    thursday: 'Qui',
+                                    friday: 'Sex',
+                                    saturday: 'Sáb',
+                                    sunday: 'Dom'
+                                  }[day];
+                                  return dayLabel;
+                                }).join(', ')}{' '}
+                                às {form.watch('meeting_start_time')}
+                                {form.watch('meeting_end_time') && ` - ${form.watch('meeting_end_time')}`}
+                              </AlertDescription>
+                            </Alert>
+                          )}
+                        </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -345,66 +624,59 @@ const CreateClassroomForm = () => {
                         <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center">
                           <Calendar className="w-4 h-4 text-white" />
                         </div>
-                        Horários e Datas
+                        Ano letivo e nível
                       </CardTitle>
                       <CardDescription>
                         Configure quando a turma acontecerá
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <FormField
-                        control={form.control}
-                        name="schedule"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Horário</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Ex: Segunda e Quarta, 14:00 - 15:30"
-                                {...field}
-                                disabled={isSubmitting}
-                              />
-                            </FormControl>
-                            <FormDescription>
-                              Descreva os dias da semana e horários das aulas
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <FormField
                           control={form.control}
-                          name="startDate"
+                          name="academic_year"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Data de Início</FormLabel>
+                              <FormLabel>Ano letivo</FormLabel>
                               <FormControl>
-                                <Input
-                                  type="date"
-                                  {...field}
-                                  disabled={isSubmitting}
-                                />
+                                <Input placeholder="Ex: 2025" {...field} disabled={isSubmitting} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-
                         <FormField
                           control={form.control}
-                          name="endDate"
+                          name="grade_level"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Data de Término</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="date"
-                                  {...field}
-                                  disabled={isSubmitting}
-                                />
-                              </FormControl>
+                              <FormLabel>Nível/Série</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Selecione o nível" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="infantil">Educação Infantil</SelectItem>
+                                  <SelectItem value="1ano">1º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="2ano">2º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="3ano">3º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="4ano">4º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="5ano">5º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="6ano">6º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="7ano">7º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="8ano">8º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="9ano">9º Ano - Fundamental</SelectItem>
+                                  <SelectItem value="1medio">1º Ano - Ensino Médio</SelectItem>
+                                  <SelectItem value="2medio">2º Ano - Ensino Médio</SelectItem>
+                                  <SelectItem value="3medio">3º Ano - Ensino Médio</SelectItem>
+                                  <SelectItem value="tecnico">Técnico/Profissionalizante</SelectItem>
+                                  <SelectItem value="superior">Ensino Superior</SelectItem>
+                                  <SelectItem value="pos">Pós-Graduação</SelectItem>
+                                  <SelectItem value="livre">Curso Livre</SelectItem>
+                                </SelectContent>
+                              </Select>
                               <FormMessage />
                             </FormItem>
                           )}
@@ -438,74 +710,14 @@ const CreateClassroomForm = () => {
                       <div className="grid grid-cols-2 gap-4">
                         <FormField
                           control={form.control}
-                          name="grade"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Série</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Série" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="6ano">6º Ano</SelectItem>
-                                  <SelectItem value="7ano">7º Ano</SelectItem>
-                                  <SelectItem value="8ano">8º Ano</SelectItem>
-                                  <SelectItem value="9ano">9º Ano</SelectItem>
-                                  <SelectItem value="1medio">1º Médio</SelectItem>
-                                  <SelectItem value="2medio">2º Médio</SelectItem>
-                                  <SelectItem value="3medio">3º Médio</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="semester"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Semestre</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Semestre" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="1">1º Semestre</SelectItem>
-                                  <SelectItem value="2">2º Semestre</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="capacity"
+                          name="student_capacity"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Capacidade</FormLabel>
                               <FormControl>
-                                <Input
-                                  type="number"
-                                  min="1"
-                                  max="100"
-                                  {...field}
-                                  onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                  disabled={isSubmitting}
-                                />
+                                <Input type="number" min="1" max="100" {...field} onChange={(e)=>field.onChange(parseInt(e.target.value)||1)} disabled={isSubmitting} />
                               </FormControl>
-                              <FormDescription>
-                                Número máximo de alunos
-                              </FormDescription>
+                              <FormDescription>Número máximo de alunos</FormDescription>
                               <FormMessage />
                             </FormItem>
                           )}
@@ -513,17 +725,25 @@ const CreateClassroomForm = () => {
 
                         <FormField
                           control={form.control}
-                          name="room"
+                          name="grading_system"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Sala (Opcional)</FormLabel>
-                              <FormControl>
-                                <Input
-                                  placeholder="Ex: Sala 101"
-                                  {...field}
-                                  disabled={isSubmitting}
-                                />
-                              </FormControl>
+                              <FormLabel>Sistema de Notas</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Selecione o sistema" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="0-10">0 a 10</SelectItem>
+                                  <SelectItem value="0-100">0 a 100</SelectItem>
+                                  <SelectItem value="A-F">A, B, C, D, F</SelectItem>
+                                  <SelectItem value="pass-fail">Aprovado/Reprovado</SelectItem>
+                                  <SelectItem value="excellent-poor">Excelente/Bom/Regular/Ruim</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormDescription className="text-xs">Como as notas serão atribuídas</FormDescription>
                               <FormMessage />
                             </FormItem>
                           )}
@@ -667,24 +887,24 @@ const CreateClassroomForm = () => {
                 variant="outline"
                 onClick={() => navigate('/dashboard/classes')}
                 disabled={isSubmitting}
-                className="bg-white/70 backdrop-blur-sm hover:bg-white/80"
+                className="whitespace-nowrap inline-flex items-center gap-2 bg-white dark:bg-slate-900 text-foreground border-border hover:bg-slate-50 dark:hover:bg-slate-800"
               >
-                Cancelar
+                <span>Cancelar</span>
               </Button>
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white min-w-[140px] shadow-lg hover:shadow-xl transition-all duration-300"
+                className="whitespace-nowrap inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Criando...
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Criando...</span>
                   </>
                 ) : (
                   <>
-                    <GraduationCap className="mr-2 h-4 w-4" />
-                    Criar Turma
+                    <GraduationCap className="w-4 h-4" />
+                    <span>Criar Turma</span>
                   </>
                 )}
               </Button>

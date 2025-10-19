@@ -445,6 +445,36 @@ export const ClassService = {
   },
 
   /**
+   * Update class schedule (vacation, cancelled dates)
+   * @param {string} classId - Class ID
+   * @param {Object} scheduleData - Schedule update data
+   * @param {string} [scheduleData.vacation_start] - Vacation start date
+   * @param {string} [scheduleData.vacation_end] - Vacation end date
+   * @param {Array<string>} [scheduleData.cancelled_dates] - Array of cancelled dates
+   * @returns {Promise<Object>} - Updated class
+   */
+  async updateClassSchedule(classId, scheduleData) {
+    const { data, error } = await supabase
+      .from('classes')
+      .update({
+        vacation_start: scheduleData.vacation_start || null,
+        vacation_end: scheduleData.vacation_end || null,
+        cancelled_dates: scheduleData.cancelled_dates || null,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', classId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error(`Error updating class schedule ${classId}:`, error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  /**
    * Subscribe to real-time class updates
    * @param {Function} callback - Function to call when classes change
    * @returns {Function} - Function to unsubscribe

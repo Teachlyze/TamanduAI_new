@@ -21,7 +21,8 @@ const lazyLoad = (importFunction) => {
 
 // Lazy load route components
 const MeetingRoutes = lazyLoad(() => import('./meetingRoutes'));
-const WhiteboardRoutes = lazyLoad(() => import('./whiteboardRoutes'));
+// Whiteboard removido - não faz parte do sistema
+// const WhiteboardRoutes = lazyLoad(() => import('./whiteboardRoutes'));
 
 // Lazy load components for better performance
 const Dashboard = lazyLoad(() => import('../pages/DashboardHome'));
@@ -65,7 +66,6 @@ const AgendaPage = lazyLoad(() => import('../pages/AgendaPagePremium'));
 const AnalyticsPage = lazyLoad(() => import('../pages/AnalyticsPagePremium'));
 const ActivitySubmissionsPage = lazyLoad(() => import('../pages/classes/ActivitySubmissionsPage'));
 const CreateClassroomForm = lazyLoad(() => import('../components/classrooms/CreateClassroomForm'));
-const CreateClassForm = lazyLoad(() => import('../components/classes/CreateClassForm'));
 const ClassroomsPagePremium = lazyLoad(() => import('../pages/ClassroomsPagePremium'));
 const ActivitiesListPage = lazyLoad(() => import('../pages/ActivitiesListPagePremium'));
 const CreateActivityPage = lazyLoad(() => import('../pages/CreateActivityPage'));
@@ -110,7 +110,7 @@ const StudentPerformancePage = lazyLoad(() => import('../pages/student/StudentPe
 const StudentClassesPage = lazyLoad(() => import('../components/student/StudentClassesPage'));
 const StudentClassDetailsPage = lazyLoad(() => import('../components/student/StudentClassDetailsPage'));
 const StudentActivityDetailsPage = lazyLoad(() => import('../components/student/StudentActivityDetailsPage'));
-const StudentCalendarPage = lazyLoad(() => import('../components/student/StudentCalendarPage'));
+const StudentCalendarPage = lazyLoad(() => import('../components/student/StudentCalendarPageEnhanced'));
 const StudentRankingPage = lazyLoad(() => import('../components/student/StudentRankingPage'));
 const StudentDiscussionPage = lazyLoad(() => import('../components/student/StudentDiscussionPage'));
 const StudentMissionsPage = lazyLoad(() => import('../components/student/StudentMissionsPage'));
@@ -131,6 +131,7 @@ const MissionDetailPage = lazyLoad(() => import('../pages/teacher/MissionDetailP
 const QuestionBankPage = lazyLoad(() => import('../pages/teacher/QuestionBankPage'));
 const CreateQuestionPage = lazyLoad(() => import('../pages/teacher/CreateQuestionPage'));
 const AnalyticsMLPage = lazyLoad(() => import('../pages/teacher/AnalyticsMLPage'));
+const EditClassPage = lazyLoad(() => import('../pages/teacher/EditClassPage'));
 
 // Layouts
 const StudentLayout = lazyLoad(() => import('../components/student/StudentLayout'));
@@ -539,7 +540,7 @@ const AppRoutes = () => {
           path="classes/new"
           element={
             <Suspense fallback={<Loading />}>
-              <CreateClassForm />
+              <CreateClassroomForm />
             </Suspense>
           }
         />
@@ -548,6 +549,14 @@ const AppRoutes = () => {
           element={
             <Suspense fallback={<Loading />}>
               <ClassDetailsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="classes/:classId/edit"
+          element={
+            <Suspense fallback={<Loading />}>
+              <EditClassPage />
             </Suspense>
           }
         />
@@ -995,19 +1004,20 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Suspense fallback={<Loading />}>
-              <CreateClassForm />
+              <CreateClassroomForm />
             </Suspense>
           </ProtectedRoute>
         }
       />
-      <Route
+      {/* Whiteboard removido - não faz parte do sistema */}
+      {/* <Route
         path="/whiteboard/*"
         element={
           <Suspense fallback={<Loading />}>
             <WhiteboardRoutes />
           </Suspense>
         }
-      />
+      /> */}
       <Route
         path="/aluno/:studentId/historico"
         element={

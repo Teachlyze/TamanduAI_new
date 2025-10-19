@@ -23,6 +23,7 @@ import { PremiumCard, StatsCard } from '@/components/ui/PremiumCard';
 import { PremiumButton } from '@/components/ui/PremiumButton';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { EmptyState } from '@/components/ui/EmptyState';
+import UpcomingClassesCard from '@/components/dashboard/UpcomingClassesCard';
 import toast from 'react-hot-toast';
 
 const StudentDashboard = () => {
@@ -270,6 +271,15 @@ const StudentDashboard = () => {
           </motion.div>
         ))}
       </div>
+
+      {/* Próximas Aulas Online */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <UpcomingClassesCard userRole="student" />
+      </motion.div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
