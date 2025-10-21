@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Settings, Type, Minimize2, Maximize2, Sun, Moon } from 'lucide-react';
 
-const AccessibilityMenu = () => {
+  const AccessibilityMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [settings, setSettings] = useState(() => {
     // Carrega as configurações salvas no localStorage
@@ -69,7 +69,9 @@ const AccessibilityMenu = () => {
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen]);
@@ -94,6 +96,8 @@ const AccessibilityMenu = () => {
       lineHeight: height
     }));
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="fixed bottom-4 right-4 z-50" ref={menuRef}>

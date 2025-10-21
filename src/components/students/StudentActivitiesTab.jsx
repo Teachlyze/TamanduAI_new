@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -22,7 +22,7 @@ import {
   Download
 } from 'lucide-react';
 
-const formatDate = (dateString) => {
+  const formatDate = (dateString) => {
   if (!dateString) return '';
   return format(new Date(dateString), "dd/MM/yyyy", { locale: ptBR });
 };
@@ -71,28 +71,36 @@ export const StudentActivitiesTab = ({
   const getStatusBadge = (status) => {
     switch (status) {
       case 'completed':
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <Badge variant="success" className="gap-1">
             <CheckCircle2 className="h-3 w-3" />
             Concluída
           </Badge>
         );
       case 'late':
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <Badge variant="destructive" className="gap-1">
             <XCircle className="h-3 w-3" />
             Atrasada
           </Badge>
         );
       default:
-        return (
-          <Badge variant="outline" className="gap-1">
+        if (loading) return <LoadingScreen />;
+
+  return (
+          <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border gap-1">
             <Clock className="h-3 w-3" />
             Pendente
           </Badge>
         );
     }
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <Card>
@@ -105,7 +113,7 @@ export const StudentActivitiesTab = ({
             </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button variant="outline" size="sm" className="bg-white dark:bg-slate-900 text-foreground border-border gap-2">
               <Download className="h-4 w-4" />
               Exportar
             </Button>

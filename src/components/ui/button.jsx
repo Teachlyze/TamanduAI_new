@@ -1,6 +1,5 @@
 import { cn } from '@/lib/utils';
 import { Slot } from '@radix-ui/react-slot';
-import React, { useMemo, useCallback } from 'react';
 
 // Variant classes using neutral Tailwind tokens
 const variantClasses = {

@@ -1,8 +1,9 @@
-import React, { Suspense, lazy, useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Loader2 } from 'lucide-react';
 
 // Sistema avançado de lazy loading com diferentes estratégias
-export const createLazyComponent = (importFn, options = {}) => {
+export const [loading, setLoading] = useState(true);
+  const createLazyComponent = (importFn, options = {}) => {
   const {
     strategy = 'intersection', // 'intersection' | 'interaction' | 'timeout'
     threshold = 0.1,
@@ -37,7 +38,9 @@ export const createLazyComponent = (importFn, options = {}) => {
         );
 
         observer.observe(elementRef.current);
-        return () => observer.disconnect();
+        if (loading) return <LoadingScreen />;
+
+  return () => observer.disconnect();
       }
     }, [strategy, threshold, rootMargin]);
 
@@ -46,7 +49,9 @@ export const createLazyComponent = (importFn, options = {}) => {
         const timer = setTimeout(() => {
           setIsVisible(true);
         }, timeout);
-        return () => clearTimeout(timer);
+        if (loading) return <LoadingScreen />;
+
+  return () => clearTimeout(timer);
       }
     }, [strategy, timeout]);
 
@@ -66,7 +71,9 @@ export const createLazyComponent = (importFn, options = {}) => {
 
     // Renderizar baseado no estado
     if (hasError) {
-      return (
+      if (loading) return <LoadingScreen />;
+
+  return (
         <div className="flex items-center justify-center p-8 text-red-500">
           <div className="text-center">
             <svg className="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
@@ -79,7 +86,9 @@ export const createLazyComponent = (importFn, options = {}) => {
     }
 
     if (!isVisible || !component) {
-      return (
+      if (loading) return <LoadingScreen />;
+
+  return (
         <div ref={elementRef} className="flex items-center justify-center p-8">
           {loadingComponent || (
             <div className="text-center">
@@ -97,6 +106,8 @@ export const createLazyComponent = (importFn, options = {}) => {
   };
 
   // Wrapper com Suspense para casos onde o componente já foi carregado
+  if (loading) return <LoadingScreen />;
+
   return (props) => (
     <Suspense fallback={fallback || <div className="animate-pulse bg-gray-200 rounded-lg h-32" />}>
       <LazyWrapper {...props} />
@@ -118,11 +129,11 @@ export const LazyComponents = {
     { strategy: 'interaction' }
   ),
 
-  // Whiteboard/Quadro branco
-  Whiteboard: createLazyComponent(
-    () => import('@/components/Whiteboard/WhiteboardCanvas'),
-    { strategy: 'intersection', threshold: 0.1 }
-  ),
+  // Whiteboard/Quadro branco (DESATIVADO - Agora SDK removido)
+  // Whiteboard: createLazyComponent(
+  //   () => import('@/components/Whiteboard/WhiteboardCanvas'),
+  //   { strategy: 'intersection', threshold: 0.1 }
+  // ),
 
   // Video player
   VideoPlayer: createLazyComponent(
@@ -276,7 +287,9 @@ export const useSmartPreloading = () => {
     }
 
     window.addEventListener('popstate', handleRouteChange);
-    return () => window.removeEventListener('popstate', handleRouteChange);
+    if (loading) return <LoadingScreen />;
+
+  return () => window.removeEventListener('popstate', handleRouteChange);
   }, [preloadedComponents]);
 
   return {
@@ -314,6 +327,8 @@ export const LazyComponentWrapper = ({
       console.log(`📊 Componente ${componentName} carregado em ${loadDuration}ms`);
     }
   }, [isLoaded, loadTime, componentName]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div data-component={componentName}>

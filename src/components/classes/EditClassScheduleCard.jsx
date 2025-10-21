@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,7 +10,7 @@ import { toast } from '@/components/ui/use-toast';
 import { Calendar, X, Plus, Save, AlertTriangle, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const EditClassScheduleCard = ({ classId, initialData }) => {
+  const EditClassScheduleCard = ({ classId, initialData }) => {
   const [vacationStart, setVacationStart] = useState('');
   const [vacationEnd, setVacationEnd] = useState('');
   const [cancelledDates, setCancelledDates] = useState([]);
@@ -122,11 +122,13 @@ const EditClassScheduleCard = ({ classId, initialData }) => {
     return days;
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <Card className="bg-white/80 backdrop-blur-sm shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg flex items-center justify-center text-white hover:opacity-90">
             <Calendar className="w-4 h-4 text-white" />
           </div>
           Cancelamentos e Férias
@@ -217,7 +219,7 @@ const EditClassScheduleCard = ({ classId, initialData }) => {
             <Button
               onClick={addCancelledDate}
               disabled={!selectedDate}
-              className="whitespace-nowrap inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+              className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit bg-blue-600 hover:bg-blue-700 text-white"
             >
               <Plus className="w-4 h-4" />
               <span>Adicionar</span>
@@ -248,7 +250,7 @@ const EditClassScheduleCard = ({ classId, initialData }) => {
                     >
                       <Badge
                         variant="secondary"
-                        className="whitespace-nowrap inline-flex items-center gap-2 px-3 py-1 hover:bg-red-100 dark:hover:bg-red-950 transition-colors"
+                        className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-3 py-1 hover:bg-red-100 dark:hover:bg-red-950 transition-colors"
                       >
                         <span>{formatDate(date)}</span>
                         <X
@@ -279,7 +281,7 @@ const EditClassScheduleCard = ({ classId, initialData }) => {
           <Button
             onClick={handleSave}
             disabled={!hasChanges || isSubmitting}
-            className="w-full whitespace-nowrap inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white disabled:opacity-50"
+            className="w-full whitespace-nowrap inline-flex items-center gap-2 min-w-fit bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white disabled:opacity-50 hover:opacity-90"
           >
             {isSubmitting ? (
               <>

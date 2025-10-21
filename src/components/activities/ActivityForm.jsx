@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { PremiumCard } from '@/components/ui/PremiumCard'
+import { PremiumButton } from '@/components/ui/PremiumButton';
 import { useParams } from 'react-router-dom';
 import { submitActivity } from '@/services/apiSupabase';
 import { useAuth } from "@/hooks/useAuth";
@@ -85,6 +86,7 @@ export default function ActivityForm({ activity }) {
 
   return (
     <div className="container mx-auto p-4">
+      <PremiumCard variant="elevated">
       <h1 className="text-3xl font-bold mb-4">{activity.title}</h1>
       <p className="text-gray-600 mb-6">{activity.description || 'Sem descrição'}</p>
 
@@ -181,6 +183,7 @@ export default function ActivityForm({ activity }) {
           {loading ? 'Enviando...' : 'Enviar Atividade'}
         </button>
       </form>
+      </PremiumCard>
     </div>
   );
 }

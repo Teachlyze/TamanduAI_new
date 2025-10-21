@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import { Send, MessageSquare, Users, Calendar } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import schoolService from '@/services/schoolService';
@@ -191,7 +190,7 @@ const SchoolCommsPage = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-8 rounded-2xl text-white">
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-8 rounded-2xl t text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fitext-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur">
@@ -345,7 +344,7 @@ const SchoolCommsPage = () => {
             <PremiumButton
               type="submit"
               disabled={sending || !title.trim() || !body.trim()}
-              className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 t text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fitext-white"
               loading={sending}
             >
               {sending ? 'Enviando...' : 'Enviar Comunicado'}

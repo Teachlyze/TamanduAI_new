@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
 
-const SettingsPage = () => {
+  const SettingsPage = () => {
   const [settings, setSettings] = useState({
     notifications: {
       email: true,
@@ -133,7 +133,9 @@ const SettingsPage = () => {
 
   // Show loading state while settings are being loaded
   if (isLoading) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="w-full space-y-8">
         <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-3xl p-8 text-white">
           <div className="animate-pulse">
@@ -150,6 +152,8 @@ const SettingsPage = () => {
       </div>
     );
   }
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="w-full space-y-8">
@@ -195,7 +199,7 @@ const SettingsPage = () => {
               value="account"
               className="flex items-center gap-3 rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-sm transition-all py-3"
             >
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white hover:opacity-90">
                 <User className="w-4 h-4 text-white" />
               </div>
               <span className="font-medium">Conta</span>
@@ -204,7 +208,7 @@ const SettingsPage = () => {
               value="accessibility"
               className="flex items-center gap-3 rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-sm transition-all py-3"
             >
-              <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center text-white hover:opacity-90">
                 <Accessibility className="w-4 h-4 text-white" />
               </div>
               <span className="font-medium">Acessibilidade</span>
@@ -213,7 +217,7 @@ const SettingsPage = () => {
               value="notifications"
               className="flex items-center gap-3 rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-sm transition-all py-3"
             >
-              <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center text-white hover:opacity-90">
                 <Bell className="w-4 h-4 text-white" />
               </div>
               <span className="font-medium">Notificações</span>
@@ -222,7 +226,7 @@ const SettingsPage = () => {
               value="privacy"
               className="flex items-center gap-3 rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-sm transition-all py-3"
             >
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center text-white hover:opacity-90">
                 <Shield className="w-4 h-4 text-white" />
               </div>
               <span className="font-medium">Privacidade</span>
@@ -238,7 +242,7 @@ const SettingsPage = () => {
               <Card className="rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center text-white hover:opacity-90">
                       <User className="w-5 h-5 text-white" />
                     </div>
                     Informações da Conta
@@ -337,7 +341,7 @@ const SettingsPage = () => {
                 <CardFooter>
                   <Button 
                     onClick={() => handleSaveSettings('account')}
-                    className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 rounded-xl"
+                    className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 rounded-xl text-white hover:opacity-90"
                   >
                     <CheckCircle2 className="w-4 h-4 mr-2" />
                     Salvar alterações
@@ -351,7 +355,7 @@ const SettingsPage = () => {
             <Card className="rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                  <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center text-white hover:opacity-90">
                     <Bell className="w-5 h-5 text-white" />
                   </div>
                   Preferências de Notificação
@@ -454,7 +458,7 @@ const SettingsPage = () => {
               <CardFooter>
                 <Button 
                   onClick={() => handleSaveSettings('notifications')}
-                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 rounded-xl"
+                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 rounded-xl text-white hover:opacity-90"
                 >
                   <CheckCircle2 className="w-4 h-4 mr-2" />
                   Salvar preferências
@@ -468,7 +472,7 @@ const SettingsPage = () => {
               <Card className="rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white hover:opacity-90">
                       <Shield className="w-5 h-5 text-white" />
                     </div>
                     Privacidade e Dados
@@ -560,7 +564,7 @@ const SettingsPage = () => {
               <Card className="rounded-2xl border border-blue-200 dark:border-blue-800 shadow-lg bg-blue-50/50 dark:bg-blue-900/10">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-3 text-blue-900 dark:text-blue-100">
-                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center text-white hover:opacity-90">
                       <Download className="w-5 h-5 text-white" />
                     </div>
                     Exportar Dados Pessoais
@@ -576,7 +580,7 @@ const SettingsPage = () => {
                   <Button 
                     variant="outline" 
                     onClick={handleExportData}
-                    className="border-blue-300 text-blue-700 hover:bg-blue-100 dark:border-blue-600 dark:text-blue-300 dark:hover:bg-muted/30 rounded-xl"
+                    className="bg-white dark:bg-slate-900 text-foreground border-border border-blue-300 text-blue-700 hover:bg-blue-100 dark:border-blue-600 dark:text-blue-300 dark:hover:bg-muted/30 rounded-xl"
                   >
                     <Download className="w-4 h-4 mr-2" />
                     Solicitar exportação
@@ -588,7 +592,7 @@ const SettingsPage = () => {
               <Card className="rounded-2xl border border-red-200 dark:border-red-800 shadow-lg bg-red-50/50 dark:bg-red-900/10">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-3 text-red-900 dark:text-red-100">
-                    <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl flex items-center justify-center text-white hover:opacity-90">
                       <AlertTriangle className="w-5 h-5 text-white" />
                     </div>
                     Zona de Perigo

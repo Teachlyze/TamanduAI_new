@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -25,6 +24,7 @@ import toast from 'react-hot-toast';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/hooks/useAuth';
 import ClassInviteService from '@/services/classInviteService';
+import { getNextClassDate, formatNextClass } from '@/utils/classScheduleUtils';
 
 const ClassroomsPagePremium = () => {
   const navigate = useNavigate();
@@ -95,10 +95,16 @@ const ClassroomsPagePremium = () => {
               .eq('class_id', cls.id)
           ]);
 
+          // Calculate next class based on weekly_schedule and dates
+          const nextClassDate = getNextClassDate(cls);
+          const nextClassText = formatNextClass(nextClassDate);
+
           return {
             ...cls,
             students: studentsResult.count || 0,
-            activities: activitiesResult.count || 0
+            activities: activitiesResult.count || 0,
+            nextClass: nextClassText,
+            nextClassDate: nextClassDate
           };
         })
       );

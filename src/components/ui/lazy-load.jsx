@@ -1,9 +1,10 @@
-import React, { Suspense, lazy, useMemo } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
 /**
  * Enhanced Lazy Loading wrapper with intelligent preloading and error boundaries
  */
-export const LazyWrapper = ({
+export const [loading, setLoading] = useState(true);
+  const LazyWrapper = ({
   children,
   fallback = null,
   errorFallback = null,
@@ -31,6 +32,8 @@ export const LazyWrapper = ({
       </div>
     </div>
   ), []);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <Suspense
@@ -151,12 +154,16 @@ export const IntersectionLazyLoad = ({
       observer.observe(ref.current);
     }
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       if (ref.current) {
         observer.unobserve(ref.current);
       }
     };
   }, [rootMargin, threshold, hasLoaded]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div ref={ref} {...props}>

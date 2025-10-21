@@ -31,7 +31,7 @@ export class PerformanceOptimizer {
     // Monitorar requisições de rede
     this.startNetworkMonitoring();
 
-    console.log('🚀 Performance monitoring started');
+    // console.log('🚀 Performance monitoring started');
   }
 
   /**
@@ -39,7 +39,7 @@ export class PerformanceOptimizer {
    */
   stopMonitoring() {
     this.isEnabled = false;
-    console.log('⏹️ Performance monitoring stopped');
+    // console.log('⏹️ Performance monitoring stopped');
   }
 
   /**
@@ -100,7 +100,7 @@ export class PerformanceOptimizer {
   forceGarbageCollection() {
     if (window.gc) {
       window.gc();
-      console.log('🗑️ Forced garbage collection');
+      // console.log('🗑️ Forced garbage collection');
     }
   }
 
@@ -111,7 +111,7 @@ export class PerformanceOptimizer {
     // Limpar caches de componentes React não utilizados
     if (window.React && window.React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED) {
       // Esta é uma abordagem simplificada - em produção usar React DevTools
-      console.log('🧹 Cleared unused component caches');
+      // console.log('🧹 Cleared unused component caches');
     }
 
     // Limpar caches de service workers
@@ -224,7 +224,7 @@ export class PerformanceOptimizer {
     if (rule) {
       try {
         rule.action(data);
-        console.log(`⚡ Optimization triggered: ${type}`, data);
+        // console.log(`⚡ Optimization triggered: ${type}`, data);
       } catch (error) {
         console.error(`Failed to execute optimization ${type}:`, error);
       }
@@ -281,7 +281,7 @@ export class PerformanceOptimizer {
    */
   enableRequestBatching() {
     // Implementar lógica de batching
-    console.log('📦 Request batching enabled');
+    // console.log('📦 Request batching enabled');
   }
 
   /**
@@ -289,7 +289,7 @@ export class PerformanceOptimizer {
    */
   implementRequestCaching(url) {
     // Implementar cache específico para URLs lentas
-    console.log(`💾 Request caching implemented for: ${url}`);
+    // console.log(`💾 Request caching implemented for: ${url}`);
   }
 
   /**
@@ -299,7 +299,7 @@ export class PerformanceOptimizer {
     // Reduzir polling de notificações
     // Desabilitar animações não essenciais
     // Reduzir qualidade de gráficos
-    console.log('⚖️ Non-critical features deprioritized');
+    // console.log('⚖️ Non-critical features deprioritized');
   }
 
   /**

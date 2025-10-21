@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import CalendarService from '@/services/calendarService';
 import {
@@ -49,8 +48,8 @@ export default function AgendaPagePremium() {
   useEffect(() => {
     if (!user) return;
     const unsubscribe = CalendarService.subscribeUserCalendar(user.id, () => {
-      loadEventsForMonth(selectedDate);
-    });
+      loadEventsForMonth(selectedDate, []); // TODO: Add dependencies
+    }, []); // TODO: Add dependencies
     return () => {
       try { unsubscribe?.(); } catch (e) { /* noop */ }
     };

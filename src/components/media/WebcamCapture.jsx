@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge';
 /**
  * Webcam capture component for taking photos and recording video
  */
-export const WebcamCapture = ({
+export const [loading, setLoading] = useState(true);
+  const WebcamCapture = ({
   onCapture,
   onRecord,
   mode = 'photo', // 'photo' | 'video'
@@ -114,10 +115,14 @@ export const WebcamCapture = ({
 
   // Cleanup on unmount
   useEffect(() => {
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       stopCamera();
     };
   }, [stopCamera]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <Card className={`webcam-capture ${className}`} {...props}>

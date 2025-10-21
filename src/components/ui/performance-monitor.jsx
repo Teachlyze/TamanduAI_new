@@ -1,11 +1,12 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Activity, Zap, AlertTriangle, CheckCircle, TrendingUp } from 'lucide-react';
 
 /**
  * Performance Monitor Component
  * Monitors and displays real-time performance metrics
  */
-export const PerformanceMonitor = ({ enabled = false, position = 'bottom-right' }) => {
+export const [loading, setLoading] = useState(true);
+  const PerformanceMonitor = ({ enabled = false, position = 'bottom-right' }) => {
   const [metrics, setMetrics] = useState({
     fps: 0,
     memoryUsage: 0,
@@ -68,7 +69,9 @@ export const PerformanceMonitor = ({ enabled = false, position = 'bottom-right' 
     // Update memory usage periodically
     const memoryInterval = setInterval(updateMemoryUsage, 5000);
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       cancelAnimationFrame(fpsInterval);
       clearInterval(memoryInterval);
       window.fetch = originalFetch;
@@ -87,7 +90,9 @@ export const PerformanceMonitor = ({ enabled = false, position = 'bottom-right' 
   }, [position]);
 
   if (!enabled || !isVisible) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <button
         onClick={() => setIsVisible(true)}
         className={`fixed ${positionStyles} z-50 p-2 bg-primary text-primary-foreground rounded-full shadow-lg hover:bg-primary/90 transition-colors`}
@@ -109,6 +114,8 @@ export const PerformanceMonitor = ({ enabled = false, position = 'bottom-right' 
     if (value >= thresholds.medium) return <TrendingUp className="w-4 h-4" />;
     return <CheckCircle className="w-4 h-4" />;
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className={`fixed ${positionStyles} z-50 bg-background border border-border rounded-lg shadow-lg p-4 min-w-48`}>
@@ -195,7 +202,9 @@ export const useWebVitals = (enabled = false) => {
       console.warn('Performance Observer not supported:', error);
     }
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       observer.disconnect();
     };
   }, [enabled]);
@@ -240,7 +249,9 @@ export const useNetworkStatus = () => {
       updateConnectionStatus();
     }
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       window.removeEventListener('online', updateOnlineStatus);
       window.removeEventListener('offline', updateOnlineStatus);
 

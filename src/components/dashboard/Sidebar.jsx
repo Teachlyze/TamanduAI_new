@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -17,7 +17,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from '@/lib/supabaseClient';
 
-const Sidebar = ({ open, setOpen }) => {
+  const Sidebar = ({ open, setOpen }) => {
   const location = useLocation();
   const { user } = useAuth();
   const [role, setRole] = useState(null); // Null até carregar
@@ -51,7 +51,9 @@ const Sidebar = ({ open, setOpen }) => {
         if (mounted) setRole('student'); // Sempre defaultar para student (mais seguro)
       }
     })();
-    return () => { mounted = false; };
+    if (loading) return <LoadingScreen />;
+
+  return () => { mounted = false; };
   }, [user?.id, user?.user_metadata?.role]);
 
   const teacherNav = [
@@ -96,6 +98,8 @@ const Sidebar = ({ open, setOpen }) => {
 
   const bottomItems = getBottomItems();
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <>
       {open && (
@@ -111,7 +115,7 @@ const Sidebar = ({ open, setOpen }) => {
           transitionTimingFunction: 'cubic-bezier(0.19, 1, 0.22, 1)'
         }}
       >
-        <div className="p-4 flex items-center justify-between border-b border-border/50 bg-gradient-to-r from-primary/5 to-purple-500/5">
+        <div className="p-4 flex items-center justify-between border-b border-border/50 bg-gradient-to-r from-primary/5 to-purple-500/5 text-white hover:opacity-90">
           <div className="flex items-center">
             <div className="w-8 h-8 bg-gradient-to-br from-primary to-purple-600 rounded-xl flex items-center justify-center mr-2 shadow-lg">
               <Zap className="w-5 h-5 text-white" />

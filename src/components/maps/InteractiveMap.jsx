@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,7 +19,8 @@ import { Input } from '@/components/ui/input';
  * @param {string} props.height - Map height
  * @param {string} props.className - Additional CSS classes
  */
-export const InteractiveMap = ({
+export const [loading, setLoading] = useState(true);
+  const InteractiveMap = ({
   center = [-23.5505, -46.6333], // São Paulo, Brazil
   zoom = 13,
   markers = [],
@@ -127,7 +128,9 @@ export const InteractiveMap = ({
       setIsLoading(false);
     }
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       // Cleanup map instance
       if (mapInstanceRef.current && provider === 'google') {
         // Google Maps cleanup would go here
@@ -248,6 +251,8 @@ export const InteractiveMap = ({
 
     onMapClick?.(coords);
   }, [provider, readOnly, onMapClick]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <Card className={`interactive-map ${className}`} {...props}>

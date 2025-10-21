@@ -1,10 +1,10 @@
-import React from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen' from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { SidebarPremium, HeaderPremium } from '@/components/ui';
 import { Toaster } from '@/components/ui/toaster';
 import { useAuth } from '@/hooks/useAuth';
 
-const Dashboard = () => {
+  const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -16,9 +16,10 @@ const Dashboard = () => {
   }, [location.pathname]);
 
   if (!user) {
-    navigate('/login');
     return null;
   }
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="flex h-screen bg-background">

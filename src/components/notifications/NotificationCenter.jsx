@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, Check, Trash2, X, AlertCircle, BookOpen, Users, Calendar } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';

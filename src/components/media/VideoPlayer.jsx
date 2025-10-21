@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
@@ -20,7 +20,8 @@ import { Slider } from '@/components/ui/slider';
  * @param {Function} props.onTimeUpdate - Time update handler
  * @param {Function} props.onLoadedData - Loaded data handler
  */
-export const VideoPlayer = ({
+export const [loading, setLoading] = useState(true);
+  const VideoPlayer = ({
   src,
   poster,
   autoPlay = false,
@@ -146,7 +147,9 @@ export const VideoPlayer = ({
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
     document.addEventListener('msfullscreenchange', handleFullscreenChange);
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
       document.removeEventListener('msfullscreenchange', handleFullscreenChange);
@@ -195,7 +198,9 @@ export const VideoPlayer = ({
     video.addEventListener('ended', handleEnded);
     video.addEventListener('error', handleError);
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       video.removeEventListener('loadeddata', handleLoadedData);
       video.removeEventListener('timeupdate', handleTimeUpdate);
       video.removeEventListener('play', handlePlay);
@@ -231,7 +236,9 @@ export const VideoPlayer = ({
 
     resetTimeout();
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       clearTimeout(timeout);
       if (containerRef.current) {
         containerRef.current.removeEventListener('mousemove', resetTimeout);
@@ -240,7 +247,9 @@ export const VideoPlayer = ({
   }, [controls, isPlaying]);
 
   if (!src) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <Card className={`video-player ${className}`}>
         <CardContent className="flex items-center justify-center h-64">
           <p className="text-muted-foreground">Nenhum vídeo fornecido</p>
@@ -248,6 +257,8 @@ export const VideoPlayer = ({
       </Card>
     );
   }
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <Card className={`video-player ${className}`} ref={containerRef} {...props}>

@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
 import SchoolSidebar from '@/components/school/SchoolSidebar';

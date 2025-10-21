@@ -31,28 +31,67 @@ export default function useClassInvites(classId) {
     }
   }, [classId, toast]);
 
-  const createInvite = useCallback(async (options = {}) => {
+  const createInvite = useCallback(async (options = {}, retryCount = 0) => {
     if (!classId) return null;
     
     setIsLoading(true);
     setError(null);
     
+    const MAX_RETRIES = 3;
+    const TIMEOUT_MS = 10000; // 10 segundos
+    
     try {
-      const invite = await ClassInviteService.createInvite(classId, options);
+      console.log(`[useClassInvites] Tentativa ${retryCount + 1}/${MAX_RETRIES} de criar convite`);
+      
+      // Promise com timeout
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('TIMEOUT')), TIMEOUT_MS)
+      );
+      
+      const createPromise = ClassInviteService.createInvite(classId, options);
+      
+      const invite = await Promise.race([createPromise, timeoutPromise]);
+      
+      console.log('[useClassInvites] Convite criado com sucesso');
       await fetchInvites();
+      
       toast({
         title: 'Link de convite criado',
         description: 'O link foi gerado com sucesso!',
       });
+      
       return invite;
     } catch (err) {
-      console.error('Error creating invite:', err);
+      console.error('[useClassInvites] Erro ao criar convite:', err);
+      
+      // Se for timeout e ainda tem retries, tentar novamente
+      if (err.message === 'TIMEOUT' && retryCount < MAX_RETRIES - 1) {
+        console.log(`[useClassInvites] Timeout detectado. Tentando novamente... (${retryCount + 2}/${MAX_RETRIES})`);
+        toast({
+          title: 'Operação lenta',
+          description: `Tentativa ${retryCount + 1} de ${MAX_RETRIES}. Aguarde...`,
+        });
+        // Retry recursivo
+        return createInvite(options, retryCount + 1);
+      }
+      
+      // Erro final
       setError(err.message);
+      
+      let errorMessage = 'Não foi possível criar o link de convite.';
+      if (err.message === 'TIMEOUT') {
+        errorMessage = `A operação demorou muito (${MAX_RETRIES} tentativas). Tente novamente em alguns instantes.`;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
       toast({
         variant: 'destructive',
         title: 'Erro ao criar convite',
-        description: err.message || 'Não foi possível criar o link de convite.',
+        description: errorMessage,
+        duration: 5000,
       });
+      
       throw err;
     } finally {
       setIsLoading(false);

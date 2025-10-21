@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -236,7 +235,7 @@ const SchoolClassesPage = () => {
                         {classItem.subject}
                       </Badge>
                       {classItem.schedule && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border text-xs">
                           <Calendar className="w-3 h-3 mr-1" />
                           {classItem.schedule}
                         </Badge>

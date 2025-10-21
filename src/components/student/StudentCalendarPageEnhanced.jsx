@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -185,7 +184,7 @@ const StudentCalendarPageEnhanced = () => {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-3xl p-8 text-white shadow-2xl"
+          className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-3xl p-8 text-white shadow-2xl hover:opacity-90"
         >
           <div className="relative z-10">
             <div className="flex items-center justify-between">
@@ -200,7 +199,7 @@ const StudentCalendarPageEnhanced = () => {
               </div>
               <Button
                 onClick={goToToday}
-                className="whitespace-nowrap inline-flex items-center gap-2 bg-white text-blue-600 hover:bg-white/90 shadow-lg"
+                className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit bg-white text-blue-600 hover:bg-white/90 shadow-lg"
               >
                 <Clock className="w-4 h-4" />
                 <span>Hoje</span>
@@ -219,7 +218,7 @@ const StudentCalendarPageEnhanced = () => {
                 variant="outline"
                 size="icon"
                 onClick={() => changeDate(-1)}
-                className="whitespace-nowrap inline-flex items-center gap-2 bg-white dark:bg-slate-900"
+                className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit bg-white dark:bg-slate-900"
               >
                 <ChevronLeft className="w-4 h-4" />
               </Button>
@@ -237,7 +236,7 @@ const StudentCalendarPageEnhanced = () => {
                 variant="outline"
                 size="icon"
                 onClick={() => changeDate(1)}
-                className="whitespace-nowrap inline-flex items-center gap-2 bg-white dark:bg-slate-900"
+                className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit bg-white dark:bg-slate-900"
               >
                 <ChevronRight className="w-4 h-4" />
               </Button>
@@ -352,7 +351,7 @@ const StudentCalendarPageEnhanced = () => {
                               <CalendarIcon className="w-4 h-4 text-muted-foreground" />
                               <div className="flex gap-1">
                                 {cls.meeting_days?.map((day) => (
-                                  <Badge key={day} variant="outline" className="text-xs">
+                                  <Badge key={day} variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border text-xs">
                                     {getDayLabel(day)}
                                   </Badge>
                                 ))}

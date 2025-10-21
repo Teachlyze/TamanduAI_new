@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabaseClient';
 
-const NOTIFICATION_TYPES = {
+  const NOTIFICATION_TYPES = {
   INFO: 'info',
   SUCCESS: 'success',
   WARNING: 'warning',
@@ -89,7 +89,9 @@ const Notifications = () => {
     
     // Set up polling to check for new notifications
     const interval = setInterval(fetchNotifications, 5 * 60 * 1000); // Check every 5 minutes
-    return () => clearInterval(interval);
+    if (loading) return <LoadingScreen />;
+
+  return () => clearInterval(interval);
   }, [fetchNotifications]);
 
   const markAsRead = useCallback((id) => {
@@ -157,6 +159,8 @@ const Notifications = () => {
         break;
     }
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <DropdownMenu onOpenChange={setIsOpen}>

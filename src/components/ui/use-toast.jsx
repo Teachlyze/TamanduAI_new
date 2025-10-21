@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 
-const TOAST_LIMIT = 1
+  const TOAST_LIMIT = 1
 
 let count = 0
 function generateId() {
@@ -28,7 +28,9 @@ const toastStore = {
   
   subscribe: (listener) => {
     toastStore.listeners.push(listener)
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       toastStore.listeners = toastStore.listeners.filter(l => l !== listener)
     }
   }
@@ -91,7 +93,9 @@ export function useToast() {
       timeouts.push(timeout)
     })
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       timeouts.forEach((timeout) => clearTimeout(timeout))
     }
   }, [state.toasts])

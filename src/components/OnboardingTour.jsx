@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight, ArrowLeft, Check } from 'lucide-react';
 import { PremiumButton } from './ui/PremiumButton';
@@ -7,7 +7,8 @@ import { PremiumButton } from './ui/PremiumButton';
  * Onboarding Tour Component
  * Guided tour for first-time users
  */
-export const OnboardingTour = ({ steps = [], onComplete, onSkip }) => {
+export const [loading, setLoading] = useState(true);
+  const OnboardingTour = ({ steps = [], onComplete, onSkip }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isActive, setIsActive] = useState(false);
 
@@ -49,6 +50,8 @@ export const OnboardingTour = ({ steps = [], onComplete, onSkip }) => {
 
   const currentStepData = steps[currentStep];
   const isLastStep = currentStep === steps.length - 1;
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <AnimatePresence>

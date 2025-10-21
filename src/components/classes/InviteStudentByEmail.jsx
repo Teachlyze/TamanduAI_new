@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Send, X, CheckCircle, AlertCircle, Loader2, UserPlus } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from '@/components/ui/use-toast';
 import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
 
-const InviteStudentByEmail = ({ classId, className }) => {
+  const InviteStudentByEmail = ({ classId, className }) => {
   const { user } = useAuth();
   const [email, setEmail] = useState('');
   const [isInviting, setIsInviting] = useState(false);
@@ -240,6 +240,8 @@ const InviteStudentByEmail = ({ classId, className }) => {
       });
     }
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <Card>

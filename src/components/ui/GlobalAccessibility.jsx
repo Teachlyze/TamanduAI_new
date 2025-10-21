@@ -8,35 +8,35 @@ export const GlobalAccessibility = () => {
         const settings = localStorage.getItem('accessibility-settings');
         if (settings) {
           const parsed = JSON.parse(settings);
-          console.log('Aplicando configurações globais:', parsed);
+          // console.log('Aplicando configurações globais:', parsed);
 
           // Aplicar configurações no documentElement
           const root = document.documentElement;
 
           if (parsed.fontSize && parsed.fontSize !== 16) {
             root.style.fontSize = `${parsed.fontSize}px`;
-            console.log('GlobalAccessibility: Aplicado fontSize:', parsed.fontSize);
+            // console.log('GlobalAccessibility: Aplicado fontSize:', parsed.fontSize);
           } else {
             root.style.fontSize = '16px';
           }
 
           if (parsed.lineSpacing && parsed.lineSpacing !== 1.5) {
             root.style.lineHeight = parsed.lineSpacing.toString();
-            console.log('GlobalAccessibility: Aplicado lineHeight:', parsed.lineSpacing);
+            // console.log('GlobalAccessibility: Aplicado lineHeight:', parsed.lineSpacing);
           } else {
             root.style.lineHeight = '1.5';
           }
 
           if (parsed.letterSpacing !== undefined && parsed.letterSpacing !== 0) {
             root.style.letterSpacing = `${parsed.letterSpacing}px`;
-            console.log('GlobalAccessibility: Aplicado letterSpacing:', parsed.letterSpacing);
+            // console.log('GlobalAccessibility: Aplicado letterSpacing:', parsed.letterSpacing);
           } else {
             root.style.letterSpacing = '0px';
           }
 
           if (parsed.highContrast) {
             root.classList.add('high-contrast');
-            console.log('GlobalAccessibility: Aplicado highContrast: true');
+            // console.log('GlobalAccessibility: Aplicado highContrast: true');
           } else {
             root.classList.remove('high-contrast');
           }
@@ -85,7 +85,7 @@ export const GlobalAccessibility = () => {
             }
           });
 
-          console.log('GlobalAccessibility: Configurações aplicadas com sucesso');
+          // console.log('GlobalAccessibility: Configurações aplicadas com sucesso');
         }
       } catch (error) {
         console.warn('GlobalAccessibility: Erro ao aplicar configurações:', error);
@@ -113,3 +113,5 @@ export const GlobalAccessibility = () => {
 
   return null;
 };
+
+export default GlobalAccessibility;

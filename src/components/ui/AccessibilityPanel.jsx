@@ -1,5 +1,4 @@
 // src/components/ui/AccessibilityPanel.jsx
-import React, { useState } from 'react';
 import { useAccessibilityAdvanced } from '@/hooks/useAccessibilityAdvanced.jsx';
 import { useAccessibility } from '@/hooks/useAccessibility';
 import { useWCAGValidator } from '@/hooks/useWCAGValidator';

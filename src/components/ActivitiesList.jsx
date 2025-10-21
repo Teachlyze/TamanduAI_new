@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getClassActivities } from '@/services/apiSupabase';
 
-const ActivitiesList = ({ classId }) => {
+  const ActivitiesList = ({ classId }) => {
   const [activities, setActivities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -62,16 +62,21 @@ const ActivitiesList = ({ classId }) => {
   };
 
   if (isLoading) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></PremiumCard>
+    </div>
       </div>
     );
   }
 
   // Error handling for denied access (RLS)
   if (error && (typeof error === 'string' ? error.toLowerCase().includes('permission') || error.toLowerCase().includes('recursion') : false)) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="flex flex-col justify-center items-center min-h-screen bg-gray-50">
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative max-w-md w-full text-center" role="alert">
           <strong className="font-bold">Acesso negado:</strong>
@@ -82,7 +87,9 @@ const ActivitiesList = ({ classId }) => {
   }
 
   if (error) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
         <p className="font-bold">Erro</p>
         <p>{error}</p>
@@ -90,8 +97,11 @@ const ActivitiesList = ({ classId }) => {
     );
   }
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className="container mx-auto p-4">
+      <PremiumCard variant="elevated">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Atividades</h1>
         <Link

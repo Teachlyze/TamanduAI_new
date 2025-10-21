@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'react-router-dom';
 import {
@@ -128,7 +127,7 @@ export default function AnalyticsMLPage() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-8 shadow-xl"
+        className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-8 shadow-xl hover:opacity-90"
       >
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between gap-4 mb-4">
@@ -261,7 +260,7 @@ export default function AnalyticsMLPage() {
                           <p className="text-xs text-gray-500 mb-1">Fontes de XP (top 3)</p>
                           <div className="flex flex-wrap gap-2">
                             {Object.entries(classSummary.xpSources).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v]) => (
-                              <Badge key={k} variant="outline" className="text-xs">{k}: {v}</Badge>
+                              <Badge key={k} variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border text-xs">{k}: {v}</Badge>
                             ))}
                           </div>
                         </div>
@@ -296,7 +295,7 @@ export default function AnalyticsMLPage() {
                       <motion.div
                         key={student.studentId}
                         whileHover={{ scale: 1.02 }}
-                        className="p-4 rounded-xl bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-700 border border-gray-200 dark:border-gray-600"
+                        className="p-4 rounded-xl bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-700 border border-gray-200 dark:border-gray-600 text-white hover:opacity-90"
                       >
                         <div className="flex items-start justify-between mb-2">
                           <div>
@@ -330,7 +329,7 @@ export default function AnalyticsMLPage() {
 
                         <div className="flex flex-wrap gap-2">
                           {student.reasons.map((reason, idx) => (
-                            <Badge key={idx} variant="outline" className="text-xs">
+                            <Badge key={idx} variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border text-xs">
                               {reason}
                             </Badge>
                           ))}

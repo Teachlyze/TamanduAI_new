@@ -1,5 +1,5 @@
 // src/components/ui/TouchOptimized.jsx
-import React from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen' from 'react';
 
 /**
  * Componentes otimizados para toque em dispositivos móveis
@@ -8,7 +8,8 @@ import React from 'react';
 /**
  * Botão otimizado para toque
  */
-export const TouchButton = ({
+export const [loading, setLoading] = useState(true);
+  const TouchButton = ({
   children,
   variant = 'primary',
   size = 'md',
@@ -30,6 +31,8 @@ export const TouchButton = ({
     outline: 'border-2 border-base-300 hover:bg-base-100 active:bg-base-200',
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <button
       className={`btn ${sizeClasses[size]} ${variantClasses[variant]} ${fullWidth ? 'w-full' : ''} transition-all duration-150 active:scale-95 ${className}`}
@@ -50,6 +53,8 @@ export const TouchTarget = ({
   minHeight = '44px',
   ...props
 }) => {
+  if (loading) return <LoadingScreen />;
+
   return (
     <div
       className={`min-h-[${minHeight}] flex items-center cursor-pointer select-none ${className}`}
@@ -72,6 +77,8 @@ export const TouchCard = ({
   padding = 'p-4',
   ...props
 }) => {
+  if (loading) return <LoadingScreen />;
+
   return (
     <div
       className={`${padding} bg-base-100 rounded-lg border border-base-200 shadow-sm cursor-pointer select-none transition-all duration-150 active:scale-[0.98] hover:shadow-md ${className}`}
@@ -91,6 +98,8 @@ export const TouchInput = ({
   className = '',
   ...props
 }) => {
+  if (loading) return <LoadingScreen />;
+
   return (
     <input
       className={`input input-bordered min-h-[48px] text-base ${className}`}
@@ -109,6 +118,8 @@ export const TouchScrollArea = ({
   className = '',
   ...props
 }) => {
+  if (loading) return <LoadingScreen />;
+
   return (
     <div
       className={`overflow-auto ${height} ${className}`}
@@ -184,6 +195,8 @@ export const TouchContainer = ({
   className = '',
   spacing = 'gap-4',
 }) => {
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className={`space-y-4 ${className}`} style={{ touchAction: 'pan-y' }}>
       {children}
@@ -200,6 +213,8 @@ export const TouchList = ({
   className = '',
   itemHeight = 'min-h-[60px]',
 }) => {
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className={`divide-y divide-base-200 ${className}`}>
       {items.map((item, index) => (
@@ -226,6 +241,8 @@ export const TouchModal = ({
   className = '',
 }) => {
   if (!isOpen) return null;
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/50 backdrop-blur-sm">

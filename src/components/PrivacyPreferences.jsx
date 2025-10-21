@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { ShieldCheck, Cookie, BarChart3, Megaphone, Save, ArrowLeft, Lock, Eye, Bell } from 'lucide-react';
 
-const PrivacyPreferences = () => {
+  const PrivacyPreferences = () => {
   const [preferences, setPreferences] = useState({
     necessary: true,
     analytics: false,
@@ -82,17 +82,19 @@ const PrivacyPreferences = () => {
     }
   ];
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl mb-4 shadow-lg">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl mb-4 shadow-lg text-white hover:opacity-90">
               <ShieldCheck className="h-8 w-8 text-white" />
             </div>
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">
-              Suas <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Preferências</span> de Privacidade
+              Suas <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent text-white hover:opacity-90">Preferências</span> de Privacidade
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
               Você tem total controle sobre seus dados. Escolha quais tipos de cookies deseja permitir.
@@ -149,7 +151,7 @@ const PrivacyPreferences = () => {
                         onCheckedChange={() => handleToggle(category.id)}
                         disabled={category.required}
                         aria-label={`${preferences[category.id] ? 'Desativar' : 'Ativar'} ${category.title}`}
-                        className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-blue-600 data-[state=checked]:to-purple-600"
+                        className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-blue-600 data-[state=checked]:to-purple-600 text-white hover:opacity-90"
                       />
                     </div>
                   </div>
@@ -163,7 +165,7 @@ const PrivacyPreferences = () => {
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-6 mb-8 border border-blue-200 dark:border-blue-800"
+            className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-6 mb-8 border border-blue-200 dark:border-blue-800 text-white hover:opacity-90"
           >
             <div className="flex items-start gap-3">
               <Bell className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
@@ -202,7 +204,7 @@ const PrivacyPreferences = () => {
               </Button>
               <Button
                 onClick={handleSave}
-                className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
+                className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:opacity-90"
               >
                 <Save className="h-4 w-4 mr-2" />
                 Salvar Preferências

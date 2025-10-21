@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -42,7 +42,7 @@ import {
 } from 'lucide-react';
 
 // Initialize Supabase client
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+  const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
 const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -53,11 +53,13 @@ const StudentHeader = ({ student, onBack, onEdit }) => {
     return format(new Date(dateString), "dd/MM/yyyy", { locale: ptBR });
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-3xl p-8 text-white"
+      className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-3xl p-8 text-white hover:opacity-90"
     >
       <div className="absolute inset-0 bg-black/10"></div>
       <div className="relative z-10">
@@ -112,7 +114,7 @@ const StudentHeader = ({ student, onBack, onEdit }) => {
             <Button 
               variant="outline" 
               size="sm" 
-              className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white border-white/30"
+              className="bg-white dark:bg-slate-900 text-foreground border-border bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white border-white/30"
             >
               <Download className="h-4 w-4 mr-2" />
               Exportar Dados
@@ -258,7 +260,9 @@ const StudentDetailPage = () => {
 
   // Loading state
   if (isLoading) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         <div className="flex items-center justify-center min-h-screen">
           <div className="flex flex-col items-center space-y-4">
@@ -272,7 +276,9 @@ const StudentDetailPage = () => {
 
   // Error state
   if (!student) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
           <AlertCircle className="h-12 w-12 text-destructive mb-4" />
@@ -307,6 +313,8 @@ const StudentDetailPage = () => {
   const handleBack = () => navigate(-1);
   const handleEdit = () => navigate(`/dashboard/students/edit/${student.id}`);
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <TooltipProvider>
@@ -332,7 +340,7 @@ const StudentDetailPage = () => {
                     <p className="text-sm font-medium text-muted-foreground">Atividades Concluídas</p>
                     <p className="text-3xl font-bold text-green-600">{completedActivities}</p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center text-white hover:opacity-90">
                     <CheckCircle2 className="w-6 h-6 text-white" />
                   </div>
                 </div>
@@ -346,7 +354,7 @@ const StudentDetailPage = () => {
                     <p className="text-sm font-medium text-muted-foreground">Atividades Pendentes</p>
                     <p className="text-3xl font-bold text-orange-600">{pendingActivities}</p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white hover:opacity-90">
                     <Clock className="w-6 h-6 text-white" />
                   </div>
                 </div>
@@ -360,7 +368,7 @@ const StudentDetailPage = () => {
                     <p className="text-sm font-medium text-muted-foreground">Média Geral</p>
                     <p className="text-3xl font-bold text-blue-600">{averageGrade.toFixed(1)}</p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center text-white hover:opacity-90">
                     <TrendingUp className="w-6 h-6 text-white" />
                   </div>
                 </div>
@@ -374,7 +382,7 @@ const StudentDetailPage = () => {
                     <p className="text-sm font-medium text-muted-foreground">Turmas</p>
                     <p className="text-3xl font-bold text-purple-600">{student.classes?.length || 0}</p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white hover:opacity-90">
                     <BookOpen className="w-6 h-6 text-white" />
                   </div>
                 </div>

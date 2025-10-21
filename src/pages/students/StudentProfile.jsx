@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { useStudentPerformance } from '../../hooks/useRedisCache';
 
-const StudentProfile = () => {
+  const StudentProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: studentPerformance, loading, error } = useStudentPerformance(id);
@@ -55,8 +55,11 @@ const StudentProfile = () => {
     return <div>Aluno não encontrado</div>;
   }
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className="container mx-auto p-6">
+      <PremiumCard variant="elevated">
       <Button 
         variant="ghost" 
         className="mb-6"
@@ -79,7 +82,8 @@ const StudentProfile = () => {
               <div>
                 <CardTitle className="text-2xl">{student.name}</CardTitle>
                 <p className="text-sm text-muted-foreground">{student.email}</p>
-              </div>
+              </PremiumCard>
+    </div>
             </div>
             <Button onClick={handleExportData}>
               <Download className="mr-2 h-4 w-4" />

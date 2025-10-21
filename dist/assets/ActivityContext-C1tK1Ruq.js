@@ -1,0 +1,1 @@
+import{r as e}from"./main-Cv3DLBs1.js";import"./useRedisCache-7qIh-_UQ.js";const i=e.createContext(),o=()=>{const t=e.useContext(i);return t===void 0?{activities:[],loading:!1,error:null,fetchActivities:()=>{},createActivity:()=>{},updateActivity:()=>{},deleteActivity:()=>{},clearError:()=>{}}:t};export{o as u};

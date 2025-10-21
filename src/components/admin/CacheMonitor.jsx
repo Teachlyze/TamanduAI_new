@@ -1,5 +1,4 @@
 // src/components/admin/CacheMonitor.jsx
-import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -182,7 +181,7 @@ const CacheMonitor = () => {
             )}
           </Badge>
           {cacheStats?.uptime && (
-            <Badge variant="outline" className="flex items-center gap-1">
+            <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border flex items-center gap-1">
               <Clock className="w-3 h-3" />
               {formatUptime(cacheStats.uptime)}
             </Badge>

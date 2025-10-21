@@ -1,4 +1,3 @@
-import React, { memo, useMemo } from 'react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -64,12 +63,12 @@ const StudentListItem = memo(({ student, onView, onEdit, onDelete }) => {
             
             <div className="flex flex-wrap gap-1 w-48">
               {student.classes?.slice(0, 2).map((className, idx) => (
-                <Badge key={idx} variant="outline" className="text-xs">
+                <Badge key={idx} variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border text-xs">
                   {className}
                 </Badge>
               ))}
               {student.classes?.length > 2 && (
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border text-xs">
                   +{student.classes.length - 2}
                 </Badge>
               )}

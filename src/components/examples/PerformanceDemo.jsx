@@ -1,4 +1,3 @@
-import React, { Suspense, useState, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,9 +23,6 @@ const validationRules = {
 };
 
 const PerformanceDemo = React.memo(() => {
-  const [loading, setLoading] = useState(false);
-  const [showCaptcha, setShowCaptcha] = useState(false);
-  const [captchaRef, setCaptchaRef] = useState(null);
 
   // Usando o hook de validação otimizada
   const {

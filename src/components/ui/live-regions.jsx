@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef, useCallback } from 'react';
+import { createContext, useContext, useState, useRef } from 'react';
 
 // Contexto para gerenciar anúncios live globalmente
 const LiveRegionContext = createContext({

@@ -1,11 +1,11 @@
 // src/components/ui/ThemeProvider.jsx
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
 /**
  * Contexto para gerenciamento de temas
  * Suporta modo automático, claro e escuro
  */
-const ThemeContext = createContext({
+  const ThemeContext = createContext({
   theme: 'auto',
   setTheme: () => {},
   resolvedTheme: 'light',
@@ -33,7 +33,9 @@ export const TamanduAIThemeProvider = ({ children, defaultTheme = 'auto' }) => {
     updateResolvedTheme();
     mediaQuery.addEventListener('change', updateResolvedTheme);
 
-    return () => mediaQuery.removeEventListener('change', updateResolvedTheme);
+    if (loading) return <LoadingScreen />;
+
+  return () => mediaQuery.removeEventListener('change', updateResolvedTheme);
   }, [theme]);
 
   // Aplicar tema ao DOM
@@ -86,6 +88,8 @@ export const TamanduAIThemeProvider = ({ children, defaultTheme = 'auto' }) => {
     setAuto: () => handleSetTheme('auto'),
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <ThemeContext.Provider value={value}>
       {children}
@@ -115,6 +119,8 @@ export const ThemeSelector = ({ className = '' }) => {
     { value: 'auto', label: 'Automático', icon: '🖥️' },
     { value: 'dark', label: 'Escuro', icon: '🌙' },
   ];
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className={`dropdown dropdown-end ${className}`}>
@@ -154,6 +160,8 @@ export const ThemeSelector = ({ className = '' }) => {
  */
 export const ThemeIndicator = ({ showLabel = true, className = '' }) => {
   const { resolvedTheme } = useTheme();
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>

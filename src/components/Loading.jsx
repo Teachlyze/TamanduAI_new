@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { AlertCircle, RefreshCw, Wifi, WifiOff, Loader2, Zap, Activity, Clock } from 'lucide-react';
 import { Button } from './ui/button';
 
 import { LOADING_TYPES, PROGRESS_VARIANTS, SKELETON_VARIANTS } from '@/constants/loading';
 
 // Color classes for animations
-const colorClasses = {
+  const colorClasses = {
   blue: 'text-blue-500',
   green: 'text-green-500',
   red: 'text-red-500',
@@ -44,7 +44,9 @@ export default function Loading({
       const interval = setInterval(() => {
         setAnimationPhase(prev => (prev + 1) % 3);
       }, 300);
-      return () => clearInterval(interval);
+      if (loading) return <LoadingScreen />;
+
+  return () => clearInterval(interval);
     }
   }, [type]);
 
@@ -55,9 +57,11 @@ export default function Loading({
         setCurrentProgress(prev => {
           if (prev >= 90) return 0; // Reset for indeterminate effect
           return prev + Math.random() * 10;
-        });
+        }, []);
       }, 200);
-      return () => clearInterval(interval);
+      if (loading) return <LoadingScreen />;
+
+  return () => clearInterval(interval);
     }
   }, [type, progress]);
 
@@ -69,7 +73,9 @@ export default function Loading({
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
@@ -85,7 +91,9 @@ export default function Loading({
         }
       }, timeout);
 
-      return () => clearTimeout(timer);
+      if (loading) return <LoadingScreen />;
+
+  return () => clearTimeout(timer);
     }
   }, [timeout, onTimeout, hasTimedOut]);
 
@@ -119,7 +127,9 @@ export default function Loading({
         handleRetry();
       }, 2000 + (retryCount * 1000)); // Increasing delay
 
-      return () => clearTimeout(retryTimer);
+      if (loading) return <LoadingScreen />;
+
+  return () => clearTimeout(retryTimer);
     }
   }, [hasTimedOut, retryCount, autoRetry, retryAttempts, handleRetry]);
 
@@ -147,7 +157,9 @@ export default function Loading({
 
     switch (type) {
       case LOADING_TYPES.SPINNER: {
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <div className={`relative flex items-center justify-center ${sizeClass}`}>
             <Loader2 className={`animate-spin ${colorClass}`} style={{ width: '100%', height: '100%' }} />
           </div>
@@ -155,7 +167,9 @@ export default function Loading({
       }
 
       case LOADING_TYPES.DOTS: {
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <div className="flex space-x-1">
             {[0, 1, 2].map((i) => (
               <div
@@ -170,7 +184,9 @@ export default function Loading({
       }
 
       case LOADING_TYPES.BARS: {
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <div className="flex space-x-1">
             {[0, 1, 2, 3].map((i) => (
               <div
@@ -188,7 +204,9 @@ export default function Loading({
 
       case LOADING_TYPES.PROGRESS: {
         const displayProgress = progress ?? currentProgress;
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <div className="w-full max-w-xs">
             <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
               <div
@@ -206,7 +224,9 @@ export default function Loading({
       }
 
       case LOADING_TYPES.CIRCLE: {
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <div className={`relative ${sizeClass}`}>
             <svg className={`w-full h-full ${colorClass}`} viewBox="0 0 50 50">
               <circle
@@ -230,7 +250,9 @@ export default function Loading({
       }
 
       case LOADING_TYPES.PULSE: {
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <div className={`${sizeClass} ${colorClass}`}>
             <Activity className="w-full h-full animate-pulse" />
           </div>
@@ -248,7 +270,9 @@ export default function Loading({
   }, [type, size, color, animationPhase, currentProgress, progress, showProgressText, skeletonVariant, skeletonLines]);
 
   if (hasTimedOut) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="flex flex-col justify-center items-center h-screen p-4 bg-gray-50 dark:bg-gray-900">
         <div className="text-center max-w-md mx-auto">
           <div className="flex justify-center mb-4">
@@ -329,6 +353,8 @@ export default function Loading({
     );
   }
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className="flex justify-center items-center h-screen bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center space-y-6">
@@ -380,7 +406,9 @@ function SkeletonLoader({ variant, lines }) {
 
   switch (variant) {
     case SKELETON_VARIANTS.TEXT:
-      return (
+      if (loading) return <LoadingScreen />;
+
+  return (
         <div className="space-y-3">
           {Array.from({ length: lines }).map((_, i) => (
             <div
@@ -393,17 +421,23 @@ function SkeletonLoader({ variant, lines }) {
       );
 
     case SKELETON_VARIANTS.RECTANGLE:
-      return (
+      if (loading) return <LoadingScreen />;
+
+  return (
         <div className={`${baseClasses} h-32 w-full max-w-md rounded-lg`} />
       );
 
     case SKELETON_VARIANTS.CIRCLE:
-      return (
+      if (loading) return <LoadingScreen />;
+
+  return (
         <div className={`${baseClasses} h-16 w-16 rounded-full`} />
       );
 
     case SKELETON_VARIANTS.CARD:
-      return (
+      if (loading) return <LoadingScreen />;
+
+  return (
         <div className="space-y-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
           <div className={`${baseClasses} h-6 w-3/4 rounded`} />
           <div className={`${baseClasses} h-4 w-full rounded`} />

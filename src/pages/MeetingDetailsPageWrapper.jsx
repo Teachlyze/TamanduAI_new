@@ -1,5 +1,7 @@
 // src/pages/MeetingDetailsPageWrapper.jsx
-import React, { useState, useEffect, useCallback } from 'react';
+import { PremiumCard } from '@/components/ui/PremiumCard'
+import { PremiumButton } from '@/components/ui/PremiumButton', { useState }
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format, parseISO, isPast } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -45,7 +47,7 @@ import { MeetingService } from '@/services/meetingsService';
 import { UserService } from '@/services/userService';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-const MeetingDetailsPageWrapper = () => {
+  const MeetingDetailsPageWrapper = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -213,14 +215,16 @@ const MeetingDetailsPageWrapper = () => {
 
   // Set up real-time subscription for meeting updates
   useEffect(() => {
-    fetchMeetingDetails();
+    fetchMeetingDetails(, []); // TODO: Add dependencies
 
     const subscription = MeetingService.subscribeToMeetingUpdates(id, (payload) => {
-      console.log('Meeting update received:', payload);
-      fetchMeetingDetails();
-    });
+      console.log('Meeting update received:', payload, []); // TODO: Add dependencies
+      fetchMeetingDetails(, []); // TODO: Add dependencies
+    }, []); // TODO: Add dependencies
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       if (subscription) {
         subscription.unsubscribe();
       }
@@ -229,8 +233,11 @@ const MeetingDetailsPageWrapper = () => {
 
   // Loading state
   if (isLoading) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="container mx-auto py-12 px-4">
+      <PremiumCard variant="elevated">
         <div className="space-y-6">
           {/* Header Skeleton */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -238,7 +245,8 @@ const MeetingDetailsPageWrapper = () => {
               <div className="h-10 w-10 bg-gray-200 rounded mr-2"></div>
               <div className="space-y-2">
                 <div className="h-6 w-48 bg-gray-200 rounded"></div>
-                <div className="h-4 w-32 bg-gray-200 rounded"></div>
+                <div className="h-4 w-32 bg-gray-200 rounded"></PremiumCard>
+    </div>
               </div>
             </div>
             <div className="flex gap-2">
@@ -265,8 +273,11 @@ const MeetingDetailsPageWrapper = () => {
 
   // Error state
   if (error || !meeting) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="container mx-auto py-12 px-4">
+      <PremiumCard variant="elevated">
         <div className="text-center">
           <AlertCircle className="mx-auto h-12 w-12 text-destructive mb-4" />
           <h2 className="text-xl font-semibold text-foreground mb-2">
@@ -330,12 +341,15 @@ const MeetingDetailsPageContent = ({
 }) => {
   const { date, time } = formatDateTime(meeting.start_time);
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <ErrorBoundary
       errorTitle="Ocorreu um erro na página de detalhes da reunião"
       errorMessage="Algo inesperado aconteceu. Por favor, tente recarregar a página."
     >
       <div className="container mx-auto py-6 px-4">
+      <PremiumCard variant="elevated">
         {/* Header with back button and actions */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <div className="flex items-center">
@@ -664,21 +678,21 @@ const MeetingDetailsPageContent = ({
                 <CardTitle className="text-lg">Ações Rápidas</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border w-full justify-start">
                   <MessageSquare className="mr-2 h-4 w-4" />
                   Enviar lembrete
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border w-full justify-start">
                   <Users className="mr-2 h-4 w-4" />
                   Adicionar participantes
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border w-full justify-start">
                   <Calendar className="mr-2 h-4 w-4" />
                   Reagendar
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full justify-start text-destructive hover:text-destructive"
+                  className="bg-white dark:bg-slate-900 text-foreground border-border w-full justify-start text-destructive hover:text-destructive"
                   onClick={onDelete}
                   disabled={isDeleting}
                 >

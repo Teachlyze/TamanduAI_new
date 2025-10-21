@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Button from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -211,7 +210,7 @@ const StudentProfilePage = () => {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-2">
+          <Button variant="outline" size="sm" className="bg-white dark:bg-slate-900 text-foreground border-border gap-2">
             <MessageCircle className="h-4 w-4" />
             <span className="hidden sm:inline">Enviar Mensagem</span>
           </Button>
@@ -236,7 +235,7 @@ const StudentProfilePage = () => {
               <div className="text-center md:text-left">
                 <h2 className="text-xl font-bold">{studentName}</h2>
                 <p className="text-sm text-muted-foreground">{studentEmail}</p>
-                <Badge variant="outline" className="mt-2">
+                <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border mt-2">
                   {student.role === 'student' ? 'Aluno' : 'Usuário'}
                 </Badge>
               </div>

@@ -1,4 +1,3 @@
-import React, { createContext, useContext, useReducer, useCallback, useMemo, useEffect } from 'react';
 
 /**
  * Advanced State Management System for TamanduAI
@@ -304,12 +303,12 @@ export const GlobalStateProvider = ({ children }) => {
   // Load persisted state on mount
   useEffect(() => {
     try {
-      const persistedAuth = localStorage.getItem(STORAGE_KEYS.AUTH);
-      const persistedUI = localStorage.getItem(STORAGE_KEYS.UI);
+      const persistedAuth = localStorage.getItem(STORAGE_KEYS.AUTH, []); // TODO: Add dependencies
+      const persistedUI = localStorage.getItem(STORAGE_KEYS.UI, []); // TODO: Add dependencies
 
       if (persistedAuth) {
-        const authData = JSON.parse(persistedAuth);
-        dispatch({ type: ACTIONS.AUTH_LOGIN, payload: authData });
+        const authData = JSON.parse(persistedAuth, []); // TODO: Add dependencies
+        dispatch({ type: ACTIONS.AUTH_LOGIN, payload: authData }, []); // TODO: Add dependencies
       }
 
       if (persistedUI) {

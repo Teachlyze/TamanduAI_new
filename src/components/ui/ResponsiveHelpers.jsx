@@ -1,5 +1,5 @@
 // src/components/ui/ResponsiveHelpers.jsx
-import React from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen' from 'react';
 
 /**
  * Helpers específicos para melhorar responsividade
@@ -8,11 +8,14 @@ import React from 'react';
 /**
  * Container que ajusta automaticamente para diferentes telas
  */
-export const AdaptiveContainer = ({
+export const [loading, setLoading] = useState(true);
+  const AdaptiveContainer = ({
   children,
   className = '',
   maxWidth = '7xl',
 }) => {
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className={`w-full mx-auto px-4 sm:px-6 lg:px-8 ${className}`}>
       <div className={`mx-auto ${maxWidth === 'none' ? 'max-w-none' : `max-w-${maxWidth}`}`}>
@@ -32,6 +35,8 @@ export const ResponsiveSection = ({
   actions,
   className = '',
 }) => {
+  if (loading) return <LoadingScreen />;
+
   return (
     <section className={`py-6 sm:py-8 lg:py-12 ${className}`}>
       <AdaptiveContainer>
@@ -71,6 +76,8 @@ export const AdaptiveGrid = ({
   gap = 'gap-4 sm:gap-6',
   className = '',
 }) => {
+  if (loading) return <LoadingScreen />;
+
   return (
     <div
       className={`grid ${gap} ${className}`}
@@ -92,6 +99,8 @@ export const ResponsiveStack = ({
   align = 'items-center',
   className = '',
 }) => {
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className={`flex flex-col sm:flex-row ${spacing} ${align} ${className}`}>
       {children}
@@ -118,6 +127,8 @@ export const AdaptiveText = ({
     '3xl': 'text-3xl sm:text-4xl lg:text-5xl',
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <Component className={`${sizeClasses[size]} text-gray-900 dark:text-white ${className}`}>
       {children}
@@ -142,6 +153,8 @@ export const ResponsiveSpacing = ({
     '2xl': 'space-y-12 sm:space-y-16',
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className={`${sizeClasses[size]} ${className}`}>
       {children}
@@ -160,6 +173,8 @@ export const ResponsiveCard = ({
   padding = 'p-4 sm:p-6',
   className = '',
 }) => {
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm ${padding} ${className}`}>
       {(title || subtitle || actions) && (
@@ -203,14 +218,16 @@ export const useDeviceOrientation = () => {
       setOrientation({
         isPortrait,
         isLandscape: !isPortrait,
-      });
+      }, []); // TODO: Add dependencies
     };
 
     updateOrientation();
     window.addEventListener('resize', updateOrientation);
     window.addEventListener('orientationchange', updateOrientation);
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       window.removeEventListener('resize', updateOrientation);
       window.removeEventListener('orientationchange', updateOrientation);
     };
@@ -227,6 +244,8 @@ export const ResponsiveHeightContainer = ({
   minHeight = 'min-h-screen',
   className = '',
 }) => {
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className={`${minHeight} flex flex-col ${className}`}>
       {children}
@@ -241,6 +260,8 @@ export const ResponsiveTableWrapper = ({
   children,
   className = '',
 }) => {
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className={`w-full overflow-x-auto ${className}`}>
       <div className="min-w-full">

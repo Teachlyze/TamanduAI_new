@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';

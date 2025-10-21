@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -17,7 +17,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
  * @param {string} props.timeRange - Time range for data ('1h' | '24h' | '7d' | '30d')
  * @param {string} props.className - Additional CSS classes
  */
-export const MetricsDashboard = ({
+export const [loading, setLoading] = useState(true);
+  const MetricsDashboard = ({
   metrics = [],
   onMetricClick,
   onRefresh,
@@ -117,7 +118,9 @@ export const MetricsDashboard = ({
 
     if (autoRefresh) {
       const interval = setInterval(loadDashboardData, refreshInterval * 1000);
-      return () => clearInterval(interval);
+      if (loading) return <LoadingScreen />;
+
+  return () => clearInterval(interval);
     }
   }, [loadDashboardData, autoRefresh, refreshInterval]);
 
@@ -216,7 +219,9 @@ export const MetricsDashboard = ({
   );
 
   if (isLoading && !dashboardData.overview) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className={`metrics-dashboard ${className}`}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map(i => (
@@ -234,6 +239,8 @@ export const MetricsDashboard = ({
       </div>
     );
   }
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className={`metrics-dashboard ${className}`} {...props}>

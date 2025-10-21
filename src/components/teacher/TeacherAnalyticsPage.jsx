@@ -1,4 +1,3 @@
-import React, { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
 import { PremiumCard, LoadingScreen, EmptyState, PremiumButton, toast } from '@/components/ui';
@@ -440,11 +439,11 @@ const TeacherAnalyticsPage = () => {
             <p className="text-white/90">Métricas detalhadas e comparações</p>
           </div>
           <div className="flex gap-3">
-            <PremiumButton onClick={exportPDF} variant="secondary" className="whitespace-nowrap inline-flex items-center gap-2">
+            <PremiumButton onClick={exportPDF} variant="secondary" className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit">
               <Download className="w-4 h-4" />
               <span>PDF</span>
             </PremiumButton>
-            <PremiumButton onClick={exportExcel} variant="secondary" className="whitespace-nowrap inline-flex items-center gap-2">
+            <PremiumButton onClick={exportExcel} variant="secondary" className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit">
               <Download className="w-4 h-4" />
               <span>Excel</span>
             </PremiumButton>

@@ -47,7 +47,7 @@ class SupabaseConnectionManager {
       this.startConnectionMonitoring();
 
       this.state = CONNECTION_STATES.CONNECTED;
-      console.log('✅ Supabase connection manager initialized');
+      // console.log('✅ Supabase connection manager initialized');
 
     } catch (error) {
       this.state = CONNECTION_STATES.ERROR;
@@ -79,7 +79,7 @@ class SupabaseConnectionManager {
     }
 
     // Log de configuração (sem dados sensíveis)
-    console.log('🔧 Supabase config validated:', {
+    // console.log('🔧 Supabase config validated:', {
       url: supabaseUrl.replace(/https?:\/\//, ''),
       hasAnonKey: !!supabaseAnonKey,
       hasServiceKey: !!supabaseServiceKey,
@@ -94,7 +94,7 @@ class SupabaseConnectionManager {
     const isProduction = import.meta.env.MODE === 'production';
 
     // Use the singleton instance instead of creating a new one
-    console.log('🔗 Using existing Supabase singleton instance');
+    // console.log('🔗 Using existing Supabase singleton instance');
     this.client = supabaseSingleton;
 
     // Cliente administrativo (se disponível)
@@ -122,13 +122,13 @@ class SupabaseConnectionManager {
   setupEventListeners() {
     // Skip auth state listeners since they're already handled by AuthContext
     // This prevents duplicate event handling
-    console.log('[SupabaseConnectionManager] Skipping auth listeners (handled by AuthContext)');
+    // console.log('[SupabaseConnectionManager] Skipping auth listeners (handled by AuthContext)');
 
     // Realtime connection events
     // Note: Realtime events are handled through channels, not direct onOpen/onClose
     // The realtime object doesn't expose onOpen/onClose methods directly
     if (this.client.realtime) {
-      console.log('[SupabaseConnectionManager] Realtime client available');
+      // console.log('[SupabaseConnectionManager] Realtime client available');
       // Realtime connection status is managed through channel subscriptions
     }
   }
@@ -152,7 +152,7 @@ class SupabaseConnectionManager {
         throw error;
       }
 
-      console.log(`✅ Supabase connection test passed (${duration.toFixed(0)}ms)`);
+      // console.log(`✅ Supabase connection test passed (${duration.toFixed(0)}ms)`);
 
       // Registrar métrica de performance
       performanceOptimizer.metrics.networkRequests.push({
@@ -284,7 +284,7 @@ class SupabaseConnectionManager {
 
     const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
 
-    console.log(`🔄 Attempting reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts} in ${delay}ms`);
+    // console.log(`🔄 Attempting reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts} in ${delay}ms`);
 
     setTimeout(async () => {
       try {
@@ -293,7 +293,7 @@ class SupabaseConnectionManager {
         this.state = CONNECTION_STATES.CONNECTED;
         this.reconnectAttempts = 0;
 
-        console.log('✅ Reconnected to Supabase successfully');
+        // console.log('✅ Reconnected to Supabase successfully');
 
       } catch (error) {
         if (this.reconnectAttempts < this.maxReconnectAttempts) {
@@ -309,30 +309,30 @@ class SupabaseConnectionManager {
    * Eventos de autenticação
    */
   onSignedIn(session) {
-    console.log('🔐 User signed in');
+    // console.log('🔐 User signed in');
     // Atualizar métricas de performance
   }
 
   onSignedOut() {
-    console.log('🚪 User signed out');
+    // console.log('🚪 User signed out');
     // Limpar caches locais
   }
 
   onTokenRefreshed(session) {
-    console.log('🔄 Token refreshed');
+    // console.log('🔄 Token refreshed');
     // Atualizar métricas
   }
 
   onUserUpdated(session) {
-    console.log('👤 User updated');
+    // console.log('👤 User updated');
   }
 
   onRealtimeConnected() {
-    console.log('📡 Realtime connected');
+    // console.log('📡 Realtime connected');
   }
 
   onRealtimeDisconnected() {
-    console.log('📡 Realtime disconnected');
+    // console.log('📡 Realtime disconnected');
   }
 
   /**
@@ -385,7 +385,7 @@ class SupabaseConnectionManager {
       clearInterval(this.connectionCheckInterval);
     }
 
-    console.log('🔌 Disconnected from Supabase');
+    // console.log('🔌 Disconnected from Supabase');
   }
 
   /**

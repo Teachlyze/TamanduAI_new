@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { PremiumCard } from '@/components/ui/PremiumCard'
+import { PremiumButton } from '@/components/ui/PremiumButton';
 import { motion } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
 import { CheckCircle, XCircle, Star, Zap, Crown, Users, Trophy, Bell, Calendar, Brain, Shield, DollarSign, Gift, TrendingUp, BookOpen, Sparkles, ArrowRight } from 'lucide-react';
@@ -166,7 +167,7 @@ const PricingPage = () => {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 text-white py-3 px-4 text-center"
+        className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 text-white py-3 px-4 text-center hover:opacity-90"
       >
         <div className="flex items-center justify-center gap-2 flex-wrap">
           <Sparkles className="w-5 h-5" />
@@ -176,7 +177,7 @@ const PricingPage = () => {
           <Button
             size="sm"
             variant="outline"
-            className="ml-4 bg-white text-green-600 hover:bg-green-50 border-white font-semibold"
+            className="bg-white dark:bg-slate-900 text-foreground border-border ml-4 text-green-600 hover:bg-green-50 border-white font-semibold"
             onClick={() => navigate('/register')}
           >
             Garantir Vaga <ArrowRight className="ml-1 w-4 h-4" />
@@ -191,12 +192,13 @@ const PricingPage = () => {
         className="bg-white/80 backdrop-blur-lg shadow-lg sticky top-0 z-50"
       >
         <div className="container mx-auto px-6 py-4">
+      <PremiumCard variant="elevated">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
                 <BookOpen className="w-6 h-6 text-white" />
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent text-white hover:opacity-90">
                 TamanduAI
               </span>
             </div>
@@ -206,30 +208,32 @@ const PricingPage = () => {
               </Button>
               <Button
                 variant="default"
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:opacity-90"
                 onClick={() => navigate('/register')}
               >
                 Começar Grátis
               </Button>
             </div>
           </div>
+        </PremiumCard>
         </div>
       </motion.header>
 
       {/* Hero Section */}
       <section className="py-20 px-6">
         <div className="container mx-auto max-w-6xl text-center">
+      <PremiumCard variant="elevated">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <Badge className="mb-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 text-base">
+            <Badge className="mb-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 text-base hover:opacity-90">
               <Gift className="mr-2 h-5 w-5" />
               🎉 Programa Beta - Ganhe 3 Meses Grátis!
             </Badge>
 
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent text-white hover:opacity-90">
               Escolha o Plano Ideal para Você
             </h1>
 
@@ -266,12 +270,14 @@ const PricingPage = () => {
               </Badge>
             </div>
           </motion.div>
+        </PremiumCard>
         </div>
       </section>
 
       {/* Teacher Plans */}
       <section className="py-16 px-6">
         <div className="container mx-auto max-w-6xl">
+      <PremiumCard variant="elevated">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -305,7 +311,7 @@ const PricingPage = () => {
                     <Card className={`relative h-full ${plan.popular ? 'border-4 border-indigo-500 shadow-2xl scale-105' : ''}`}>
                       {plan.popular && (
                         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                          <Badge className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-1">
+                          <Badge className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-1 hover:opacity-90">
                             Mais Popular
                           </Badge>
                         </div>
@@ -391,7 +397,7 @@ const PricingPage = () => {
                     <Card className={`relative h-full ${plan.name === 'Escola Média' ? 'border-4 border-orange-500 shadow-2xl scale-105' : ''}`}>
                       {plan.name === 'Escola Média' && (
                         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                          <Badge className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-4 py-1">
+                          <Badge className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-4 py-1 hover:opacity-90">
                             Recomendado
                           </Badge>
                         </div>
@@ -461,12 +467,14 @@ const PricingPage = () => {
               </div>
             </TabsContent>
           </Tabs>
+        </PremiumCard>
         </div>
       </section>
 
       {/* Unique Value Props */}
       <section className="py-16 px-6 bg-gradient-to-br from-indigo-50 to-purple-50">
         <div className="container mx-auto max-w-6xl">
+      <PremiumCard variant="elevated">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -479,7 +487,7 @@ const PricingPage = () => {
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="text-center">
               <CardContent className="p-8">
-                <div className="w-16 h-16 bg-gradient-to-r from-violet-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <div className="w-16 h-16 bg-gradient-to-r from-violet-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white hover:opacity-90">
                   <Brain className="h-8 w-8 text-white" />
                 </div>
                 <h3 className="text-xl font-bold mb-4">IA Proprietária com RAG</h3>
@@ -492,7 +500,7 @@ const PricingPage = () => {
 
             <Card className="text-center">
               <CardContent className="p-8">
-                <div className="w-16 h-16 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <div className="w-16 h-16 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white hover:opacity-90">
                   <DollarSign className="h-8 w-8 text-white" />
                 </div>
                 <h3 className="text-xl font-bold mb-4">Programa de Descontos Único</h3>
@@ -505,7 +513,7 @@ const PricingPage = () => {
 
             <Card className="text-center">
               <CardContent className="p-8">
-                <div className="w-16 h-16 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <div className="w-16 h-16 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white hover:opacity-90">
                   <TrendingUp className="h-8 w-8 text-white" />
                 </div>
                 <h3 className="text-xl font-bold mb-4">Analytics com Machine Learning</h3>
@@ -516,12 +524,14 @@ const PricingPage = () => {
               </CardContent>
             </Card>
           </div>
+        </PremiumCard>
         </div>
       </section>
 
       {/* FAQ */}
       <section className="py-16 px-6">
         <div className="container mx-auto max-w-4xl">
+      <PremiumCard variant="elevated">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -565,11 +575,12 @@ const PricingPage = () => {
               </motion.div>
             ))}
           </div>
+        </PremiumCard>
         </div>
       </section>
 
       {/* CTA Final */}
-      <section className="py-20 px-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white relative overflow-hidden">
+      <section className="py-20 px-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white relative overflow-hidden hover:opacity-90">
         {/* Background decorations */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-10 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
@@ -577,6 +588,7 @@ const PricingPage = () => {
         </div>
 
         <div className="container mx-auto text-center max-w-4xl relative z-10">
+      <PremiumCard variant="elevated">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -608,7 +620,7 @@ const PricingPage = () => {
               <Button
                 size="lg"
                 variant="outline"
-                className="bg-transparent border-2 border-white text-white hover:bg-white/20 px-10 py-7 text-xl font-semibold"
+                className="bg-white dark:bg-slate-900 text-foreground border-border bg-transparent border-2 border-white text-white hover:bg-white/20 px-10 py-7 text-xl font-semibold"
                 onClick={() => navigate('/contact')}
               >
                 Falar com Especialista
@@ -637,19 +649,21 @@ const PricingPage = () => {
               ⏰ Vagas limitadas • 🎯 847/1000 vagas restantes • 🔒 Dados 100% seguros e LGPD compliant
             </p>
           </motion.div>
+        </PremiumCard>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="w-full bg-slate-900 text-white py-12">
         <div className="container mx-auto px-6">
+      <PremiumCard variant="elevated">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl flex items-center justify-center text-white hover:opacity-90">
                   <BookOpen className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">TamanduAI</span>
+                <span className="text-2xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent text-white hover:opacity-90">TamanduAI</span>
               </div>
               <p className="text-slate-400 max-w-md mb-4">
                 Revolucionando a educação através da inteligência artificial.
@@ -686,9 +700,10 @@ const PricingPage = () => {
             </div>
           </div>
           <div className="border-t border-slate-800 pt-8 text-center">
-            <p className="text-slate-500">© 2025 TamanduAI. Todos os direitos reservados.</p>
-            <p className="text-slate-600 text-sm mt-2">Feito com ❤️ para educadores brasileiros</p>
+            <p className="text-slate-500"> 2025 TamanduAI. Todos os direitos reservados.</p>
+            <p className="text-slate-600 text-sm mt-2">Feito com para educadores brasileiros</p>
           </div>
+        </PremiumCard>
         </div>
       </footer>
 

@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import { Play, Pause, Square, Coffee, Clock, Zap, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import focusService from '@/services/focusService';

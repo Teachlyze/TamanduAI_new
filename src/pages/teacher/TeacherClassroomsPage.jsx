@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -66,10 +65,10 @@ const TeacherClassroomsPage = () => {
 
       if (classesError) throw classesError;
 
-      // Para cada turma, buscar contagem de alunos e atividades
+      // Para cada turma, buscar contagem de alunos, atividades e performance média
       const classesWithCounts = await Promise.all(
         (classesData || []).map(async (cls) => {
-          const [studentsResult, activitiesResult] = await Promise.all([
+          const [studentsResult, activitiesResult, submissionsResult] = await Promise.all([
             supabase
               .from('class_members')
               .select('id', { count: 'exact', head: true })
@@ -78,13 +77,25 @@ const TeacherClassroomsPage = () => {
             supabase
               .from('activities')
               .select('id', { count: 'exact', head: true })
+              .eq('class_id', cls.id),
+            supabase
+              .from('submissions')
+              .select('grade')
               .eq('class_id', cls.id)
+              .not('grade', 'is', null)
           ]);
+
+          // Calcular média de notas
+          const grades = submissionsResult.data || [];
+          const averageGrade = grades.length > 0
+            ? grades.reduce((sum, s) => sum + (s.grade || 0), 0) / grades.length
+            : 0;
 
           return {
             ...cls,
             studentsCount: studentsResult.count || 0,
-            activitiesCount: activitiesResult.count || 0
+            activitiesCount: activitiesResult.count || 0,
+            averageGrade: averageGrade
           };
         })
       );
@@ -125,7 +136,7 @@ const TeacherClassroomsPage = () => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", delay: 0.2 }}
-              className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-4"
+              className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-4"
             >
               <Users className="w-4 h-4" />
               <span className="text-sm font-medium">Gestão de Turmas</span>
@@ -140,8 +151,8 @@ const TeacherClassroomsPage = () => {
           >
             <PremiumButton
               leftIcon={Plus}
-              onClick={() => navigate('/dashboard/teacher/classes/new')}
-              className="bg-white text-blue-600 hover:bg-white/90 shadow-lg whitespace-nowrap inline-flex items-center gap-2 font-semibold border-2 border-white/20"
+              onClick={() => navigate('/dashboard/classes/new')}
+              className="bg-white text-blue-600 hover:bg-white/90 shadow-lg whitespace-nowrap inline-flex items-center gap-2 min-w-fit font-semibold border-2 border-white/20 px-6 py-2.5"
             >
               Nova Turma
             </PremiumButton>
@@ -174,8 +185,10 @@ const TeacherClassroomsPage = () => {
             gradient: "from-green-500 to-emerald-500"
           },
           {
-            title: "Atividades Criadas",
-            value: classes.reduce((sum, cls) => sum + (cls.activitiesCount || 0), 0),
+            title: "Performance Média",
+            value: classes.length > 0
+              ? `${(classes.reduce((sum, cls) => sum + (cls.averageGrade || 0), 0) / classes.length).toFixed(1)}%`
+              : "0%",
             icon: TrendingUp,
             gradient: "from-purple-500 to-pink-500"
           }
@@ -225,7 +238,7 @@ const TeacherClassroomsPage = () => {
                 size="sm"
                 onClick={() => setViewMode('grid')}
                 leftIcon={Grid}
-                className="whitespace-nowrap inline-flex items-center gap-2 bg-white dark:bg-slate-900 text-foreground border-border"
+                className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-4 py-2 bg-white dark:bg-slate-900 text-foreground border-border"
               >
                 Grade
               </PremiumButton>
@@ -234,7 +247,7 @@ const TeacherClassroomsPage = () => {
                 size="sm"
                 onClick={() => setViewMode('list')}
                 leftIcon={List}
-                className="whitespace-nowrap inline-flex items-center gap-2 bg-white dark:bg-slate-900 text-foreground border-border"
+                className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-4 py-2 bg-white dark:bg-slate-900 text-foreground border-border"
               >
                 Lista
               </PremiumButton>
@@ -252,7 +265,7 @@ const TeacherClassroomsPage = () => {
             description="Crie sua primeira turma para começar a gerenciar alunos e atividades"
             action={{
               label: "Criar Primeira Turma",
-              onClick: () => navigate('/dashboard/teacher/classes/new')
+              onClick: () => navigate('/dashboard/classes/new')
             }}
           />
         ) : (
@@ -277,7 +290,7 @@ const TeacherClassroomsPage = () => {
                 <PremiumCard
                   variant="elevated"
                   className="group relative overflow-hidden hover:scale-105 transition-all cursor-pointer"
-                  onClick={() => navigate(`/dashboard/teacher/classes/${classItem.id}`)}
+                  onClick={() => navigate(`/dashboard/classes/${classItem.id}`)}
                 >
                   {/* Banner Colorido */}
                   <div className={`h-24 bg-gradient-to-r ${classItem.color || 'from-blue-500 to-cyan-500'} relative overflow-hidden`}>
@@ -298,12 +311,20 @@ const TeacherClassroomsPage = () => {
                   <div className="p-6">
                     <div className="flex items-center gap-2 mb-4">
                       <Badge className="bg-primary/10 text-primary">
-                        {classItem.subject}
+                        {classItem.subject || 'Geral'}
                       </Badge>
                       {classItem.schedule && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border text-xs">
                           <Calendar className="w-3 h-3 mr-1" />
-                          {classItem.schedule}
+                          {(() => {
+                            try {
+                              const date = new Date(classItem.schedule);
+                              if (isNaN(date.getTime())) return 'Horário não definido';
+                              return date.toLocaleDateString('pt-BR', { weekday: 'short', hour: '2-digit', minute: '2-digit' });
+                            } catch {
+                              return 'Horário não definido';
+                            }
+                          })()}
                         </Badge>
                       )}
                     </div>
@@ -337,11 +358,16 @@ const TeacherClassroomsPage = () => {
                         size="sm"
                         variant="outline"
                         leftIcon={Share2}
-                        onClick={() => {
-                          navigator.clipboard.writeText(classItem.invite_code);
-                          toast.success('Código copiado!');
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (classItem.invite_code) {
+                            navigator.clipboard.writeText(classItem.invite_code);
+                            toast.success('Código copiado!');
+                          } else {
+                            toast.error('Código de convite não disponível');
+                          }
                         }}
-                        className="flex-1 whitespace-nowrap inline-flex items-center gap-2 bg-white dark:bg-slate-900 text-foreground border-border rounded-lg"
+                        className="flex-1 whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-3 py-2 bg-white dark:bg-slate-900 text-foreground border-border rounded-lg"
                       >
                         Convidar
                       </PremiumButton>
@@ -349,10 +375,11 @@ const TeacherClassroomsPage = () => {
                         size="sm"
                         variant="outline"
                         leftIcon={Settings}
-                        onClick={() => {
-                          navigate(`/dashboard/teacher/classes/${classItem.id}/settings`);
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/dashboard/classes/${classItem.id}/edit`);
                         }}
-                        className="whitespace-nowrap inline-flex items-center gap-2 bg-white dark:bg-slate-900 text-foreground border-border rounded-lg"
+                        className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-3 py-2 bg-white dark:bg-slate-900 text-foreground border-border rounded-lg"
                       >
                         <Settings className="w-4 h-4" />
                       </PremiumButton>

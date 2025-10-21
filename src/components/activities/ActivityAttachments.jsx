@@ -1,11 +1,11 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { FiPaperclip, FiDownload, FiTrash2, FiEye, FiX, FiCheck, FiAlertCircle } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import FileUploader from './FileUploader';
 import useActivityFiles from '../../hooks/useActivityFiles';
 import { BUCKETS } from '../../services/storageService';
 
-const ActivityAttachments = ({
+  const ActivityAttachments = ({
   activityId,
   userId,
   initialAttachments = [],
@@ -218,9 +218,13 @@ const ActivityAttachments = ({
       const timer = setTimeout(() => {
         setErrors([]);
       }, 5000);
-      return () => clearTimeout(timer);
+      if (loading) return <LoadingScreen />;
+
+  return () => clearTimeout(timer);
     }
   }, [errors]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="space-y-4">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useTranslation } from 'react-i18next';
 import {
   Upload,
@@ -18,7 +18,7 @@ import { useToast } from '@/components/ui/use-toast';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { AttachmentService } from '@/services/attachmentService';
 
-const MeetingAttachments = ({ meetingId, readOnly = false, onUploadSuccess, onDeleteSuccess }) => {
+  const MeetingAttachments = ({ meetingId, readOnly = false, onUploadSuccess, onDeleteSuccess }) => {
   const [attachments, setAttachments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
@@ -155,7 +155,9 @@ const MeetingAttachments = ({ meetingId, readOnly = false, onUploadSuccess, onDe
   };
 
   if (isLoading) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="flex justify-center py-8">
         <LoadingSpinner size="md" text="Carregando anexos..." />
       </div>
@@ -163,20 +165,24 @@ const MeetingAttachments = ({ meetingId, readOnly = false, onUploadSuccess, onDe
   }
 
   if (error) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="text-center py-8">
         <AlertCircle className="mx-auto h-12 w-12 text-destructive mb-4" />
         <p className="text-muted-foreground">{error}</p>
         <Button
           variant="outline"
           onClick={loadAttachments}
-          className="mt-4"
+          className="bg-white dark:bg-slate-900 text-foreground border-border mt-4"
         >
           Tentar novamente
         </Button>
       </div>
     );
   }
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="space-y-4">

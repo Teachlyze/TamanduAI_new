@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useTranslation } from 'react-i18next';
 import { changeLanguage } from '../i18n';
 import LanguageSelector from './LanguageSelector';
 import { Button } from './ui/button';
 
-const LanguageTest = () => {
+  const LanguageTest = () => {
   const { t, i18n } = useTranslation();
   const [currentLang, setCurrentLang] = useState(i18n.language);
   const [testText, setTestText] = useState(t('common.loading'));
@@ -19,7 +19,9 @@ const LanguageTest = () => {
 
     i18n.on('languageChanged', handleLanguageChanged);
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       i18n.off('languageChanged', handleLanguageChanged);
     };
   }, [t, i18n]);
@@ -37,6 +39,8 @@ const LanguageTest = () => {
   const toggleTestMode = () => {
     setIsTestMode(!isTestMode);
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="p-6 max-w-2xl mx-auto bg-white dark:bg-gray-900 rounded-lg shadow-lg">

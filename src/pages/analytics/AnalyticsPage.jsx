@@ -33,7 +33,6 @@
       // alert('Para exportar o PDF, instale as dependências: npm i jspdf html2canvas');
     }
   };
-import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { 
   TrendingUp, 

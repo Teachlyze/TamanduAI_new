@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import {
@@ -170,7 +169,7 @@ const StudentChatSidebar = ({ collapsed, setCollapsed, classId = null, activityI
                   <Bot className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  <h3 className="font-bold text-lg bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent text-white hover:opacity-90">
                     Assistente IA
                   </h3>
                   <p className="text-xs text-muted-foreground">
@@ -196,7 +195,7 @@ const StudentChatSidebar = ({ collapsed, setCollapsed, classId = null, activityI
           <div className="flex-1 flex flex-col">
             {/* Context Info */}
             {(classId || activityId) && (
-              <div className="p-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-b border-border/30">
+              <div className="p-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-b border-border/30 text-white hover:opacity-90">
                 <div className="flex items-center gap-2 text-sm">
                   <Sparkles className="w-4 h-4 text-blue-500" />
                   <span className="text-muted-foreground">
@@ -241,7 +240,7 @@ const StudentChatSidebar = ({ collapsed, setCollapsed, classId = null, activityI
                       <div className="mt-2 pt-2 border-t border-border/30">
                         <p className="text-xs text-muted-foreground mb-1">Fontes:</p>
                         {message.sources.map((source, idx) => (
-                          <Badge key={idx} variant="outline" className="text-xs mr-1">
+                          <Badge key={idx} variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border text-xs mr-1">
                             {source}
                           </Badge>
                         ))}

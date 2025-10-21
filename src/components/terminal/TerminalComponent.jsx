@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,7 +8,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 /**
  * Terminal component with command execution and history
  */
-export const TerminalComponent = ({
+export const [loading, setLoading] = useState(true);
+  const TerminalComponent = ({
   commands = [],
   onCommandExecute,
   readOnly = false,
@@ -120,13 +121,15 @@ export const TerminalComponent = ({
     setHistory([]);
   }, []);
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <Card className={`terminal-component ${className}`} {...props}>
       {showHeader && (
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Terminal</CardTitle>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border text-xs">
               {history.length} comandos
             </Badge>
             <Button size="sm" variant="outline" onClick={clearTerminal}>
@@ -182,7 +185,7 @@ export const TerminalComponent = ({
                     onChange={handleInputChange}
                     onKeyDown={handleKeyPress}
                     placeholder="Digite um comando..."
-                    className="border-none shadow-none focus-visible:ring-0 p-0 h-auto font-mono"
+                    className="bg-white dark:bg-slate-900 text-foreground border-none shadow-none focus-visible:ring-0 p-0 h-auto font-mono"
                   />
                 </div>
               )}

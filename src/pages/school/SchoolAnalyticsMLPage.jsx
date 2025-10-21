@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
   Brain, Users, TrendingUp, Award, BarChart3, Zap,
@@ -154,7 +153,7 @@ export default function SchoolAnalyticsMLPage() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-8 shadow-xl"
+        className="bg-gradient-to-r from-purple-600 to-indigo-600 t text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fitext-white p-8 shadow-xl"
       >
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between gap-4 mb-4">
@@ -320,7 +319,7 @@ export default function SchoolAnalyticsMLPage() {
                         <motion.div
                           key={teacher.teacherId}
                           whileHover={{ scale: 1.02 }}
-                          className="p-4 rounded-xl bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-700 border border-gray-200 dark:border-gray-600"
+                          className="p-4 rounded-xl bg-gradient-to-r text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fit from-slate-50 to-white dark:from-slate-800 dark:to-slate-700 border border-gray-200 dark:border-gray-600"
                         >
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex items-center gap-3">
@@ -478,7 +477,7 @@ export default function SchoolAnalyticsMLPage() {
                               <p className="text-xs text-gray-500 mb-1">Fontes de XP:</p>
                               <div className="flex flex-wrap gap-1">
                                 {Object.entries(cls.xpSources).slice(0, 3).map(([source, xp]) => (
-                                  <Badge key={source} variant="outline" className="text-xs">
+                                  <Badge key={source} variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border text-xs">
                                     {source}: {xp}
                                   </Badge>
                                 ))}
@@ -595,7 +594,7 @@ export default function SchoolAnalyticsMLPage() {
                       </div>
 
                       {aiInsights.recognition && (
-                        <div className="md:col-span-2 p-4 rounded-xl bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900">
+                        <div className="md:col-span-2 p-4 rounded-xl bg-gradient-to-r text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fit from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900">
                           <p className="text-center text-gray-800 dark:text-gray-200 italic">
                             "{aiInsights.recognition}"
                           </p>

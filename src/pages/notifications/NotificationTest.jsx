@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { PremiumCard } from '@/components/ui/PremiumCard'
+import { PremiumButton } from '@/components/ui/PremiumButton';
 import Button from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import NotificationService from '@/services/notificationService';
@@ -164,6 +165,7 @@ const NotificationTest = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <PremiumCard variant="elevated">
       <h1 className="text-3xl font-bold mb-6">Teste de Notificações</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -274,6 +276,7 @@ const NotificationTest = () => {
           </CardContent>
         </Card>
       </div>
+      </PremiumCard>
     </div>
   );
 };

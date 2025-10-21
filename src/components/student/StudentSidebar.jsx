@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -36,7 +36,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-const StudentSidebar = ({ collapsed, setCollapsed }) => {
+  const StudentSidebar = ({ collapsed, setCollapsed }) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [gamification, setGamification] = useState({ xp: 0, level: 1, streak: 0 });
@@ -61,7 +61,9 @@ const StudentSidebar = ({ collapsed, setCollapsed }) => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 60000); // Update every minute
-    return () => clearInterval(timer);
+    if (loading) return <LoadingScreen />;
+
+  return () => clearInterval(timer);
   }, []);
 
   const toggleTheme = () => {
@@ -191,6 +193,8 @@ const StudentSidebar = ({ collapsed, setCollapsed }) => {
     navigate('/login');
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <motion.aside
       initial={{ x: -300 }}
@@ -214,7 +218,7 @@ const StudentSidebar = ({ collapsed, setCollapsed }) => {
                     <BookOpen className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent text-white hover:opacity-90">
                       TamanduAI
                     </h2>
                     <p className="text-xs text-muted-foreground">Aluno</p>
@@ -380,7 +384,7 @@ const StudentSidebar = ({ collapsed, setCollapsed }) => {
                     initial={{ width: 0 }}
                     animate={{ width: `${(gamification.xp % 100)}%` }}
                     transition={{ duration: 1, type: 'spring' }}
-                    className="h-full bg-gradient-to-r from-yellow-300 via-yellow-200 to-white rounded-full shadow-lg"
+                    className="h-full bg-gradient-to-r from-yellow-300 via-yellow-200 to-white rounded-full shadow-lg text-white hover:opacity-90"
                   />
                 </div>
                 <p className="text-xs text-white/70 mt-1 text-center">
@@ -420,7 +424,9 @@ const StudentSidebar = ({ collapsed, setCollapsed }) => {
         <nav className="flex-1 space-y-0.5 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-blue-300 dark:scrollbar-thumb-blue-700 scrollbar-track-transparent">
           {navItems.map((item, index) => {
             const Icon = item.icon;
-            return (
+            if (loading) return <LoadingScreen />;
+
+  return (
               <NavLink
                 key={item.path}
                 to={item.path}

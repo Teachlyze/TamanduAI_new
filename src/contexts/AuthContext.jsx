@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
     
     const bootstrap = async () => {
       if (process.env.NODE_ENV === 'development') {
-        console.log('[AuthContext] Starting bootstrap...');
+        // console.log('[AuthContext] Starting bootstrap...');
       }
       const startTime = performance.now();
 
@@ -38,23 +38,25 @@ export const AuthProvider = ({ children }) => {
         const sessionTime = performance.now() - startTime;
 
         if (process.env.NODE_ENV === 'development') {
-          console.log('[AuthContext] Session check:', {
-            hasSession: !!session,
-            error: sessionError,
-            timeMs: sessionTime.toFixed(2)
-          });
+          // console.log('[AuthContext] Session check:', {
+          //   hasSession: !!session,
+          //   error: sessionError,
+          //   timeMs: sessionTime.toFixed(2)
+          // });
         }
 
         if (!mounted) return;
 
         if (sessionError) {
           console.error('[AuthContext] Session error:', sessionError);
-          throw sessionError;
+          // If token is invalid or refresh failed, force sign out
+          try { await supabase.auth.signOut(); } catch (_) {}
+          return;
         }
 
         if (!session) {
           if (process.env.NODE_ENV === 'development') {
-            console.log('[AuthContext] No session found, user not authenticated');
+            // console.log('[AuthContext] No session found');
           }
           setUser(null);
           setLoading(false);
@@ -63,7 +65,7 @@ export const AuthProvider = ({ children }) => {
 
         // Get user from session instead of making another API call
         if (process.env.NODE_ENV === 'development') {
-          console.log('[AuthContext] User from session:', session.user?.email);
+          // console.log('[AuthContext] User from session:', session.user?.email);
         }
         setUser(session.user ?? null);
       } catch (err) {
@@ -77,7 +79,7 @@ export const AuthProvider = ({ children }) => {
         if (mounted) {
           const totalTime = performance.now() - startTime;
           if (process.env.NODE_ENV === 'development') {
-            console.log('[AuthContext] Bootstrap complete, setting loading to false (total time:', totalTime.toFixed(2), 'ms)');
+            // console.log('[AuthContext] Bootstrap complete, setting loading to false (total time:', totalTime.toFixed(2), 'ms)');
           }
           setLoading(false);
         }
@@ -88,34 +90,34 @@ export const AuthProvider = ({ children }) => {
     
     // Update on auth state change
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      console.log('[AuthContext] Auth state changed:', _event, 'Session:', !!session);
+      // console.log('[AuthContext] Auth state changed:', _event, 'Session:', !!session);
       
       if (!mounted) {
-        console.log('[AuthContext] Component unmounted, skipping auth state change');
+        // console.log('[AuthContext] Component unmounted, skipping auth state change');
         return;
       }
       
       // For SIGNED_IN events during active login, skip to avoid race condition
       // The signIn function will handle setting the user
       if (_event === 'SIGNED_IN') {
-        console.log('[AuthContext] SIGNED_IN event - user will be set by signIn function');
+        // console.log('[AuthContext] SIGNED_IN event - user will be set by signIn function');
         return;
       }
       
       try {
         if (!session) {
-          console.log('[AuthContext] No session, clearing user');
+          // console.log('[AuthContext] No session, clearing user');
           setUser(null);
           return;
         }
         
         // Only fetch user for other events (TOKEN_REFRESHED, etc.)
-        console.log('[AuthContext] Fetching user from auth state change...');
+        // console.log('[AuthContext] Fetching user from auth state change...');
         const { data: userData, error: userError } = await supabase.auth.getUser();
         if (userError) throw userError;
         
         if (mounted) {
-          console.log('[AuthContext] User updated from auth state change:', userData?.user?.email);
+          // console.log('[AuthContext] User updated from auth state change:', userData?.user?.email);
           setUser(userData?.user ?? null);
         }
       } catch (err) {
@@ -155,7 +157,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       // 2) Perform Supabase sign-in
-      console.log('Attempting sign-in with Supabase...');
+      // console.log('Attempting sign-in with Supabase...');
       const signInOptions = {
         email,
         password,
@@ -189,7 +191,7 @@ export const AuthProvider = ({ children }) => {
         throw error;
       }
       
-      console.log('[AuthContext] Sign-in successful, session created');
+      // console.log('[AuthContext] Sign-in successful, session created');
       
       // 3) Clear attempts/lock on success (skip if edge function doesn't exist)
       if (!isLocalhost) {
@@ -199,14 +201,14 @@ export const AuthProvider = ({ children }) => {
             body: { email },
           })
         } catch (_) { 
-          console.log('[AuthContext] auth-login-success edge function not available, skipping');
+          // console.log('[AuthContext] auth-login-success edge function not available, skipping');
         }
       }
       
       // The onAuthStateChange handler will update the user automatically
       // We just need to get the user from the response data
       const meUser = data?.user ?? null;
-      console.log('[AuthContext] User from sign-in response:', meUser?.email);
+      // console.log('[AuthContext] User from sign-in response:', meUser?.email);
       
       // Set user immediately from the response (don't wait for onAuthStateChange)
       setUser(meUser);
@@ -217,8 +219,8 @@ export const AuthProvider = ({ children }) => {
         meUser?.user_metadata?.privacy_accepted
       );
       
-      console.log('[AuthContext] Sign-in complete, needsOnboarding:', needsOnboarding);
-      console.log('[AuthContext] Setting loading to false');
+      // console.log('[AuthContext] Sign-in complete, needsOnboarding:', needsOnboarding);
+      // console.log('[AuthContext] Setting loading to false');
       setLoading(false); // Set loading to false after setting user
       
       return { user: meUser, needsOnboarding };
@@ -246,12 +248,12 @@ export const AuthProvider = ({ children }) => {
             body: { email: userData.email, hcaptchaToken },
           })
         } catch (guardErr) {
-          console.log('[AuthContext] auth-guard-register edge function not available, skipping');
+          // console.log('[AuthContext] auth-guard-register edge function not available, skipping');
         }
       }
 
       // 2) Perform Supabase registration
-      console.log('[AuthContext] Registering user...');
+      // console.log('[AuthContext] Registering user...');
       const { data, error } = await supabase.auth.signUp({
         email: userData.email,
         password: userData.password,
@@ -265,7 +267,7 @@ export const AuthProvider = ({ children }) => {
       });
       if (error) throw error;
       
-      console.log('[AuthContext] User registered successfully:', data.user?.email);
+      // console.log('[AuthContext] User registered successfully:', data.user?.email);
       return { user: data.user, success: true };
     } catch (error) {
       setError(error.message);
@@ -279,7 +281,7 @@ export const AuthProvider = ({ children }) => {
   const completeOnboarding = async (concluded = true) => {
     try {
       setLoading(true);
-      console.log('[AuthContext] Completing onboarding...');
+      // console.log('[AuthContext] Completing onboarding...');
       
       const { data: { user: currentUser }, error } = await supabase.auth.getUser();
       if (error) throw error;
@@ -295,7 +297,7 @@ export const AuthProvider = ({ children }) => {
       
       if (updateError) throw updateError;
       
-      console.log('[AuthContext] Onboarding completed');
+      // console.log('[AuthContext] Onboarding completed');
       setUser(updatedData?.user ?? currentUser);
       return { user: updatedData?.user ?? currentUser };
     } catch (err) {

@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { motion } from 'framer-motion';
 
-export const ProtectedRoute = ({ children }) => {
+export const [loading, setLoading] = useState(true);
+  const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -12,19 +13,21 @@ export const ProtectedRoute = ({ children }) => {
 
   // Debug logs
   useEffect(() => {
-    console.log('[ProtectedRoute] State:', { user: !!user, loading, path: location.pathname });
+    console.log('[ProtectedRoute] State:', { user: !!user, loading, path: location.pathname }, []); // TODO: Add dependencies
   }, [user, loading, location.pathname]);
 
   // Emergency timeout - if loading takes more than 15 seconds, force redirect to login
   useEffect(() => {
     if (loading) {
       const timeoutId = setTimeout(() => {
-        console.error('[ProtectedRoute] Emergency timeout - forcing redirect to login');
-        setEmergencyTimeout(true);
-        navigate('/login', { replace: true });
+        console.error('[ProtectedRoute] Emergency timeout - forcing redirect to login', []); // TODO: Add dependencies
+        setEmergencyTimeout(true, []); // TODO: Add dependencies
+        navigate('/login', { replace: true }, []); // TODO: Add dependencies
       }, 15000);
 
-      return () => clearTimeout(timeoutId);
+      if (loading) return <LoadingScreen />;
+
+  return () => clearTimeout(timeoutId);
     }
   }, [loading, navigate]);
 
@@ -55,7 +58,9 @@ export const ProtectedRoute = ({ children }) => {
   }, [user, loading, navigate, location.pathname]);
 
   if (loading || checkingOnboarding) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}

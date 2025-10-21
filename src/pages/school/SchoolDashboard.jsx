@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -310,7 +309,7 @@ const SchoolDashboard = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                     onClick={() => navigate(`/school/teachers/${teacher.id}`)}
-                    className="group flex items-center gap-3 p-3 border-2 border-border rounded-xl hover:border-primary/50 hover:bg-gradient-to-r hover:from-muted/50 hover:to-transparent transition-all cursor-pointer"
+                    className="group flex items-center gap-3 p-3 border-2 border-border rounded-xl hover:border-primary/50 hover:bg-gradient-to-r text-white hover:opacity-90 whitespace-nowrap inline-flex gap-2 min-w-fit hover:from-muted/50 hover:to-transparent transition-all cursor-pointer"
                   >
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white font-bold">
                       {teacher.name?.charAt(0) || 'P'}
@@ -319,7 +318,7 @@ const SchoolDashboard = () => {
                       <h4 className="font-semibold text-sm">{teacher.name}</h4>
                       <p className="text-xs text-muted-foreground">{teacher.email}</p>
                     </div>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border text-xs">
                       {new Date(teacher.created_at).toLocaleDateString('pt-BR')}
                     </Badge>
                   </motion.div>

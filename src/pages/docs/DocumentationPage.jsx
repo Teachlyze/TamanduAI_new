@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import Seo from '@/components/Seo';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,7 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-const DocumentationPagePremium = () => {
+  const DocumentationPagePremium = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSection, setSelectedSection] = useState('intro');
@@ -1011,6 +1011,8 @@ const calculateXP = (score, maxScore) => {
     console.log(`Feedback: ${type} na seção ${currentSection.id}`);
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className="w-full min-h-screen bg-gray-50 dark:bg-gray-900">
       <Seo
@@ -1038,7 +1040,7 @@ const calculateXP = (score, maxScore) => {
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="whitespace-nowrap inline-flex items-center gap-2 rounded-lg bg-white/20 hover:bg-white/30 text-white px-4 py-2 transition-colors"
+              className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit rounded-lg bg-white/20 hover:bg-white/30 text-white px-4 py-2 transition-colors"
               aria-label="Voltar"
             >
               <span>Voltar</span>
@@ -1156,7 +1158,9 @@ const calculateXP = (score, maxScore) => {
                       const Icon = section.icon;
                       const isActive = selectedSection === section.id;
                       
-                      return (
+                      if (loading) return <LoadingScreen />;
+
+  return (
                         <motion.button
                           key={section.id}
                           initial={{ opacity: 0, x: -10 }}
@@ -1367,7 +1371,7 @@ const calculateXP = (score, maxScore) => {
                                 )}
                                 
                                 {item.badge && (
-                                  <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white mt-3 shadow-lg">
+                                  <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white mt-3 shadow-lg hover:opacity-90">
                                     ✨ {item.badge}
                                   </Badge>
                                 )}
@@ -1392,14 +1396,14 @@ const calculateXP = (score, maxScore) => {
                         <div className="flex gap-3">
                           <button
                             onClick={() => submitFeedback('helpful')}
-                            className="whitespace-nowrap inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 transition-all duration-200 shadow-sm hover:shadow-md"
+                            className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-6 py-3 rounded-xl bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 transition-all duration-200 shadow-sm hover:shadow-md"
                           >
                             <span className="text-2xl">👍</span>
                             <span className="font-medium">Sim, útil!</span>
                           </button>
                           <button
                             onClick={() => submitFeedback('not-helpful')}
-                            className="whitespace-nowrap inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 transition-all duration-200 shadow-sm hover:shadow-md"
+                            className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-6 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 transition-all duration-200 shadow-sm hover:shadow-md"
                           >
                             <span className="text-2xl">👎</span>
                             <span className="font-medium">Não ajudou</span>

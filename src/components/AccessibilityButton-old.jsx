@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useLanguageDetection } from '../hooks/useLanguageDetection';
 import useTheme from '../hooks/useTheme';
 
-const AccessibilityButton = () => {
+  const AccessibilityButton = () => {
   const [settings, setSettings] = useState({
     fontSize: 16,
     highContrast: false,
@@ -124,6 +124,8 @@ const AccessibilityButton = () => {
     typeof value === 'boolean' ? value : value !== 16
   );
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <>
       {/* Main Button */}
@@ -133,7 +135,7 @@ const AccessibilityButton = () => {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="group relative flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 text-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/20"
+        className="group relative flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 text-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/20 hover:opacity-90"
         aria-label="Menu de acessibilidade"
         aria-expanded={isOpen}
       >
@@ -187,7 +189,7 @@ const AccessibilityButton = () => {
               className="fixed bottom-24 right-6 w-80 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden max-h-[85vh] overflow-y-auto"
             >
               {/* Header */}
-              <div className="p-4 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white">
+              <div className="p-4 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white hover:opacity-90">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
@@ -217,7 +219,7 @@ const AccessibilityButton = () => {
                     variant="outline"
                     size="sm"
                     onClick={resetSettings}
-                    className="flex items-center gap-2 border-2 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 rounded-xl"
+                    className="bg-white dark:bg-slate-900 text-foreground border-border flex items-center gap-2 border-2 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 rounded-xl"
                   >
                     <RotateCcw className="w-4 h-4" />
                     {t('accessibility.reset')}
@@ -234,10 +236,10 @@ const AccessibilityButton = () => {
                 </div>
 
                 {/* Theme Toggle */}
-                <div className="p-3 bg-gradient-to-r from-slate-50 to-gray-50 dark:from-gray-800 dark:to-slate-800 rounded-2xl border-2 border-gray-200 dark:border-gray-600 shadow-lg shadow-gray-100/50 dark:shadow-gray-900/20">
+                <div className="p-3 bg-gradient-to-r from-slate-50 to-gray-50 dark:from-gray-800 dark:to-slate-800 rounded-2xl border-2 border-gray-200 dark:border-gray-600 shadow-lg shadow-gray-100/50 dark:shadow-gray-900/20 text-white hover:opacity-90">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-gradient-to-r from-slate-100 to-gray-100 dark:from-gray-900/30 dark:to-slate-900/30 rounded-lg flex items-center justify-center shadow-sm">
+                      <div className="w-8 h-8 bg-gradient-to-r from-slate-100 to-gray-100 dark:from-gray-900/30 dark:to-slate-900/30 rounded-lg flex items-center justify-center shadow-sm text-white hover:opacity-90">
                         {isDark ? <Moon className="w-4 h-4 text-slate-600 dark:text-slate-400" /> : <Sun className="w-4 h-4 text-slate-600 dark:text-slate-400" />}
                       </div>
                       <div>
@@ -253,7 +255,7 @@ const AccessibilityButton = () => {
                       size="sm"
                       variant="outline"
                       onClick={toggleTheme}
-                      className="h-8 px-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-600 text-xs"
+                      className="bg-white dark:bg-slate-900 text-foreground border-border h-8 px-3 dark:bg-gray-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-600 text-xs"
                     >
                       {isDark ? <Sun className="w-3 h-3 mr-1" /> : <Moon className="w-3 h-3 mr-1" />}
                       {isDark ? t('accessibility.light') : t('accessibility.dark')}
@@ -268,11 +270,11 @@ const AccessibilityButton = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="group p-3 bg-gradient-to-r from-white to-blue-50/30 dark:from-gray-800 dark:to-blue-950/20 rounded-2xl border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-lg hover:shadow-blue-100/50 dark:hover:shadow-blue-900/20 transition-all duration-300 transform hover:-translate-y-0.5"
+                    className="group p-3 bg-gradient-to-r from-white to-blue-50/30 dark:from-gray-800 dark:to-blue-950/20 rounded-2xl border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-lg hover:shadow-blue-100/50 dark:hover:shadow-blue-900/20 transition-all duration-300 transform hover:-translate-y-0.5 text-white hover:opacity-90"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 flex-1">
-                        <div className="w-8 h-8 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200 shadow-sm">
+                        <div className="w-8 h-8 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200 shadow-sm text-white hover:opacity-90">
                           <option.icon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div className="flex-1">
@@ -298,7 +300,7 @@ const AccessibilityButton = () => {
                               <Minus className="w-3 h-3 text-blue-600 dark:text-blue-400" />
                             </Button>
                             <div className="flex-1 text-center">
-                              <div className="inline-flex items-center justify-center w-12 h-6 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-md border border-blue-200 dark:border-blue-800">
+                              <div className="inline-flex items-center justify-center w-12 h-6 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-md border border-blue-200 dark:border-blue-800 text-white hover:opacity-90">
                                 <span className="text-xs font-bold text-blue-700 dark:text-blue-300">
                                   {settings[option.key]}
                                 </span>
@@ -341,10 +343,10 @@ const AccessibilityButton = () => {
                 ))}
 
                 {/* Language Selection - Moved to end */}
-                <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl border-2 border-green-200 dark:border-green-800 shadow-lg shadow-green-100/50 dark:shadow-green-900/20">
+                <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl border-2 border-green-200 dark:border-green-800 shadow-lg shadow-green-100/50 dark:shadow-green-900/20 text-white hover:opacity-90">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-lg flex items-center justify-center shadow-sm">
+                      <div className="w-8 h-8 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-lg flex items-center justify-center shadow-sm text-white hover:opacity-90">
                         <Globe className="w-4 h-4 text-green-600 dark:text-green-400" />
                       </div>
                       <div>

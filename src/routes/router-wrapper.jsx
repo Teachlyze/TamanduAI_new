@@ -1,4 +1,3 @@
-import React, { Suspense, lazy } from 'react';
 import { createBrowserRouter, Outlet, Navigate } from 'react-router-dom';
 import { ErrorFallback, Loading } from '@/components/shared/ErrorComponents';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
@@ -17,7 +16,7 @@ const pageModules = import.meta.glob([
   '../components/*/*.jsx',
   '../components/*/*/*.jsx',
 ]);
-console.log('Available page modules:', Object.keys(pageModules));
+// console.log('Available page modules:', Object.keys(pageModules));
 
 // Sistema inteligente de lazy loading com prefetching
 const createLazyComponent = (componentName, options = {}) => {
@@ -28,7 +27,7 @@ const createLazyComponent = (componentName, options = {}) => {
   } = options;
 
   const lazyComponent = lazy(() => {
-    console.log(`Carregando componente: ${componentName} (prioridade: ${priority})`);
+    // console.log(`Carregando componente: ${componentName} (prioridade: ${priority})`);
 
     // Buscar o módulo correspondente
     const possiblePaths = [
@@ -69,7 +68,7 @@ const createLazyComponent = (componentName, options = {}) => {
 
     return loader()
       .then(module => {
-        console.log(`✅ Componente ${componentName} carregado com sucesso`);
+        // console.log(`✅ Componente ${componentName} carregado com sucesso`);
 
         // Pré-carregar componentes relacionados baseado na prioridade
         if (priority === 'high' && preloadOnRouteChange) {
@@ -193,7 +192,7 @@ const StrategicPlanPage = createLazyComponent('StrategicPlanPage', { priority: '
 
 // Component to wrap protected routes with enhanced error boundaries
 const withProtectedRoute = (Component, name) => {
-  console.log(`🔒 Criando rota protegida para: ${name}`);
+  // console.log(`🔒 Criando rota protegida para: ${name}`);
   return (
     <ProtectedRoute>
       <Suspense
@@ -216,7 +215,7 @@ const withProtectedRoute = (Component, name) => {
 
 // Component to wrap public routes
 const withPublicRoute = (Component, name) => {
-  console.log(`🌐 Criando rota pública para: ${name}`);
+  // console.log(`🌐 Criando rota pública para: ${name}`);
   return (
     <Suspense
       fallback={
@@ -236,7 +235,7 @@ const withPublicRoute = (Component, name) => {
 };
 
 
-console.log('Criando configuração de rotas...');
+// console.log('Criando configuração de rotas...');
 
 // Create the router instance (support subpath deployments via basename)
 const basename = (import.meta?.env?.BASE_URL || import.meta?.env?.VITE_BASE_PATH || '/').replace(/\/$/, '') || '/';
@@ -610,6 +609,6 @@ const router = createBrowserRouter([
   }
 ], { basename });
 
-console.log('Configuração de rotas criada com sucesso');
+// console.log('Configuração de rotas criada com sucesso');
 
 export default router;

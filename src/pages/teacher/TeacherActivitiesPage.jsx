@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -184,7 +183,7 @@ const TeacherActivitiesPage = () => {
             <PremiumButton
               leftIcon={Plus}
               onClick={() => navigate('/dashboard/activities/new')}
-              className="bg-white text-purple-600 hover:bg-white/90 shadow-lg whitespace-nowrap inline-flex items-center gap-2 font-semibold border-2 border-white/20"
+              className="bg-white text-purple-600 hover:bg-white/90 shadow-lg whitespace-nowrap inline-flex items-center gap-2 font-semibold border-2 border-white/20 min-w-fit px-6 py-2.5"
             >
               Nova Atividade
             </PremiumButton>
@@ -290,7 +289,7 @@ const TeacherActivitiesPage = () => {
                   size="sm"
                   onClick={() => setFilterStatus(status)}
                   leftIcon={Filter}
-                  className="whitespace-nowrap inline-flex items-center gap-2 bg-white dark:bg-slate-900 text-foreground border-border"
+                  className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-4 py-2 bg-white dark:bg-slate-900 text-foreground border-border"
                 >
                   {status === 'all' ? 'Todas' : status === 'published' ? 'Publicadas' : 'Rascunhos'}
                 </PremiumButton>
@@ -425,7 +424,7 @@ const TeacherActivitiesPage = () => {
                               e.stopPropagation();
                               navigate(`/dashboard/activities/${activity.id}`);
                             }}
-                            className="whitespace-nowrap inline-flex items-center gap-2"
+                            className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-4 py-2"
                           >
                             Ver
                           </PremiumButton>
@@ -437,7 +436,7 @@ const TeacherActivitiesPage = () => {
                               e.stopPropagation();
                               navigate(`/dashboard/activities/edit/${activity.id}`);
                             }}
-                            className="whitespace-nowrap inline-flex items-center gap-2"
+                            className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-4 py-2"
                           >
                             Editar
                           </PremiumButton>

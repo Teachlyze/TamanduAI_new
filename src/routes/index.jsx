@@ -1,4 +1,3 @@
-import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from '../components/ProtectedRoute';
 import RoleProtectedRoute from '../components/RoleProtectedRoute';
@@ -50,7 +49,7 @@ const StrategicPlanPage = lazyLoad(() => import('../pages/StrategicPlanPage'));
 const RoleBasedDashboard = lazyLoad(() => import('../components/dashboard/RoleBasedDashboard'));
 const DashboardHome = lazyLoad(() => import('../components/dashboard/DashboardHome'));
 const ClassesPage = lazyLoad(() => import('../components/dashboard/ClassesPage'));
-const ClassDetailsPage = lazyLoad(() => import('../components/dashboard/ClassDetailsPage'));
+// const ClassDetailsPage = lazyLoad(() => import('../components/dashboard/ClassDetailsPage')); // Arquivo deletado
 const StudentsPage = lazyLoad(() => import('../components/students/StudentsPage'));
 const StudentProfilePage = lazyLoad(() => import('../pages/dashboard/StudentProfilePage'));
 const InviteStudentPage = lazyLoad(() => import('../pages/students/InviteStudentPage'));
@@ -132,6 +131,15 @@ const QuestionBankPage = lazyLoad(() => import('../pages/teacher/QuestionBankPag
 const CreateQuestionPage = lazyLoad(() => import('../pages/teacher/CreateQuestionPage'));
 const AnalyticsMLPage = lazyLoad(() => import('../pages/teacher/AnalyticsMLPage'));
 const EditClassPage = lazyLoad(() => import('../pages/teacher/EditClassPage'));
+
+// New Class Systems - Janeiro 2025
+const ClassFeedPage = lazyLoad(() => import('../pages/classes/ClassFeedPage'));
+const GradingQueuePage = lazyLoad(() => import('../pages/teacher/GradingQueuePage'));
+const GradingPage = lazyLoad(() => import('../pages/teacher/GradingPage'));
+const ClassGradesPage = lazyLoad(() => import('../pages/teacher/ClassGradesPage'));
+const ClassMaterialsPage = lazyLoad(() => import('../pages/teacher/ClassMaterialsPage'));
+const ClassAnalyticsPage = lazyLoad(() => import('../pages/teacher/ClassAnalyticsPage'));
+const ClassAttendancePage = lazyLoad(() => import('../pages/teacher/ClassAttendancePage'));
 
 // Layouts
 const StudentLayout = lazyLoad(() => import('../components/student/StudentLayout'));
@@ -544,14 +552,14 @@ const AppRoutes = () => {
             </Suspense>
           }
         />
-        <Route
+        {/* <Route
           path="classes/:classId"
           element={
             <Suspense fallback={<Loading />}>
               <ClassDetailsPage />
             </Suspense>
           }
-        />
+        /> */}
         <Route
           path="classes/:classId/edit"
           element={
@@ -695,6 +703,63 @@ const AppRoutes = () => {
           element={
             <Suspense fallback={<Loading />}>
               <TeacherAnalyticsPage />
+            </Suspense>
+          }
+        />
+        {/* New Class Systems Routes - Janeiro 2025 */}
+        <Route
+          path="classes/:classId/feed"
+          element={
+            <Suspense fallback={<Loading />}>
+              <ClassFeedPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="grading"
+          element={
+            <Suspense fallback={<Loading />}>
+              <GradingQueuePage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="grading/:submissionId"
+          element={
+            <Suspense fallback={<Loading />}>
+              <GradingPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="classes/:classId/grades"
+          element={
+            <Suspense fallback={<Loading />}>
+              <ClassGradesPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="classes/:classId/materials"
+          element={
+            <Suspense fallback={<Loading />}>
+              <ClassMaterialsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="classes/:classId/analytics"
+          element={
+            <Suspense fallback={<Loading />}>
+              <ClassAnalyticsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="classes/:classId/attendance"
+          element={
+            <Suspense fallback={<Loading />}>
+              <ClassAttendancePage />
             </Suspense>
           }
         />

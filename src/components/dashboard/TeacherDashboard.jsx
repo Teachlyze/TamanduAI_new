@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Users,
@@ -70,6 +69,7 @@ const TeacherDashboard = () => {
                 activity_type,
                 created_at,
                 due_date,
+                max_score,
                 status
               ),
               classes!inner(name)
@@ -124,7 +124,7 @@ const TeacherDashboard = () => {
   useEffect(() => {
     if (classesLoading) {
       const timer = setTimeout(() => {
-        setLoading(false);
+        setLoading(false, []); // TODO: Add dependencies
         setTeacherStats({
           totalStudents: 0,
           activeClasses: 0,
@@ -132,7 +132,7 @@ const TeacherDashboard = () => {
           completionRate: 0,
           pendingSubmissions: 0,
           upcomingDeadlines: 0
-        });
+        }, []); // TODO: Add dependencies
       }, 7000);
       return () => clearTimeout(timer);
     }

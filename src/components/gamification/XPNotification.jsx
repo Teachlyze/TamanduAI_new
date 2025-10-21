@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, TrendingUp, Award, Star } from 'lucide-react';
 
@@ -6,7 +6,7 @@ import { Zap, TrendingUp, Award, Star } from 'lucide-react';
  * Notificação de XP ganho
  * Mostra animação quando aluno ganha XP
  */
-const XPNotification = ({ xp, reason, onClose, show }) => {
+  const XPNotification = ({ xp, reason, onClose, show }) => {
   const [visible, setVisible] = useState(show);
 
   useEffect(() => {
@@ -16,7 +16,9 @@ const XPNotification = ({ xp, reason, onClose, show }) => {
         setVisible(false);
         setTimeout(onClose, 300);
       }, 3000);
-      return () => clearTimeout(timer);
+      if (loading) return <LoadingScreen />;
+
+  return () => clearTimeout(timer);
     }
   }, [show, onClose]);
 
@@ -38,6 +40,8 @@ const XPNotification = ({ xp, reason, onClose, show }) => {
     return 'XP ganho!';
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <AnimatePresence>
       {visible && (
@@ -47,11 +51,11 @@ const XPNotification = ({ xp, reason, onClose, show }) => {
           exit={{ opacity: 0, y: -20, scale: 0.95 }}
           className="fixed right-4 top-4 z-50"
         >
-          <div className="overflow-hidden rounded-2xl border border-yellow-200 bg-gradient-to-r from-yellow-50 to-amber-50 shadow-xl">
+          <div className="overflow-hidden rounded-2xl border border-yellow-200 bg-gradient-to-r from-yellow-50 to-amber-50 shadow-xl text-white hover:opacity-90">
             <div className="relative p-4">
               {/* Animated background */}
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-400/20"
+                className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 text-white hover:opacity-90"
                 animate={{
                   scale: [1, 1.2, 1],
                   opacity: [0.3, 0.5, 0.3],
@@ -115,7 +119,7 @@ const XPNotification = ({ xp, reason, onClose, show }) => {
 
             {/* Progress bar */}
             <motion.div
-              className="h-1 bg-gradient-to-r from-yellow-400 to-orange-500"
+              className="h-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:opacity-90"
               initial={{ width: '100%' }}
               animate={{ width: '0%' }}
               transition={{ duration: 3, ease: 'linear' }}

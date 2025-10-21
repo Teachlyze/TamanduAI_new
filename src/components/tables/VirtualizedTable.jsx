@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,7 +18,8 @@ import { Checkbox } from '@/components/ui/checkbox';
  * @param {Function} props.onSort - Sort handler
  * @param {string} props.className - Additional CSS classes
  */
-export const VirtualizedTable = ({
+export const [loading, setLoading] = useState(true);
+  const VirtualizedTable = ({
   data = [],
   columns = [],
   rowHeight = 50,
@@ -117,7 +118,9 @@ export const VirtualizedTable = ({
   const renderRow = (rowData, rowIndex) => {
     const isSelected = selectedRows.has(rowIndex);
 
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div
         key={rowIndex}
         className={`flex border-b hover:bg-muted/50 cursor-pointer ${
@@ -140,7 +143,9 @@ export const VirtualizedTable = ({
           const cellValue = rowData[column.key];
           const cellContent = column.render ? column.render(cellValue, rowData, rowIndex) : cellValue;
 
-          return (
+          if (loading) return <LoadingScreen />;
+
+  return (
             <div
               key={column.key}
               className="flex-1 p-3 border-r last:border-r-0 flex items-center overflow-hidden"
@@ -164,6 +169,8 @@ export const VirtualizedTable = ({
   // Calculate total height for scroll container
   const totalHeight = data.length * rowHeight;
   const offsetY = visibleRange.startIndex * rowHeight;
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <Card className={`virtualized-table ${className}`} {...props}>
@@ -196,7 +203,9 @@ export const VirtualizedTable = ({
                 const dataIndex = visibleRange.startIndex + index;
                 if (dataIndex >= data.length) return null;
 
-                return (
+                if (loading) return <LoadingScreen />;
+
+  return (
                   <div
                     key={dataIndex}
                     style={{

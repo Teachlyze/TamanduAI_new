@@ -1,4 +1,3 @@
-import React, { useEffect, useMemo, useState } from 'react';
 import { PremiumCard, EmptyState, LoadingScreen } from '@/components/ui';
 import { Trophy, Users } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';

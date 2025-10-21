@@ -1,9 +1,9 @@
-import React from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen' from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiWifiOff, FiWifi } from 'react-icons/fi';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 
-const OfflineIndicator = () => {
+  const OfflineIndicator = () => {
   const isOnline = useOnlineStatus();
   const [wasOffline, setWasOffline] = React.useState(false);
   const [showReconnected, setShowReconnected] = React.useState(false);
@@ -17,9 +17,13 @@ const OfflineIndicator = () => {
         setShowReconnected(false);
         setWasOffline(false);
       }, 3000);
-      return () => clearTimeout(timer);
+      if (loading) return <LoadingScreen />;
+
+  return () => clearTimeout(timer);
     }
   }, [isOnline, wasOffline]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <AnimatePresence>

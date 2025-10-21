@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { PremiumCard, LoadingScreen, EmptyState, PremiumButton } from '@/components/ui';

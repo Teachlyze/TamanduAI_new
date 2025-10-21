@@ -1,11 +1,11 @@
 // src/components/ui/AdvancedThemeSystem.jsx
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /**
  * Sistema avançado de temas com múltiplas opções visuais
  */
-const ThemeContext = createContext({
+  const ThemeContext = createContext({
   currentTheme: 'auto',
   availableThemes: [],
   setTheme: () => {},
@@ -162,7 +162,9 @@ export const AdvancedThemeProvider = ({
     updateAutoTheme();
     mediaQuery.addEventListener('change', updateAutoTheme);
 
-    return () => mediaQuery.removeEventListener('change', updateAutoTheme);
+    if (loading) return <LoadingScreen />;
+
+  return () => mediaQuery.removeEventListener('change', updateAutoTheme);
   }, [currentTheme, customColors]);
 
   // Aplicar tema ao DOM
@@ -248,6 +250,8 @@ export const AdvancedThemeProvider = ({
     enableCustomColors,
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <ThemeContext.Provider value={value}>
       {children}
@@ -296,6 +300,8 @@ export const AdvancedThemeSelector = ({
     setCustomColors(tempColors);
     setShowCustomizer(false);
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -410,6 +416,8 @@ export const ThemeIndicator = ({ showDetails = false, className = '' }) => {
 
   const theme = availableThemes.find(t => t.id === currentTheme);
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       <div className={`w-4 h-4 rounded-full border-2 border-base-200 ${
@@ -440,6 +448,8 @@ export const ThemePreview = ({
   onSelect,
   className = '',
 }) => {
+  if (loading) return <LoadingScreen />;
+
   return (
     <motion.button
       whileHover={{ scale: 1.02 }}
@@ -517,6 +527,8 @@ export const useThemeAnimations = () => {
  */
 export const ThemeTransition = ({ children }) => {
   const { currentTheme } = useAdvancedTheme();
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <motion.div

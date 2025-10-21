@@ -27,7 +27,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Trash2, Plus, Eye, Loader2 } from 'lucide-react';
 
 // Função para determinar o tipo de pergunta com base no schema
-const getQuestionTypeFromSchema = (prop) => {
+  const getQuestionTypeFromSchema = (prop) => {
   if (prop.format === 'date') return 'date';
   if (prop.format === 'textarea') return 'textarea';
   if (prop.type === 'number') return 'number';
@@ -76,12 +76,12 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
   const saveActivity = async (isFinal = false) => {
     // Evitar múltiplas submissões simultâneas
     if (isSubmitting || isSaving) {
-      console.log('Save already in progress, skipping...');
+      // console.log('Save already in progress, skipping...');
       return null;
     }
     
     try {
-      console.log('Starting save operation...');
+      // console.log('Starting save operation...');
       setIsSaving(true);
       
       // Usa schema/uiSchema memoizados declarados abaixo via useMemo
@@ -91,7 +91,7 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
         throw new Error('Usuário não autenticado. Por favor, faça login novamente.');
       }
       
-      console.log('Preparing activity data...');
+      // console.log('Preparing activity data...');
       const activityData = {
         title: (schema && schema.title) || 'Sem título',
         description: '',
@@ -103,12 +103,12 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
         updated_at: new Date().toISOString()
       };
       
-      console.log('Saving activity data:', activityData);
+      // console.log('Saving activity data:', activityData);
       let result;
       
       try {
         if (activityId) {
-          console.log('Updating existing activity:', activityId);
+          // console.log('Updating existing activity:', activityId);
           const { data, error } = await supabase
             .from('activities')
             .update(activityData)
@@ -121,9 +121,9 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
             throw error;
           }
           result = data;
-          console.log('Activity updated successfully:', result);
+          // console.log('Activity updated successfully:', result);
         } else {
-          console.log('Creating new activity');
+          // console.log('Creating new activity');
           const { data, error } = await supabase
             .from('activities')
             .insert([activityData])
@@ -135,11 +135,11 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
             throw error;
           }
           result = data;
-          console.log('Activity created successfully:', result);
+          // console.log('Activity created successfully:', result);
           
           // Atualiza a URL se for uma nova atividade
           if (result?.id) {
-            console.log('Updating URL with new activity ID:', result.id);
+            // console.log('Updating URL with new activity ID:', result.id);
             window.history.replaceState({}, '', `/dashboard/atividade/editar/${result.id}`);
           }
         }
@@ -174,7 +174,7 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
           }
         }
         
-        console.log('Save operation completed successfully');
+        // console.log('Save operation completed successfully');
         return result;
         
       } catch (dbError) {
@@ -196,7 +196,7 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
       throw error;
       
     } finally {
-      console.log('Cleaning up save operation...');
+      // console.log('Cleaning up save operation...');
       // Garante que o estado de salvamento seja sempre limpo, mesmo em caso de erro
       setIsSaving(false);
       setIsSubmitting(false);
@@ -205,7 +205,7 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
 
   // Ref to call latest saveActivity without adding it to deps
   const saveActivityRef = useRef(saveActivity);
-  useEffect(() => { saveActivityRef.current = saveActivity; });
+  useEffect(() => { saveActivityRef.current = saveActivity; }, []); // TODO: Add dependencies
 
   // Função para agendar o salvamento automático (no unnecessary deps)
   const scheduleSave = useCallback((isFinal = false) => {
@@ -218,12 +218,16 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
       }
     }, isFinal ? 0 : 2000);
     setAutoSaveTimeout(timeout);
-    return () => clearTimeout(timeout);
+    if (loading) return <LoadingScreen />;
+
+  return () => clearTimeout(timeout);
   }, [autoSaveTimeout]);
 
   // Efeito para limpar o timeout ao desmontar
   useEffect(() => {
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       if (autoSaveTimeout) {
         clearTimeout(autoSaveTimeout);
       }
@@ -236,19 +240,19 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
     
     const loadActivity = async () => {
       if (!activityId) {
-        console.log('No activityId provided, skipping load');
+        // console.log('No activityId provided, skipping load');
         if (isMounted) setIsLoading(false);
         return;
       }
       
       // Se já temos os dados iniciais, não precisamos carregar novamente
       if (initialData) {
-        console.log('Using provided initialData, skipping load');
+        // console.log('Using provided initialData, skipping load');
         if (isMounted) setIsLoading(false);
         return;
       }
       
-      console.log(`Loading activity with ID: ${activityId}`);
+      // console.log(`Loading activity with ID: ${activityId}`);
       
       try {
         if (isMounted) setIsLoading(true);
@@ -281,10 +285,10 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
           return;
         }
         
-        console.log('Activity data loaded:', data);
+        // console.log('Activity data loaded:', data);
         
         if (!isMounted) {
-          console.log('Component unmounted before setting state');
+          // console.log('Component unmounted before setting state');
           return;
         }
         
@@ -299,7 +303,7 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
             ? JSON.parse(data.ui_schema) 
             : (data.ui_schema || {}); */
           
-          console.log('Parsed schema:', parsedSchema);
+          // console.log('Parsed schema:', parsedSchema);
           
           // Atualiza o estado com os dados carregados
           setTitle(parsedSchema.title || '');
@@ -335,7 +339,7 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
             }];
           }
           
-          console.log('Setting questions from schema:', questionsFromSchema);
+          // console.log('Setting questions from schema:', questionsFromSchema);
           setQuestions(questionsFromSchema);
           
         } catch (parseError) {
@@ -371,7 +375,7 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
         
       } finally {
         if (isMounted) {
-          console.log('Loading complete, setting isLoading to false');
+          // console.log('Loading complete, setting isLoading to false');
           setIsLoading(false);
         }
       }
@@ -379,7 +383,9 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
     
     loadActivity();
     
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       isMounted = false;
     };
   }, [activityId, initialData, toast, navigate]);
@@ -422,7 +428,9 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
       }
     };
     loadClasses();
-    return () => { isMounted = false; };
+    if (loading) return <LoadingScreen />;
+
+  return () => { isMounted = false; };
   }, [activityId]);
 
   // Atualiza o estado e agenda salvamento
@@ -635,14 +643,14 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
     
     // Evitar múltiplas submissões simultâneas
     if (isSubmitting) {
-      console.log('Submit already in progress, skipping...');
+      // console.log('Submit already in progress, skipping...');
       return;
     }
     
     // Validação do formulário
     const errors = validateForm();
     if (errors.length > 0) {
-      console.log('Form validation failed with errors:', errors);
+      // console.log('Form validation failed with errors:', errors);
       toast({
         title: 'Erro de validação',
         description: (
@@ -661,18 +669,18 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
     }
     
     try {
-      console.log('Starting form submission...');
+      // console.log('Starting form submission...');
       setIsSubmitting(true);
       
       // Salva a atividade como final (não rascunho)
-      console.log('Calling saveActivity with isFinal=true');
+      // console.log('Calling saveActivity with isFinal=true');
       const result = await saveActivity(true);
       
       if (!result || !result.id) {
         throw new Error('A resposta do servidor está incompleta. Por favor, tente novamente.');
       }
       
-      console.log('Activity saved successfully, result:', result);
+      // console.log('Activity saved successfully, result:', result);
       
       // Feedback de sucesso
       toast({
@@ -682,14 +690,14 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
       });
       
       // Redireciona após um pequeno atraso para o usuário ver a mensagem
-      console.log('Preparing to redirect after save...');
+      // console.log('Preparing to redirect after save...');
       setTimeout(() => {
         try {
           if (onActivityCreated) {
-            console.log('Calling onActivityCreated with ID:', result.id);
+            // console.log('Calling onActivityCreated with ID:', result.id);
             onActivityCreated(result.id);
           } else {
-            console.log('Navigating to /activities');
+            // console.log('Navigating to /activities');
             navigate('/activities');
           }
         } catch (navError) {
@@ -733,14 +741,16 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
       throw error;
       
     } finally {
-      console.log('Cleaning up submit state...');
+      // console.log('Cleaning up submit state...');
       // Não precisamos mais limpar o estado de submissão aqui,
       // pois já é feito no saveActivity
     }
   };
 
   if (isLoading) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="flex h-screen items-center justify-center">
         <div className="flex flex-col items-center gap-2">
           <Loader2 className="h-8 w-8 animate-spin" />
@@ -749,6 +759,8 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
       </div>
     );
   }
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="bg-card p-6 rounded-lg shadow-sm">
@@ -792,7 +804,9 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               {availableClasses.map(c => {
                 const checked = selectedClassIds.includes(c.id);
-                return (
+                if (loading) return <LoadingScreen />;
+
+  return (
                   <label key={c.id} className="flex items-center gap-2 border rounded-md p-2 cursor-pointer">
                     <input
                       type="checkbox"

@@ -91,11 +91,11 @@ export const useAccessibility = () => {
 
   // Detectar se usuário prefere reduced motion
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)', []); // TODO: Add dependencies
 
     const handleChange = (e) => {
       if (preferences.reducedMotion !== e.matches) {
-        savePreferences({ reducedMotion: e.matches });
+        savePreferences({ reducedMotion: e.matches }, []); // TODO: Add dependencies
       }
     };
 

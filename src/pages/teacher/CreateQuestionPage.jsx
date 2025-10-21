@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Save, Plus, X, BookOpen, Target, Award } from 'lucide-react';
@@ -133,14 +132,14 @@ export default function CreateQuestionPage() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-8 shadow-xl"
+        className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-8 shadow-xl hover:opacity-90"
       >
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-4 mb-4">
             <Button
               variant="ghost"
               onClick={() => navigate('/dashboard/question-bank')}
-              className="text-white hover:bg-white/20 whitespace-nowrap inline-flex items-center gap-2"
+              className="text-white hover:bg-white/20 whitespace-nowrap inline-flex items-center gap-2 min-w-fit"
             >
               <ArrowLeft className="w-5 h-5" />
               <span>Voltar</span>
@@ -279,7 +278,7 @@ export default function CreateQuestionPage() {
                     type="button"
                     variant="outline"
                     onClick={handleAddOption}
-                    className="w-full whitespace-nowrap inline-flex items-center gap-2 bg-white dark:bg-slate-900 text-foreground border-border"
+                    className="bg-white dark:bg-slate-900 text-foreground border-border w-full whitespace-nowrap inline-flex items-center gap-2 min-w-fit"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Adicionar Alternativa</span>
@@ -368,7 +367,7 @@ export default function CreateQuestionPage() {
                       placeholder="Adicionar tag..."
                       className="flex-1 bg-white dark:bg-slate-900 text-foreground"
                     />
-                    <Button type="button" onClick={handleAddTag} variant="outline" className="whitespace-nowrap inline-flex items-center gap-2">
+                    <Button type="button" onClick={handleAddTag} variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border whitespace-nowrap inline-flex items-center gap-2 min-w-fit">
                       <Plus className="w-4 h-4" />
                       <span>Adicionar</span>
                     </Button>
@@ -406,7 +405,7 @@ export default function CreateQuestionPage() {
             <PremiumButton
               type="submit"
               disabled={loading}
-              className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white whitespace-nowrap inline-flex items-center justify-center gap-2 shadow-lg rounded-xl"
+              className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white whitespace-nowrap inline-flex items-center justify-center gap-2 shadow-lg rounded-xl hover:opacity-90"
             >
               {loading ? (
                 <>Salvando...</>

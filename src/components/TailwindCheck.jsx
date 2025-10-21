@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
-const TailwindCheck = () => {
+  const TailwindCheck = () => {
   useEffect(() => {
     console.log('[TailwindCheck] Componente montado');
     
@@ -31,6 +31,8 @@ const TailwindCheck = () => {
     console.log('[TailwindCheck] Fonte Inter carregada:', isFontLoaded);
     
   }, []);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="fixed bottom-4 right-4 bg-white p-4 rounded-lg shadow-lg border border-gray-200 z-50 max-w-sm">

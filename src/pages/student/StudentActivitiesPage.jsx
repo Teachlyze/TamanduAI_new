@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Loader2, Clock, AlertCircle, CheckCircle, Filter, Search, FileText, Calendar, Target, Zap } from 'lucide-react';

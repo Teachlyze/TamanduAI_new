@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Accessibility, Sun, Moon, Globe, RotateCcw, Eye, Type, Settings } from 'lucide-react';
 import Button from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useLanguageDetection } from '../hooks/useLanguageDetection';
 import useTheme from '../hooks/useTheme';
-
-const AccessibilityButton = () => {
+  const AccessibilityButton = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(() => {
     // Minimizar após primeiro acesso
@@ -38,45 +37,47 @@ const AccessibilityButton = () => {
         setIsMinimized(true);
         localStorage.setItem('accessibility-minimized', 'true');
       }, 5000);
-      return () => clearTimeout(timer);
+      if (loading) return <LoadingScreen />;
+
+  return () => clearTimeout(timer);
     }
   }, []);
 
   // Aplicar configurações
   useEffect(() => {
     const applySettings = () => {
-      console.log('Aplicando configurações:', settings);
+      // console.log('Aplicando configurações:', settings);
 
       // Aplicar configurações no documentElement
       const root = document.documentElement;
 
       if (settings.fontSize && settings.fontSize !== 16) {
         root.style.fontSize = `${settings.fontSize}px`;
-        console.log('Aplicado fontSize:', settings.fontSize);
+        // console.log('Aplicado fontSize:', settings.fontSize);
       } else {
         root.style.fontSize = '16px';
       }
 
       if (settings.lineSpacing && settings.lineSpacing !== 1.5) {
         root.style.lineHeight = settings.lineSpacing.toString();
-        console.log('Aplicado lineHeight:', settings.lineSpacing);
+        // console.log('Aplicado lineHeight:', settings.lineSpacing);
       } else {
         root.style.lineHeight = '1.5';
       }
 
       if (settings.letterSpacing !== undefined && settings.letterSpacing !== 0) {
         root.style.letterSpacing = `${settings.letterSpacing}px`;
-        console.log('Aplicado letterSpacing:', settings.letterSpacing);
+        // console.log('Aplicado letterSpacing:', settings.letterSpacing);
       } else {
         root.style.letterSpacing = '0px';
       }
 
       if (settings.highContrast) {
         root.classList.add('high-contrast');
-        console.log('Aplicado highContrast: true');
+        // console.log('Aplicado highContrast: true');
       } else {
         root.classList.remove('high-contrast');
-        console.log('Removido highContrast');
+        // console.log('Removido highContrast');
       }
 
       // Aplicar também no body e em todos os elementos
@@ -123,7 +124,7 @@ const AccessibilityButton = () => {
         }
       });
 
-      console.log('Configurações aplicadas com sucesso');
+      // console.log('Configurações aplicadas com sucesso');
     };
 
     applySettings();
@@ -150,12 +151,12 @@ const AccessibilityButton = () => {
 
   const handleLanguageChange = async (langCode) => {
     try {
-      console.log('Tentando alterar idioma para:', langCode);
+      // console.log('Tentando alterar idioma para:', langCode);
       await setLanguage(langCode);
       setIsLanguageManual(true);
 
       // Não recarregar a página, apenas atualizar o estado
-      console.log('Idioma alterado com sucesso para:', langCode);
+      // console.log('Idioma alterado com sucesso para:', langCode);
 
       // Forçar atualização dos componentes que usam i18n
       window.dispatchEvent(new CustomEvent('languageChanged', { detail: langCode }));
@@ -163,6 +164,8 @@ const AccessibilityButton = () => {
       console.error('Erro ao alterar idioma:', error);
     }
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <>
@@ -179,7 +182,7 @@ const AccessibilityButton = () => {
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
         onMouseEnter={() => setIsMinimized(false)}
-        className="group relative flex items-center justify-center gap-3 py-3.5 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 text-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-blue-700"
+        className="group relative flex items-center justify-center gap-3 py-3.5 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 text-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-blue-700 hover:opacity-90"
         style={{
           background: 'linear-gradient(to right, #2563eb, #9333ea, #4338ca)',
           borderColor: '#1d4ed8',
@@ -291,7 +294,7 @@ const AccessibilityButton = () => {
                     </div>
                     <button
                       onClick={toggleTheme}
-                      className="w-14 h-8 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 dark:from-blue-500 dark:to-indigo-600 relative shadow-lg hover:shadow-xl transition-all duration-300 flex items-center"
+                      className="w-14 h-8 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 dark:from-blue-500 dark:to-indigo-600 relative shadow-lg hover:shadow-xl transition-all duration-300 flex items-center text-white hover:opacity-90"
                     >
                       <div className={`absolute w-6 h-6 bg-white rounded-full shadow-md transition-all duration-300 flex items-center justify-center ${
                         isDark ? 'right-1' : 'left-1'

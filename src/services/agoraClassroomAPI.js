@@ -19,7 +19,7 @@ let tokenExpiry = 0;
  * @returns {Promise<string>} - The education token
  */
 async function fetchEducationToken() {
-  console.log('[Agora] Fetching new education token...');
+  // console.log('[Agora] Fetching new education token...');
   
   // Check if environment variables are set
   if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
@@ -28,7 +28,7 @@ async function fetchEducationToken() {
   }
 
   try {
-    console.log(`[Agora] Making request to token service: ${TOKEN_SERVICE_URL}`);
+    // console.log(`[Agora] Making request to token service: ${TOKEN_SERVICE_URL}`);
     
     const response = await fetch(TOKEN_SERVICE_URL, {
       method: 'POST',
@@ -39,7 +39,7 @@ async function fetchEducationToken() {
       body: JSON.stringify({}),
     });
 
-    console.log(`[Agora] Token service response status: ${response.status}`);
+    // console.log(`[Agora] Token service response status: ${response.status}`);
     
     if (!response.ok) {
       let errorMessage = `HTTP error! status: ${response.status}`;
@@ -55,7 +55,7 @@ async function fetchEducationToken() {
     }
 
     const data = await response.json();
-    console.log('[Agora] Token service response data:', data);
+    // console.log('[Agora] Token service response data:', data);
     
     if (!data.success) {
       throw new Error(data.error || 'Invalid response from token service: success flag is false');
@@ -69,7 +69,7 @@ async function fetchEducationToken() {
     cachedToken = data.token;
     tokenExpiry = Date.now() + (60 * 60 * 1000); // 1 hour from now
     
-    console.log('[Agora] Successfully obtained and cached education token');
+    // console.log('[Agora] Successfully obtained and cached education token');
     return cachedToken;
   } catch (error) {
     console.error('[Agora] Error in fetchEducationToken:', {
@@ -146,7 +146,7 @@ const agoraApi = async (endpoint, method = 'GET', body = null) => {
     
     // If the error is due to an invalid token, clear the cache and retry once
     if (error.message.includes('token') || error.message.includes('401')) {
-      console.log('Token may be expired, attempting to refresh...');
+      // console.log('Token may be expired, attempting to refresh...');
       cachedToken = null; // Clear the cached token
       return agoraApi(endpoint, method, body); // Retry the request
     }

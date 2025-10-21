@@ -473,8 +473,8 @@ export const setupProductionDatabase = async () => {
   // Enable query logging in development
   if (process.env.NODE_ENV === 'development') {
     db.on('query', (query) => {
-      console.log('SQL Query:', query.sql);
-      console.log('Parameters:', query.bindings);
+      // console.log('SQL Query:', query.sql);
+      // console.log('Parameters:', query.bindings);
     });
   }
 
@@ -557,7 +557,7 @@ export const productionChecklist = {
  * Generate production build
  */
 export const generateProductionBuild = async () => {
-  console.log('🚀 Starting production build...');
+  // console.log('🚀 Starting production build...');
 
   try {
     // Validate configuration
@@ -566,25 +566,25 @@ export const generateProductionBuild = async () => {
       throw new Error(`Configuration errors: ${configValidation.errors.join(', ')}`);
     }
 
-    console.log('✅ Configuration validated');
+    // console.log('✅ Configuration validated');
 
     // Run tests
-    console.log('🧪 Running tests...');
+    // console.log('🧪 Running tests...');
     // Test execution would go here
 
     // Build application
-    console.log('🔨 Building application...');
+    // console.log('🔨 Building application...');
     // Build process would go here
 
     // Generate documentation
-    console.log('📚 Generating documentation...');
+    // console.log('📚 Generating documentation...');
     const docs = await generateProjectDocs();
 
     // Run security audit
-    console.log('🔒 Running security audit...');
+    // console.log('🔒 Running security audit...');
     // Security audit would go here
 
-    console.log('✅ Production build completed successfully');
+    // console.log('✅ Production build completed successfully');
 
     return {
       success: true,

@@ -319,7 +319,7 @@ export const useErrorMonitoring = () => {
       monitor.current.recordError(event.error || event.reason, {
         type: 'unhandled',
         url: window.location.href,
-      });
+      }, []); // TODO: Add dependencies
     };
 
     const handleUnhandledRejection = (event) => {

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { X, Cookie, Settings, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const PRIVACY_PREFS_KEY = 'privacy-preferences';
+  const PRIVACY_PREFS_KEY = 'privacy-preferences';
 const PRIVACY_ACCEPTED_KEY = 'privacy-preferences-accepted';
 
 const PrivacyPreferencesPopup = () => {
@@ -26,7 +26,9 @@ const PrivacyPreferencesPopup = () => {
       const timer = setTimeout(() => {
         setIsOpen(true);
       }, 1000);
-      return () => clearTimeout(timer);
+      if (loading) return <LoadingScreen />;
+
+  return () => clearTimeout(timer);
     }
   }, []);
 
@@ -49,7 +51,9 @@ const PrivacyPreferencesPopup = () => {
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen]);
@@ -127,6 +131,8 @@ const PrivacyPreferencesPopup = () => {
     return null;
   }
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <>
       {/* Floating Settings Button - Only show if user hasn't accepted yet */}
@@ -167,7 +173,7 @@ const PrivacyPreferencesPopup = () => {
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white hover:opacity-90">
                       <Cookie className="text-white" size={20} />
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -184,7 +190,7 @@ const PrivacyPreferencesPopup = () => {
                 </div>
 
                 <div className="space-y-6">
-                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800 text-white hover:opacity-90">
                     <p className="text-sm text-gray-700 dark:text-gray-300">
                       🍪 Usamos cookies para melhorar sua experiência. Você tem total controle sobre quais aceitar!
                     </p>

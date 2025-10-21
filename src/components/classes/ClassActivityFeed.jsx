@@ -72,7 +72,7 @@ const ClassActivityFeed = () => {
             title,
             description,
             due_date,
-            total_points,
+            max_score,
             status,
             published_at,
             instructions,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,7 +10,7 @@ import { ptBR } from 'date-fns/locale';
 import useClassInvites from '@/hooks/useClassInvites';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 
-const ClassInviteManager = ({ classId, className }) => {
+  const ClassInviteManager = ({ classId, className }) => {
   const { toast } = useToast();
   const [expirationDays, setExpirationDays] = useState(7);
   const [maxUses, setMaxUses] = useState(10);
@@ -85,6 +85,8 @@ const ClassInviteManager = ({ classId, className }) => {
     })})`;
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <Card className={className}>
       <CardHeader>
@@ -108,7 +110,7 @@ const ClassInviteManager = ({ classId, className }) => {
                   min="1"
                   value={expirationDays}
                   onChange={(e) => setExpirationDays(e.target.value)}
-                  className="max-w-[200px]"
+                  className="max-w-[200px] bg-white dark:bg-slate-900 text-foreground border-border"
                 />
               </div>
               
@@ -120,14 +122,14 @@ const ClassInviteManager = ({ classId, className }) => {
                   min="1"
                   value={maxUses}
                   onChange={(e) => setMaxUses(e.target.value)}
-                  className="max-w-[200px]"
+                  className="max-w-[200px] bg-white dark:bg-slate-900 text-foreground border-border"
                 />
               </div>
 
               <div className="space-y-2">
                 <Label>Role</Label>
                 <Select value={role} onValueChange={setRole}>
-                  <SelectTrigger className="max-w-[220px]">
+                  <SelectTrigger className="max-w-[220px] bg-white dark:bg-slate-900 text-foreground border-border">
                     <SelectValue placeholder="Selecione o papel" />
                   </SelectTrigger>
                   <SelectContent>
@@ -141,15 +143,15 @@ const ClassInviteManager = ({ classId, className }) => {
             <Button 
               onClick={handleCreateInvite}
               disabled={isLoading}
-              className="mt-2"
+              className="mt-2 whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-6 py-2.5 bg-white dark:bg-slate-900 text-foreground border-border"
             >
               {isLoading ? (
                 <>
-                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                  Criando...
+                  <RefreshCw className="h-4 w-4 animate-spin" />
+                  <span>Criando...</span>
                 </>
               ) : (
-                'Gerar link de convite'
+                <span>Gerar link de convite</span>
               )}
             </Button>
           </div>
@@ -176,6 +178,7 @@ const ClassInviteManager = ({ classId, className }) => {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleCopyInviteCode(invite.invitation_code)}
+                              className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-2 py-1"
                             >
                               <Copy className="h-3.5 w-3.5" />
                             </Button>
@@ -228,16 +231,17 @@ const ClassInviteManager = ({ classId, className }) => {
                           size="sm"
                           onClick={() => handleCopyInviteLink(invite.invitation_code)}
                           disabled={copiedInviteId === invite.invitation_code}
+                          className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-4 py-2 bg-white dark:bg-slate-900 text-foreground border-border"
                         >
                           {copiedInviteId === invite.invitation_code ? (
                             <>
-                              <Check className="mr-2 h-4 w-4" />
-                              Copiado!
+                              <Check className="h-4 w-4" />
+                              <span>Copiado!</span>
                             </>
                           ) : (
                             <>
-                              <Copy className="mr-2 h-4 w-4" />
-                              Copiar Link
+                              <Copy className="h-4 w-4" />
+                              <span>Copiar Link</span>
                             </>
                           )}
                         </Button>
@@ -245,7 +249,7 @@ const ClassInviteManager = ({ classId, className }) => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-destructive hover:text-destructive"
+                          className="text-destructive hover:text-destructive whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-3 py-2"
                           onClick={() => handleRevokeInvite(invite.id)}
                           disabled={isLoading || invite.status !== 'active'}
                         >

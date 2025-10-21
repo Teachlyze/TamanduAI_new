@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -37,7 +37,7 @@ import {
 } from 'lucide-react';
 
 // Initialize Supabase client
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+  const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
 const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -245,6 +245,8 @@ const StudentsPage = () => {
     </div>
   );
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -267,7 +269,7 @@ const StudentsPage = () => {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Buscar alunos..."
-                className="pl-9"
+                className="bg-white dark:bg-slate-900 text-foreground pl-9"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -405,14 +407,14 @@ const StudentsPage = () => {
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
                             {student.classes.slice(0, 2).map((cls, i) => (
-                              <Badge key={i} variant="outline" className="text-xs">
+                              <Badge key={i} variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border text-xs">
                                 {cls}
                               </Badge>
                             ))}
                             {student.classes.length > 2 && (
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <Badge variant="outline" className="text-xs">
+                                  <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border text-xs">
                                     +{student.classes.length - 2} mais
                                   </Badge>
                                 </TooltipTrigger>
@@ -564,7 +566,7 @@ const StudentsPage = () => {
               </p>
               <Button 
                 variant="outline" 
-                className="mt-4"
+                className="bg-white dark:bg-slate-900 text-foreground border-border mt-4"
                 onClick={() => {
                   if (searchTerm || statusFilter !== 'all' || classFilter !== 'all') {
                     setSearchTerm('');

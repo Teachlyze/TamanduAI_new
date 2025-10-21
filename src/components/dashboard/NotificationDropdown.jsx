@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Bell, BellRing, Check, X, Clock as ClockIcon, AlertTriangle, Info, Calendar as CalendarIcon } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/components/ui/use-toast';
@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabaseClient';
 
 function NotificationDropdown() {
+  const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -98,7 +99,9 @@ function NotificationDropdown() {
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
@@ -123,7 +126,9 @@ function NotificationDropdown() {
     setupSubscription();
 
     // Cleanup function
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       isSubscribed = false;
       if (subscription && typeof subscription === 'function') {
         subscription();
@@ -146,6 +151,8 @@ function NotificationDropdown() {
   };
 
   const unreadCount = notifications.filter(n => !n.is_read).length;
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="relative" ref={dropdownRef}>

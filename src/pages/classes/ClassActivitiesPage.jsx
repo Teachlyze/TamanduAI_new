@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { format, parseISO, isAfter, isBefore, isToday } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -332,12 +331,12 @@ const ClassActivitiesPage = () => {
         break;
       case 'duplicate':
         // TODO: Handle duplicate action
-        console.log('Duplicate activity:', activityId);
+        // console.log('Duplicate activity:', activityId);
         break;
       case 'delete':
         if (window.confirm('Tem certeza que deseja excluir esta atividade?')) {
           // TODO: Handle delete action
-          console.log('Delete activity:', activityId);
+          // console.log('Delete activity:', activityId);
           setActivities(prev => prev.filter(a => a.id !== activityId));
         }
         break;
@@ -381,19 +380,19 @@ const ClassActivitiesPage = () => {
       case 'delete':
         if (window.confirm(`Tem certeza que deseja excluir as ${selectedItems.length} atividades selecionadas?`)) {
           // TODO: Handle bulk delete
-          console.log('Delete activities:', selectedItems);
+          // console.log('Delete activities:', selectedItems);
           setActivities(prev => prev.filter(a => !selectedItems.includes(a.id)));
           setSelectedItems([]);
         }
         break;
       case 'publish':
         // TODO: Handle bulk publish
-        console.log('Publish activities:', selectedItems);
+        // console.log('Publish activities:', selectedItems);
         setSelectedItems([]);
         break;
       case 'unpublish':
         // TODO: Handle bulk unpublish
-        console.log('Unpublish activities:', selectedItems);
+        // console.log('Unpublish activities:', selectedItems);
         setSelectedItems([]);
         break;
       default:
@@ -564,7 +563,7 @@ const ClassActivitiesPage = () => {
                     onClick={(e) => {
                       e.stopPropagation();
                       // TODO: Handle file download
-                      console.log('Download file:', file.id);
+                      // console.log('Download file:', file.id);
                     }}
                   />
                 ))}

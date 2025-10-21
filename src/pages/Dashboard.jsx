@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useLocation, Outlet } from 'react-router-dom';
 // useNavigate is imported for future use
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,7 +11,7 @@ import { SidebarPremium } from '@/components/ui/SidebarPremium';
 
 // Conteúdo das rotas aninhadas será renderizado via <Outlet />
 
-const Dashboard = () => {
+  const Dashboard = () => {
   const location = useLocation();
   const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false); // Iniciar fechado em mobile
@@ -19,8 +19,12 @@ const Dashboard = () => {
   // Track route changes for debugging
   React.useEffect(() => {
     // Clean up function
-    return () => {};
+    if (loading) return <LoadingScreen />;
+
+  return () => {};
   }, [location]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="flex h-full min-h-screen bg-background">

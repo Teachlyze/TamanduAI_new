@@ -46,7 +46,7 @@ export const useLazyLoad = (options = {}) => {
     const observer = new IntersectionObserver(handleIntersection, {
       threshold,
       rootMargin,
-    });
+    }, []); // TODO: Add dependencies
 
     observer.observe(element);
 

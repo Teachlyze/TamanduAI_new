@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -170,7 +169,7 @@ const TeacherDashboard = () => {
             <PremiumButton 
               variant="outline" 
               leftIcon={Plus}
-              className="bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30 whitespace-nowrap inline-flex items-center gap-2 font-semibold shadow-lg"
+              className="bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30 whitespace-nowrap inline-flex items-center gap-2 font-semibold shadow-lg min-w-fit px-6 py-2.5"
               onClick={() => navigate('/dashboard/teacher/activities/new')}
             >
               Nova Atividade
@@ -276,7 +275,7 @@ const TeacherDashboard = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <PremiumCard variant="elevated" className="p-6">
+          <PremiumCard variant="elevated" className="p-6 min-h-[420px] flex flex-col">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-xl font-bold mb-1">Minhas Turmas</h3>
@@ -328,7 +327,7 @@ const TeacherDashboard = () => {
             {recentClasses.length > 0 && (
               <PremiumButton
                 variant="outline"
-                className="w-full mt-4 whitespace-nowrap inline-flex items-center justify-center gap-2 bg-white dark:bg-slate-900 text-foreground border-border"
+                className="w-full mt-4 whitespace-nowrap inline-flex items-center justify-center gap-2 bg-white dark:bg-slate-900 text-foreground border-border min-w-fit px-6 py-2.5"
                 onClick={() => navigate('/dashboard/teacher/classes')}
               >
                 Ver Todas as Turmas
@@ -343,7 +342,7 @@ const TeacherDashboard = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <PremiumCard variant="elevated" className="p-6">
+          <PremiumCard variant="elevated" className="p-6 min-h-[420px] flex flex-col">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-xl font-bold mb-1">Para Corrigir</h3>

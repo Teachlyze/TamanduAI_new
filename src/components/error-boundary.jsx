@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 
 export class ErrorBoundary extends Component {
   constructor(props) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -38,7 +38,7 @@ import {
 } from 'lucide-react';
 
 // Initialize Supabase client
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+  const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
 const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -205,6 +205,8 @@ const EditStudentPage = () => {
 
   // Handle form submission
   const onSubmit = async (data) => {
+    e.preventDefault();
+
     setIsSubmitting(true);
     try {
       // Simulate API call
@@ -253,7 +255,9 @@ const EditStudentPage = () => {
 
   // Loading state
   if (isLoading) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         <div className="flex items-center justify-center min-h-screen">
           <div className="flex flex-col items-center space-y-4">
@@ -265,6 +269,8 @@ const EditStudentPage = () => {
     );
   }
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="w-full space-y-8 p-6">
@@ -272,7 +278,7 @@ const EditStudentPage = () => {
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-3xl p-8 text-white"
+          className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-3xl p-8 text-white hover:opacity-90"
         >
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="relative z-10">
@@ -310,7 +316,7 @@ const EditStudentPage = () => {
                 <Card className="bg-white/70 backdrop-blur-sm border-white/50 shadow-lg">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg">
-                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-white hover:opacity-90">
                         <Camera className="w-4 h-4 text-white" />
                       </div>
                       Foto do Aluno
@@ -326,14 +332,14 @@ const EditStudentPage = () => {
                           {avatarPreview ? (
                             <AvatarImage src={avatarPreview} alt={form.getValues('name')} />
                           ) : (
-                            <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-2xl">
+                            <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-2xl hover:opacity-90">
                               {form.getValues('name') ? form.getValues('name').charAt(0).toUpperCase() : 'A'}
                             </AvatarFallback>
                           )}
                         </Avatar>
                         <label
                           htmlFor="avatar-upload"
-                          className="absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white p-2 rounded-full cursor-pointer hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-lg"
+                          className="absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white p-2 rounded-full cursor-pointer hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:opacity-90"
                           title="Alterar foto"
                         >
                           <Camera className="h-4 w-4" />
@@ -356,7 +362,7 @@ const EditStudentPage = () => {
                 <Card className="bg-white/70 backdrop-blur-sm border-white/50 shadow-lg">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg">
-                      <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center text-white hover:opacity-90">
                         <Users className="w-4 h-4 text-white" />
                       </div>
                       Status e Turma
@@ -423,7 +429,7 @@ const EditStudentPage = () => {
                 <Card className="bg-white/70 backdrop-blur-sm border-white/50 shadow-lg">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg">
-                      <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center text-white hover:opacity-90">
                         <User className="w-4 h-4 text-white" />
                       </div>
                       Informações Pessoais
@@ -441,7 +447,7 @@ const EditStudentPage = () => {
                               <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                               <Input
                                 placeholder="Nome completo do aluno"
-                                className="pl-9"
+                                className="bg-white dark:bg-slate-900 text-foreground pl-9"
                                 {...field}
                               />
                             </div>
@@ -463,7 +469,7 @@ const EditStudentPage = () => {
                               <Input
                                 type="email"
                                 placeholder="exemplo@email.com"
-                                className="pl-9"
+                                className="bg-white dark:bg-slate-900 text-foreground pl-9"
                                 {...field}
                               />
                             </div>
@@ -484,7 +490,7 @@ const EditStudentPage = () => {
                               <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                               <Input
                                 placeholder="(00) 00000-0000"
-                                className="pl-9"
+                                className="bg-white dark:bg-slate-900 text-foreground pl-9"
                                 {...field}
                               />
                             </div>
@@ -505,7 +511,7 @@ const EditStudentPage = () => {
                               <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                               <Input
                                 type="date"
-                                className="pl-9"
+                                className="bg-white dark:bg-slate-900 text-foreground pl-9"
                                 {...field}
                               />
                             </div>
@@ -541,7 +547,7 @@ const EditStudentPage = () => {
                 <Card className="bg-white/70 backdrop-blur-sm border-white/50 shadow-lg">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg">
-                      <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center text-white hover:opacity-90">
                         <GraduationCap className="w-4 h-4 text-white" />
                       </div>
                       Informações Acadêmicas
@@ -632,7 +638,7 @@ const EditStudentPage = () => {
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className="flex items-center gap-2 text-lg">
-                        <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center text-white hover:opacity-90">
                           <Users className="w-4 h-4 text-white" />
                         </div>
                         Responsável
@@ -668,7 +674,7 @@ const EditStudentPage = () => {
                               <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                               <Input
                                 placeholder="Nome completo do responsável"
-                                className="pl-9"
+                                className="bg-white dark:bg-slate-900 text-foreground pl-9"
                                 disabled={!hasParentInfo}
                                 {...field}
                               />
@@ -691,7 +697,7 @@ const EditStudentPage = () => {
                               <Input
                                 type="email"
                                 placeholder="exemplo@email.com"
-                                className="pl-9"
+                                className="bg-white dark:bg-slate-900 text-foreground pl-9"
                                 disabled={!hasParentInfo}
                                 {...field}
                               />
@@ -713,7 +719,7 @@ const EditStudentPage = () => {
                               <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                               <Input
                                 placeholder="(00) 00000-0000"
-                                className="pl-9"
+                                className="bg-white dark:bg-slate-900 text-foreground pl-9"
                                 disabled={!hasParentInfo}
                                 {...field}
                               />
@@ -729,7 +735,7 @@ const EditStudentPage = () => {
                 <Card className="bg-white/70 backdrop-blur-sm border-white/50 shadow-lg">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg">
-                      <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center text-white hover:opacity-90">
                         <AlertCircle className="w-4 h-4 text-white" />
                       </div>
                       Informações Adicionais
@@ -796,7 +802,7 @@ const EditStudentPage = () => {
                 <Card className="bg-red-50/70 backdrop-blur-sm border-red-200/50 shadow-lg">
                   <CardHeader className="pb-3">
                     <CardTitle className="flex items-center gap-2 text-lg text-red-700">
-                      <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center text-white hover:opacity-90">
                         <AlertCircle className="w-4 h-4 text-white" />
                       </div>
                       Zona de Perigo
@@ -864,7 +870,7 @@ const EditStudentPage = () => {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white min-w-[120px]"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white min-w-[120px] hover:opacity-90"
               >
                 {isSubmitting ? (
                   <>

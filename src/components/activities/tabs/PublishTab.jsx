@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import {
   Box,
   Typography,
@@ -154,7 +154,7 @@ import {
 import { format, addDays, isAfter, isBefore, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-const PublishTab = ({ formik, tabValue, onTabChange, onPublish, isPublishing }) => {
+  const PublishTab = ({ formik, tabValue, onTabChange, onPublish, isPublishing }) => {
   const theme = useTheme();
   
   // Estados para o diálogo de confirmação
@@ -298,6 +298,8 @@ const PublishTab = ({ formik, tabValue, onTabChange, onPublish, isPublishing }) 
     isPublishing || 
     (publishOption === 'schedule' && !isScheduledDateValid);
   
+  if (loading) return <LoadingScreen />;
+
   return (
     <Box>
       <Box sx={{ mb: 4 }}>

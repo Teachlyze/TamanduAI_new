@@ -417,3 +417,183 @@ export const provideFeedback = async (submissionId, feedbackData, userId) => {
     throw error;
   }
 };
+
+/**
+ * Get grading queue prioritized
+ * @param {string} teacherId - Teacher's ID
+ * @param {Object} filters - Filters (classId, status, priority)
+ * @returns {Promise<Array>} Prioritized queue
+ */
+export const getGradingQueue = async (teacherId, filters = {}) => {
+  try {
+    let query = supabase
+      .from('grading_queue')
+      .select('*')
+      .eq('teacher_id', teacherId);
+
+    if (filters.classId) {
+      const { data: activities } = await supabase
+        .from('activities')
+        .select('id')
+        .eq('class_id', filters.classId);
+      
+      const activityIds = activities?.map(a => a.id) || [];
+      if (activityIds.length > 0) {
+        query = query.in('activity_id', activityIds);
+      }
+    }
+
+    if (filters.status) {
+      query = query.eq('status', filters.status);
+    }
+
+    if (filters.priority) {
+      query = query.eq('priority', filters.priority);
+    }
+
+    const { data, error } = await query.limit(50);
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error('Error getting grading queue:', error);
+    throw error;
+  }
+};
+
+/**
+ * Grade submission with rubric
+ */
+export const gradeSubmission = async (submissionId, gradingData) => {
+  try {
+    const { grade, feedback, rubricScores, latePenalty = 0 } = gradingData;
+
+    const { data, error } = await supabase
+      .from('submissions')
+      .update({
+        grade: grade - latePenalty,
+        feedback,
+        rubric_scores: rubricScores || {},
+        late_penalty: latePenalty,
+        status: 'graded',
+        graded_at: new Date().toISOString(),
+      })
+      .eq('id', submissionId)
+      .select('*, activity:activities(title), student:profiles!submissions_user_id_fkey(full_name)')
+      .single();
+
+    if (error) throw error;
+
+    if (grade && data.user_id) {
+      try {
+        await gamificationService.trackGradeAssigned(data.user_id, grade);
+      } catch (xpError) {
+        console.error('Error awarding XP:', xpError);
+      }
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error grading submission:', error);
+    throw error;
+  }
+};
+
+// Rubrics
+export const createRubric = async (rubricData) => {
+  const user = (await supabase.auth.getUser()).data.user;
+  const { data, error } = await supabase
+    .from('grading_rubrics')
+    .insert([{ ...rubricData, teacher_id: user.id }])
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const getRubrics = async (filters = {}) => {
+  let query = supabase.from('grading_rubrics').select('*').eq('is_active', true);
+  if (filters.activityId) query = query.eq('activity_id', filters.activityId);
+  if (filters.teacherId) query = query.eq('teacher_id', filters.teacherId);
+  const { data, error } = await query.order('created_at', { ascending: false });
+  if (error) throw error;
+  return data || [];
+};
+
+export const updateRubric = async (rubricId, updates) => {
+  const { data, error } = await supabase
+    .from('grading_rubrics')
+    .update(updates)
+    .eq('id', rubricId)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const deleteRubric = async (rubricId) => {
+  const { error } = await supabase.from('grading_rubrics').delete().eq('id', rubricId);
+  if (error) throw error;
+  return true;
+};
+
+// Feedback Templates
+export const createFeedbackTemplate = async (templateData) => {
+  const user = (await supabase.auth.getUser()).data.user;
+  const { data, error } = await supabase
+    .from('feedback_templates')
+    .insert([{ ...templateData, teacher_id: user.id }])
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const getFeedbackTemplates = async (filters = {}) => {
+  const user = (await supabase.auth.getUser()).data.user;
+  let query = supabase.from('feedback_templates').select('*').eq('teacher_id', filters.teacherId || user?.id);
+  if (filters.category) query = query.eq('category', filters.category);
+  const { data, error } = await query.order('usage_count', { ascending: false });
+  if (error) throw error;
+  return data || [];
+};
+
+export const useFeedbackTemplate = async (templateId) => {
+  await supabase.rpc('increment_template_usage', { template_id: templateId });
+  const { data, error } = await supabase.from('feedback_templates').select('*').eq('id', templateId).single();
+  if (error) throw error;
+  return data;
+};
+
+export const deleteFeedbackTemplate = async (templateId) => {
+  const { error } = await supabase.from('feedback_templates').delete().eq('id', templateId);
+  if (error) throw error;
+  return true;
+};
+
+export const getGradeHistory = async (submissionId) => {
+  const { data, error } = await supabase
+    .from('grade_history')
+    .select('*, changer:profiles!grade_history_changed_by_fkey(id, full_name)')
+    .eq('submission_id', submissionId)
+    .order('changed_at', { ascending: false });
+  if (error) throw error;
+  return data || [];
+};
+
+export default {
+  autoGradeSubmission,
+  getClassGradingStats,
+  getSubmissionsNeedingGrading,
+  provideFeedback,
+  getGradingQueue,
+  gradeSubmission,
+  createRubric,
+  getRubrics,
+  updateRubric,
+  deleteRubric,
+  createFeedbackTemplate,
+  getFeedbackTemplates,
+  useFeedbackTemplate,
+  deleteFeedbackTemplate,
+  getGradeHistory,
+};

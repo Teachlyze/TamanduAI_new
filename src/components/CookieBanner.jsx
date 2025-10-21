@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Cookie, Shield, Settings, X, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const COOKIE_CONSENT_KEY = 'cookie-consent';
+  const COOKIE_CONSENT_KEY = 'cookie-consent';
 
 const CookieBanner = () => {
   const { t } = useTranslation();
@@ -24,7 +24,9 @@ const CookieBanner = () => {
       const timer = setTimeout(() => {
         setShowBanner(true);
       }, 1000);
-      return () => clearTimeout(timer);
+      if (loading) return <LoadingScreen />;
+
+  return () => clearTimeout(timer);
     }
   }, []);
 
@@ -81,6 +83,8 @@ const CookieBanner = () => {
 
   if (!showBanner) return null;
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <AnimatePresence>
       {showBanner && (
@@ -109,7 +113,7 @@ const CookieBanner = () => {
                 // Simple Banner
                 <>
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                    <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg text-white hover:opacity-90">
                       <Cookie className="w-6 h-6 text-white" />
                     </div>
                     <div className="flex-1">
@@ -122,7 +126,7 @@ const CookieBanner = () => {
                       <div className="mt-4 flex flex-col sm:flex-row gap-3">
                         <button
                           onClick={handleAcceptAll}
-                          className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                          className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 hover:opacity-90"
                         >
                           <Check className="w-4 h-4" />
                           {t('cookie.acceptAll', 'Aceitar Todos')}
@@ -149,7 +153,7 @@ const CookieBanner = () => {
                 <>
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                      <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white hover:opacity-90">
                         <Shield className="w-5 h-5 text-white" />
                       </div>
                       <h3 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -220,7 +224,7 @@ const CookieBanner = () => {
                     </button>
                     <button
                       onClick={handleSavePreferences}
-                      className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                      className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 hover:opacity-90"
                     >
                       <Check className="w-4 h-4" />
                       {t('cookie.savePreferences', 'Salvar Preferências')}

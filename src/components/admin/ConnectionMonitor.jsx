@@ -1,5 +1,5 @@
 // src/components/admin/ConnectionMonitor.jsx
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion } from 'framer-motion';
 import {
   Wifi,
@@ -25,7 +25,7 @@ import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx'
 /**
  * Monitor de conexão Supabase em tempo real
  */
-const ConnectionMonitor = ({ className = '' }) => {
+  const ConnectionMonitor = ({ className = '' }) => {
   const [connectionState, setConnectionState] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState(Date.now());
@@ -52,7 +52,9 @@ const ConnectionMonitor = ({ className = '' }) => {
     // Atualizar a cada 10 segundos
     const interval = setInterval(updateConnectionState, 10000);
 
-    return () => clearInterval(interval);
+    if (loading) return <LoadingScreen />;
+
+  return () => clearInterval(interval);
   }, []);
 
   const handleReconnect = async () => {
@@ -92,37 +94,49 @@ const ConnectionMonitor = ({ className = '' }) => {
 
     switch (state) {
       case 'connected':
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <Badge className="bg-green-100 text-green-800 border-green-200">
             Conectado
           </Badge>
         );
       case 'connecting':
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <Badge className="bg-blue-100 text-blue-800 border-blue-200">
             Conectando...
           </Badge>
         );
       case 'reconnecting':
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
             Reconectando...
           </Badge>
         );
       case 'error':
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <Badge className="bg-red-100 text-red-800 border-red-200">
             Erro
           </Badge>
         );
       case 'disconnected':
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <Badge className="bg-gray-100 text-gray-800 border-gray-200">
             Desconectado
           </Badge>
         );
       default:
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <Badge className="bg-gray-100 text-gray-800 border-gray-200">
             Verificando...
           </Badge>
@@ -131,7 +145,9 @@ const ConnectionMonitor = ({ className = '' }) => {
   };
 
   if (isLoading && !connectionState) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <Card className={className}>
         <CardContent className="flex items-center justify-center p-6">
           <div className="flex items-center space-x-2">
@@ -142,6 +158,8 @@ const ConnectionMonitor = ({ className = '' }) => {
       </Card>
     );
   }
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <motion.div
@@ -246,6 +264,8 @@ const ConnectionMonitor = ({ className = '' }) => {
 export const IntegratedMonitoringDashboard = ({ className = '' }) => {
   const [activeTab, setActiveTab] = useState('connection');
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Tabs */}
@@ -256,7 +276,9 @@ export const IntegratedMonitoringDashboard = ({ className = '' }) => {
           { id: 'performance', label: 'Performance', icon: Zap },
         ].map((tab) => {
           const Icon = tab.icon;
-          return (
+          if (loading) return <LoadingScreen />;
+
+  return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
@@ -302,7 +324,9 @@ export const ConnectionIndicator = () => {
     checkConnection();
     const interval = setInterval(checkConnection, 30000);
 
-    return () => clearInterval(interval);
+    if (loading) return <LoadingScreen />;
+
+  return () => clearInterval(interval);
   }, []);
 
   const getIndicatorColor = () => {
@@ -336,6 +360,8 @@ export const ConnectionIndicator = () => {
         return 'Verificando conexão...';
     }
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="flex items-center gap-2 px-2" title={getTooltipText()}>

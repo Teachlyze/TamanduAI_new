@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import { Settings, Image, Calendar, Award, Users, Save } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import schoolService from '@/services/schoolService';
@@ -354,7 +353,7 @@ const SchoolSettingsPage = () => {
         <button
           type="submit"
           disabled={saving}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-slate-600 to-slate-700 px-6 py-3 font-semibold text-white shadow-lg hover:from-slate-700 hover:to-slate-800 disabled:opacity-50 whitespace-nowrap"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-slate-600 to-slate-700 px-6 py-3 font-semibold t text-white hover:opacity-90 whitespace-nowrap inline-flex min-w-fitext-white shadow-lg hover:from-slate-700 hover:to-slate-800 disabled:opacity-50"
         >
           <Save className="h-4 w-4" />
           <span>{saving ? 'Salvando...' : 'Salvar Configurações'}</span>

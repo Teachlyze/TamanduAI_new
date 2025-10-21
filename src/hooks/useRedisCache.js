@@ -120,7 +120,7 @@ export const useRedisCache = (key, fetchFunction, options = {}) => {
 
   useEffect(() => {
     if (skipInitialFetch) return;
-    fetchData().catch(() => {});
+    fetchData().catch(() => {}, []); // TODO: Add dependencies
     return () => fetchController.current?.abort();
   }, [cacheKey, skipInitialFetch, fetchData, ...dependencies]);
 

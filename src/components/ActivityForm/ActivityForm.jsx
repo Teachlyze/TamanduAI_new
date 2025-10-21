@@ -18,7 +18,7 @@ import { UploadCloud, Plus, Save, ArrowLeft, FileText, CheckCircle2, AlertCircle
 import QuestionBuilder from './QuestionBuilder';
 
 // Schema for form validation
-const activitySchema = z.object({
+  const activitySchema = z.object({
   title: z.string().min(5, 'O título deve ter pelo menos 5 caracteres'),
   description: z.string().min(10, 'A descrição deve ter pelo menos 10 caracteres'),
   instructions: z.string().optional(),
@@ -75,7 +75,9 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
       setConnectionStatus('offline');
     }
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
@@ -187,7 +189,9 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
   // Clean up preview URLs on unmount
   useEffect(() => {
     setIsMounted(true);
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       const image = watch('image');
       if (image?.previewUrl) {
         URL.revokeObjectURL(image.previewUrl);
@@ -207,7 +211,9 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
   }, [initialData, reset]);
 
   if (!isMounted) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
@@ -215,6 +221,8 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
   }
 
   const progressPercentage = questions.length > 0 ? Math.min((questions.length / 10) * 100, 100) : 0;
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -281,7 +289,7 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
           transition={{ delay: 0.1 }}
         >
           <Card className="border-l-4 border-l-blue-500">
-            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
+            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 text-white hover:opacity-90">
               <CardTitle className="flex items-center gap-2">
                 <FileText className="w-5 h-5 text-blue-600" />
                 Informações Básicas da Atividade
@@ -297,7 +305,7 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
                   id="title"
                   {...register('title')}
                   placeholder="Digite um título descritivo para sua atividade..."
-                  className="text-base"
+                  className="bg-white dark:bg-slate-900 text-foreground text-base"
                   error={errors.title?.message}
                 />
                 {errors.title && (
@@ -465,7 +473,7 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
           transition={{ delay: 0.2 }}
         >
           <Card className="border-l-4 border-l-green-500">
-            <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50">
+            <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 text-white hover:opacity-90">
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-green-600" />
@@ -479,7 +487,7 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
                 <Button
                   type="button"
                   onClick={addQuestion}
-                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white hover:opacity-90"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Adicionar Pergunta
@@ -506,7 +514,7 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
                     type="button"
                     onClick={addQuestion}
                     variant="outline"
-                    className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 hover:from-blue-100 hover:to-indigo-100"
+                    className="bg-white dark:bg-slate-900 text-foreground border-border bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 hover:from-blue-100 hover:to-indigo-100 text-white hover:opacity-90"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Criar Primeira Pergunta
@@ -542,7 +550,7 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
             type="button"
             variant="outline"
             onClick={goBack}
-            className="flex items-center gap-2"
+            className="bg-white dark:bg-slate-900 text-foreground border-border flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
             Cancelar

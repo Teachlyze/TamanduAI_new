@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
 import { motion } from 'framer-motion';

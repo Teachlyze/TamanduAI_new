@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import { BarChart3, TrendingUp, TrendingDown, Users, Clock, Award } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import schoolService from '@/services/schoolService';
@@ -241,7 +240,7 @@ const SchoolReportsPage = () => {
       </div>
 
       {/* Insights */}
-      <div className="rounded-2xl border border-border/50 bg-gradient-to-r from-blue-50 to-purple-50 p-6">
+      <div className="rounded-2xl border border-border/50 bg-gradient-to-r text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fit from-blue-50 to-purple-50 p-6">
         <h3 className="mb-3 text-lg font-semibold">💡 Insights</h3>
         <ul className="space-y-2 text-sm">
           <li className="flex items-start gap-2">

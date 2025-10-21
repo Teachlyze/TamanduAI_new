@@ -26,7 +26,7 @@ export class BackupManager {
       this.createFullBackup();
     }, this.config.backupInterval);
 
-    console.log('🔄 Auto backup started');
+    // console.log('🔄 Auto backup started');
   }
 
   /**
@@ -52,7 +52,7 @@ export class BackupManager {
     const startTime = Date.now();
 
     try {
-      console.log('🚀 Starting full backup...');
+      // console.log('🚀 Starting full backup...');
 
       const backupData = {
         id: backupId,
@@ -91,7 +91,7 @@ export class BackupManager {
       await this.cleanupOldBackups();
 
       const duration = Date.now() - startTime;
-      console.log(`✅ Full backup completed in ${duration}ms`);
+      // console.log(`✅ Full backup completed in ${duration}ms`);
 
       return backupId;
     } catch (error) {
@@ -294,7 +294,7 @@ export class BackupManager {
         created_at: new Date().toISOString(),
       });
 
-      console.log(`💾 Backup saved: ${fileName}`);
+      // console.log(`💾 Backup saved: ${fileName}`);
     } catch (error) {
       console.error('Failed to save backup:', error);
       throw error;
@@ -332,7 +332,7 @@ export class BackupManager {
    */
   async restoreBackup(backupId) {
     try {
-      console.log(`🔄 Restoring backup: ${backupId}`);
+      // console.log(`🔄 Restoring backup: ${backupId}`);
 
       const { createClient } = await import('@supabase/supabase-js');
       const supabase = createClient(
@@ -381,7 +381,7 @@ export class BackupManager {
         restored_at: new Date().toISOString(),
       });
 
-      console.log(`✅ Backup restored: ${backupId}`);
+      // console.log(`✅ Backup restored: ${backupId}`);
       return restoreResults;
     } catch (error) {
       console.error('Failed to restore backup:', error);
@@ -493,7 +493,7 @@ export class BackupManager {
             .remove([`backups/backup-${backup.id}.json`]);
         }
 
-        console.log(`🗑️ Cleaned up ${oldBackups.length} old backups`);
+        // console.log(`🗑️ Cleaned up ${oldBackups.length} old backups`);
       }
     } catch (error) {
       console.error('Failed to cleanup old backups:', error);

@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, Target, Clock, TrendingUp, Sparkles, Flame } from 'lucide-react';
 import GamificationPanel from '@/components/gamification/GamificationPanel';

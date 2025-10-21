@@ -1,4 +1,3 @@
-import React, { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
 import { PremiumCard, LoadingScreen, EmptyState, PremiumButton, toast } from '@/components/ui';

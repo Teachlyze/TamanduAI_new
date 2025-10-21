@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
@@ -167,9 +166,9 @@ const ReportsPage = () => {
       const totalActivities = activities.length;
 
       // Calculate average grade
-      const gradedSubmissions = submissions.filter(s => s.score !== null);
+      const gradedSubmissions = submissions.filter(s => s.grade !== null);
       const averageGrade = gradedSubmissions.length > 0
-        ? gradedSubmissions.reduce((sum, s) => sum + s.score, 0) / gradedSubmissions.length
+        ? gradedSubmissions.reduce((sum, s) => sum + Number(s.grade || 0), 0) / gradedSubmissions.length
         : 0;
 
       // Calculate completion rate
@@ -183,7 +182,7 @@ const ReportsPage = () => {
         if (!studentGrades[sub.student_id]) {
           studentGrades[sub.student_id] = { total: 0, count: 0 };
         }
-        studentGrades[sub.student_id].total += sub.score;
+        studentGrades[sub.student_id].total += Number(sub.grade || 0);
         studentGrades[sub.student_id].count += 1;
       });
 
@@ -204,9 +203,9 @@ const ReportsPage = () => {
       // Activity stats
       const activityStats = activities.map(activity => {
         const activitySubs = submissions.filter(s => s.activity_id === activity.id);
-        const gradedSubs = activitySubs.filter(s => s.score !== null);
+        const gradedSubs = activitySubs.filter(s => s.grade !== null);
         const avgScore = gradedSubs.length > 0
-          ? gradedSubs.reduce((sum, s) => sum + s.score, 0) / gradedSubs.length
+          ? gradedSubs.reduce((sum, s) => sum + Number(s.grade || 0), 0) / gradedSubs.length
           : 0;
 
         return {
@@ -224,10 +223,10 @@ const ReportsPage = () => {
         const classActivities = activities.filter(a => a.class_id === cls.id);
         const classActivityIds = classActivities.map(a => a.id);
         const classSubs = submissions.filter(s => classActivityIds.includes(s.activity_id));
-        const gradedClassSubs = classSubs.filter(s => s.score !== null);
+        const gradedClassSubs = classSubs.filter(s => s.grade !== null);
         
         const avgGrade = gradedClassSubs.length > 0
-          ? gradedClassSubs.reduce((sum, s) => sum + s.score, 0) / gradedClassSubs.length
+          ? gradedClassSubs.reduce((sum, s) => sum + Number(s.grade || 0), 0) / gradedClassSubs.length
           : 0;
 
         return {
@@ -536,7 +535,7 @@ const ReportsPage = () => {
                       </p>
                     </div>
                   </div>
-                  <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
+                  <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:opacity-90">
                     {student.average.toFixed(1)}%
                   </Badge>
                 </div>
@@ -567,7 +566,7 @@ const ReportsPage = () => {
                       {cls.students} alunos • {cls.activities} atividades
                     </p>
                   </div>
-                  <Badge variant="outline" className="ml-4">
+                  <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border ml-4">
                     Média: {cls.avgGrade}%
                   </Badge>
                 </div>

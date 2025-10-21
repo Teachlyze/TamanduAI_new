@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -96,7 +96,7 @@ import PageHeader from '../PageHeader';
 import RichTextEditor from '../common/RichTextEditor';
 
 // Esquema de validação
-const validationSchema = Yup.object().shape({
+  const validationSchema = Yup.object().shape({
   title: Yup.string().required('Título é obrigatório'),
   description: Yup.string(),
   type: Yup.string().required('Tipo de atividade é obrigatório'),
@@ -197,6 +197,8 @@ const CreateActivityForm = ({ isEditing = false, initialData = null }) => {
       setIsPublishing(false);
     }
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <form onSubmit={formik.handleSubmit}>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import Button from '@/components/ui/button';
 
-const PrivacyButton = () => {
+  const PrivacyButton = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -47,6 +47,8 @@ const PrivacyButton = () => {
     }
   ];
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <>
       {/* Privacy Button */}
@@ -56,7 +58,7 @@ const PrivacyButton = () => {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="group relative flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 text-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/20"
+        className="group relative flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 text-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/20 hover:opacity-90"
         aria-label="Menu de privacidade"
         aria-expanded={isOpen}
       >
@@ -95,7 +97,7 @@ const PrivacyButton = () => {
               className="fixed bottom-24 right-6 w-80 max-w-[calc(100vw-3rem)] bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden"
             >
               {/* Header */}
-              <div className="p-6 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white">
+              <div className="p-6 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white hover:opacity-90">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
@@ -120,9 +122,9 @@ const PrivacyButton = () => {
               {/* Content */}
               <div className="p-6 space-y-4">
                 {/* Status */}
-                <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl border-2 border-green-200 dark:border-green-800 shadow-lg shadow-green-100/50 dark:shadow-green-900/20">
+                <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl border-2 border-green-200 dark:border-green-800 shadow-lg shadow-green-100/50 dark:shadow-green-900/20 text-white hover:opacity-90">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-xl flex items-center justify-center shadow-lg">
+                    <div className="w-10 h-10 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-xl flex items-center justify-center shadow-lg text-white hover:opacity-90">
                       <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
                     </div>
                     <div>

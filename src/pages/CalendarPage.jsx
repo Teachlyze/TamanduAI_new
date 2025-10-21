@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
+import CalendarService from '@/services/calendarService';
 import {
   Calendar as CalendarIcon,
   Clock,
@@ -149,27 +149,22 @@ const CalendarPage = () => {
     }
 
     try {
-      const eventData = {
-        teacher_id: user.id,
-        ...newEvent
+      const payload = {
+        class_id: newEvent.class_id,
+        title: newEvent.title,
+        description: newEvent.description || null,
+        start_time: newEvent.start_time,
+        end_time: newEvent.end_time,
+        type: newEvent.type
       };
 
       if (editingEvent) {
-        // Update
-        const { error } = await supabase
-          .from('calendar_events')
-          .update(eventData)
-          .eq('id', editingEvent.id);
-
-        if (error) throw error;
+        // Update via service (maps UI type to DB enums)
+        await CalendarService.updateEvent(editingEvent.id, payload);
         toast.success('Evento atualizado!');
       } else {
-        // Create
-        const { error } = await supabase
-          .from('calendar_events')
-          .insert([eventData]);
-
-        if (error) throw error;
+        // Create via service (maps UI type to DB enums)
+        await CalendarService.createEvent(payload);
         toast.success('Evento criado!');
       }
 
@@ -203,10 +198,19 @@ const CalendarPage = () => {
 
   const handleEditEvent = (event) => {
     setEditingEvent(event);
+    // Map DB types to UI types for editing
+    const mapDbToUi = (dbType, eventType) => {
+      if (dbType === 'meeting') return 'meeting';
+      if (eventType === 'class') return 'class';
+      if (eventType === 'exam') return 'exam';
+      if (eventType === 'assignment') return 'activity';
+      return 'other';
+    };
+    const uiType = mapDbToUi(event.type, event.event_type);
     setNewEvent({
       title: event.title,
       description: event.description || '',
-      type: event.type,
+      type: uiType,
       start_time: new Date(event.start_time).toISOString().slice(0, 16),
       end_time: new Date(event.end_time).toISOString().slice(0, 16),
       location: event.location || '',
@@ -427,7 +431,8 @@ const CalendarPage = () => {
         ) : (
           <div className="grid gap-4">
             {filteredEvents.map(event => {
-              const EventIcon = getEventIcon(event.type);
+              const uiType = event.event_type || event.type;
+              const EventIcon = getEventIcon(uiType);
               const startDate = new Date(event.start_time);
               const endDate = new Date(event.end_time);
 
@@ -437,7 +442,7 @@ const CalendarPage = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
-                  <Card className={`border-l-4 ${getEventColor(event.type)}`}>
+                  <Card className={`border-l-4 ${getEventColor(uiType)}`}>
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-4 flex-1">
@@ -449,10 +454,12 @@ const CalendarPage = () => {
                             <div className="flex items-center gap-2 mb-1">
                               <h3 className="font-semibold text-lg">{event.title}</h3>
                               <Badge variant="outline">
-                                {event.type === 'class' && 'Aula'}
-                                {event.type === 'meeting' && 'Reunião'}
-                                {event.type === 'exam' && 'Prova'}
-                                {event.type === 'video' && 'Vídeo'}
+                                {uiType === 'class' && 'Aula'}
+                                {uiType === 'meeting' && 'Reunião'}
+                                {uiType === 'exam' && 'Prova'}
+                                {uiType === 'video' && 'Vídeo'}
+                                {uiType === 'activity' && 'Atividade'}
+                                {uiType === 'other' && 'Outro'}
                               </Badge>
                               {event.status === 'completed' && (
                                 <Badge className="bg-green-500">Concluído</Badge>

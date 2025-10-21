@@ -149,7 +149,7 @@ export const StudentReportsTab = ({
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="gap-1">
+              <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border gap-1">
                 <Clock className="h-3 w-3" />
                 {isLoadingActivities ? (
                   <Skeleton className="h-3 w-8" />
@@ -199,7 +199,7 @@ export const StudentReportsTab = ({
               Histórico
             </TabsTrigger>
           </TabsList>
-          <Button variant="outline" size="sm" className="gap-2">
+          <Button variant="outline" size="sm" className="bg-white dark:bg-slate-900 text-foreground border-border gap-2">
             <Download className="h-4 w-4" />
             Exportar Relatório
           </Button>

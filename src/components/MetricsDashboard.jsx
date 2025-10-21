@@ -1,9 +1,10 @@
 // src/components/MetricsDashboard.jsx
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Activity, AlertTriangle, CheckCircle, Clock, Database, Zap, TrendingUp } from 'lucide-react';
 import monitoringService from '@/services/monitoring';
 
 export default function MetricsDashboard({ isVisible = false }) {
+  const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,6 +27,8 @@ export default function MetricsDashboard({ isVisible = false }) {
   };
 
   if (!isVisible) return null;
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="fixed bottom-4 right-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4 max-w-sm z-50">

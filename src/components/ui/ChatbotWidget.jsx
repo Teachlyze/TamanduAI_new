@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useRef } from 'react';
 import { Bot, Send, X, Minimize2, Maximize2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
@@ -14,7 +13,7 @@ const ChatbotWidget = ({ context = {} }) => {
 
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' }, []); // TODO: Add dependencies
     }
   }, [messages]);
 

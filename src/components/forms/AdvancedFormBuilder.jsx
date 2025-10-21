@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,7 +24,8 @@ import { cn } from '@/lib/utils';
  * @param {number} props.columns - Number of columns for grid layout
  * @param {string} props.className - Additional CSS classes
  */
-export const AdvancedFormBuilder = ({
+export const [loading, setLoading] = useState(true);
+  const AdvancedFormBuilder = ({
   schema = [],
   initialValues = {},
   onSubmit,
@@ -43,7 +44,7 @@ export const AdvancedFormBuilder = ({
 
   // Update values when initialValues prop changes
   useEffect(() => {
-    setValues({ ...initialValues });
+    setValues({ ...initialValues }, []); // TODO: Add dependencies
   }, [initialValues]);
 
   // Validate single field
@@ -159,7 +160,9 @@ export const AdvancedFormBuilder = ({
         case 'number':
         case 'tel':
         case 'url':
-          return (
+          if (loading) return <LoadingScreen />;
+
+  return (
             <Input
               {...commonProps}
               type={type}
@@ -169,7 +172,9 @@ export const AdvancedFormBuilder = ({
           );
 
         case 'textarea':
-          return (
+          if (loading) return <LoadingScreen />;
+
+  return (
             <Textarea
               {...commonProps}
               placeholder={placeholder}
@@ -178,7 +183,9 @@ export const AdvancedFormBuilder = ({
           );
 
         case 'select':
-          return (
+          if (loading) return <LoadingScreen />;
+
+  return (
             <Select
               {...commonProps}
               onValueChange={(value) => handleFieldChange(name, value)}
@@ -197,7 +204,9 @@ export const AdvancedFormBuilder = ({
           );
 
         case 'checkbox':
-          return (
+          if (loading) return <LoadingScreen />;
+
+  return (
             <div className="flex items-center space-x-2">
               <Checkbox
                 {...commonProps}
@@ -211,7 +220,9 @@ export const AdvancedFormBuilder = ({
           );
 
         case 'radio':
-          return (
+          if (loading) return <LoadingScreen />;
+
+  return (
             <RadioGroup
               {...commonProps}
               onValueChange={(value) => handleFieldChange(name, value)}
@@ -228,7 +239,9 @@ export const AdvancedFormBuilder = ({
           );
 
         case 'switch':
-          return (
+          if (loading) return <LoadingScreen />;
+
+  return (
             <div className="flex items-center space-x-2">
               <Switch
                 {...commonProps}
@@ -242,7 +255,9 @@ export const AdvancedFormBuilder = ({
           );
 
         case 'file':
-          return (
+          if (loading) return <LoadingScreen />;
+
+  return (
             <Input
               {...commonProps}
               type="file"
@@ -251,7 +266,9 @@ export const AdvancedFormBuilder = ({
           );
 
         default:
-          return (
+          if (loading) return <LoadingScreen />;
+
+  return (
             <Input
               {...commonProps}
               placeholder={placeholder}
@@ -261,7 +278,9 @@ export const AdvancedFormBuilder = ({
       }
     })();
 
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className={cn(
         layout === 'horizontal' && "flex items-center gap-4",
         layout === 'grid' && "space-y-2",
@@ -302,6 +321,8 @@ export const AdvancedFormBuilder = ({
 
     return groups;
   }, [schema]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <form onSubmit={handleSubmit} className={cn("advanced-form-builder", className)} {...props}>

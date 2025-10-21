@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,7 +26,8 @@ import { cn } from '@/lib/utils';
  * @param {boolean} props.disabled - Disable message input
  * @param {string} props.className - Additional CSS classes
  */
-export const ChatbotWidget = ({
+export const [loading, setLoading] = useState(true);
+  const ChatbotWidget = ({
   title = "Chatbot",
   subtitle = "Como posso ajudar?",
   botName = "Assistente",
@@ -61,7 +62,7 @@ export const ChatbotWidget = ({
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     if (autoScroll && messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' }, []); // TODO: Add dependencies
     }
   }, [messages, autoScroll]);
 
@@ -161,7 +162,9 @@ export const ChatbotWidget = ({
     const isBot = message.type === 'bot';
     const isError = message.isError;
 
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className={cn(
         "flex gap-3 p-4",
         isBot ? "bg-muted/30" : "bg-background",
@@ -252,6 +255,8 @@ export const ChatbotWidget = ({
     </div>
   );
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <Card className={cn("chatbot-widget flex flex-col", className)} style={{ height: '600px' }} {...props}>
       {/* Header */}
@@ -337,7 +342,7 @@ export const ChatbotWidget = ({
                 onKeyPress={handleKeyPress}
                 placeholder={placeholder}
                 disabled={disabled || isTyping}
-                className="flex-1"
+                className="bg-white dark:bg-slate-900 text-foreground flex-1"
               />
 
               <Button

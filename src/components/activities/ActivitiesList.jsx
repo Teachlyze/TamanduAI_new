@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { PremiumCard } from '@/components/ui/PremiumCard'
+import { PremiumButton } from '@/components/ui/PremiumButton';
 import { useParams } from 'react-router-dom';
 import { getClassActivities } from '@/services/apiSupabase';
 import Loading from '../Loading';
@@ -39,6 +40,7 @@ const ActivitiesList = () => {
 
   return (
     <div className="container mx-auto p-4">
+      <PremiumCard variant="elevated">
       <h1 className="text-3xl font-bold mb-4">Atividades da Turma</h1>
       
       {activities.length === 0 ? (
@@ -68,6 +70,7 @@ const ActivitiesList = () => {
           ))}
         </div>
       )}
+      </PremiumCard>
     </div>
   );
 };

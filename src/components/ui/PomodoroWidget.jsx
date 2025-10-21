@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Clock, Play, Pause, RotateCcw, Award, Target } from 'lucide-react';
 import { PremiumCard, PremiumButton, toast } from '@/components/ui';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/hooks/useAuth';
 
-const PomodoroWidget = ({ variant = 'full', onComplete }) => {
+  const PomodoroWidget = ({ variant = 'full', onComplete }) => {
   const { user } = useAuth();
   const [minutes, setMinutes] = useState(25);
   const [seconds, setSeconds] = useState(0);
@@ -32,7 +32,9 @@ const PomodoroWidget = ({ variant = 'full', onComplete }) => {
       clearInterval(intervalRef.current);
     }
 
-    return () => clearInterval(intervalRef.current);
+    if (loading) return <LoadingScreen />;
+
+  return () => clearInterval(intervalRef.current);
   }, [isActive, minutes, seconds]);
 
   const handleSessionComplete = async () => {
@@ -126,8 +128,10 @@ const PomodoroWidget = ({ variant = 'full', onComplete }) => {
   const progress = ((((isBreak ? 5 : 25) - minutes) * 60 + (60 - seconds)) / ((isBreak ? 5 : 25) * 60)) * 100;
 
   if (variant === 'compact') {
-    return (
-      <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-lg border border-purple-200 dark:border-purple-800">
+    if (loading) return <LoadingScreen />;
+
+  return (
+      <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-lg border border-purple-200 dark:border-purple-800 text-white hover:opacity-90">
         <Clock className="w-5 h-5 text-purple-600" />
         <div className="flex-1">
           <div className="text-2xl font-bold font-mono">
@@ -141,6 +145,8 @@ const PomodoroWidget = ({ variant = 'full', onComplete }) => {
       </div>
     );
   }
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <PremiumCard variant="elevated">
@@ -202,7 +208,7 @@ const PomodoroWidget = ({ variant = 'full', onComplete }) => {
 
           {/* Time Text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="text-6xl font-bold font-mono bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <div className="text-6xl font-bold font-mono bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent text-white hover:opacity-90">
               {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
             </div>
             <div className="text-sm text-muted-foreground mt-2">{Math.round(progress)}% completo</div>
@@ -258,7 +264,7 @@ const PomodoroWidget = ({ variant = 'full', onComplete }) => {
 
         {/* Info */}
         {user?.user_metadata?.role === 'student' && (
-          <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 p-3 rounded-lg text-center">
+          <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 p-3 rounded-lg text-center text-white hover:opacity-90">
             <p className="text-sm text-muted-foreground">
               ✨ Complete sessões e ganhe <strong className="text-purple-600">10 XP</strong> por sessão de 25min!
             </p>

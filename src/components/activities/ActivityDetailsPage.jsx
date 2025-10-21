@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { PremiumCard } from '@/components/ui/PremiumCard'
+import { PremiumButton } from '@/components/ui/PremiumButton';
 import { useParams } from 'react-router-dom';
 import { getActivity } from '@/services/apiSupabase';
 import ActivityForm from './ActivityForm';
@@ -53,7 +54,9 @@ export default function ActivityDetailsPage() {
   if (hasRole('teacher')) {
     return (
       <div className="container mx-auto p-4">
+      <PremiumCard variant="elevated">
         <ActivityForm activity={activity} />
+      </PremiumCard>
       </div>
     );
   }
@@ -61,6 +64,7 @@ export default function ActivityDetailsPage() {
   // Students see a read-only view (you can create a StudentActivityView component)
   return (
     <div className="container mx-auto p-4">
+      <PremiumCard variant="elevated">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">{activity.title}</h1>
@@ -73,6 +77,7 @@ export default function ActivityDetailsPage() {
           </div>
         </div>
       </div>
+      </PremiumCard>
     </div>
   );
 }

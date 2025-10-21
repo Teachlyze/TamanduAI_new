@@ -21,7 +21,7 @@ export const useResponsiveLayout = () => {
         isTablet: width >= 768 && width < 1024, // md to lg
         isDesktop: width >= 1024, // lg breakpoint
         sidebarCollapsed: width < 1024,
-      });
+      }, []); // TODO: Add dependencies
     };
 
     updateLayout();

@@ -1,11 +1,12 @@
-import React, { forwardRef, useEffect, useState } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import LexicalEditor from './LexicalEditor';
 
 /**
  * Rich Text Editor component with a clean API for lazy loading
  * Wraps the existing LexicalEditor with additional features and easier integration
  */
-export const RichTextEditor = forwardRef(({
+export const [loading, setLoading] = useState(true);
+  const RichTextEditor = forwardRef(({
   value,
   onChange,
   placeholder = 'Digite seu texto aqui...',
@@ -17,7 +18,6 @@ export const RichTextEditor = forwardRef(({
   maxHeight = 600,
   ...props
 }, ref) => {
-  const [editorValue, setEditorValue] = useState(value || '');
 
   // Handle value changes from parent
   useEffect(() => {
@@ -69,6 +69,8 @@ export const RichTextEditor = forwardRef(({
       console.error('RichTextEditor error:', error);
     },
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className={`rich-text-editor ${className}`} ref={ref} {...props}>

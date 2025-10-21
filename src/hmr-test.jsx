@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 
 const HMRTest = () => {
   const [messages, setMessages] = useState(['HMR Test - ' + new Date().toLocaleTimeString()]);

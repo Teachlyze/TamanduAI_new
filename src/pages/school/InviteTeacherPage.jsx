@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
 import { PremiumCard, PremiumButton, LoadingScreen } from '@/components/ui';
@@ -204,7 +203,7 @@ const InviteTeacherPage = () => {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-8 rounded-2xl text-white">
+      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-8 rounded-2xl t text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fitext-white">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur">
             <Mail className="w-8 h-8" />
@@ -273,7 +272,7 @@ const InviteTeacherPage = () => {
 
               <PremiumButton
                 type="submit"
-                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white whitespace-nowrap inline-flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 t text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fitext-white justify-center"
                 loading={sending}
               >
                 <Send className="w-4 h-4" />
@@ -337,7 +336,7 @@ const InviteTeacherPage = () => {
 
       {/* Info Card */}
       <PremiumCard variant="elevated">
-        <div className="p-6 bg-gradient-to-r from-purple-500/10 to-indigo-500/10">
+        <div className="p-6 bg-gradient-to-r text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fit from-purple-500/10 to-indigo-500/10">
           <h3 className="text-lg font-bold mb-4">📧 Como funciona o sistema de convites?</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>

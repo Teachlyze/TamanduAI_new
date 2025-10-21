@@ -57,34 +57,61 @@ const getXPForNextLevel = (currentXP) => {
   return lastThreshold + ((levelsAbove + 1) * 10000);
 };
 
+// Helper: aggregate XP from xp_log if profiles table is unavailable
+const aggregateXPFromLog = async (userId) => {
+  try {
+    const { data, error } = await supabase
+      .from('xp_log')
+      .select('xp')
+      .eq('user_id', userId);
+    if (error) throw error;
+    const total = (data || []).reduce((sum, r) => sum + (Number(r.xp) || 0), 0);
+    const level = calculateLevel(total);
+    return { totalXP: total, level };
+  } catch (e) {
+    return { totalXP: 0, level: 1 };
+  }
+};
+
 class GamificationService {
   /**
    * Inicializa perfil de gamificação do usuário
    */
   async initializeProfile(userId) {
-    const { data: existing } = await supabase
-      .from('gamification_profiles')
-      .select('user_id')
-      .eq('user_id', userId)
-      .maybeSingle();
+    try {
+      const { data: existing } = await supabase
+        .from('gamification_profiles')
+        .select('user_id')
+        .eq('user_id', userId)
+        .maybeSingle();
+      if (existing) return existing;
 
-    if (existing) return existing;
-
-    const { data, error } = await supabase
-      .from('gamification_profiles')
-      .insert({
+      const { data, error } = await supabase
+        .from('gamification_profiles')
+        .insert({
+          user_id: userId,
+          xp_total: 0,
+          level: 1,
+          current_streak: 0,
+          longest_streak: 0,
+          last_activity_at: null,
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    } catch (e) {
+      // Table may not exist; return a minimal synthetic profile
+      const agg = await aggregateXPFromLog(userId);
+      return {
         user_id: userId,
-        xp_total: 0,
-        level: 1,
+        xp_total: agg.totalXP,
+        level: agg.level,
         current_streak: 0,
         longest_streak: 0,
         last_activity_at: null,
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
+      };
+    }
   }
 
   /**
@@ -108,34 +135,45 @@ class GamificationService {
 
       if (logError) throw logError;
 
-      // 2. Buscar perfil atual
-      const { data: profile, error: profileError } = await supabase
-        .from('gamification_profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
-
-      if (profileError) {
-        // Se não existe, inicializar
-        await this.initializeProfile(userId);
-        return this.addXP(userId, xp, source, meta);
+      // 2. Buscar/atualizar perfil quando disponível, senão seguir com fallback agregado
+      let profile = null;
+      let newTotalXP = 0;
+      let newLevel = 1;
+      let leveledUp = false;
+      try {
+        const { data: prof } = await supabase
+          .from('gamification_profiles')
+          .select('*')
+          .eq('user_id', userId)
+          .maybeSingle();
+        profile = prof;
+        if (!profile) {
+          await this.initializeProfile(userId);
+          profile = {
+            user_id: userId,
+            xp_total: 0,
+            level: 1,
+          };
+        }
+        newTotalXP = (profile.xp_total || 0) + xp;
+        newLevel = calculateLevel(newTotalXP);
+        leveledUp = newLevel > (profile.level || 1);
+        const { error: updateError } = await supabase
+          .from('gamification_profiles')
+          .update({
+            xp_total: newTotalXP,
+            level: newLevel,
+            last_activity_at: new Date().toISOString(),
+          })
+          .eq('user_id', userId);
+        if (updateError) throw updateError;
+      } catch {
+        // Fallback: compute from xp_log only
+        const agg = await aggregateXPFromLog(userId);
+        newTotalXP = agg.totalXP;
+        newLevel = agg.level;
+        leveledUp = false;
       }
-
-      const newTotalXP = profile.xp_total + xp;
-      const newLevel = calculateLevel(newTotalXP);
-      const leveledUp = newLevel > profile.level;
-
-      // 3. Atualizar perfil
-      const { error: updateError } = await supabase
-        .from('gamification_profiles')
-        .update({
-          xp_total: newTotalXP,
-          level: newLevel,
-          last_activity_at: new Date().toISOString(),
-        })
-        .eq('user_id', userId);
-
-      if (updateError) throw updateError;
 
       // 4. Verificar conquistas (badges)
       await this.checkBadges(userId, newLevel, newTotalXP);
@@ -254,9 +292,9 @@ class GamificationService {
         .from('gamification_profiles')
         .select('*')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
 
-      if (!profile) return;
+      if (!profile) return; // silently skip if table/profile doesn't exist
 
       const now = new Date();
       const lastActivity = profile.last_activity_at ? new Date(profile.last_activity_at) : null;
@@ -328,14 +366,31 @@ class GamificationService {
         .from('gamification_profiles')
         .select('*')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
 
-      if (error) {
-        if (error.code === 'PGRST116') {
-          // Não existe, criar
-          return await this.initializeProfile(userId);
-        }
-        throw error;
+      if (error) throw error;
+
+      if (!profile) {
+        // Fallback synth profile from xp_log
+        const agg = await aggregateXPFromLog(userId);
+        const xpForNext = getXPForNextLevel(agg.totalXP);
+        const currentLevelXP = agg.level < LEVEL_THRESHOLDS.length 
+          ? LEVEL_THRESHOLDS[agg.level - 1] 
+          : LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1] + ((agg.level - LEVEL_THRESHOLDS.length) * 10000);
+        const progressToNext = agg.totalXP - currentLevelXP;
+        const xpNeededForNext = xpForNext - currentLevelXP;
+        const progressPercent = Math.min(100, Math.round((progressToNext / xpNeededForNext) * 100));
+        return {
+          user_id: userId,
+          xp_total: agg.totalXP,
+          level: agg.level,
+          current_streak: 0,
+          longest_streak: 0,
+          last_activity_at: null,
+          xp_for_next_level: xpForNext,
+          progress_to_next_level: progressPercent,
+          badges: [],
+        };
       }
 
       const xpForNext = getXPForNextLevel(profile.xp_total);
@@ -369,8 +424,26 @@ class GamificationService {
         badges: badges || [],
       };
     } catch (error) {
-      console.error('[GamificationService] Error getting profile:', error);
-      throw error;
+      // Final fallback to avoid breaking UI: return synthetic profile
+      const agg = await aggregateXPFromLog(userId);
+      const xpForNext = getXPForNextLevel(agg.totalXP);
+      const currentLevelXP = agg.level < LEVEL_THRESHOLDS.length 
+        ? LEVEL_THRESHOLDS[agg.level - 1] 
+        : LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1] + ((agg.level - LEVEL_THRESHOLDS.length) * 10000);
+      const progressToNext = agg.totalXP - currentLevelXP;
+      const xpNeededForNext = xpForNext - currentLevelXP;
+      const progressPercent = Math.min(100, Math.round((progressToNext / xpNeededForNext) * 100));
+      return {
+        user_id: userId,
+        xp_total: agg.totalXP,
+        level: agg.level,
+        current_streak: 0,
+        longest_streak: 0,
+        last_activity_at: null,
+        xp_for_next_level: xpForNext,
+        progress_to_next_level: progressPercent,
+        badges: [],
+      };
     }
   }
 
@@ -417,14 +490,34 @@ class GamificationService {
 
       const userIds = members.map(m => m.user_id);
 
-      // Buscar perfis de gamificação
-      const { data: profiles } = await supabase
-        .from('gamification_profiles')
-        .select('user_id, xp_total, level')
-        .in('user_id', userIds)
-        .order('xp_total', { ascending: false });
+      // Buscar perfis de gamificação; se indisponível, usar soma do xp_log
+      let profiles = [];
+      try {
+        const { data: profs } = await supabase
+          .from('gamification_profiles')
+          .select('user_id, xp_total, level')
+          .in('user_id', userIds)
+          .order('xp_total', { ascending: false });
+        profiles = profs || [];
+      } catch {
+        profiles = [];
+      }
 
-      if (!profiles) return [];
+      if (!profiles || profiles.length === 0) {
+        const { data: xpAgg } = await supabase
+          .from('xp_log')
+          .select('user_id, xp');
+        const sums = new Map();
+        for (const r of xpAgg || []) {
+          if (!userIds.includes(r.user_id)) continue;
+          sums.set(r.user_id, (sums.get(r.user_id) || 0) + (Number(r.xp) || 0));
+        }
+        profiles = Array.from(sums.entries()).map(([uid, total]) => ({
+          user_id: uid,
+          xp_total: total,
+          level: calculateLevel(total),
+        })).sort((a, b) => b.xp_total - a.xp_total);
+      }
 
       // Buscar nomes dos usuários
       const { data: users } = await supabase

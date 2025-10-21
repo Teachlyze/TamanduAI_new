@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DndContext, DragOverlay, closestCorners, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -422,7 +421,7 @@ const TaskFormModal = ({ isOpen, onClose, onSave, task = null }) => {
         </div>
 
         <div className="flex gap-3 pt-4">
-          <PremiumButton type="button" variant="outline" onClick={onClose} className="flex-1">
+          <PremiumButton type="button" variant="outline" onClick={onClose} className="bg-white dark:bg-slate-900 text-foreground border-border flex-1">
             Cancelar
           </PremiumButton>
           <PremiumButton type="submit" variant="gradient" className="flex-1">

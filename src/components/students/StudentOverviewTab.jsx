@@ -119,7 +119,7 @@ export const StudentOverviewTab = ({
                     <p className="text-sm text-muted-foreground">{cls.teacher}</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border text-xs">
                       {cls.schedule}
                     </Badge>
                   </div>

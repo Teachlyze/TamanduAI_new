@@ -30,11 +30,11 @@ const StrategicPlanPage = () => {
             Versão: 5.0 Final | Data: Outubro 2025 | Status: Documento Executivo Completo
           </p>
           <div className="mt-6 flex justify-center space-x-4">
-            <Button variant="outline" className="flex items-center">
+            <Button variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border flex items-center">
               <Download className="w-4 h-4 mr-2" />
               Baixar PDF
             </Button>
-            <Button variant="outline" className="flex items-center">
+            <Button variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border flex items-center">
               <ExternalLink className="w-4 h-4 mr-2" />
               Ver Original
             </Button>

@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -40,33 +39,75 @@ const CorrectionsPage = () => {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (activityId && user) {
-      loadActivityAndSubmissions();
+    // console.log('[CorrectionsPage] Mounting with:', { activityId, userId: user?.id }, []); // TODO: Add dependencies
+    
+    if (!activityId) {
+      console.error('[CorrectionsPage] No activityId provided');
+      setLoading(false);
+      toast.error('ID da atividade não fornecido');
+      return;
     }
+    
+    if (!user) {
+      console.error('[CorrectionsPage] No user found');
+      setLoading(false);
+      return;
+    }
+    
+    loadActivityAndSubmissions();
   }, [activityId, user]);
 
   const loadActivityAndSubmissions = async () => {
+    // console.log('[CorrectionsPage] Loading data for activity:', activityId);
+    
     try {
       setLoading(true);
 
+      // Timeout de 15 segundos para a query
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout ao carregar dados')), 15000)
+      );
+
       // Buscar atividade
-      const { data: activityData, error: activityError } = await supabase
+      // console.log('[CorrectionsPage] Fetching activity...');
+      const activityPromise = supabase
         .from('activities')
         .select('*')
         .eq('id', activityId)
         .single();
+        
+      const { data: activityData, error: activityError } = await Promise.race([
+        activityPromise,
+        timeoutPromise
+      ]);
 
-      if (activityError) throw activityError;
+      if (activityError) {
+        console.error('[CorrectionsPage] Activity error:', activityError);
+        throw activityError;
+      }
+      
+      // console.log('[CorrectionsPage] Activity loaded:', activityData?.title);
       setActivity(activityData);
 
       // Buscar submissões (sem nested profiles para evitar PGRST201)
-      const { data: submissionsData, error: submissionsError } = await supabase
+      // console.log('[CorrectionsPage] Fetching submissions...');
+      const submissionsPromise = supabase
         .from('submissions')
         .select('*')
         .eq('activity_id', activityId)
         .order('submitted_at', { ascending: false });
+        
+      const { data: submissionsData, error: submissionsError } = await Promise.race([
+        submissionsPromise,
+        timeoutPromise
+      ]);
 
-      if (submissionsError) throw submissionsError;
+      if (submissionsError) {
+        console.error('[CorrectionsPage] Submissions error:', submissionsError);
+        throw submissionsError;
+      }
+      
+      // console.log('[CorrectionsPage] Submissions loaded:', submissionsData?.length || 0);
 
       // Buscar dados dos alunos separadamente
       if (submissionsData && submissionsData.length > 0) {
@@ -100,9 +141,24 @@ const CorrectionsPage = () => {
       }
 
     } catch (error) {
-      console.error('Erro ao carregar:', error);
-      toast.error('Erro ao carregar correções');
+      console.error('[CorrectionsPage] Error loading:', error);
+      
+      let errorMessage = 'Erro ao carregar correções';
+      if (error.message === 'Timeout ao carregar dados') {
+        errorMessage = 'A operação está demorando muito. Tente novamente.';
+      } else if (error.code) {
+        errorMessage = `Erro ${error.code}: ${error.message}`;
+      }
+      
+      toast.error(errorMessage, {
+        duration: 5000,
+        action: {
+          label: 'Tentar novamente',
+          onClick: () => loadActivityAndSubmissions()
+        }
+      });
     } finally {
+      // console.log('[CorrectionsPage] Setting loading to false');
       setLoading(false);
     }
   };

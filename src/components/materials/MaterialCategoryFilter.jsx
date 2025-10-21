@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { supabase } from '@/lib/supabaseClient';
 import {
   Select,
@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { FiFilter, FiX } from 'react-icons/fi';
 
-const MaterialCategoryFilter = ({ classId, onFilterChange }) => {
+  const MaterialCategoryFilter = ({ classId, onFilterChange }) => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedTags, setSelectedTags] = useState([]);
@@ -30,7 +30,7 @@ const MaterialCategoryFilter = ({ classId, onFilterChange }) => {
         category: selectedCategory !== 'all' ? selectedCategory : null,
         tags: selectedTags,
         search: searchQuery
-      });
+      }, []); // TODO: Add dependencies
     }
   }, [selectedCategory, selectedTags, searchQuery]);
 
@@ -75,6 +75,8 @@ const MaterialCategoryFilter = ({ classId, onFilterChange }) => {
   };
 
   const hasActiveFilters = selectedCategory !== 'all' || selectedTags.length > 0 || searchQuery.length > 0;
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">

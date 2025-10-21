@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import { Trophy, Medal, Crown, TrendingUp } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import gamificationService from '@/services/gamificationService';

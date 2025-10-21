@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -25,12 +24,14 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { getUserClasses, exportClassData } from '@/services/apiSupabase';
+import ClassService from '@/services/classService';
 import { useUserClasses } from '@/hooks/useRedisCache';
 import { useAuth } from "@/hooks/useAuth";
 import useUserRole from '@/hooks/useUserRole';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { getNextClassDate, formatNextClass } from '@/utils/classScheduleUtils';
 // Using native browser API for file downloads
 
 const ClassesPage = () => {
@@ -40,11 +41,8 @@ const ClassesPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [classes, setClasses] = useState([]);
-  const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [selectedClass, setSelectedClass] = useState(null);
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
   const [file, setFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
@@ -52,7 +50,7 @@ const ClassesPage = () => {
   const { isTeacher } = useUserRole();
 
   // Use Redis cache for classes data
-  const { data: classesData, loading: classesLoading, error: classesError, invalidateCache } = useUserClasses(user?.id, isTeacher ? 'teacher' : 'student');
+  const { data: classesData, loading: classesLoading, error: classesError, invalidate: invalidateClassesCache } = useUserClasses(user?.id, isTeacher ? 'teacher' : 'student');
 
   // Colors for class cards (cycled through)
   const classColors = [
@@ -77,13 +75,20 @@ const ClassesPage = () => {
 
         if (classesData) {
           // Add color and format data for display
-          const formattedClasses = classesData.map((cls, index) => ({
-            ...cls,
-            color: classColors[index % classColors.length],
-            students: cls.students_count || 0,
-            activities: cls.activities_count || 0,
-            nextClass: cls.next_class || null
-          }));
+          const formattedClasses = classesData.map((cls, index) => {
+            // Calculate next class based on weekly_schedule and dates
+            const nextClassDate = getNextClassDate(cls);
+            const nextClassText = formatNextClass(nextClassDate);
+            
+            return {
+              ...cls,
+              color: classColors[index % classColors.length],
+              students: cls.students_count || 0,
+              activities: cls.activities_count || 0,
+              nextClass: nextClassText,
+              nextClassDate: nextClassDate
+            };
+          });
 
           setClasses(formattedClasses);
         }
@@ -114,7 +119,7 @@ const ClassesPage = () => {
           break;
         case 'view':
           if (classItem?.id) {
-            navigate(`/classes/${classItem.id}`);
+            navigate(`/dashboard/classes/${classItem.id}`);
           }
           break;
         case 'edit':
@@ -125,8 +130,10 @@ const ClassesPage = () => {
           });
           break;
         case 'inviteStudent':
-          setSelectedClass(classItem);
-          setShowInviteDialog(true);
+          // Navigate to class details with invites tab
+          if (classItem?.id) {
+            navigate(`/dashboard/classes/${classItem.id}?tab=invites`);
+          }
           break;
           
         case 'delete':
@@ -142,10 +149,9 @@ const ClassesPage = () => {
           setShowUploadDialog(true);
           break;
         case 'students':
-          if (classItem) {
-            navigate('/dashboard/students', { state: { classId: classItem.id } });
-          } else {
-            navigate('/dashboard/students');
+          // Navigate to class students tab instead of general students page
+          if (classItem?.id) {
+            navigate(`/dashboard/classes/${classItem.id}?tab=students`);
           }
           break;
         case 'filter':
@@ -180,8 +186,10 @@ const ClassesPage = () => {
   const handleDeleteConfirm = async () => {
     if (classToDelete) {
       try {
-        // Invalidate cache for the deleted class
-        await invalidateCache();
+        // Backend: soft delete class
+        await ClassService.deleteClass(classToDelete.id);
+        // Invalidate classes cache
+        await invalidateClassesCache();
 
         setClasses(classes.filter(c => c.id !== classToDelete.id));
         toast({
@@ -202,50 +210,6 @@ const ClassesPage = () => {
     setClassToDelete(null);
   };
 
-  const handleInviteStudent = async () => {
-    if (!selectedClass || !email) {
-      toast({
-        title: "Erro",
-        description: "Por favor, preencha o email do aluno.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      // TODO: Implementar convite de aluno através da API
-      // Por exemplo: enviar email de convite usando serviço de email
-      // ou criar registro de convite no banco de dados
-
-      // Simulação da implementação futura
-      console.log('Convidando aluno:', {
-        email,
-        classId: selectedClass.id,
-        className: selectedClass.name,
-        message,
-        invitedBy: user.id
-      });
-
-      toast({
-        title: "Convite enviado!",
-        description: `Um convite foi enviado para ${email}.`,
-      });
-
-      setShowInviteDialog(false);
-      setEmail('');
-      setMessage('');
-    } catch (error) {
-      console.error('Error inviting student:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível enviar o convite. Tente novamente.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleExport = async (classItem) => {
     if (!classItem) return;
@@ -632,60 +596,6 @@ const ClassesPage = () => {
         </AlertDialog>
       </div>
 
-      {/* Invite Student Dialog */}
-      <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Convidar Aluno</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email do Aluno</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="email@exemplo.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={isLoading}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="message">Mensagem (opcional)</Label>
-              <Textarea
-                id="message"
-                placeholder="Adicione uma mensagem pessoal..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                disabled={isLoading}
-                rows={3}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowInviteDialog(false)}
-              disabled={isLoading}
-            >
-              Cancelar
-            </Button>
-            <Button
-              onClick={handleInviteStudent}
-              disabled={!email || isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Enviando...
-                </>
-              ) : (
-                'Enviar Convite'
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Upload Material Dialog */}
       <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>

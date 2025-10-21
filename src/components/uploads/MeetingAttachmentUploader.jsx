@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { AttachmentService } from '@/services/attachmentService';
 import { Paperclip, ShieldAlert, CheckCircle2, UploadCloud } from 'lucide-react';
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useAuth } from '@/hooks/useAuth';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
@@ -11,7 +11,7 @@ import { X, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
  * Para usar: Adicionar no Layout principal temporariamente
  * <DebugPanel />
  */
-const DebugPanel = () => {
+  const DebugPanel = () => {
   const { user } = useAuth();
   const location = useLocation();
   const [show, setShow] = useState(true);
@@ -51,6 +51,8 @@ const DebugPanel = () => {
   };
   const expectedPath = expectedPaths[role];
   const isCorrectPath = location.pathname.startsWith(expectedPath);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="fixed bottom-4 right-4 z-[9999] max-w-md">

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -7,7 +7,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 /**
  * Voice recognition component for speech-to-text functionality
  */
-export const VoiceRecognition = ({
+export const [loading, setLoading] = useState(true);
+  const VoiceRecognition = ({
   onResult,
   onError,
   language = 'pt-BR',
@@ -97,7 +98,9 @@ export const VoiceRecognition = ({
 
     recognitionRef.current = recognition;
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
@@ -130,7 +133,9 @@ export const VoiceRecognition = ({
   }, []);
 
   if (!isSupported) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <Card className={`voice-recognition ${className}`} {...props}>
         <CardContent className="flex items-center justify-center h-32">
           <p className="text-muted-foreground">
@@ -140,6 +145,8 @@ export const VoiceRecognition = ({
       </Card>
     );
   }
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <Card className={`voice-recognition ${className}`} {...props}>

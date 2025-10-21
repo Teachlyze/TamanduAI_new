@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import ClassService from '@/services/classService';
 import schoolService from '@/services/schoolService';
@@ -64,6 +64,9 @@ const classFormSchema = z.object({
   period: z.string().optional(),
   school_id: z.string().optional(),
   is_school_managed: z.boolean().default(false),
+  // NEW: Datas de início e fim das aulas
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
 });
 
 const CreateClassroomForm = () => {
@@ -75,6 +78,8 @@ const CreateClassroomForm = () => {
   const [error, setError] = useState(null);
   const [affiliatedSchools, setAffiliatedSchools] = useState([]);
   const [loadingSchools, setLoadingSchools] = useState(true);
+  // NEW: Individual schedules per day  
+  const [weeklySchedule, setWeeklySchedule] = useState({});
 
   // Available colors for class
   const classColors = [
@@ -120,6 +125,8 @@ const CreateClassroomForm = () => {
       period: '',
       school_id: '',
       is_school_managed: false,
+      start_date: '',
+      end_date: '',
     }
   });
 
@@ -147,8 +154,39 @@ const CreateClassroomForm = () => {
     loadAffiliatedSchools();
   }, [user]);
 
+  // NEW: Handle day toggle with individual schedule
+  const toggleDaySchedule = (dayValue, checked) => {
+    if (checked) {
+      // Add day with default time
+      setWeeklySchedule(prev => ({
+        ...prev,
+        [dayValue]: { start_time: '08:00', end_time: '09:00' }
+      }));
+    } else {
+      // Remove day
+      setWeeklySchedule(prev => {
+        const updated = { ...prev };
+        delete updated[dayValue];
+        return updated;
+      });
+    }
+  };
+
+  // NEW: Update schedule time for specific day
+  const updateDayTime = (dayValue, field, value) => {
+    setWeeklySchedule(prev => ({
+      ...prev,
+      [dayValue]: {
+        ...prev[dayValue],
+        [field]: value
+      }
+    }));
+  };
+
   // Handle form submission
   const onSubmit = async (data) => {
+    e.preventDefault();
+
     if (!user) {
       toast({
         variant: 'destructive',
@@ -168,6 +206,13 @@ const CreateClassroomForm = () => {
         subject: data.subject
       });
 
+      // NEW: Convert weekly schedule to array format
+      const scheduleArray = Object.entries(weeklySchedule).map(([day, times]) => ({
+        day,
+        start_time: times.start_time,
+        end_time: times.end_time
+      }));
+
       // Create class via service using valid schema columns
       const classPayload = {
         name: data.name,
@@ -185,13 +230,14 @@ const CreateClassroomForm = () => {
         address: data.address || null,
         is_online: !!data.is_online,
         meeting_link: data.meeting_link || null,
-        meeting_days: data.meeting_days && data.meeting_days.length > 0 ? data.meeting_days : null,
-        meeting_start_time: data.meeting_start_time || null,
-        meeting_end_time: data.meeting_end_time || null,
+        weekly_schedule: scheduleArray.length > 0 ? scheduleArray : null, // NEW: Individual schedules
         period: data.period || null,
         school_id: data.school_id || null,
         is_school_managed: !!data.school_id,
-        is_active: true
+        is_active: true,
+        // NEW: Datas de início e fim das aulas
+        start_date: data.start_date || null,
+        end_date: data.end_date || null,
       };
 
       const created = await ClassService.createClass(classPayload);
@@ -285,9 +331,10 @@ const CreateClassroomForm = () => {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Left Column - Basic Information */}
-              <div className="space-y-6">
+            {/* NEW: 2-Column Layout - 2/3 + 1/3 */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* LEFT COLUMN (2/3 width) - Main Form */}
+              <div className="lg:col-span-2 space-y-6">
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -337,9 +384,10 @@ const CreateClassroomForm = () => {
                             </FormLabel>
                             <Select 
                               onValueChange={(value) => {
-                                field.onChange(value);
+                                const normalized = value === 'none' ? '' : value;
+                                field.onChange(normalized);
                                 // Auto-set is_school_managed based on selection
-                                form.setValue('is_school_managed', !!value);
+                                form.setValue('is_school_managed', !!normalized);
                               }} 
                               defaultValue={field.value} 
                               disabled={isSubmitting || loadingSchools}
@@ -356,7 +404,7 @@ const CreateClassroomForm = () => {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="">
+                                <SelectItem value="none">
                                   🏫 Turma Independente (só você)
                                 </SelectItem>
                                 {affiliatedSchools.map((school) => (
@@ -564,142 +612,119 @@ const CreateClassroomForm = () => {
                         </motion.div>
                       )}
 
-                      {/* Dias da Semana e Horários - Aparecem SEMPRE (online ou presencial) */}
+                      {/* NEW: Dias da Semana com Horários Individuais */}
                       <div className="space-y-4 pt-2">
-                        <FormField
-                            control={form.control}
-                            name="meeting_days"
-                            render={() => (
-                              <FormItem>
-                                <div className="mb-4">
-                                  <FormLabel className="text-base flex items-center gap-2">
-                                    <Calendar className="w-4 h-4 text-green-600" />
-                                    Dias da Semana
-                                  </FormLabel>
-                                  <FormDescription className="text-xs">
-                                    Selecione os dias em que a aula ocorre
-                                  </FormDescription>
-                                </div>
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                                  {[
-                                    { value: 'monday', label: 'Segunda' },
-                                    { value: 'tuesday', label: 'Terça' },
-                                    { value: 'wednesday', label: 'Quarta' },
-                                    { value: 'thursday', label: 'Quinta' },
-                                    { value: 'friday', label: 'Sexta' },
-                                    { value: 'saturday', label: 'Sábado' },
-                                    { value: 'sunday', label: 'Domingo' },
-                                  ].map((day) => (
-                                    <FormField
-                                      key={day.value}
-                                      control={form.control}
-                                      name="meeting_days"
-                                      render={({ field }) => {
-                                        return (
-                                          <FormItem
-                                            key={day.value}
-                                            className="flex flex-row items-center space-x-2 space-y-0 rounded-lg border-2 border-border p-3 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                                          >
-                                            <FormControl>
-                                              <Checkbox
-                                                checked={field.value?.includes(day.value)}
-                                                onCheckedChange={(checked) => {
-                                                  return checked
-                                                    ? field.onChange([...(field.value || []), day.value])
-                                                    : field.onChange(
-                                                        field.value?.filter(
-                                                          (value) => value !== day.value
-                                                        )
-                                                      )
-                                                }}
-                                                disabled={isSubmitting}
-                                              />
-                                            </FormControl>
-                                            <FormLabel className="font-normal cursor-pointer text-sm">
-                                              {day.label}
-                                            </FormLabel>
-                                          </FormItem>
-                                        )
-                                      }}
-                                    />
-                                  ))}
-                                </div>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          {/* Horários */}
-                          <div className="grid grid-cols-2 gap-4">
-                            <FormField
-                              control={form.control}
-                              name="meeting_start_time"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel className="flex items-center gap-2">
-                                    <Clock className="w-4 h-4 text-orange-600" />
-                                    Horário de Início
-                                  </FormLabel>
-                                  <FormControl>
-                                    <Input 
-                                      type="time" 
-                                      {...field} 
-                                      disabled={isSubmitting}
-                                      className="bg-white dark:bg-slate-900"
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-
-                            <FormField
-                              control={form.control}
-                              name="meeting_end_time"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel className="flex items-center gap-2">
-                                    <Clock className="w-4 h-4 text-red-600" />
-                                    Horário de Término
-                                  </FormLabel>
-                                  <FormControl>
-                                    <Input 
-                                      type="time" 
-                                      {...field} 
-                                      disabled={isSubmitting}
-                                      className="bg-white dark:bg-slate-900"
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
-
-                          {/* Preview */}
-                          {form.watch('meeting_days')?.length > 0 && form.watch('meeting_start_time') && (
-                            <Alert className="bg-violet-50 dark:bg-violet-950 border-violet-200 dark:border-violet-800">
-                              <Video className="h-4 w-4 text-violet-600" />
-                              <AlertDescription className="text-sm">
-                                <span className="font-semibold">Aulas ao vivo:</span>{' '}
-                                {form.watch('meeting_days').map((day) => {
-                                  const dayLabel = {
-                                    monday: 'Seg',
-                                    tuesday: 'Ter',
-                                    wednesday: 'Qua',
-                                    thursday: 'Qui',
-                                    friday: 'Sex',
-                                    saturday: 'Sáb',
-                                    sunday: 'Dom'
-                                  }[day];
-                                  return dayLabel;
-                                }).join(', ')}{' '}
-                                às {form.watch('meeting_start_time')}
-                                {form.watch('meeting_end_time') && ` - ${form.watch('meeting_end_time')}`}
-                              </AlertDescription>
-                            </Alert>
-                          )}
+                        <div className="mb-4">
+                          <FormLabel className="text-base flex items-center gap-2">
+                            <Calendar className="w-4 h-4 text-green-600" />
+                            Horários das Aulas
+                          </FormLabel>
+                          <FormDescription className="text-xs">
+                            Selecione os dias e defina horários individuais para cada aula
+                          </FormDescription>
                         </div>
+
+                        {/* Checkboxes para dias */}
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                          {[
+                            { value: 'monday', label: 'Seg' },
+                            { value: 'tuesday', label: 'Ter' },
+                            { value: 'wednesday', label: 'Qua' },
+                            { value: 'thursday', label: 'Qui' },
+                            { value: 'friday', label: 'Sex' },
+                            { value: 'saturday', label: 'Sáb' },
+                            { value: 'sunday', label: 'Dom' },
+                          ].map((day) => (
+                            <label
+                              key={day.value}
+                              className={`flex items-center space-x-2 p-2 rounded-lg border-2 cursor-pointer transition-all ${
+                                weeklySchedule[day.value]
+                                  ? 'border-violet-500 bg-violet-50 dark:bg-violet-950'
+                                  : 'border-border bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'
+                              }`}
+                            >
+                              <Checkbox
+                                checked={!!weeklySchedule[day.value]}
+                                onCheckedChange={(checked) => toggleDaySchedule(day.value, checked)}
+                                disabled={isSubmitting}
+                              />
+                              <span className="text-sm font-medium">{day.label}</span>
+                            </label>
+                          ))}
+                        </div>
+
+                        {/* Horários individuais para cada dia selecionado */}
+                        {Object.keys(weeklySchedule).length > 0 && (
+                          <div className="space-y-3 mt-4">
+                            {[
+                              { value: 'monday', label: 'Segunda-feira' },
+                              { value: 'tuesday', label: 'Terça-feira' },
+                              { value: 'wednesday', label: 'Quarta-feira' },
+                              { value: 'thursday', label: 'Quinta-feira' },
+                              { value: 'friday', label: 'Sexta-feira' },
+                              { value: 'saturday', label: 'Sábado' },
+                              { value: 'sunday', label: 'Domingo' },
+                            ]
+                              .filter(day => weeklySchedule[day.value])
+                              .map((day) => (
+                                <div
+                                  key={day.value}
+                                  className="p-4 rounded-lg border-2 border-violet-200 dark:border-violet-800 bg-violet-50/50 dark:bg-violet-950/50"
+                                >
+                                  <div className="flex items-center justify-between mb-3">
+                                    <span className="font-semibold text-violet-700 dark:text-violet-300">
+                                      {day.label}
+                                    </span>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                      <Label className="text-xs text-muted-foreground mb-1 block">Início</Label>
+                                      <Input
+                                        type="time"
+                                        value={weeklySchedule[day.value]?.start_time || '08:00'}
+                                        onChange={(e) => updateDayTime(day.value, 'start_time', e.target.value)}
+                                        disabled={isSubmitting}
+                                        className="bg-white dark:bg-slate-900 text-foreground border-border"
+                                      />
+                                    </div>
+                                    <div>
+                                      <Label className="text-xs text-muted-foreground mb-1 block">Término</Label>
+                                      <Input
+                                        type="time"
+                                        value={weeklySchedule[day.value]?.end_time || '09:00'}
+                                        onChange={(e) => updateDayTime(day.value, 'end_time', e.target.value)}
+                                        disabled={isSubmitting}
+                                        className="bg-white dark:bg-slate-900 text-foreground border-border"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                          </div>
+                        )}
+
+                        {/* Preview */}
+                        {Object.keys(weeklySchedule).length > 0 && (
+                          <Alert className="bg-violet-50 dark:bg-violet-950 border-violet-200 dark:border-violet-800">
+                            <Clock className="h-4 w-4 text-violet-600" />
+                            <AlertDescription className="text-sm">
+                              <span className="font-semibold">Resumo:</span>{' '}
+                              {Object.entries(weeklySchedule).map(([day, times], idx) => {
+                                const dayLabel = {
+                                  monday: 'Seg',
+                                  tuesday: 'Ter',
+                                  wednesday: 'Qua',
+                                  thursday: 'Qui',
+                                  friday: 'Sex',
+                                  saturday: 'Sáb',
+                                  sunday: 'Dom'
+                                }[day];
+                                return `${dayLabel} ${times.start_time}-${times.end_time}${idx < Object.keys(weeklySchedule).length - 1 ? ', ' : ''}`;
+                              }).join('')}
+                            </AlertDescription>
+                          </Alert>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -773,12 +798,65 @@ const CreateClassroomForm = () => {
                           )}
                         />
                       </div>
+
+                      {/* NEW: Datas de início e fim das aulas */}
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-4 border-t">
+                        <FormField
+                          control={form.control}
+                          name="start_date"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="flex items-center gap-2">
+                                <Calendar className="w-4 h-4 text-green-600" />
+                                Data de Início das Aulas
+                              </FormLabel>
+                              <FormControl>
+                                <Input 
+                                  type="date" 
+                                  {...field} 
+                                  disabled={isSubmitting}
+                                  className="bg-white dark:bg-slate-900 text-foreground border-border"
+                                />
+                              </FormControl>
+                              <FormDescription className="text-xs">
+                                Quando começam as aulas desta turma
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="end_date"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="flex items-center gap-2">
+                                <Calendar className="w-4 h-4 text-red-600" />
+                                Data de Término das Aulas
+                              </FormLabel>
+                              <FormControl>
+                                <Input 
+                                  type="date" 
+                                  {...field} 
+                                  disabled={isSubmitting}
+                                  className="bg-white dark:bg-slate-900 text-foreground border-border"
+                                />
+                              </FormControl>
+                              <FormDescription className="text-xs">
+                                Quando terminam as aulas (antes das férias/fim do semestre)
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
               </div>
 
-              {/* Right Column - Additional Settings */}
+              {/* RIGHT COLUMN (1/3 width) - Alunos Disponíveis */}
               <div className="space-y-6">
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
@@ -882,11 +960,15 @@ const CreateClassroomForm = () => {
                     </CardContent>
                   </Card>
                 </motion.div>
+              </div>
 
+              {/* RIGHT COLUMN (1/3 width) - Alunos Disponíveis */}
+              <div className="space-y-6">
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 }}
+                  className="sticky top-6"
                 >
                   <Card className="bg-white/80 backdrop-blur-sm border-white/50 shadow-lg hover:shadow-xl transition-all duration-300">
                     <CardHeader>

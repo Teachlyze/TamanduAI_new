@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { cn } from '@/lib/utils';
 import { Button } from './button';
 import { Input } from './input';
@@ -12,7 +12,8 @@ import { AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
  * Enhanced Form Field Component
  * Provides consistent styling and validation for form fields
  */
-export const FormField = ({
+export const [loading, setLoading] = useState(true);
+  const FormField = ({
   label,
   name,
   type = 'text',
@@ -58,6 +59,8 @@ export const FormField = ({
       onBlur(name);
     }
   }, [name, onBlur]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className={cn('space-y-2', className)}>
@@ -311,6 +314,8 @@ export const EnhancedForm = ({
     validateForm,
   ]);
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <form
       ref={formRef}
@@ -328,6 +333,8 @@ export const EnhancedForm = ({
  * Form Field Factory for creating consistent form fields
  */
 export const createFormField = (FieldComponent) => {
+  if (loading) return <LoadingScreen />;
+
   return ({
     name,
     label,
@@ -335,7 +342,9 @@ export const createFormField = (FieldComponent) => {
     validation,
     ...props
   }) => {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <FormField
         name={name}
         label={label}
@@ -536,7 +545,9 @@ export const useAutoSave = (values, onSave, options = {}) => {
 
     timeoutRef.current = setTimeout(save, delay);
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }

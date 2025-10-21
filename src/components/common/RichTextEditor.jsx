@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
-const RichTextEditor = ({
+  const RichTextEditor = ({
   value = '',
   onChange,
   placeholder = 'Start typing...',
@@ -39,7 +39,9 @@ const RichTextEditor = ({
   };
 
   if (readOnly) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div
         className={`border rounded-md p-3 min-h-[200px] bg-gray-50 ${className}`}
         style={style}
@@ -48,6 +50,8 @@ const RichTextEditor = ({
       />
     );
   }
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className={`border rounded-md ${isFocused ? 'border-blue-500' : 'border-gray-300'} ${className}`} style={style}>

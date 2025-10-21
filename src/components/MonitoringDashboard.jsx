@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import monitoringService from '@/services/monitoring';
 
-const MonitoringDashboard = () => {
+  const MonitoringDashboard = () => {
   const [healthReport, setHealthReport] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(true);
@@ -35,7 +35,9 @@ const MonitoringDashboard = () => {
       interval = setInterval(loadHealthReport, 10000); // Update every 10 seconds
     }
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       if (interval) clearInterval(interval);
     };
   }, [autoRefresh]);
@@ -94,7 +96,9 @@ const MonitoringDashboard = () => {
   };
 
   if (isLoading && !healthReport) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="p-6 space-y-6">
         <div className="animate-pulse space-y-4">
           <div className="h-8 bg-gray-200 rounded w-1/3"></div>
@@ -109,7 +113,9 @@ const MonitoringDashboard = () => {
   }
 
   if (!healthReport) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="p-6 text-center">
         <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
         <h3 className="text-lg font-semibold mb-2">Erro ao carregar dashboard</h3>
@@ -118,6 +124,8 @@ const MonitoringDashboard = () => {
       </div>
     );
   }
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="p-6 space-y-6">

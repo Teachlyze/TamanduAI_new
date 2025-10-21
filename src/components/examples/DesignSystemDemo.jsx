@@ -1,5 +1,4 @@
 // src/components/examples/DesignSystemDemo.jsx
-import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   BookOpen,

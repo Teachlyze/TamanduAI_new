@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -18,7 +18,7 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
 
-const teacherNavigation = [
+  const teacherNavigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
   { name: 'Turmas', href: '/dashboard/classes', icon: Users },
   { name: 'Atividades', href: '/dashboard/activities', icon: BookOpen },
@@ -112,6 +112,8 @@ export const SidebarPremium = ({ isOpen, onClose }) => {
     return location.pathname.startsWith(href);
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <>
       {/* Mobile backdrop */}
@@ -151,7 +153,7 @@ export const SidebarPremium = ({ isOpen, onClose }) => {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
               <BookOpen className="w-4 h-4 text-white" />
             </div>
-            <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent text-white hover:opacity-90">
               TamanduAI
             </span>
             <span
@@ -183,7 +185,9 @@ export const SidebarPremium = ({ isOpen, onClose }) => {
               const Icon = item.icon;
               const active = isActive(item.href);
               
-              return (
+              if (loading) return <LoadingScreen />;
+
+  return (
                 <Link
                   key={item.name}
                   to={item.href}

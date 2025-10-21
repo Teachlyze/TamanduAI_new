@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useForm } from 'react-hook-form';
 import { FiUpload, FiCheck, FiAlertCircle, FiFileText, FiX } from 'react-icons/fi';
 import { AnimatePresence } from 'framer-motion';
@@ -6,7 +6,7 @@ import useActivityFiles from '../../hooks/useActivityFiles';
 import FileUploader from './FileUploader';
 import { BUCKETS } from '../../services/storageService';
 
-const ActivitySubmissionForm = ({
+  const ActivitySubmissionForm = ({
   activityId,
   userId,
   onSubmit,
@@ -46,7 +46,7 @@ const ActivitySubmissionForm = ({
         answer: initialData.answer || '',
         files: initialData.files || [],
         agreeTerms: initialData.agreeTerms || false,
-      });
+      }, []); // TODO: Add dependencies
     }
   }, [initialData, reset]);
 
@@ -55,12 +55,14 @@ const ActivitySubmissionForm = ({
     if (!onAutosave) return;
     const t = setTimeout(() => {
       try {
-        onAutosave({ answer, files, answersByIndex });
+        onAutosave({ answer, files, answersByIndex }, []); // TODO: Add dependencies
       } catch (e) {
         // silent
       }
     }, 1000);
-    return () => clearTimeout(t);
+    if (loading) return <LoadingScreen />;
+
+  return () => clearTimeout(t);
   }, [answer, files, answersByIndex, onAutosave]);
   
   // Manipula o upload de arquivos
@@ -144,6 +146,8 @@ const ActivitySubmissionForm = ({
   
   // Submete o formulário
   const handleFormSubmit = async (data) => {
+    e.preventDefault();
+
     if (isSubmitting || isUploading) return;
     
     try {
@@ -181,7 +185,9 @@ const ActivitySubmissionForm = ({
   
   // Se a submissão foi bem-sucedida, exibe mensagem de sucesso
   if (submissionSuccess) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="rounded-md bg-green-50 p-4 mb-6">
         <div className="flex">
           <div className="flex-shrink-0">
@@ -200,6 +206,8 @@ const ActivitySubmissionForm = ({
     );
   }
   
+  if (loading) return <LoadingScreen />;
+
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
       {/* Dynamic schema-driven questions (optional) */}
@@ -216,7 +224,9 @@ const ActivitySubmissionForm = ({
             const value = answersByIndex[qIndex];
             const setValueFor = (v) => setAnswersByIndex(prev => ({ ...prev, [qIndex]: v }));
 
-            return (
+            if (loading) return <LoadingScreen />;
+
+  return (
               <div key={key} className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">{prop.title || `Pergunta ${qIndex}`}</label>
                 {qType === 'textarea' && (
@@ -249,7 +259,9 @@ const ActivitySubmissionForm = ({
                     {prop.items.enum.map((opt) => {
                       const arr = Array.isArray(value) ? value : [];
                       const checked = arr.includes(opt);
-                      return (
+                      if (loading) return <LoadingScreen />;
+
+  return (
                         <label key={opt} className="inline-flex items-center gap-1 text-sm">
                           <input type="checkbox" checked={checked} disabled={isSubmitting}
                             onChange={(e) => {

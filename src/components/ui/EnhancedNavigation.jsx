@@ -1,5 +1,5 @@
 // src/components/ui/EnhancedNavigation.jsx
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronDown,
@@ -19,7 +19,8 @@ import { useAccessibility } from '@/hooks/useAccessibility';
 /**
  * Navegação lateral aprimorada com funcionalidades avançadas
  */
-export const AdvancedSidebar = ({
+export const [loading, setLoading] = useState(true);
+  const AdvancedSidebar = ({
   items = [],
   activeItem,
   onItemClick,
@@ -53,7 +54,9 @@ export const AdvancedSidebar = ({
     const isExpanded = expandedItems.has(item.id);
     const Icon = item.icon;
 
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div key={item.id}>
         <button
           onClick={() => {
@@ -114,7 +117,7 @@ export const AdvancedSidebar = ({
               >
                 <div className="ml-4 space-y-1">
                   {item.children.map((child) => renderNavItem(child, level + 1))}
-                </div>
+                </div key={child.id || child.key || Math.random()}>
               </motion.div>
             )}
           </AnimatePresence>
@@ -122,6 +125,8 @@ export const AdvancedSidebar = ({
       </div>
     );
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <aside
@@ -151,7 +156,7 @@ export const AdvancedSidebar = ({
         {/* Navigation items */}
         <nav className="flex-1 space-y-1">
           {items.map((item) => renderNavItem(item))}
-        </nav>
+        </nav key={item.id || item.key || Math.random()}>
 
         {/* Footer */}
         {footer && (
@@ -173,6 +178,8 @@ export const EnhancedBreadcrumb = ({
   className = '',
   ...props
 }) => {
+  if (loading) return <LoadingScreen />;
+
   return (
     <nav
       className={`flex items-center space-x-2 text-sm ${className}`}
@@ -223,6 +230,8 @@ export const AdvancedDropdown = ({
     'top-start': 'dropdown-top dropdown-start',
     'top-end': 'dropdown-top dropdown-end',
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className={`dropdown ${placements[placement]} ${className}`}>
@@ -295,6 +304,8 @@ export const EnhancedTabs = ({
     buttons: '',
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className={`${variants[variant]} ${className}`} {...props}>
       <div className={`flex ${variant === 'pills' ? 'gap-2' : 'gap-6'}`}>
@@ -302,7 +313,9 @@ export const EnhancedTabs = ({
           const isActive = activeTab === tab.id;
           const Icon = tab.icon;
 
-          return (
+          if (loading) return <LoadingScreen />;
+
+  return (
             <button
               key={tab.id}
               onClick={() => onTabChange?.(tab.id)}
@@ -376,9 +389,13 @@ export const ContextMenu = ({
   useEffect(() => {
     if (isOpen) {
       document.addEventListener('click', handleClick);
-      return () => document.removeEventListener('click', handleClick);
+      if (loading) return <LoadingScreen />;
+
+  return () => document.removeEventListener('click', handleClick);
     }
   }, [isOpen]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <>
@@ -478,6 +495,8 @@ export const AdvancedPagination = ({
 
   if (totalPages <= 1) return null;
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className={`flex items-center justify-between ${className}`} {...props}>
       {/* Info */}
@@ -574,6 +593,8 @@ export const AdvancedSearch = ({
     }
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className={`relative ${className}`}>
       <div className="flex gap-2">
@@ -668,6 +689,8 @@ export const AdvancedFilter = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const activeCount = Object.values(activeFilters).filter(Boolean).length;
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className={`relative ${className}`}>
@@ -801,6 +824,8 @@ export const QuickActionButton = ({
   ...props
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className={`fixed bottom-6 right-6 z-40 ${className}`}>

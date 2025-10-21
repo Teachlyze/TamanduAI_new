@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, createContext, useContext } from 'react';
+import { createContext, useContext, useState, useRef, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
 // Contexto para gerenciar focus trap global
 const FocusTrapContext = createContext({
@@ -61,7 +62,9 @@ export const useFocusTrap = (options = {}) => {
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keydown', handleEscape);
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('keydown', handleEscape);
 
@@ -101,6 +104,8 @@ export const FocusTrap = ({
 }) => {
   const containerRef = useFocusTrap({ isActive });
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div
       ref={containerRef}
@@ -132,7 +137,9 @@ export const useAutoFocus = (options = {}) => {
       }
     }, delay);
 
-    return () => clearTimeout(timer);
+    if (loading) return <LoadingScreen />;
+
+  return () => clearTimeout(timer);
   }, [selector, delay, condition]);
 };
 
@@ -257,6 +264,8 @@ export const FocusTrapProvider = ({ children }) => {
     }
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <FocusTrapContext.Provider value={{
       activeTrap,
@@ -276,6 +285,8 @@ export const LiveAnnouncer = ({
   className = '',
   ...props
 }) => {
+  if (loading) return <LoadingScreen />;
+
   return (
     <>
       <div

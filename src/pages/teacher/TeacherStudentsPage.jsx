@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -209,7 +208,7 @@ const TeacherStudentsPage = () => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", delay: 0.2 }}
-              className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-4"
+              className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-4"
             >
               <GraduationCap className="w-4 h-4" />
               <span className="text-sm font-medium">Gestão de Alunos</span>
@@ -315,7 +314,7 @@ const TeacherStudentsPage = () => {
                   variant={filterPerformance === filter ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setFilterPerformance(filter)}
-                  className="whitespace-nowrap inline-flex items-center gap-2 bg-white dark:bg-slate-900 text-foreground border-border rounded-lg"
+                  className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-4 py-2 bg-white dark:bg-slate-900 text-foreground border-border rounded-lg"
                 >
                   {filter === 'all' ? 'Todos' : 
                    filter === 'excellent' ? 'Excelentes' :
@@ -374,7 +373,7 @@ const TeacherStudentsPage = () => {
                         </h3>
                         <p className="text-sm text-muted-foreground truncate">{student.email}</p>
                         <div className="flex items-center gap-2 mt-2">
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border text-xs">
                             {student.className}
                           </Badge>
                         </div>
@@ -419,7 +418,7 @@ const TeacherStudentsPage = () => {
                           e.stopPropagation();
                           navigate(`/dashboard/students/${student.id}`);
                         }}
-                        className="flex-1 whitespace-nowrap inline-flex items-center gap-2 bg-white dark:bg-slate-900 text-foreground border-border rounded-lg"
+                        className="flex-1 whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-4 py-2 bg-white dark:bg-slate-900 text-foreground border-border rounded-lg"
                       >
                         Ver Perfil
                       </PremiumButton>
@@ -431,7 +430,7 @@ const TeacherStudentsPage = () => {
                           e.stopPropagation();
                           toast.success('Mensagem enviada!');
                         }}
-                        className="whitespace-nowrap inline-flex items-center gap-2 bg-white dark:bg-slate-900 text-foreground border-border rounded-lg"
+                        className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-3 py-2 bg-white dark:bg-slate-900 text-foreground border-border rounded-lg"
                       >
                         <MessageSquare className="w-4 h-4" />
                       </PremiumButton>

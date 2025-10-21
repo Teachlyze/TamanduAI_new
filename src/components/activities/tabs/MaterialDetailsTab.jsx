@@ -1,5 +1,4 @@
 // src/components/activities/tabs/MaterialDetailsTab.jsx
-import React, { useState, useRef } from 'react';
 import {
   Box,
   Button,

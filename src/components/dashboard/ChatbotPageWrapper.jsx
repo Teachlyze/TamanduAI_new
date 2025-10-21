@@ -1,11 +1,11 @@
 // src/components/dashboard/ChatbotPageWrapper.jsx
-import React, { useState, useEffect, Suspense } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from '@/lib/supabaseClient';
 import { Logger } from '@/services/logger';
 import ChatbotSkeleton from '@/components/ui/chatbot-skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertTriangle, RefreshCw, Bot, Upload, Brain, MessageSquare, GraduationCap, Lightbulb, User, Send, FileText, FolderOpen, Zap, CheckCircle, Clock } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Bot, Upload, Brain, MessageSquare, GraduationCap, Lightbulb, User, Send, FileText, FolderOpen, Zap, CheckCircle, Clock, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,7 +15,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 
-const ChatbotPageWrapper = () => {
+  const ChatbotPageWrapper = () => {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -69,7 +69,9 @@ const ChatbotPageWrapper = () => {
 
   // Error state
   if (error) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-6">
         <Alert variant="destructive" className="max-w-md">
           <AlertTriangle className="h-4 w-4" />
@@ -79,7 +81,7 @@ const ChatbotPageWrapper = () => {
               variant="outline"
               size="sm"
               onClick={handleRetry}
-              className="ml-2"
+              className="bg-white dark:bg-slate-900 text-foreground border-border ml-2"
             >
               <RefreshCw className="h-3 w-3 mr-1" />
               Tentar novamente
@@ -91,6 +93,8 @@ const ChatbotPageWrapper = () => {
   }
 
   // Success state - renderizar o componente real
+  if (loading) return <LoadingScreen />;
+
   return (
     <Suspense fallback={<ChatbotSkeleton />}>
       <ChatbotPageContent
@@ -293,6 +297,8 @@ const ChatbotPageContent = ({ teacherClasses, isLoading }) => {
     { icon: MessageSquare, text: "Pronto! Seus alunos já podem conversar com o chatbot.", color: "from-orange-500 to-orange-600" }
   ];
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="space-y-8 p-6">
@@ -300,7 +306,7 @@ const ChatbotPageContent = ({ teacherClasses, isLoading }) => {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 rounded-3xl p-8 text-white"
+          className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 rounded-3xl p-8 text-white hover:opacity-90"
         >
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="relative z-10">
@@ -362,7 +368,7 @@ const ChatbotPageContent = ({ teacherClasses, isLoading }) => {
           className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-white/50 shadow-lg"
         >
           <div className="flex items-center mb-6">
-            <div className="w-12 h-12 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center mr-4">
+            <div className="w-12 h-12 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center mr-4 text-white hover:opacity-90">
               <Lightbulb className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -403,10 +409,10 @@ const ChatbotPageContent = ({ teacherClasses, isLoading }) => {
           >
             <Card className="bg-white/70 backdrop-blur-sm border-white/50 shadow-lg overflow-hidden">
               {/* Chat Header */}
-              <div className="p-6 border-b border-white/50 bg-gradient-to-r from-blue-50 to-purple-50">
+              <div className="p-6 border-b border-white/50 bg-gradient-to-r from-blue-50 to-purple-50 text-white hover:opacity-90">
                 <div className="flex items-center space-x-4">
                   <div className="relative">
-                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-white hover:opacity-90">
                       <Bot className="w-7 h-7 text-white" />
                     </div>
                     <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${
@@ -476,7 +482,7 @@ const ChatbotPageContent = ({ teacherClasses, isLoading }) => {
                   <Button
                     onClick={handleSendMessage}
                     disabled={!selectedClass}
-                    className="h-12 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl"
+                    className="h-12 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl hover:opacity-90"
                   >
                     <Send className="w-5 h-5" />
                   </Button>
@@ -502,7 +508,7 @@ const ChatbotPageContent = ({ teacherClasses, isLoading }) => {
                       {selectedClass ? `Turma: ${selectedClass.name}` : 'Selecione uma turma para ver os materiais'}
                     </p>
                   </div>
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white hover:opacity-90">
                     <FileText className="w-4 h-4 text-white" />
                   </div>
                 </div>
@@ -553,7 +559,7 @@ const ChatbotPageContent = ({ teacherClasses, isLoading }) => {
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
-                      className="flex-1 bg-white/50 hover:bg-white/80 border-white/50"
+                      className="bg-white dark:bg-slate-900 text-foreground border-border flex-1 bg-white/50 hover:bg-white/80 border-white/50"
                       onClick={() => handleAction('manage_materials')}
                       disabled={!selectedClass}
                     >
@@ -570,7 +576,7 @@ const ChatbotPageContent = ({ teacherClasses, isLoading }) => {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-bold text-gray-900">Status do Treinamento</h3>
-                  <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white hover:opacity-90">
                     <Brain className="w-4 h-4 text-white" />
                   </div>
                 </div>
@@ -593,7 +599,7 @@ const ChatbotPageContent = ({ teacherClasses, isLoading }) => {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full bg-white/50 hover:bg-white/80 border-white/50"
+                    className="bg-white dark:bg-slate-900 text-foreground border-border w-full bg-white/50 hover:bg-white/80 border-white/50"
                     onClick={() => handleAction('retrain')}
                     disabled={!selectedClass}
                   >

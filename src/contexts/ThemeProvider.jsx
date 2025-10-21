@@ -1,4 +1,3 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { THEME_DARK, THEME_LIGHT, THEME_STORAGE_KEY } from '../constants/theme';
 import ThemeContext from './ThemeContext';
 

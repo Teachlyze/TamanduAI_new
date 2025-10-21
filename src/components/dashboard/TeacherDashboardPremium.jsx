@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -262,7 +261,7 @@ const TeacherDashboardPremium = () => {
         className="flex items-center justify-between"
       >
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent text-white hover:opacity-90">
             Olá, Professor! 👋
           </h1>
           <p className="text-gray-600 mt-2">
@@ -271,7 +270,7 @@ const TeacherDashboardPremium = () => {
         </div>
 
         {subscription && (
-          <Badge className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-3 py-1 text-sm">
+          <Badge className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-3 py-1 text-sm hover:opacity-90">
             {subscription.plan_name}
           </Badge>
         )}
@@ -388,7 +387,7 @@ const TeacherDashboardPremium = () => {
                     </div>
                     {action.indicator && (
                       <div className="mt-4 flex items-center">
-                        <Badge variant="outline" className="bg-gray-100">
+                        <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border bg-gray-100">
                           {action.indicator}
                         </Badge>
                       </div>
@@ -421,7 +420,7 @@ const TeacherDashboardPremium = () => {
               <BookOpen className="h-12 w-14 text-gray-400 mb-4" />
               <p className="text-gray-600 mb-4">Você ainda não tem turmas</p>
               <Button
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:opacity-90"
                 onClick={() => navigate('/dashboard/classes/new')}
               >
                 <Plus className="mr-2 h-4 w-4" />
@@ -513,7 +512,7 @@ const TeacherDashboardPremium = () => {
                         </p>
                       </div>
                     </div>
-                    <Badge variant="outline" className="bg-blue-50 shrink-0">{event.type}</Badge>
+                    <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border bg-blue-50 shrink-0">{event.type}</Badge>
                   </div>
                 ))}
               </div>
@@ -558,7 +557,7 @@ const TeacherDashboardPremium = () => {
                         </div>
                       </div>
                     </div>
-                    <Button size="sm" variant="outline" className="shrink-0" onClick={() => navigate(`/dashboard/students/${student.profiles.id}`)}>
+                    <Button size="sm" variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border shrink-0" onClick={() => navigate(`/dashboard/students/${student.profiles.id}`)}>
                       Ver perfil
                     </Button>
                   </div>

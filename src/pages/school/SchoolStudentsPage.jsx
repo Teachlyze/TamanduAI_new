@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -216,7 +215,7 @@ const SchoolStudentsPage = () => {
         averageGrade: Math.round(averageGrade * 10) / 10,
         topPerformers,
         needsAttention
-      });
+      }, []); // TODO: Add dependencies
     }
   }, [students]);
 
@@ -305,7 +304,7 @@ const SchoolStudentsPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-gradient-to-r text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fit from-green-600 to-teal-600 bg-clip-text text-transparent">
             Alunos da Escola
           </h1>
           <p className="text-muted-foreground mt-1">
@@ -381,7 +380,7 @@ const SchoolStudentsPage = () => {
             </div>
           </div>
           <Select value={filterClass} onValueChange={setFilterClass}>
-            <SelectTrigger className="w-full md:w-48">
+  <SelectTrigger className="bg-white dark:bg-slate-900 text-foreground border-border w-full md:w-48">
               <SelectValue placeholder="Filtrar por turma" />
             </SelectTrigger>
             <SelectContent>
@@ -394,7 +393,7 @@ const SchoolStudentsPage = () => {
             </SelectContent>
           </Select>
           <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-full md:w-48">
+  <SelectTrigger className="bg-white dark:bg-slate-900 text-foreground border-border w-full md:w-48">
               <SelectValue placeholder="Filtrar por status" />
             </SelectTrigger>
             <SelectContent>

@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,14 +44,14 @@ const OnboardingPage = () => {
 
     setSubmitting(true);
     try {
-      console.log('[Onboarding] Starting onboarding process...');
+      // console.log('[Onboarding] Starting onboarding process...');
       
       // Get current user
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
       if (!user) throw new Error('No user found');
 
-      console.log('[Onboarding] Updating user metadata...');
+      // console.log('[Onboarding] Updating user metadata...');
       
       // Update user metadata directly
       const { data: updatedData, error: updateError } = await supabase.auth.updateUser({
@@ -72,7 +71,7 @@ const OnboardingPage = () => {
 
       if (updateError) throw updateError;
       
-      console.log('[Onboarding] User metadata updated successfully');
+      // console.log('[Onboarding] User metadata updated successfully');
       const userId = user.id;
 
       // Log terms acceptance with IP/UA and versioning
@@ -102,11 +101,11 @@ const OnboardingPage = () => {
 
       // Inicializar gamificação para alunos
       if (form.role === 'student') {
-        console.log('[Onboarding] Initializing gamification for student...');
+        // console.log('[Onboarding] Initializing gamification for student...');
         try {
           await gamificationService.initializeProfile(userId);
           await missionsService.initializeMissions(userId);
-          console.log('[Onboarding] Gamification initialized successfully!');
+          // console.log('[Onboarding] Gamification initialized successfully!');
         } catch (gamError) {
           console.error('[Onboarding] Error initializing gamification:', gamError);
           // Não bloquear o fluxo se gamificação falhar
@@ -115,7 +114,7 @@ const OnboardingPage = () => {
 
       // Criar escola e vincular admin
       if (form.role === 'school') {
-        console.log('[Onboarding] Creating school...');
+        // console.log('[Onboarding] Creating school...');
         try {
           const { data: school, error: schoolError } = await supabase
             .from('schools')
@@ -128,7 +127,7 @@ const OnboardingPage = () => {
 
           if (schoolError) throw schoolError;
 
-          console.log('[Onboarding] School created:', school.id);
+          // console.log('[Onboarding] School created:', school.id);
 
           // Vincular como admin
           const { error: adminError } = await supabase
@@ -141,14 +140,14 @@ const OnboardingPage = () => {
 
           if (adminError) throw adminError;
 
-          console.log('[Onboarding] User linked as school admin!');
+          // console.log('[Onboarding] User linked as school admin!');
         } catch (schoolError) {
           console.error('[Onboarding] Error creating school:', schoolError);
           // Não bloquear o fluxo
         }
       }
 
-      console.log('[Onboarding] Onboarding completed successfully!');
+      // console.log('[Onboarding] Onboarding completed successfully!');
       // Navigate based on user role
       const role = form.role || 'student';
       navigateToHome(navigate, role);

@@ -1,5 +1,4 @@
 // src/components/dashboard/AgendaPageWrapper.jsx
-import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from '@/lib/supabaseClient';
 import { AttachmentService } from '@/services/attachmentService';

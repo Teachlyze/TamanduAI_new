@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { cn } from '@/lib/utils';
 
 /**
@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
  * @param {string} props.className - Additional CSS classes
  * @param {React.Ref} ref - Forwarded ref
  */
-const Slider = React.forwardRef(({
+  const Slider = React.forwardRef(({
   value = [0],
   onValueChange,
   min = 0,
@@ -25,9 +25,7 @@ const Slider = React.forwardRef(({
   className,
   ...props
 }, ref) => {
-  const [isDragging, setIsDragging] = useState(false);
   const sliderRef = useRef(null);
-  const [internalValue, setInternalValue] = useState(value);
 
   // Update internal value when prop changes
   useEffect(() => {
@@ -36,7 +34,9 @@ const Slider = React.forwardRef(({
 
   // Calculate percentage for positioning
   const getPercentage = useCallback((val) => {
-    return ((val - min) / (max - min)) * 100;
+    if (loading) return <LoadingScreen />;
+
+  return ((val - min) / (max - min)) * 100;
   }, [min, max]);
 
   // Get value from position
@@ -108,13 +108,15 @@ const Slider = React.forwardRef(({
   // Add/remove global event listeners
   useEffect(() => {
     if (isDragging) {
-      document.addEventListener('mousemove', handleInteractionMove);
-      document.addEventListener('mouseup', handleInteractionEnd);
-      document.addEventListener('touchmove', handleInteractionMove, { passive: false });
+      document.addEventListener('mousemove', handleInteractionMove, []);
+      document.addEventListener('mouseup', handleInteractionEnd, []);
+      document.addEventListener('touchmove', handleInteractionMove, { passive: false }, []);
       document.addEventListener('touchend', handleInteractionEnd);
     }
 
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       document.removeEventListener('mousemove', handleInteractionMove);
       document.removeEventListener('mouseup', handleInteractionEnd);
       document.removeEventListener('touchmove', handleInteractionMove);
@@ -124,6 +126,8 @@ const Slider = React.forwardRef(({
 
   const currentValue = internalValue[0] || 0;
   const percentage = getPercentage(currentValue);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div

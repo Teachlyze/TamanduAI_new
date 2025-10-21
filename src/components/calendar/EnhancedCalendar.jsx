@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -94,6 +93,7 @@ const EnhancedCalendar = ({
 
           const isCurrentMonth = isSameMonth(date, currentMonth);
           const isSelectedDate = isSelected(date);
+          const isToday = isSameDay(date, new Date());
 
           return (
             <Button
@@ -102,12 +102,17 @@ const EnhancedCalendar = ({
               size="sm"
               onClick={() => handleDateClick(date)}
               className={cn(
-                "h-8 w-8 p-0 text-xs font-normal hover:bg-blue-100 hover:text-blue-900",
+                "h-8 w-8 p-0 text-xs font-normal hover:bg-blue-100 hover:text-blue-900 transition-all relative",
                 !isCurrentMonth && "text-gray-300 hover:text-gray-400",
-                isSelectedDate && "bg-blue-600 text-white hover:bg-blue-700 hover:text-white"
+                isToday && !isSelectedDate && "bg-blue-600 text-white hover:bg-blue-700 hover:text-white font-bold ring-4 ring-blue-200 dark:ring-blue-800 shadow-lg scale-105",
+                isSelectedDate && !isToday && "bg-blue-100 dark:bg-blue-900/50 text-blue-900 dark:text-blue-100 font-semibold ring-2 ring-blue-300 dark:ring-blue-700",
+                isSelectedDate && isToday && "bg-blue-600 text-white hover:bg-blue-700 hover:text-white font-bold ring-4 ring-blue-300 dark:ring-blue-800 shadow-lg scale-110"
               )}
             >
               {format(date, 'd')}
+              {isToday && !isSelectedDate && (
+                <span className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 text-[8px] whitespace-nowrap">Hoje</span>
+              )}
             </Button>
           );
         })}

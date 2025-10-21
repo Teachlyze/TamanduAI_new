@@ -1,5 +1,4 @@
 // src/components/ui/EnhancedForm.jsx
-import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, CheckCircle, Eye, EyeOff, Info } from 'lucide-react';
 

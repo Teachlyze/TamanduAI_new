@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { submitActivity } from '@/services/apiSupabase';
 import { useToast } from '@/components/ui/use-toast';
 
-const ActivityForm = ({ activityId }) => {
+  const ActivityForm = ({ activityId }) => {
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [isLoading, setIsLoading] = useState(true);
@@ -57,6 +57,8 @@ const ActivityForm = ({ activityId }) => {
   }, [activityId]);
 
   const onSubmit = async (formData) => {
+    e.preventDefault();
+
     setIsSubmitting(true);
     
     try {
@@ -87,7 +89,9 @@ const ActivityForm = ({ activityId }) => {
   }
 
   if (submissionSuccess) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-md" role="alert">
         <div className="flex">
           <div className="flex-shrink-0">
@@ -108,15 +112,19 @@ const ActivityForm = ({ activityId }) => {
               >
                 Enviar outra resposta
               </button>
-            </div>
+            </PremiumCard>
+    </div>
           </div>
         </div>
       </div>
     );
   }
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className="container mx-auto p-4 max-w-3xl">
+      <PremiumCard variant="elevated">
       <h1 className="text-2xl font-bold mb-4">{activityTitle}</h1>
       
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

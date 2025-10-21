@@ -1,4 +1,3 @@
-import React, { useState, useMemo } from 'react';
 import { X, FileText, Image as ImageIcon, FileVideo, FileAudio, FileArchive, File as FileIcon, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';

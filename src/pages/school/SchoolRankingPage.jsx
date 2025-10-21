@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, Medal, Star, TrendingUp, Users, Award, Zap, BookOpen, Crown, Flame, Target } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -183,9 +182,9 @@ const SchoolRankingPage = () => {
   };
 
   const getRankBadge = (position) => {
-    if (position === 1) return <Badge className="bg-gradient-to-r from-yellow-400 to-amber-500 text-white">🏆 1º Lugar</Badge>;
-    if (position === 2) return <Badge className="bg-gradient-to-r from-gray-300 to-gray-400 text-white">🥈 2º Lugar</Badge>;
-    if (position === 3) return <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white">🥉 3º Lugar</Badge>;
+    if (position === 1) return <Badge className="bg-gradient-to-r from-yellow-400 to-amber-500 t text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fitext-white">🏆 1º Lugar</Badge>;
+    if (position === 2) return <Badge className="bg-gradient-to-r from-gray-300 to-gray-400 t text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fitext-white">🥈 2º Lugar</Badge>;
+    if (position === 3) return <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 t text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fitext-white">🥉 3º Lugar</Badge>;
     return <Badge variant="outline">{position}º</Badge>;
   };
 
@@ -198,7 +197,7 @@ const SchoolRankingPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-3">
+          <h1 className="text-3xl font-bold bg-gradient-to-r text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fit from-blue-600 to-indigo-600 bg-clip-text text-transparent flex gap-3">
             <Trophy className="w-8 h-8 text-blue-600" />
             Ranking de Alunos - {schoolData?.name}
           </h1>

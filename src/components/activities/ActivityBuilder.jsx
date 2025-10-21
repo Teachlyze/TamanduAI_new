@@ -25,7 +25,7 @@ import { AutoLinkNode, LinkNode } from '@lexical/link';
 
 import { FiPlus, FiTrash2, FiArrowUp, FiArrowDown, FiType, FiList, FiCheckSquare, FiAlignLeft } from 'react-icons/fi';
 
-const editorConfig = {
+  const editorConfig = {
   theme: {
     paragraph: 'mb-2',
     heading: {
@@ -67,6 +67,8 @@ export function RichTextEditor({ onChange, placeholder = 'Digite aqui...' }) {
       onChange(text);
     });
   }, [onChange]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="border rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
@@ -332,18 +334,22 @@ export default function ActivityBuilder({ draftId: initialDraftId, onActivityCre
     autosaveTimer.current = setTimeout(() => {
       doAutosave();
     }, 1000);
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       if (autosaveTimer.current) clearTimeout(autosaveTimer.current);
     };
   }, [title, description, questions, doAutosave]);
 
   // save on unload
   useEffect(() => {
-    window.addEventListener('beforeunload', doAutosave);
+    window.addEventListener('beforeunload', doAutosave, []);
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') doAutosave();
-    });
-    return () => {
+      if (document.visibilityState === 'hidden') doAutosave(, []);
+    }, []);
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       window.removeEventListener('beforeunload', doAutosave);
     };
   }, [doAutosave, title, description, questions.length]);
@@ -584,6 +590,8 @@ export default function ActivityBuilder({ draftId: initialDraftId, onActivityCre
     </div>
   );
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -737,7 +745,7 @@ export default function ActivityBuilder({ draftId: initialDraftId, onActivityCre
                   {questions.length > 0 ? (
                     <div className="space-y-6">
                       {questions.map((q, index) => renderQuestionPreview(q, index))}
-                    </div>
+                    </div key={q.id || q.key || Math.random()}>
                   ) : (
                     <div className="text-center py-12 bg-white rounded-lg border-2 border-dashed border-gray-300">
                       <p className="text-gray-500">Adicione perguntas para visualizar a prévia</p>

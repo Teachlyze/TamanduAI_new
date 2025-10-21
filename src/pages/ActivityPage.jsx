@@ -6,7 +6,7 @@ import ActivityView from '../components/activities/ActivityView';
 import { useActivityDetails } from '../hooks/useRedisCache';
 import { FiArrowLeft } from 'react-icons/fi';
 
-const ActivityPage = () => {
+  const ActivityPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -50,14 +50,23 @@ const ActivityPage = () => {
           // Fallback to direct database query if no cache
           const { data, error: fetchError } = await supabase
             .from('activities')
-            .select(`
-              *,
-              class:classes (id, name, description)
-            `)
+            .select('*')
             .eq('id', id)
             .single();
 
           if (fetchError) throw fetchError;
+
+          // Buscar classes separadamente via activity_class_assignments
+          if (data) {
+            const { data: assignments } = await supabase
+              .from('activity_class_assignments')
+              .select('class_id, classes(id, name, description)')
+              .eq('activity_id', data.id);
+            
+            if (assignments && assignments.length > 0) {
+              data.classes = assignments.map(a => a.classes).filter(Boolean);
+            }
+          }
 
           setActivity(data);
         }
@@ -74,7 +83,7 @@ const ActivityPage = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        console.log('Checking authentication status...');
+        // console.log('Checking authentication status...');
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
@@ -83,12 +92,14 @@ const ActivityPage = () => {
         }
         
         const isAuth = !!session;
-        console.log('Is authenticated:', isAuth);
+        // console.log('Is authenticated:', isAuth);
         setIsAuthenticated(isAuth);
         
         if (!isAuth) {
-          console.log('Not authenticated, redirecting to login...');
-          navigate('/login');
+          // console.log('Not authenticated, redirecting to login...');
+          // Salvar URL atual para redirecionar depois do login
+          localStorage.setItem('redirectAfterLogin', location.pathname);
+          navigate('/login', { state: { from: location } });
           return;
         }
         
@@ -116,16 +127,26 @@ const ActivityPage = () => {
         
         const isTeacher = profile?.is_teacher || false;
         
-        // Se estiver no modo de edição, verifica se é o dono da atividade
-        if (mode === 'edit' && activity) {
-          if (activity.created_by !== authUser?.id && !isTeacher) {
-            console.log('User is not the owner, redirecting to view mode...');
-            navigate(`/dashboard/activities/${id}`, { replace: true });
-            setMode('view');
+        // Verificações de permissão por status da atividade
+        if (activity) {
+          // Atividades DRAFT só podem ser acessadas pelo criador
+          if (activity.status === 'draft' && activity.created_by !== authUser?.id) {
+            // console.log('Tentativa de acesso a rascunho de outro usuário');
+            navigate('/dashboard/activities', { replace: true });
+            return;
+          }
+          
+          // Se estiver no modo de edição, verifica se é o dono da atividade
+          if (mode === 'edit') {
+            if (activity.created_by !== authUser?.id && !isTeacher) {
+              // console.log('User is not the owner, redirecting to view mode...');
+              navigate(`/dashboard/activities/${id}`, { replace: true });
+              setMode('view');
+            }
           }
         }
         
-        console.log('Authentication check passed, setting loading to false');
+        // console.log('Authentication check passed, setting loading to false');
         setIsLoading(false);
         
       } catch (error) {
@@ -169,7 +190,9 @@ const ActivityPage = () => {
 
   // Exibe um indicador de carregamento enquanto verifica a autenticação ou carrega os dados
   if (isLoading) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="flex justify-center items-center h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
@@ -181,7 +204,9 @@ const ActivityPage = () => {
 
   // Redireciona para o login se não estiver autenticado
   if (!isAuthenticated) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="flex justify-center items-center h-screen">
         <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4">
           <p>Redirecionando para a página de login...</p>
@@ -192,7 +217,9 @@ const ActivityPage = () => {
   
   // Exibe mensagem de erro se ocorrer algum problema
   if (error) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
           <div className="bg-red-50 border-l-4 border-red-400 p-4">
@@ -222,6 +249,8 @@ const ActivityPage = () => {
 
   // Verifica se o usuário atual é um professor
   const isTeacher = user?.user_metadata?.is_teacher || false;
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="min-h-screen bg-gray-50">

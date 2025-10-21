@@ -1,10 +1,11 @@
-import React from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen' from 'react';
 import { sanitizeText, validateTextSafety, SafeHtml } from '@/utils/securityUtils';
 
 /**
  * Input component with built-in XSS protection and sanitization
  */
-export const SecureInput = React.forwardRef(({
+export const [loading, setLoading] = useState(true);
+  const SecureInput = React.forwardRef(({
   value,
   onChange,
   sanitize = true,
@@ -53,6 +54,8 @@ export const SecureInput = React.forwardRef(({
       onChange?.(newValue);
     }
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <input
@@ -118,6 +121,8 @@ export const SecureTextarea = React.forwardRef(({
     }
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <textarea
       ref={ref}
@@ -157,6 +162,8 @@ export const SecureContent = ({
     return <SafeHtml html={safeContent} className={className} {...props} />;
   }
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className={className} {...props}>
       {safeContent}
@@ -195,6 +202,8 @@ export const SecureFormField = ({
   };
 
   const InputComponent = type === 'textarea' ? SecureTextarea : SecureInput;
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className={`space-y-2 ${className}`}>

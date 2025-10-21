@@ -1,5 +1,4 @@
 // src/components/ui/EnhancedTable.jsx
-import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronUp,

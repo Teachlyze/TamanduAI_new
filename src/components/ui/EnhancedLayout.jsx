@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Bell, User, Settings, LogOut } from 'lucide-react';
 import { Button } from './button';
@@ -8,7 +8,8 @@ import { useAuth } from '@/contexts/AuthContext';
  * Layout aprimorado com melhor responsividade e acessibilidade
  * Usa princípios de design system com Tailwind + DaisyUI
  */
-export const EnhancedLayout = ({
+export const [loading, setLoading] = useState(true);
+  const EnhancedLayout = ({
   children,
   title,
   subtitle,
@@ -35,7 +36,9 @@ export const EnhancedLayout = ({
     checkMobile();
     window.addEventListener('resize', checkMobile);
 
-    return () => window.removeEventListener('resize', checkMobile);
+    if (loading) return <LoadingScreen />;
+
+  return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // Fechar sidebar ao clicar fora em mobile
@@ -48,7 +51,9 @@ export const EnhancedLayout = ({
       };
 
       document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      if (loading) return <LoadingScreen />;
+
+  return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [sidebarOpen, isMobile]);
 
@@ -75,6 +80,8 @@ export const EnhancedLayout = ({
     closed: { opacity: 0, display: 'none' },
     open: { opacity: 1, display: 'block' },
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className={`min-h-screen bg-base-100 ${className}`}>
@@ -206,13 +213,17 @@ export const EnhancedSidebar = ({
   onItemClick,
   className = '',
 }) => {
+  if (loading) return <LoadingScreen />;
+
   return (
     <nav className={`space-y-1 ${className}`}>
       {items.map((item) => {
         const isActive = activeItem === item.id;
         const Icon = item.icon;
 
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <button
             key={item.id}
             onClick={() => onItemClick?.(item.id)}
@@ -259,6 +270,8 @@ export const EnhancedCard = ({
     elevated: 'bg-base-100 shadow-lg border-transparent',
     glass: 'glass border-base-200/50',
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div
@@ -330,6 +343,8 @@ export const EnhancedButton = ({
     className,
   ].filter(Boolean).join(' ');
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <button
       className={classes}
@@ -359,6 +374,8 @@ export const ResponsiveContainer = ({
     '2xl': 'max-w-7xl',
     none: 'max-w-none',
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div

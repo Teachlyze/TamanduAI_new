@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
 import { PremiumCard, PremiumButton, LoadingScreen, EmptyState, toast } from '@/components/ui';
@@ -151,7 +150,7 @@ const RewardSettingsPage = () => {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-yellow-600 to-orange-600 p-8 rounded-2xl text-white">
+      <div className="bg-gradient-to-r from-yellow-600 to-orange-600 p-8 rounded-2xl t text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fitext-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur">
@@ -171,7 +170,7 @@ const RewardSettingsPage = () => {
 
       {/* Suggested Rewards */}
       <PremiumCard variant="elevated">
-        <div className="p-6 bg-gradient-to-r from-blue-500/10 to-purple-500/10">
+        <div className="p-6 bg-gradient-to-r text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fit from-blue-500/10 to-purple-500/10">
           <h3 className="text-lg font-bold mb-4">💡 Sugestões de Recompensas</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 bg-white dark:bg-black/20 rounded-lg">
@@ -291,10 +290,10 @@ const RewardSettingsPage = () => {
               </div>
 
               <div className="flex gap-3 pt-4">
-                <PremiumButton type="submit" className="flex-1 bg-gradient-to-r from-yellow-600 to-orange-600 whitespace-nowrap inline-flex items-center justify-center gap-2" loading={saving}>
+                <PremiumButton type="submit" className="flex-1 bg-gradient-to-r text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fit from-yellow-600 to-orange-600 justify-center" loading={saving}>
                   <span>{editingReward ? 'Atualizar' : 'Criar'} Recompensa</span>
                 </PremiumButton>
-                <PremiumButton type="button" variant="outline" onClick={resetForm} className="whitespace-nowrap inline-flex items-center gap-2">
+                <PremiumButton type="button" variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border whitespace-nowrap inline-flex items-center gap-2">
                   <span>Cancelar</span>
                 </PremiumButton>
               </div>
@@ -369,7 +368,7 @@ const RewardSettingsPage = () => {
 
       {/* Info Card */}
       <PremiumCard variant="elevated">
-        <div className="p-6 bg-gradient-to-r from-purple-500/10 to-pink-500/10">
+        <div className="p-6 bg-gradient-to-r text-white hover:opacity-90 whitespace-nowrap inline-flex items-center gap-2 min-w-fit from-purple-500/10 to-pink-500/10">
           <h3 className="text-lg font-bold mb-4">ℹ️ Como as Recompensas Funcionam?</h3>
           <div className="space-y-3 text-sm">
             <p>

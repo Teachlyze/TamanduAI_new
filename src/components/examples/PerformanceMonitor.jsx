@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +9,7 @@ import { Progress } from '@/components/ui/progress';
 /**
  * Componente de monitoramento de performance para acompanhar otimizações implementadas
  */
-const PerformanceMonitor = () => {
+  const PerformanceMonitor = () => {
   const [metrics, setMetrics] = useState({
     bundleSize: 0,
     loadTime: 0,
@@ -40,7 +40,9 @@ const PerformanceMonitor = () => {
         }));
       }, 2000);
 
-      return () => clearInterval(interval);
+      if (loading) return <LoadingScreen />;
+
+  return () => clearInterval(interval);
     }
   }, [isMonitoring]);
 
@@ -66,6 +68,8 @@ const PerformanceMonitor = () => {
   const lazyLoadProgress = metrics.lazyComponents.total > 0
     ? (metrics.lazyComponents.loaded / metrics.lazyComponents.total) * 100
     : 0;
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
@@ -386,7 +390,7 @@ ActivitiesListPage → CreateActivityPage, ActivityPage`}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-8 border border-blue-200 dark:border-blue-800"
+        className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-8 border border-blue-200 dark:border-blue-800 text-white hover:opacity-90"
       >
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-white">
           🚀 Otimizações Implementadas

@@ -11,6 +11,7 @@ import ClassInviteService from '@/services/classInviteService';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function JoinClassPage() {
+  const [loading, setLoading] = useState(true);
   const { invitationCode } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -133,7 +134,9 @@ export default function JoinClassPage() {
   const getStatusContent = () => {
     switch (status) {
       case 'loading':
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <div className="flex flex-col items-center justify-center py-12 space-y-4">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
             <p className="text-lg font-medium">Processando seu convite...</p>
@@ -141,7 +144,9 @@ export default function JoinClassPage() {
         );
         
       case 'not_authenticated':
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <Card className="max-w-2xl mx-auto">
             <CardHeader>
               <div className="flex items-center justify-center mb-4">
@@ -185,7 +190,7 @@ export default function JoinClassPage() {
               <Button 
                 onClick={handleSignupRedirect}
                 variant="outline"
-                className="w-full"
+                className="bg-white dark:bg-slate-900 text-foreground border-border w-full"
                 size="lg"
               >
                 Criar Conta
@@ -195,7 +200,9 @@ export default function JoinClassPage() {
         );
 
       case 'preview':
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <Card className="max-w-2xl mx-auto">
             <CardHeader>
               <CardTitle className="text-center text-2xl">Você foi convidado para esta turma</CardTitle>
@@ -279,7 +286,9 @@ export default function JoinClassPage() {
         );
 
       case 'confirming':
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <div className="flex flex-col items-center justify-center py-12 space-y-4">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
             <p className="text-lg font-medium">Adicionando você à turma...</p>
@@ -287,7 +296,9 @@ export default function JoinClassPage() {
         );
         
       case 'success':
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <Card className="max-w-md mx-auto">
             <CardHeader className="text-center">
               <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
@@ -311,7 +322,9 @@ export default function JoinClassPage() {
         
         
       case 'error':
-        return (
+        if (loading) return <LoadingScreen />;
+
+  return (
           <Card className="max-w-md mx-auto">
             <CardHeader className="text-center">
               <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
@@ -346,9 +359,12 @@ export default function JoinClassPage() {
     }
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <div className="container max-w-4xl py-12 px-4">
+      <PremiumCard variant="elevated">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold tracking-tight">Convite para Turma</h1>
           <p className="text-muted-foreground mt-2 text-lg">
@@ -369,6 +385,7 @@ export default function JoinClassPage() {
         <div className="flex justify-center">
           {getStatusContent()}
         </div>
+      </PremiumCard>
       </div>
     </div>
   );

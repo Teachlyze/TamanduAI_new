@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -40,7 +40,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-const SchoolSidebar = ({ collapsed, setCollapsed }) => {
+  const SchoolSidebar = ({ collapsed, setCollapsed }) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [stats, setStats] = useState({ teachers: 0, students: 0, classes: 0 });
@@ -65,7 +65,9 @@ const SchoolSidebar = ({ collapsed, setCollapsed }) => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 60000); // Update every minute
-    return () => clearInterval(timer);
+    if (loading) return <LoadingScreen />;
+
+  return () => clearInterval(timer);
   }, []);
 
   const toggleTheme = () => {
@@ -233,6 +235,8 @@ const SchoolSidebar = ({ collapsed, setCollapsed }) => {
     await signOut();
     navigate('/login');
   };
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <motion.aside
@@ -405,7 +409,9 @@ const SchoolSidebar = ({ collapsed, setCollapsed }) => {
         <nav className="flex-1 space-y-0.5 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 scrollbar-track-transparent">
           {navItems.map((item, index) => {
             const Icon = item.icon;
-            return (
+            if (loading) return <LoadingScreen />;
+
+  return (
               <NavLink
                 key={item.path}
                 to={item.path}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Bell, Search, User, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -16,7 +16,7 @@ import { NotificationBell, NotificationContainer } from '../ui/notification-syst
 // LAYOUT CONFIGURATION
 // ============================================
 
-const LAYOUT_CONFIG = {
+  const LAYOUT_CONFIG = {
   BREAKPOINTS: {
     MOBILE: 768,
     TABLET: 1024,
@@ -60,11 +60,13 @@ export const useResponsive = () => {
       setDimensions({
         width: window.innerWidth,
         height: window.innerHeight,
-      });
+      }, []); // TODO: Add dependencies
     };
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    if (loading) return <LoadingScreen />;
+
+  return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const breakpoints = useMemo(() => ({
@@ -167,6 +169,8 @@ export const Sidebar = ({
     return null;
   }
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <motion.aside
       initial={false}
@@ -216,6 +220,8 @@ export const Header = ({
   const { mobileMenuOpen, toggle } = useSidebar();
 
   const headerHeight = isMobile ? mobileHeight : height;
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <header
@@ -287,8 +293,12 @@ export const MainLayout = ({
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    if (loading) return <LoadingScreen />;
+
+  return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isMobile, isOpen, closeMobileMenu]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className={cn('flex h-screen bg-background', className)} {...props}>
@@ -381,6 +391,8 @@ export const ContentArea = ({
     return widths[maxWidth] || `max-w-${maxWidth}`;
   }, [maxWidth]);
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div
       className={cn(
@@ -425,6 +437,8 @@ export const GridLayout = ({
     return colsArray.join(' ');
   }, [cols]);
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div
       className={cn(
@@ -450,6 +464,8 @@ export const ResponsiveContainer = ({
   ...props
 }) => {
   const { isMobile } = useResponsive();
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div

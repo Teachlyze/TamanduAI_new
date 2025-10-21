@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from "@/hooks/useAuth";
 import { 
@@ -151,49 +150,63 @@ const CreateActivityPageEnhanced = () => {
       return;
     }
 
-    if (formData.selectedClasses.length === 0) {
-      toast.error('Selecione pelo menos uma turma');
-      return;
+    // NÃO obrigar seleção de turma - se não tiver, vira rascunho
+    const isDraft = formData.selectedClasses.length === 0 || !formData.isPublished;
+    
+    if (isDraft) {
+      console.log('[CreateActivity] Salvando como rascunho (sem turma ou não publicado)');
+    } else {
+      console.log('[CreateActivity] Publicando atividade em', formData.selectedClasses.length, 'turma(s)');
     }
 
     setSaving(true);
     try {
       // Criar atividade
+      const activityData = {
+        title: formData.title,
+        description: formData.description,
+        content: {
+          instructions: formData.instructions,
+          questions: formData.questions,
+          enablePlagiarismCheck: formData.enablePlagiarismCheck,
+          allowBatchGrading: formData.allowBatchGrading
+        },
+        type: formData.type,
+        max_grade: formData.maxGrade,
+        due_date: formData.dueDate || null,
+        created_by: user.id,
+        status: isDraft ? 'draft' : 'published',
+        is_published: !isDraft,
+        published_at: !isDraft ? new Date().toISOString() : null
+      };
+      
       const { data: activity, error: activityError } = await supabase
         .from('activities')
-        .insert({
-          title: formData.title,
-          description: formData.description,
-          content: {
-            instructions: formData.instructions,
-            questions: formData.questions,
-            enablePlagiarismCheck: formData.enablePlagiarismCheck,
-            allowBatchGrading: formData.allowBatchGrading
-          },
-          type: formData.type,
-          max_grade: formData.maxGrade,
-          due_date: formData.dueDate || null,
-          created_by: user.id,
-          is_published: formData.isPublished
-        })
+        .insert(activityData)
         .select()
         .single();
 
       if (activityError) throw activityError;
 
-      // Associar às turmas
-      const assignments = formData.selectedClasses.map(classId => ({
-        activity_id: activity.id,
-        class_id: classId
-      }));
+      // Associar às turmas APENAS se tiver turmas selecionadas E estiver publicado
+      if (formData.selectedClasses.length > 0 && !isDraft) {
+        const assignments = formData.selectedClasses.map(classId => ({
+          activity_id: activity.id,
+          class_id: classId,
+          assigned_at: new Date().toISOString()
+        }));
 
-      const { error: assignmentError } = await supabase
-        .from('activity_class_assignments')
-        .insert(assignments);
+        const { error: assignmentError } = await supabase
+          .from('activity_class_assignments')
+          .insert(assignments);
 
-      if (assignmentError) throw assignmentError;
-
-      toast.success('Atividade criada com sucesso!');
+        if (assignmentError) throw assignmentError;
+        
+        toast.success(`Atividade publicada em ${formData.selectedClasses.length} turma(s)!`);
+      } else {
+        toast.success('Rascunho salvo com sucesso!');
+      }
+      
       navigate('/dashboard/activities');
     } catch (error) {
       console.error('Erro ao criar atividade:', error);
@@ -217,6 +230,7 @@ const CreateActivityPageEnhanced = () => {
             size="sm"
             leftIcon={ArrowLeft}
             onClick={() => navigate('/dashboard/activities')}
+            className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-4 py-2"
           >
             Voltar
           </PremiumButton>
@@ -233,6 +247,7 @@ const CreateActivityPageEnhanced = () => {
             variant="outline"
             leftIcon={X}
             onClick={() => navigate('/dashboard/activities')}
+            className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-6 py-2.5"
           >
             Cancelar
           </PremiumButton>
@@ -240,7 +255,7 @@ const CreateActivityPageEnhanced = () => {
             leftIcon={Save}
             onClick={handleSave}
             loading={saving}
-            className="bg-gradient-to-r from-blue-600 to-purple-600"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-6 py-2.5"
           >
             Criar Atividade
           </PremiumButton>
@@ -440,7 +455,7 @@ const CreateActivityPageEnhanced = () => {
                             size="sm"
                             leftIcon={Trash2}
                             onClick={() => removeQuestion(question.id)}
-                            className="text-red-500 hover:text-red-600"
+                            className="text-red-500 hover:text-red-600 whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-4 py-2"
                           >
                             Remover
                           </PremiumButton>
@@ -530,7 +545,7 @@ const CreateActivityPageEnhanced = () => {
                     <PremiumButton
                       leftIcon={Plus}
                       onClick={addQuestion}
-                      className="bg-gradient-to-r from-green-500 to-teal-500"
+                      className="bg-gradient-to-r from-green-500 to-teal-500 whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-6 py-2.5"
                     >
                       Adicionar Questão
                     </PremiumButton>

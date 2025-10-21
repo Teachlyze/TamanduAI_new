@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -95,7 +94,7 @@ const StudentCard = ({ student, onView, onEdit, onDelete }) => {
                     <User className="mr-1 h-3 w-3" />
                     {student.classes?.length || 0} turmas
                   </Badge>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border text-xs">
                     <GraduationCap className="mr-1 h-3 w-3" />
                     {student.avgGrade ? `${student.avgGrade.toFixed(1)}` : 'N/A'}
                   </Badge>
@@ -208,7 +207,7 @@ const StudentCard = ({ student, onView, onEdit, onDelete }) => {
                       <TooltipTrigger asChild>
                         <Badge 
                           variant="outline" 
-                          className="text-xs px-2 py-0.5 cursor-default"
+                          className="bg-white dark:bg-slate-900 text-foreground border-border text-xs px-2 py-0.5 cursor-default"
                         >
                           +{student.classes.length - 3}
                         </Badge>

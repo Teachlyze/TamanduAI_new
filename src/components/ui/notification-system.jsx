@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Bell,
@@ -27,7 +27,8 @@ import { ScrollArea } from './scroll-area';
 // NOTIFICATION TYPES AND CONFIGURATION
 // ============================================
 
-export const NOTIFICATION_TYPES = {
+export const [loading, setLoading] = useState(true);
+  const NOTIFICATION_TYPES = {
   SUCCESS: 'success',
   ERROR: 'error',
   WARNING: 'warning',
@@ -73,7 +74,9 @@ class NotificationManager {
   // Subscribe to notification changes
   subscribe(callback) {
     this.listeners.add(callback);
-    return () => this.listeners.delete(callback);
+    if (loading) return <LoadingScreen />;
+
+  return () => this.listeners.delete(callback);
   }
 
   // Notify all listeners
@@ -342,7 +345,9 @@ export const NotificationItem = ({
   };
 
   if (compact) {
-    return (
+    if (loading) return <LoadingScreen />;
+
+  return (
       <motion.div
         initial={{ opacity: 0, x: 300 }}
         animate={{ opacity: 1, x: 0 }}
@@ -371,6 +376,8 @@ export const NotificationItem = ({
       </motion.div>
     );
   }
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <motion.div
@@ -462,6 +469,8 @@ export const NotificationContainer = ({
     return positions[position] || positions[NOTIFICATION_POSITIONS.BOTTOM_RIGHT];
   }, [position]);
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className={cn(
       'fixed z-50 w-96 max-w-sm',
@@ -495,6 +504,8 @@ export const NotificationBell = ({
 }) => {
   const { unreadCount } = useNotifications();
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <Button
       variant="ghost"
@@ -525,6 +536,8 @@ export const NotificationSettings = ({
   const { settings, updateSettings } = useNotificationSettings();
 
   if (!isOpen) return null;
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -185,7 +184,7 @@ const ReportsPage = () => {
         // Submissions for those activities from those students
         const { data: submissions, error: submissionsError } = await supabase
           .from('submissions')
-          .select('id, activity_id, student_id, score, submitted_at, status')
+          .select('id, activity_id, student_id, grade, submitted_at, status')
           .in('activity_id', activityIds)
           .in('student_id', studentIds);
         if (submissionsError) throw submissionsError;
@@ -193,9 +192,9 @@ const ReportsPage = () => {
         // Compute KPIs
         const totalStudents = studentIds.length;
         const totalActivities = activities.length;
-        const graded = (submissions || []).filter(s => s.score !== null);
+        const graded = (submissions || []).filter(s => s.grade !== null);
         const averageGrade = graded.length > 0
-          ? graded.reduce((sum, s) => sum + s.score, 0) / graded.length
+          ? graded.reduce((sum, s) => sum + Number(s.grade || 0), 0) / graded.length
           : 0;
         const expectedSubmissions = totalStudents * totalActivities;
         const completedSubmissions = (submissions || []).filter(s => s.status === 'graded' || s.status === 'submitted').length;
@@ -205,7 +204,7 @@ const ReportsPage = () => {
         const studentGrades = {};
         for (const s of graded) {
           if (!studentGrades[s.student_id]) studentGrades[s.student_id] = { total: 0, count: 0 };
-          studentGrades[s.student_id].total += s.score;
+          studentGrades[s.student_id].total += Number(s.grade || 0);
           studentGrades[s.student_id].count += 1;
         }
         const topStudents = Object.entries(studentGrades)
@@ -225,8 +224,8 @@ const ReportsPage = () => {
         // Per-activity stats
         const activityStats = activities.map(activity => {
           const subs = (submissions || []).filter(s => s.activity_id === activity.id);
-          const gradedSubs = subs.filter(s => s.score !== null);
-          const avgScore = gradedSubs.length > 0 ? gradedSubs.reduce((sum, s) => sum + s.score, 0) / gradedSubs.length : 0;
+          const gradedSubs = subs.filter(s => s.grade !== null);
+          const avgScore = gradedSubs.length > 0 ? gradedSubs.reduce((sum, s) => sum + Number(s.grade || 0), 0) / gradedSubs.length : 0;
           return {
             id: activity.id,
             title: activity.title,
@@ -242,8 +241,8 @@ const ReportsPage = () => {
           const classActivities = activities.filter(a => a.class_id === cls.id);
           const classActivityIds = classActivities.map(a => a.id);
           const classSubs = (submissions || []).filter(s => classActivityIds.includes(s.activity_id));
-          const gradedClassSubs = classSubs.filter(s => s.score !== null);
-          const avgGrade = gradedClassSubs.length > 0 ? gradedClassSubs.reduce((sum, s) => sum + s.score, 0) / gradedClassSubs.length : 0;
+          const gradedClassSubs = classSubs.filter(s => s.grade !== null);
+          const avgGrade = gradedClassSubs.length > 0 ? gradedClassSubs.reduce((sum, s) => sum + Number(s.grade || 0), 0) / gradedClassSubs.length : 0;
           return {
             id: cls.id,
             name: cls.name,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
@@ -44,7 +44,7 @@ import {
 } from 'lucide-react';
 
 // Lazy load components for better performance
-const StudentCard = lazy(() => import('./StudentCard'));
+  const StudentCard = lazy(() => import('./StudentCard'));
 const StudentListItem = lazy(() => import('./StudentListItem'));
 
 // Mock data - In a real app, this would come from an API
@@ -279,6 +279,8 @@ const StudentsPage = () => {
     </div>
   );
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <TooltipProvider>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -289,15 +291,15 @@ const StudentsPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="relative"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-2xl blur-xl" />
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-2xl blur-xl text-white hover:opacity-90" />
             <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/20 shadow-xl">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
+                    <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg text-white hover:opacity-90">
                       <GraduationCap className="h-6 w-6 text-white" />
                     </div>
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent text-white hover:opacity-90">
                       Gerenciar Alunos
                     </h1>
                   </div>
@@ -311,7 +313,7 @@ const StudentsPage = () => {
                     size="sm" 
                     onClick={handleRefresh} 
                     disabled={isLoading}
-                    className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-white/20 dark:border-gray-600/20 hover:bg-white/80 dark:hover:bg-gray-600/80"
+                    className="bg-white dark:bg-slate-900 text-foreground border-border bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-white/20 dark:border-gray-600/20 hover:bg-white/80 dark:hover:bg-gray-600/80"
                   >
                     <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
                     <span className="hidden sm:inline ml-2">Atualizar</span>
@@ -331,7 +333,7 @@ const StudentsPage = () => {
             <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-white/20 dark:border-gray-700/20 shadow-xl hover:shadow-2xl transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">Total de Alunos</CardTitle>
-                <div className="p-2 rounded-lg bg-gradient-to-r from-blue-500/20 to-purple-500/20">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white hover:opacity-90">
                   <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 </div>
               </CardHeader>
@@ -344,7 +346,7 @@ const StudentsPage = () => {
             <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-white/20 dark:border-gray-700/20 shadow-xl hover:shadow-2xl transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">Alunos Ativos</CardTitle>
-                <div className="p-2 rounded-lg bg-gradient-to-r from-emerald-500/20 to-green-500/20">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-emerald-500/20 to-green-500/20 text-white hover:opacity-90">
                   <UserCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                 </div>
               </CardHeader>
@@ -357,7 +359,7 @@ const StudentsPage = () => {
             <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-white/20 dark:border-gray-700/20 shadow-xl hover:shadow-2xl transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">Média Geral</CardTitle>
-                <div className="p-2 rounded-lg bg-gradient-to-r from-amber-500/20 to-orange-500/20">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-white hover:opacity-90">
                   <BarChart2 className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                 </div>
               </CardHeader>
@@ -370,7 +372,7 @@ const StudentsPage = () => {
             <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-white/20 dark:border-gray-700/20 shadow-xl hover:shadow-2xl transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">Novos Alunos</CardTitle>
-                <div className="p-2 rounded-lg bg-gradient-to-r from-blue-500/20 to-indigo-500/20">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-blue-500/20 to-indigo-500/20 text-white hover:opacity-90">
                   <UserPlus className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 </div>
               </CardHeader>
@@ -397,7 +399,7 @@ const StudentsPage = () => {
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400 z-10" />
                       <Input
                         placeholder="Buscar alunos por nome ou e-mail..."
-                        className="pl-9 pr-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full transition-all duration-200"
+                        className="bg-white dark:bg-slate-900 text-foreground pl-9 pr-4 py-2.5 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full transition-all duration-200"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                       />
@@ -436,7 +438,7 @@ const StudentsPage = () => {
                         <Button 
                           variant="outline" 
                           size="icon" 
-                          className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors rounded-lg"
+                          className="bg-white dark:bg-slate-900 text-foreground border-border dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors rounded-lg"
                           onClick={clearFilters}
                         >
                           <FilterX className="h-4 w-4" />
@@ -504,14 +506,14 @@ const StudentsPage = () => {
                 ) : getCurrentStudents.length === 0 ? (
                   <div className="text-center py-16">
                     <div className="relative">
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full blur-xl" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full blur-xl text-white hover:opacity-90" />
                       <Users className="relative h-16 w-16 mx-auto text-gray-400 mb-4" />
                     </div>
                     <h3 className="text-lg font-medium text-gray-900 dark:text-white">Nenhum aluno encontrado</h3>
                     <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 mb-6">Tente ajustar sua busca ou filtros</p>
                     <Button 
                       variant="outline"
-                      className="bg-white/50 dark:bg-gray-700/50 border-white/20 dark:border-gray-600/20 hover:bg-white/80 dark:hover:bg-gray-600/80"
+                      className="bg-white dark:bg-slate-900 text-foreground border-border bg-white/50 dark:bg-gray-700/50 border-white/20 dark:border-gray-600/20 hover:bg-white/80 dark:hover:bg-gray-600/80"
                       onClick={clearFilters}
                     >
                       <RefreshCw className="mr-2 h-4 w-4" /> Limpar filtros

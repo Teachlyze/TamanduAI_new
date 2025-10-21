@@ -1,5 +1,4 @@
 // src/pages/JoinClassPage.jsx
-import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -177,7 +176,7 @@ const JoinClassPage = () => {
                 {joining ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                 Entrar
               </Button>
-              <Button type="button" variant="outline" onClick={handleRegister} className="w-full">
+              <Button type="button" variant="outline" onClick={handleRegister} className="bg-white dark:bg-slate-900 text-foreground border-border w-full">
                 <UserPlus className="w-4 h-4 mr-2" />
                 Criar Conta
               </Button>
@@ -221,7 +220,7 @@ const JoinClassPage = () => {
       >
         <Card>
           <CardHeader className="text-center">
-            <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white hover:opacity-90">
               <GraduationCap className="w-10 h-10 text-white" />
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import useTheme from '../hooks/useTheme';
 import { THEME_DARK, THEME_LIGHT, DEFAULT_THEME } from '../constants/theme';
 
@@ -9,6 +9,7 @@ import { THEME_DARK, THEME_LIGHT, DEFAULT_THEME } from '../constants/theme';
  * @param {React.ReactNode} props.children - Componentes filhos que serão envolvidos
  */
 function ThemeWrapper({ children }) {
+  const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
 
   // Aplicar classes de tema ao elemento raiz
@@ -39,13 +40,17 @@ function ThemeWrapper({ children }) {
       root.classList.add('transition-colors', 'duration-200');
     }, 0);
     
-    return () => clearTimeout(timer);
+    if (loading) return <LoadingScreen />;
+
+  return () => clearTimeout(timer);
   }, [theme]);
   
   // Efeito para aplicar o tema quando o componente for montado ou quando o tema mudar
   useEffect(() => {
     const cleanup = applyTheme();
-    return () => {
+    if (loading) return <LoadingScreen />;
+
+  return () => {
       if (cleanup) cleanup();
       
       // Limpar classes ao desmontar
@@ -56,6 +61,8 @@ function ThemeWrapper({ children }) {
       }
     };
   }, [applyTheme]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <>

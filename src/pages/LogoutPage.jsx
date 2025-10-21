@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { motion } from 'framer-motion';
 import { LogOut, Loader2 } from 'lucide-react';
 
-const LogoutPage = () => {
+  const LogoutPage = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [status, setStatus] = useState('logging_out'); // 'logging_out' | 'success'
@@ -28,6 +28,8 @@ const LogoutPage = () => {
     
     performLogout();
   }, [logout, navigate]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-4">
