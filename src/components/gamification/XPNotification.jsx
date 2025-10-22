@@ -1,12 +1,12 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, TrendingUp, Award, Star } from 'lucide-react';
-
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { motion, AnimatePresence } from "framer-motion";
+import { Zap, TrendingUp, Award, Star } from "lucide-react";
+import { useState, useEffect } from "react";
 /**
  * Notificação de XP ganho
  * Mostra animação quando aluno ganha XP
  */
-  const XPNotification = ({ xp, reason, onClose, show }) => {
+const XPNotification = ({ xp, reason, onClose, show }) => {
   const [visible, setVisible] = useState(show);
 
   useEffect(() => {
@@ -16,31 +16,31 @@ import { Zap, TrendingUp, Award, Star } from 'lucide-react';
         setVisible(false);
         setTimeout(onClose, 300);
       }, 3000);
-      if (loading) return <LoadingScreen />;
+      /* if (loading) return <LoadingScreen />; */
 
-  return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
     }
   }, [show, onClose]);
 
   const getIcon = () => {
-    if (reason?.includes('perfect') || reason?.includes('grade')) return Award;
-    if (reason?.includes('level')) return TrendingUp;
-    if (reason?.includes('streak')) return Star;
+    if (reason?.includes("perfect") || reason?.includes("grade")) return Award;
+    if (reason?.includes("level")) return TrendingUp;
+    if (reason?.includes("streak")) return Star;
     return Zap;
   };
 
   const Icon = getIcon();
 
   const getMessage = () => {
-    if (reason?.includes('submission')) return 'Atividade entregue!';
-    if (reason?.includes('quiz')) return 'Quiz completado!';
-    if (reason?.includes('focus')) return 'Sessão de foco concluída!';
-    if (reason?.includes('grade')) return 'Nota atribuída!';
-    if (reason?.includes('streak')) return 'Streak mantido!';
-    return 'XP ganho!';
+    if (reason?.includes("submission")) return "Atividade entregue!";
+    if (reason?.includes("quiz")) return "Quiz completado!";
+    if (reason?.includes("focus")) return "Sessão de foco concluída!";
+    if (reason?.includes("grade")) return "Nota atribuída!";
+    if (reason?.includes("streak")) return "Streak mantido!";
+    return "XP ganho!";
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <AnimatePresence>
@@ -63,10 +63,10 @@ import { Zap, TrendingUp, Award, Star } from 'lucide-react';
                 transition={{
                   duration: 2,
                   repeat: Infinity,
-                  ease: 'easeInOut',
+                  ease: "easeInOut",
                 }}
               />
-              
+
               <div className="relative flex items-center gap-3">
                 {/* Icon */}
                 <motion.div
@@ -92,7 +92,7 @@ import { Zap, TrendingUp, Award, Star } from 'lucide-react';
                     className="mt-1 text-2xl font-bold text-yellow-700"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    transition={{ delay: 0.2, type: 'spring', stiffness: 500 }}
+                    transition={{ delay: 0.2, type: "spring", stiffness: 500 }}
                   >
                     +{xp} XP
                   </motion.div>
@@ -106,7 +106,7 @@ import { Zap, TrendingUp, Award, Star } from 'lucide-react';
                       scale: [1, 1.2, 1],
                     }}
                     transition={{
-                      rotate: { duration: 3, repeat: Infinity, ease: 'linear' },
+                      rotate: { duration: 3, repeat: Infinity, ease: "linear" },
                       scale: { duration: 1, repeat: Infinity },
                     }}
                     className="text-yellow-400"
@@ -120,9 +120,9 @@ import { Zap, TrendingUp, Award, Star } from 'lucide-react';
             {/* Progress bar */}
             <motion.div
               className="h-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:opacity-90"
-              initial={{ width: '100%' }}
-              animate={{ width: '0%' }}
-              transition={{ duration: 3, ease: 'linear' }}
+              initial={{ width: "100%" }}
+              animate={{ width: "0%" }}
+              transition={{ duration: 3, ease: "linear" }}
             />
           </div>
         </motion.div>
@@ -137,7 +137,7 @@ import { Zap, TrendingUp, Award, Star } from 'lucide-react';
 export const useXPNotification = () => {
   const [notification, setNotification] = useState(null);
 
-  const showXPGained = (xp, reason = '') => {
+  const showXPGained = (xp, reason = "") => {
     setNotification({ xp, reason, show: true });
   };
 

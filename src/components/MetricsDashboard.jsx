@@ -1,7 +1,15 @@
 // src/components/MetricsDashboard.jsx
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Activity, AlertTriangle, CheckCircle, Clock, Database, Zap, TrendingUp } from 'lucide-react';
-import monitoringService from '@/services/monitoring';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import {
+  Activity,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Database,
+  Zap,
+  TrendingUp,
+} from "lucide-react";
+import monitoringService from "@/services/monitoring";
 
 export default function MetricsDashboard({ isVisible = false }) {
   const [loading, setLoading] = useState(true);
@@ -20,7 +28,7 @@ export default function MetricsDashboard({ isVisible = false }) {
       const healthReport = await monitoringService.getHealthReport();
       setMetrics(healthReport);
     } catch (error) {
-      console.error('Failed to load metrics:', error);
+      console.error("Failed to load metrics:", error);
     } finally {
       setIsLoading(false);
     }
@@ -28,7 +36,7 @@ export default function MetricsDashboard({ isVisible = false }) {
 
   if (!isVisible) return null;
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className="fixed bottom-4 right-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4 max-w-sm z-50">
@@ -42,7 +50,7 @@ export default function MetricsDashboard({ isVisible = false }) {
           disabled={isLoading}
           className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400"
         >
-          {isLoading ? '...' : 'Refresh'}
+          {isLoading ? "..." : "Refresh"}
         </button>
       </div>
 
@@ -50,15 +58,21 @@ export default function MetricsDashboard({ isVisible = false }) {
         <div className="space-y-3">
           {/* Status geral */}
           <div className="flex items-center gap-2">
-            {metrics.status === 'healthy' ? (
+            {metrics.status === "healthy" ? (
               <CheckCircle className="w-4 h-4 text-green-500" />
             ) : (
               <AlertTriangle className="w-4 h-4 text-yellow-500" />
             )}
-            <span className={`text-sm font-medium ${
-              metrics.status === 'healthy' ? 'text-green-700 dark:text-green-300' : 'text-yellow-700 dark:text-yellow-300'
-            }`}>
-              {metrics.status === 'healthy' ? 'Sistema Saudável' : 'Sistema Degradado'}
+            <span
+              className={`text-sm font-medium ${
+                metrics.status === "healthy"
+                  ? "text-green-700 dark:text-green-300"
+                  : "text-yellow-700 dark:text-yellow-300"
+              }`}
+            >
+              {metrics.status === "healthy"
+                ? "Sistema Saudável"
+                : "Sistema Degradado"}
             </span>
           </div>
 
@@ -66,7 +80,9 @@ export default function MetricsDashboard({ isVisible = false }) {
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="flex items-center gap-1">
               <TrendingUp className="w-3 h-3 text-blue-500" />
-              <span className="text-gray-600 dark:text-gray-400">Requests:</span>
+              <span className="text-gray-600 dark:text-gray-400">
+                Requests:
+              </span>
               <span className="font-medium text-gray-900 dark:text-gray-100">
                 {metrics.metrics.totalRequests}
               </span>
@@ -99,12 +115,18 @@ export default function MetricsDashboard({ isVisible = false }) {
 
           {/* Cache status */}
           <div className="flex items-center gap-2 text-xs">
-            <Database className={`w-3 h-3 ${metrics.cache.status === 'healthy' ? 'text-green-500' : 'text-red-500'}`} />
+            <Database
+              className={`w-3 h-3 ${metrics.cache.status === "healthy" ? "text-green-500" : "text-red-500"}`}
+            />
             <span className="text-gray-600 dark:text-gray-400">Redis:</span>
-            <span className={`font-medium ${
-              metrics.cache.status === 'healthy' ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'
-            }`}>
-              {metrics.cache.status === 'healthy' ? 'Online' : 'Offline'}
+            <span
+              className={`font-medium ${
+                metrics.cache.status === "healthy"
+                  ? "text-green-700 dark:text-green-300"
+                  : "text-red-700 dark:text-red-300"
+              }`}
+            >
+              {metrics.cache.status === "healthy" ? "Online" : "Offline"}
             </span>
           </div>
 
@@ -118,7 +140,9 @@ export default function MetricsDashboard({ isVisible = false }) {
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
                 <div
                   className="bg-blue-500 h-1 rounded-full transition-all duration-300"
-                  style={{ width: `${Math.min((metrics.memory.used / metrics.memory.limit) * 100, 100)}%` }}
+                  style={{
+                    width: `${Math.min((metrics.memory.used / metrics.memory.limit) * 100, 100)}%`,
+                  }}
                 />
               </div>
             </div>
@@ -126,7 +150,8 @@ export default function MetricsDashboard({ isVisible = false }) {
 
           {/* Timestamp */}
           <div className="text-xs text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600 pt-2">
-            Última atualização: {new Date(metrics.timestamp).toLocaleTimeString()}
+            Última atualização:{" "}
+            {new Date(metrics.timestamp).toLocaleTimeString()}
           </div>
         </div>
       ) : (

@@ -215,7 +215,7 @@ import { UserService } from '@/services/userService';
       fetchMeetingDetails(, []); // TODO: Add dependencies
     }, []); // TODO: Add dependencies
     
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
   return () => {
       if (subscription) {
@@ -226,7 +226,7 @@ import { UserService } from '@/services/userService';
 
   // Render loading state
   if (isLoading) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
   return (
       <div className="container mx-auto py-12 px-4">
@@ -238,7 +238,7 @@ import { UserService } from '@/services/userService';
 
   // Render error state
   if (error || !meeting) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
   return (
       <div className="container mx-auto py-12 px-4">
@@ -266,7 +266,7 @@ import { UserService } from '@/services/userService';
   const isPastMeeting = isPast(parseISO(meeting.end_time));
   const isOnline = meeting.meeting_type === 'online';
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <ErrorBoundary

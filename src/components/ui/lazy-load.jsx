@@ -1,45 +1,52 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 /**
  * Enhanced Lazy Loading wrapper with intelligent preloading and error boundaries
  */
 export const [loading, setLoading] = useState(true);
-  const LazyWrapper = ({
+const LazyWrapper = ({
   children,
   fallback = null,
   errorFallback = null,
   preload = false,
   ...suspenseProps
 }) => {
-  const defaultFallback = useMemo(() => (
-    <div className="flex items-center justify-center p-8">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      <span className="ml-3 text-sm text-muted-foreground">Carregando...</span>
-    </div>
-  ), []);
-
-  const defaultErrorFallback = useMemo(() => (
-    <div className="flex items-center justify-center p-8">
-      <div className="text-center">
-        <div className="text-red-500 mb-2">⚠️</div>
-        <p className="text-sm text-muted-foreground">Erro ao carregar componente</p>
-        <button
-          className="mt-2 text-xs text-primary hover:underline"
-          onClick={() => window.location.reload()}
-        >
-          Tentar novamente
-        </button>
+  const defaultFallback = useMemo(
+    () => (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <span className="ml-3 text-sm text-muted-foreground">
+          Carregando...
+        </span>
       </div>
-    </div>
-  ), []);
+    ),
+    []
+  );
 
-  if (loading) return <LoadingScreen />;
+  const defaultErrorFallback = useMemo(
+    () => (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-center">
+          <div className="text-red-500 mb-2">⚠️</div>
+          <p className="text-sm text-muted-foreground">
+            Erro ao carregar componente
+          </p>
+          <button
+            className="mt-2 text-xs text-primary hover:underline"
+            onClick={() => window.location.reload()}
+          >
+            Tentar novamente
+          </button>
+        </div>
+      </div>
+    ),
+    []
+  );
+
+  /* if (loading) return <LoadingScreen />; */
 
   return (
-    <Suspense
-      fallback={fallback || defaultFallback}
-      {...suspenseProps}
-    >
+    <Suspense fallback={fallback || defaultFallback} {...suspenseProps}>
       {children}
     </Suspense>
   );
@@ -49,21 +56,20 @@ export const [loading, setLoading] = useState(true);
  * Lazy load a component with optional preloading
  */
 export const lazyLoad = (importFunc, options = {}) => {
-  const {
-    preload = false,
-    chunkName,
-    retries = 3,
-  } = options;
+  const { preload = false, chunkName, retries = 3 } = options;
 
   const LazyComponent = lazy(async () => {
     try {
       return await importFunc();
     } catch (error) {
-      console.error(`Error loading component ${chunkName || 'unknown'}:`, error);
+      console.error(
+        `Error loading component ${chunkName || "unknown"}:`,
+        error
+      );
 
       if (retries > 0) {
         console.log(`Retrying... (${retries} attempts left)`);
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         return lazyLoad(importFunc, { ...options, retries: retries - 1 })();
       }
 
@@ -73,8 +79,8 @@ export const lazyLoad = (importFunc, options = {}) => {
 
   // Preload the component if requested
   if (preload) {
-    importFunc().catch(error => {
-      console.warn('Preload failed for component:', error);
+    importFunc().catch((error) => {
+      console.warn("Preload failed for component:", error);
     });
   }
 
@@ -85,8 +91,8 @@ export const lazyLoad = (importFunc, options = {}) => {
  * Preload a component in the background
  */
 export const preloadComponent = (importFunc) => {
-  return importFunc().catch(error => {
-    console.warn('Preload failed:', error);
+  return importFunc().catch((error) => {
+    console.warn("Preload failed:", error);
     return null;
   });
 };
@@ -110,9 +116,9 @@ export const createLazyPage = (importFunc, routePath) => {
  * Batch preload multiple components
  */
 export const preloadComponents = (components) => {
-  const promises = components.map(({ importFunc, priority = 'normal' }) => {
-    const delay = priority === 'high' ? 0 : priority === 'low' ? 2000 : 1000;
-    return new Promise(resolve => {
+  const promises = components.map(({ importFunc, priority = "normal" }) => {
+    const delay = priority === "high" ? 0 : priority === "low" ? 2000 : 1000;
+    return new Promise((resolve) => {
       setTimeout(() => {
         preloadComponent(importFunc).then(resolve);
       }, delay);
@@ -128,7 +134,7 @@ export const preloadComponents = (components) => {
 export const IntersectionLazyLoad = ({
   children,
   fallback,
-  rootMargin = '50px',
+  rootMargin = "50px",
   threshold = 0.1,
   ...props
 }) => {
@@ -154,20 +160,22 @@ export const IntersectionLazyLoad = ({
       observer.observe(ref.current);
     }
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
+    return () => {
       if (ref.current) {
         observer.unobserve(ref.current);
       }
     };
   }, [rootMargin, threshold, hasLoaded]);
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div ref={ref} {...props}>
-      {isIntersecting ? children : (fallback || <div className="h-32 bg-muted animate-pulse rounded" />)}
+      {isIntersecting
+        ? children
+        : fallback || <div className="h-32 bg-muted animate-pulse rounded" />}
     </div>
   );
 };

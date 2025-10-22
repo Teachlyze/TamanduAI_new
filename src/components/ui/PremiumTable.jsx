@@ -1,19 +1,19 @@
-import { motion } from 'framer-motion';
-import { 
-  ChevronUp, 
-  ChevronDown, 
+import { motion } from "framer-motion";
+import {
+  ChevronUp,
+  ChevronDown,
   ChevronsUpDown,
   Search,
   Filter,
   Download,
   MoreVertical,
   ChevronLeft,
-  ChevronRight
-} from 'lucide-react';
-import { PremiumInput } from './PremiumInput';
-import { PremiumButton, IconButton } from './PremiumButton';
-import { InlineLoading } from './LoadingScreen';
-import EmptyState from './EmptyState';
+  ChevronRight,
+} from "lucide-react";
+import { PremiumInput } from "./PremiumInput";
+import { PremiumButton, IconButton } from "./PremiumButton";
+import { LoadingScreen } from "./LoadingScreen";
+import EmptyState from "./EmptyState";
 
 /**
  * Premium Table Component - Award-winning data tables
@@ -27,21 +27,21 @@ export const PremiumTable = ({
   pagination = true,
   pageSize: initialPageSize = 10,
   onRowClick,
-  emptyMessage = 'Nenhum dado encontrado',
-  className = ''
+  emptyMessage = "Nenhum dado encontrado",
+  className = "",
 }) => {
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
-  const [searchQuery, setSearchQuery] = useState('');
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(initialPageSize);
 
   // Sorting
   const handleSort = (key) => {
     if (!sortable) return;
-    
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
+
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
     }
     setSortConfig({ key, direction });
   };
@@ -52,10 +52,13 @@ export const PremiumTable = ({
 
     // Search/Filter
     if (searchQuery && filterable) {
-      result = result.filter(row =>
-        columns.some(col => {
+      result = result.filter((row) =>
+        columns.some((col) => {
           const value = row[col.key];
-          return value?.toString().toLowerCase().includes(searchQuery.toLowerCase());
+          return value
+            ?.toString()
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase());
         })
       );
     }
@@ -65,11 +68,11 @@ export const PremiumTable = ({
       result.sort((a, b) => {
         const aVal = a[sortConfig.key];
         const bVal = b[sortConfig.key];
-        
+
         if (aVal === bVal) return 0;
-        
+
         const comparison = aVal > bVal ? 1 : -1;
-        return sortConfig.direction === 'asc' ? comparison : -comparison;
+        return sortConfig.direction === "asc" ? comparison : -comparison;
       });
     }
 
@@ -79,7 +82,7 @@ export const PremiumTable = ({
   // Pagination
   const paginatedData = useMemo(() => {
     if (!pagination) return processedData;
-    
+
     const start = (currentPage - 1) * pageSize;
     const end = start + pageSize;
     return processedData.slice(start, end);
@@ -91,7 +94,9 @@ export const PremiumTable = ({
   if (loading) {
     return (
       <div className="bg-card rounded-xl border border-border p-6">
-        <InlineLoading message="Carregando dados..." />
+        {/*         <InlineLoading message="Carregando dados..." />
+         */}{" "}
+        <LoadingScreen />
       </div>
     );
   }
@@ -122,16 +127,8 @@ export const PremiumTable = ({
               clearable
             />
           </div>
-          <IconButton
-            icon={Filter}
-            variant="outline"
-            tooltip="Filtros"
-          />
-          <IconButton
-            icon={Download}
-            variant="outline"
-            tooltip="Exportar"
-          />
+          <IconButton icon={Filter} variant="outline" tooltip="Filtros" />
+          <IconButton icon={Download} variant="outline" tooltip="Exportar" />
         </div>
       )}
 
@@ -145,9 +142,13 @@ export const PremiumTable = ({
                 {columns.map((column) => (
                   <th
                     key={column.key}
-                    onClick={() => column.sortable !== false && handleSort(column.key)}
+                    onClick={() =>
+                      column.sortable !== false && handleSort(column.key)
+                    }
                     className={`px-6 py-4 text-left text-sm font-semibold text-foreground ${
-                      column.sortable !== false && sortable ? 'cursor-pointer hover:bg-muted/50' : ''
+                      column.sortable !== false && sortable
+                        ? "cursor-pointer hover:bg-muted/50"
+                        : ""
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -155,7 +156,7 @@ export const PremiumTable = ({
                       {column.sortable !== false && sortable && (
                         <span className="text-muted-foreground">
                           {sortConfig.key === column.key ? (
-                            sortConfig.direction === 'asc' ? (
+                            sortConfig.direction === "asc" ? (
                               <ChevronUp className="w-4 h-4" />
                             ) : (
                               <ChevronDown className="w-4 h-4" />
@@ -182,7 +183,7 @@ export const PremiumTable = ({
                       title="Nenhum resultado encontrado"
                       description={`Nenhum resultado para "${searchQuery}"`}
                       actionLabel="Limpar busca"
-                      onAction={() => setSearchQuery('')}
+                      onAction={() => setSearchQuery("")}
                     />
                   </td>
                 </tr>
@@ -195,7 +196,7 @@ export const PremiumTable = ({
                     transition={{ delay: index * 0.05 }}
                     onClick={() => onRowClick?.(row)}
                     className={`hover:bg-muted/30 transition-colors ${
-                      onRowClick ? 'cursor-pointer' : ''
+                      onRowClick ? "cursor-pointer" : ""
                     }`}
                   >
                     {columns.map((column) => (
@@ -230,8 +231,8 @@ export const PremiumTable = ({
         {pagination && paginatedData.length > 0 && (
           <div className="px-6 py-4 border-t border-border flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
-              Mostrando {((currentPage - 1) * pageSize) + 1} a{' '}
-              {Math.min(currentPage * pageSize, processedData.length)} de{' '}
+              Mostrando {(currentPage - 1) * pageSize + 1} a{" "}
+              {Math.min(currentPage * pageSize, processedData.length)} de{" "}
               {processedData.length} resultados
             </div>
             <div className="flex items-center gap-2">
@@ -239,12 +240,12 @@ export const PremiumTable = ({
                 variant="outline"
                 size="sm"
                 leftIcon={ChevronLeft}
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
               >
                 Anterior
               </PremiumButton>
-              
+
               <div className="flex items-center gap-1">
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                   let pageNum;
@@ -257,15 +258,15 @@ export const PremiumTable = ({
                   } else {
                     pageNum = currentPage - 2 + i;
                   }
-                  
+
                   return (
                     <button
                       key={pageNum}
                       onClick={() => setCurrentPage(pageNum)}
                       className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
                         currentPage === pageNum
-                          ? 'bg-primary text-primary-foreground'
-                          : 'hover:bg-muted text-foreground'
+                          ? "bg-primary text-primary-foreground"
+                          : "hover:bg-muted text-foreground"
                       }`}
                     >
                       {pageNum}
@@ -278,7 +279,9 @@ export const PremiumTable = ({
                 variant="outline"
                 size="sm"
                 rightIcon={ChevronRight}
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
                 disabled={currentPage === totalPages}
               >
                 Próximo

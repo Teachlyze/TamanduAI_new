@@ -1,21 +1,21 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { supabase } from '@/lib/supabaseClient';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { supabase } from "@/lib/supabaseClient";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { FiFilter, FiX } from 'react-icons/fi';
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { FiFilter, FiX } from "react-icons/fi";
 
-  const MaterialCategoryFilter = ({ classId, onFilterChange }) => {
+const MaterialCategoryFilter = ({ classId, onFilterChange }) => {
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedTags, setSelectedTags] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [allTags, setAllTags] = useState([]);
 
   useEffect(() => {
@@ -26,57 +26,63 @@ import { FiFilter, FiX } from 'react-icons/fi';
 
   useEffect(() => {
     if (onFilterChange) {
-      onFilterChange({
-        category: selectedCategory !== 'all' ? selectedCategory : null,
-        tags: selectedTags,
-        search: searchQuery
-      }, []); // TODO: Add dependencies
+      onFilterChange(
+        {
+          category: selectedCategory !== "all" ? selectedCategory : null,
+          tags: selectedTags,
+          search: searchQuery,
+        },
+        []
+      ); // TODO: Add dependencies
     }
   }, [selectedCategory, selectedTags, searchQuery]);
 
   const loadCategoriesAndTags = async () => {
     try {
       const { data: materials } = await supabase
-        .from('class_materials')
-        .select('category, tags')
-        .eq('class_id', classId);
+        .from("class_materials")
+        .select("category, tags")
+        .eq("class_id", classId);
 
       if (materials) {
         // Extract unique categories
-        const uniqueCategories = [...new Set(materials.map(m => m.category).filter(Boolean))];
+        const uniqueCategories = [
+          ...new Set(materials.map((m) => m.category).filter(Boolean)),
+        ];
         setCategories(uniqueCategories);
 
         // Extract unique tags
         const tagSet = new Set();
-        materials.forEach(m => {
+        materials.forEach((m) => {
           if (m.tags && Array.isArray(m.tags)) {
-            m.tags.forEach(tag => tagSet.add(tag));
+            m.tags.forEach((tag) => tagSet.add(tag));
           }
         });
         setAllTags([...tagSet]);
       }
     } catch (error) {
-      console.error('Error loading categories and tags:', error);
+      console.error("Error loading categories and tags:", error);
     }
   };
 
   const toggleTag = (tag) => {
-    setSelectedTags(prev =>
-      prev.includes(tag)
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
   };
 
   const clearFilters = () => {
-    setSelectedCategory('all');
+    setSelectedCategory("all");
     setSelectedTags([]);
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
-  const hasActiveFilters = selectedCategory !== 'all' || selectedTags.length > 0 || searchQuery.length > 0;
+  const hasActiveFilters =
+    selectedCategory !== "all" ||
+    selectedTags.length > 0 ||
+    searchQuery.length > 0;
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">
@@ -107,8 +113,10 @@ import { FiFilter, FiX } from 'react-icons/fi';
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas as categorias</SelectItem>
-              {categories.map(cat => (
-                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+              {categories.map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -132,10 +140,10 @@ import { FiFilter, FiX } from 'react-icons/fi';
             Tags
           </label>
           <div className="flex flex-wrap gap-2">
-            {allTags.map(tag => (
+            {allTags.map((tag) => (
               <Badge
                 key={tag}
-                variant={selectedTags.includes(tag) ? 'default' : 'outline'}
+                variant={selectedTags.includes(tag) ? "default" : "outline"}
                 className="cursor-pointer"
                 onClick={() => toggleTag(tag)}
               >

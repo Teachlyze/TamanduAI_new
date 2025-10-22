@@ -1,6 +1,6 @@
 // src/components/admin/ConnectionMonitor.jsx
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { motion } from 'framer-motion';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { motion } from "framer-motion";
 import {
   Wifi,
   WifiOff,
@@ -9,23 +9,29 @@ import {
   RefreshCw,
   Activity,
   Clock,
-  Zap
-} from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import Button from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+  Zap,
+} from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import Button from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   getSupabaseConnectionManager,
   checkConnection,
-  forceReconnect
-} from '@/lib/supabaseConnectionManager';
-import { useErrorMonitoring } from '@/services/errorMonitoring.jsx';
-import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx';
+  forceReconnect,
+} from "@/lib/supabaseConnectionManager";
+import { useErrorMonitoring } from "@/services/errorMonitoring.jsx";
+import { usePerformanceOptimization } from "@/services/performanceOptimizer.jsx";
 
 /**
  * Monitor de conexão Supabase em tempo real
  */
-  const ConnectionMonitor = ({ className = '' }) => {
+const ConnectionMonitor = ({ className = "" }) => {
   const [connectionState, setConnectionState] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState(Date.now());
@@ -41,7 +47,7 @@ import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx'
         setConnectionState(state);
         setLastUpdate(Date.now());
       } catch (error) {
-        console.error('Failed to check connection:', error);
+        console.error("Failed to check connection:", error);
       } finally {
         setIsLoading(false);
       }
@@ -52,9 +58,9 @@ import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx'
     // Atualizar a cada 10 segundos
     const interval = setInterval(updateConnectionState, 10000);
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => clearInterval(interval);
+    return () => clearInterval(interval);
   }, []);
 
   const handleReconnect = async () => {
@@ -69,20 +75,20 @@ import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx'
         setIsLoading(false);
       }, 2000);
     } catch (error) {
-      console.error('Reconnection failed:', error);
+      console.error("Reconnection failed:", error);
       setIsLoading(false);
     }
   };
 
   const getConnectionIcon = () => {
     switch (connectionState?.state) {
-      case 'connected':
+      case "connected":
         return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'connecting':
-      case 'reconnecting':
+      case "connecting":
+      case "reconnecting":
         return <RefreshCw className="h-5 w-5 text-blue-500 animate-spin" />;
-      case 'error':
-      case 'disconnected':
+      case "error":
+      case "disconnected":
         return <WifiOff className="h-5 w-5 text-red-500" />;
       default:
         return <Activity className="h-5 w-5 text-gray-400" />;
@@ -93,50 +99,48 @@ import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx'
     const state = connectionState?.state;
 
     switch (state) {
-      case 'connected':
-        if (loading) return <LoadingScreen />;
+      case "connected":
+        /* if (loading) return <LoadingScreen />; */
 
-  return (
+        return (
           <Badge className="bg-green-100 text-green-800 border-green-200">
             Conectado
           </Badge>
         );
-      case 'connecting':
-        if (loading) return <LoadingScreen />;
+      case "connecting":
+        /* if (loading) return <LoadingScreen />; */
 
-  return (
+        return (
           <Badge className="bg-blue-100 text-blue-800 border-blue-200">
             Conectando...
           </Badge>
         );
-      case 'reconnecting':
-        if (loading) return <LoadingScreen />;
+      case "reconnecting":
+        /* if (loading) return <LoadingScreen />; */
 
-  return (
+        return (
           <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
             Reconectando...
           </Badge>
         );
-      case 'error':
-        if (loading) return <LoadingScreen />;
+      case "error":
+        /* if (loading) return <LoadingScreen />; */
 
-  return (
-          <Badge className="bg-red-100 text-red-800 border-red-200">
-            Erro
-          </Badge>
+        return (
+          <Badge className="bg-red-100 text-red-800 border-red-200">Erro</Badge>
         );
-      case 'disconnected':
-        if (loading) return <LoadingScreen />;
+      case "disconnected":
+        /* if (loading) return <LoadingScreen />; */
 
-  return (
+        return (
           <Badge className="bg-gray-100 text-gray-800 border-gray-200">
             Desconectado
           </Badge>
         );
       default:
-        if (loading) return <LoadingScreen />;
+        /* if (loading) return <LoadingScreen />; */
 
-  return (
+        return (
           <Badge className="bg-gray-100 text-gray-800 border-gray-200">
             Verificando...
           </Badge>
@@ -145,9 +149,9 @@ import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx'
   };
 
   if (isLoading && !connectionState) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
+    return (
       <Card className={className}>
         <CardContent className="flex items-center justify-center p-6">
           <div className="flex items-center space-x-2">
@@ -159,7 +163,7 @@ import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx'
     );
   }
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <motion.div
@@ -200,16 +204,23 @@ import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx'
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Estado:</span>
-                  <span className="font-medium capitalize">{connectionState.state}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Tentativas de reconexão:</span>
-                  <span className="font-medium">
-                    {connectionState.reconnectAttempts}/{connectionState.maxReconnectAttempts}
+                  <span className="font-medium capitalize">
+                    {connectionState.state}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Última atualização:</span>
+                  <span className="text-muted-foreground">
+                    Tentativas de reconexão:
+                  </span>
+                  <span className="font-medium">
+                    {connectionState.reconnectAttempts}/
+                    {connectionState.maxReconnectAttempts}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    Última atualização:
+                  </span>
                   <span className="font-medium">
                     {new Date(lastUpdate).toLocaleTimeString()}
                   </span>
@@ -220,10 +231,9 @@ import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx'
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Uptime:</span>
                   <span className="font-medium">
-                    {connectionState.state === 'connected' ?
-                      `${Math.floor((Date.now() - (connectionState.connectedAt || Date.now())) / 1000)}s` :
-                      'N/A'
-                    }
+                    {connectionState.state === "connected"
+                      ? `${Math.floor((Date.now() - (connectionState.connectedAt || Date.now())) / 1000)}s`
+                      : "N/A"}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -244,10 +254,9 @@ import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx'
               <div className="flex items-center space-x-2">
                 <AlertTriangle className="h-4 w-4 text-yellow-600" />
                 <span className="text-sm text-yellow-800">
-                  {connectionState.reconnectAttempts === 1 ?
-                    'Uma tentativa de reconexão foi necessária' :
-                    `${connectionState.reconnectAttempts} tentativas de reconexão foram necessárias`
-                  }
+                  {connectionState.reconnectAttempts === 1
+                    ? "Uma tentativa de reconexão foi necessária"
+                    : `${connectionState.reconnectAttempts} tentativas de reconexão foram necessárias`}
                 </span>
               </div>
             </div>
@@ -261,31 +270,31 @@ import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx'
 /**
  * Dashboard integrado de monitoramento
  */
-export const IntegratedMonitoringDashboard = ({ className = '' }) => {
-  const [activeTab, setActiveTab] = useState('connection');
+export const IntegratedMonitoringDashboard = ({ className = "" }) => {
+  const [activeTab, setActiveTab] = useState("connection");
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Tabs */}
       <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
         {[
-          { id: 'connection', label: 'Conexão', icon: Wifi },
-          { id: 'errors', label: 'Erros', icon: AlertTriangle },
-          { id: 'performance', label: 'Performance', icon: Zap },
+          { id: "connection", label: "Conexão", icon: Wifi },
+          { id: "errors", label: "Erros", icon: AlertTriangle },
+          { id: "performance", label: "Performance", icon: Zap },
         ].map((tab) => {
           const Icon = tab.icon;
-          if (loading) return <LoadingScreen />;
+          /* if (loading) return <LoadingScreen />; */
 
-  return (
+          return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center space-x-2 flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                 activeTab === tab.id
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
               }`}
             >
               <Icon className="h-4 w-4" />
@@ -297,9 +306,9 @@ export const IntegratedMonitoringDashboard = ({ className = '' }) => {
 
       {/* Content */}
       <div className="min-h-[400px]">
-        {activeTab === 'connection' && <ConnectionMonitor />}
-        {activeTab === 'errors' && <ErrorMetricsDashboard />}
-        {activeTab === 'performance' && <PerformanceDashboard />}
+        {activeTab === "connection" && <ConnectionMonitor />}
+        {activeTab === "errors" && <ErrorMetricsDashboard />}
+        {activeTab === "performance" && <PerformanceDashboard />}
       </div>
     </div>
   );
@@ -309,7 +318,7 @@ export const IntegratedMonitoringDashboard = ({ className = '' }) => {
  * Indicador compacto para header
  */
 export const ConnectionIndicator = () => {
-  const [connectionState, setConnectionState] = useState('unknown');
+  const [connectionState, setConnectionState] = useState("unknown");
 
   useEffect(() => {
     const checkConnection = async () => {
@@ -317,51 +326,51 @@ export const ConnectionIndicator = () => {
         const state = await checkConnection();
         setConnectionState(state.state);
       } catch {
-        setConnectionState('error');
+        setConnectionState("error");
       }
     };
 
     checkConnection();
     const interval = setInterval(checkConnection, 30000);
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => clearInterval(interval);
+    return () => clearInterval(interval);
   }, []);
 
   const getIndicatorColor = () => {
     switch (connectionState) {
-      case 'connected':
-        return 'bg-green-500';
-      case 'connecting':
-      case 'reconnecting':
-        return 'bg-blue-500 animate-pulse';
-      case 'error':
-      case 'disconnected':
-        return 'bg-red-500';
+      case "connected":
+        return "bg-green-500";
+      case "connecting":
+      case "reconnecting":
+        return "bg-blue-500 animate-pulse";
+      case "error":
+      case "disconnected":
+        return "bg-red-500";
       default:
-        return 'bg-gray-400';
+        return "bg-gray-400";
     }
   };
 
   const getTooltipText = () => {
     switch (connectionState) {
-      case 'connected':
-        return 'Conectado ao banco de dados';
-      case 'connecting':
-        return 'Conectando...';
-      case 'reconnecting':
-        return 'Reconectando...';
-      case 'error':
-        return 'Erro de conexão';
-      case 'disconnected':
-        return 'Desconectado';
+      case "connected":
+        return "Conectado ao banco de dados";
+      case "connecting":
+        return "Conectando...";
+      case "reconnecting":
+        return "Reconectando...";
+      case "error":
+        return "Erro de conexão";
+      case "disconnected":
+        return "Desconectado";
       default:
-        return 'Verificando conexão...';
+        return "Verificando conexão...";
     }
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className="flex items-center gap-2 px-2" title={getTooltipText()}>

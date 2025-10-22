@@ -24,7 +24,7 @@ export const [loading, setLoading] = useState(true);
     return breakpoints.join(' ');
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`grid ${getGridCols()} ${gap} ${className}`}>
@@ -41,7 +41,7 @@ export const ResponsiveCardLayout = ({
   breakpoint = 'md',
   className = '',
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`grid grid-cols-1 ${breakpoint}:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-6 ${className}`}>
@@ -68,7 +68,7 @@ export const ResponsiveContainer = ({
     full: 'max-w-none',
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`w-full mx-auto ${sizeClasses[size]} ${padding ? 'px-4 sm:px-6 lg:px-8' : ''} ${className}`}>
@@ -87,7 +87,7 @@ export const ResponsiveSection = ({
   actions,
   className = '',
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <section className={`space-y-6 ${className}`}>
@@ -124,7 +124,7 @@ export const ResponsiveFormLayout = ({
   children,
   className = '',
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`grid grid-cols-1 lg:grid-cols-3 gap-6 ${className}`}>
@@ -161,7 +161,7 @@ export const useResponsiveBreakpoints = () => {
     updateBreakpoints();
     window.addEventListener('resize', updateBreakpoints);
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
   return () => window.removeEventListener('resize', updateBreakpoints);
   }, []);
@@ -188,7 +188,7 @@ export const ResponsiveText = ({
     '3xl': 'text-3xl sm:text-4xl',
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <Component className={`${sizeClasses[size]} ${className}`}>
@@ -214,7 +214,7 @@ export const ResponsiveSpacing = ({
     xl: 'space-y-8 sm:space-y-12',
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`${spacingClasses[spacing]} ${className}`}>

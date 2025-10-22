@@ -55,7 +55,7 @@ import { useStudentPerformance } from '../../hooks/useRedisCache';
     return <div>Aluno não encontrado</div>;
   }
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className="container mx-auto p-6">

@@ -89,7 +89,7 @@ import { useToast } from '@/components/ui/use-toast';
   }
 
   if (submissionSuccess) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
   return (
       <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-md" role="alert">
@@ -120,7 +120,7 @@ import { useToast } from '@/components/ui/use-toast';
     );
   }
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className="container mx-auto p-4 max-w-3xl">

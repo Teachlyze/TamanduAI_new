@@ -1,18 +1,18 @@
 // src/components/ui/async-wrapper.jsx
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertTriangle, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-  const AsyncWrapper = ({
+const AsyncWrapper = ({
   children,
   loading: externalLoading = false,
   error: externalError = null,
   onRetry,
   skeletonCount = 3,
   showRetryButton = true,
-  fallback = null
+  fallback = null,
 }) => {
   const [internalLoading, setInternalLoading] = useState(true);
   const [internalError, setInternalError] = useState(null);
@@ -28,17 +28,17 @@ import { Button } from '@/components/ui/button';
         setInternalLoading(false);
       }, 100); // Pequeno delay para mostrar skeleton
 
-      if (loading) return <LoadingScreen />;
+      /* if (loading) return <LoadingScreen />; */
 
-  return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
     }
   }, [externalLoading]);
 
   // Loading state
   if (isLoading) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
+    return (
       <div className="space-y-4 animate-pulse">
         {Array.from({ length: skeletonCount }).map((_, index) => (
           <Skeleton key={index} className="h-16 w-full rounded-lg" />
@@ -49,9 +49,9 @@ import { Button } from '@/components/ui/button';
 
   // Error state
   if (error) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
+    return (
       <Alert variant="destructive" className="max-w-md mx-auto">
         <AlertTriangle className="h-4 w-4" />
         <AlertDescription className="flex items-center justify-between">

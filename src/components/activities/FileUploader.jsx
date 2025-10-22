@@ -1,29 +1,33 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { useDropzone } from 'react-dropzone';
-import { FiUpload, FiX, FiCheck, FiAlertCircle, FiFile } from 'react-icons/fi';
-import { motion, AnimatePresence } from 'framer-motion';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useDropzone } from "react-dropzone";
+import { FiUpload, FiX, FiCheck, FiAlertCircle, FiFile } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
 
-  const FileUploader = ({
+const FileUploader = ({
   onUpload,
   onRemove,
   files = [],
   maxFiles = 5,
   maxSize = 10 * 1024 * 1024, // 10MB
   accept = {
-    'image/*': ['.jpeg', '.jpg', '.png', '.gif'],
-    'application/pdf': ['.pdf'],
-    'application/msword': ['.doc'],
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-    'application/vnd.ms-excel': ['.xls'],
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
-    'text/plain': ['.txt'],
-    'application/zip': ['.zip'],
-    'application/x-rar-compressed': ['.rar'],
+    "image/*": [".jpeg", ".jpg", ".png", ".gif"],
+    "application/pdf": [".pdf"],
+    "application/msword": [".doc"],
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [
+      ".docx",
+    ],
+    "application/vnd.ms-excel": [".xls"],
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
+      ".xlsx",
+    ],
+    "text/plain": [".txt"],
+    "application/zip": [".zip"],
+    "application/x-rar-compressed": [".rar"],
   },
   disabled = false,
-  label = 'Arraste e solte arquivos aqui, ou clique para selecionar',
+  label = "Arraste e solte arquivos aqui, ou clique para selecionar",
   subLabel = `Máx. ${maxFiles} arquivos • ${maxSize / (1024 * 1024)}MB por arquivo`,
-  className = '',
+  className = "",
 }) => {
   const [dragActive, setDragActive] = useState(false);
   const [errors, setErrors] = useState([]);
@@ -32,12 +36,12 @@ import { motion, AnimatePresence } from 'framer-motion';
   const onDrop = useCallback(
     (acceptedFiles, rejectedFiles) => {
       setDragActive(false);
-      
+
       // Verifica se o número máximo de arquivos foi excedido
       if (files.length + acceptedFiles.length > maxFiles) {
-        setErrors(prev => [
+        setErrors((prev) => [
           ...prev,
-          `Você só pode fazer upload de no máximo ${maxFiles} arquivos.`
+          `Você só pode fazer upload de no máximo ${maxFiles} arquivos.`,
         ]);
         return;
       }
@@ -45,16 +49,16 @@ import { motion, AnimatePresence } from 'framer-motion';
       // Processa arquivos rejeitados (tamanho, tipo, etc.)
       if (rejectedFiles && rejectedFiles.length > 0) {
         const newErrors = rejectedFiles.map(({ file, errors }) => {
-          if (errors.some(e => e.code === 'file-too-large')) {
+          if (errors.some((e) => e.code === "file-too-large")) {
             return `O arquivo ${file.name} é muito grande. Tamanho máximo: ${maxSize / (1024 * 1024)}MB`;
           }
-          if (errors.some(e => e.code === 'file-invalid-type')) {
+          if (errors.some((e) => e.code === "file-invalid-type")) {
             return `Tipo de arquivo não suportado: ${file.name}`;
           }
           return `Erro ao processar o arquivo ${file.name}`;
         });
-        
-        setErrors(prev => [...prev, ...newErrors]);
+
+        setErrors((prev) => [...prev, ...newErrors]);
       }
 
       // Processa arquivos aceitos
@@ -94,45 +98,50 @@ import { motion, AnimatePresence } from 'framer-motion';
       const timer = setTimeout(() => {
         setErrors([]);
       }, 5000);
-      if (loading) return <LoadingScreen />;
+      /* if (loading) return <LoadingScreen />; */
 
-  return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
     }
   }, [errors]);
 
   const getFileIcon = (fileType) => {
     if (!fileType) return <FiFile className="w-5 h-5" />;
-    
-    if (fileType.startsWith('image/')) {
+
+    if (fileType.startsWith("image/")) {
       return <FiFile className="w-5 h-5 text-blue-500" />;
     }
-    
-    if (fileType === 'application/pdf') {
+
+    if (fileType === "application/pdf") {
       return <FiFile className="w-5 h-5 text-red-500" />;
     }
-    
+
     if (
-      fileType === 'application/msword' ||
-      fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      fileType === "application/msword" ||
+      fileType ===
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     ) {
       return <FiFile className="w-5 h-5 text-blue-600" />;
     }
-    
+
     if (
-      fileType === 'application/vnd.ms-excel' ||
-      fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      fileType === "application/vnd.ms-excel" ||
+      fileType ===
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     ) {
       return <FiFile className="w-5 h-5 text-green-600" />;
     }
-    
-    if (fileType === 'text/plain') {
+
+    if (fileType === "text/plain") {
       return <FiFile className="w-5 h-5 text-gray-500" />;
     }
-    
-    if (fileType === 'application/zip' || fileType === 'application/x-rar-compressed') {
+
+    if (
+      fileType === "application/zip" ||
+      fileType === "application/x-rar-compressed"
+    ) {
       return <FiFile className="w-5 h-5 text-yellow-500" />;
     }
-    
+
     return <FiFile className="w-5 h-5 text-gray-400" />;
   };
 
@@ -142,7 +151,7 @@ import { motion, AnimatePresence } from 'framer-motion';
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -150,8 +159,8 @@ import { motion, AnimatePresence } from 'framer-motion';
         {...getRootProps()}
         className={`
           border-2 border-dashed rounded-lg p-6 text-center transition-colors
-          ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-400'}
-          ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+          ${dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-blue-400"}
+          ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
         `}
         onClick={handleClick}
       >
@@ -160,14 +169,11 @@ import { motion, AnimatePresence } from 'framer-motion';
           <div className="p-3 rounded-full bg-blue-100 text-blue-500">
             <FiUpload className="w-6 h-6" />
           </div>
-          <div className="text-sm font-medium text-gray-700">
-            {label}
-          </div>
-          <p className="text-xs text-gray-500">
-            {subLabel}
-          </p>
+          <div className="text-sm font-medium text-gray-700">{label}</div>
+          <p className="text-xs text-gray-500">{subLabel}</p>
           <p className="text-xs text-gray-500 mt-1">
-            Formatos suportados: JPG, PNG, GIF, PDF, DOC, DOCX, XLS, XLSX, TXT, ZIP, RAR
+            Formatos suportados: JPG, PNG, GIF, PDF, DOC, DOCX, XLS, XLSX, TXT,
+            ZIP, RAR
           </p>
         </div>
       </div>
@@ -183,9 +189,7 @@ import { motion, AnimatePresence } from 'framer-motion';
             className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 shadow-sm"
           >
             <div className="flex items-center space-x-3 min-w-0">
-              <div className="flex-shrink-0">
-                {getFileIcon(file.type)}
-              </div>
+              <div className="flex-shrink-0">{getFileIcon(file.type)}</div>
               <div className="min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
                   {file.name}
@@ -205,9 +209,7 @@ import { motion, AnimatePresence } from 'framer-motion';
                     </span>
                   )}
                   {file.error && (
-                    <span className="text-red-500 text-xs">
-                      {file.error}
-                    </span>
+                    <span className="text-red-500 text-xs">{file.error}</span>
                   )}
                 </div>
               </div>

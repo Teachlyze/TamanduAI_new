@@ -16,6 +16,7 @@ import toast from 'react-hot-toast';
 import { PremiumInput } from '@/components/ui/PremiumInput';
 import { PremiumButton } from '@/components/ui/PremiumButton';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
+import { useState, useEffect } from 'react';
 
 const LoginPagePremium = () => {
   const [email, setEmail] = useState('');
@@ -38,9 +39,9 @@ const LoginPagePremium = () => {
     }
   }, [user, authLoading, navigate]);
 
-  if (isCheckingAuth) {
+/*   if (isCheckingAuth) {
     return <LoadingScreen message="Verificando autenticação..." />;
-  }
+  } */
 
   const validateField = (name, value) => {
     const newErrors = { ...errors };

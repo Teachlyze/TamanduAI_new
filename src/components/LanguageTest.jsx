@@ -1,28 +1,28 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { useTranslation } from 'react-i18next';
-import { changeLanguage } from '../i18n';
-import LanguageSelector from './LanguageSelector';
-import { Button } from './ui/button';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useTranslation } from "react-i18next";
+import { changeLanguage } from "../i18n";
+import LanguageSelector from "./LanguageSelector";
+import { Button } from "./ui/button";
 
-  const LanguageTest = () => {
+const LanguageTest = () => {
   const { t, i18n } = useTranslation();
   const [currentLang, setCurrentLang] = useState(i18n.language);
-  const [testText, setTestText] = useState(t('common.loading'));
+  const [testText, setTestText] = useState(t("common.loading"));
   const [isTestMode, setIsTestMode] = useState(false);
 
   // Listen for language changes
   useEffect(() => {
     const handleLanguageChanged = (lng) => {
       setCurrentLang(lng);
-      setTestText(t('common.loading'));
+      setTestText(t("common.loading"));
     };
 
-    i18n.on('languageChanged', handleLanguageChanged);
+    i18n.on("languageChanged", handleLanguageChanged);
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
-      i18n.off('languageChanged', handleLanguageChanged);
+    return () => {
+      i18n.off("languageChanged", handleLanguageChanged);
     };
   }, [t, i18n]);
 
@@ -31,7 +31,7 @@ import { Button } from './ui/button';
     try {
       await changeLanguage(lang);
     } catch (error) {
-      console.error('[LanguageTest] Test failed:', error);
+      console.error("[LanguageTest] Test failed:", error);
     }
   };
 
@@ -40,7 +40,7 @@ import { Button } from './ui/button';
     setIsTestMode(!isTestMode);
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className="p-6 max-w-2xl mx-auto bg-white dark:bg-gray-900 rounded-lg shadow-lg">
@@ -53,7 +53,7 @@ import { Button } from './ui/button';
           variant={isTestMode ? "destructive" : "default"}
           size="sm"
         >
-          {isTestMode ? '🔄 Modo Normal' : '🧪 Modo Teste'}
+          {isTestMode ? "🔄 Modo Normal" : "🧪 Modo Teste"}
         </Button>
       </div>
 
@@ -102,7 +102,7 @@ import { Button } from './ui/button';
                 <strong>common.save:</strong>
               </p>
               <p className="text-lg bg-white dark:bg-gray-700 p-3 rounded">
-                {t('common.save')}
+                {t("common.save")}
               </p>
             </div>
             <div>
@@ -110,7 +110,7 @@ import { Button } from './ui/button';
                 <strong>common.cancel:</strong>
               </p>
               <p className="text-lg bg-white dark:bg-gray-700 p-3 rounded">
-                {t('common.cancel')}
+                {t("common.cancel")}
               </p>
             </div>
           </div>
@@ -135,22 +135,22 @@ import { Button } from './ui/button';
               </h3>
               <div className="flex flex-wrap gap-2">
                 <Button
-                  onClick={() => testLanguageChange('pt')}
-                  variant={i18n.language === 'pt' ? 'default' : 'outline'}
+                  onClick={() => testLanguageChange("pt")}
+                  variant={i18n.language === "pt" ? "default" : "outline"}
                   size="sm"
                 >
                   🇧🇷 Português
                 </Button>
                 <Button
-                  onClick={() => testLanguageChange('en')}
-                  variant={i18n.language === 'en' ? 'default' : 'outline'}
+                  onClick={() => testLanguageChange("en")}
+                  variant={i18n.language === "en" ? "default" : "outline"}
                   size="sm"
                 >
                   🇺🇸 English
                 </Button>
                 <Button
-                  onClick={() => testLanguageChange('es')}
-                  variant={i18n.language === 'es' ? 'default' : 'outline'}
+                  onClick={() => testLanguageChange("es")}
+                  variant={i18n.language === "es" ? "default" : "outline"}
                   size="sm"
                 >
                   🇪🇸 Español
@@ -180,10 +180,19 @@ import { Button } from './ui/button';
             ✅ Status das Correções
           </h3>
           <div className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
-            <p>✅ <strong>AuthContext:</strong> Desabilitado (sem polling)</p>
-            <p>✅ <strong>SupabaseAuthContext:</strong> Desabilitado (sem polling)</p>
-            <p>✅ <strong>NotificationDropdown:</strong> Otimizado (sem spam)</p>
-            <p>✅ <strong>Sistema de Idioma:</strong> Funcionando corretamente</p>
+            <p>
+              ✅ <strong>AuthContext:</strong> Desabilitado (sem polling)
+            </p>
+            <p>
+              ✅ <strong>SupabaseAuthContext:</strong> Desabilitado (sem
+              polling)
+            </p>
+            <p>
+              ✅ <strong>NotificationDropdown:</strong> Otimizado (sem spam)
+            </p>
+            <p>
+              ✅ <strong>Sistema de Idioma:</strong> Funcionando corretamente
+            </p>
           </div>
         </div>
       </div>

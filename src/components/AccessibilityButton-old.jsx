@@ -1,29 +1,45 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  Accessibility, Eye, Type, Palette, Moon, Sun,
-  Settings, Globe, Minus, Plus, RotateCcw, Check
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useLanguageDetection } from '../hooks/useLanguageDetection';
-import useTheme from '../hooks/useTheme';
+  Accessibility,
+  Eye,
+  Type,
+  Palette,
+  Moon,
+  Sun,
+  Settings,
+  Globe,
+  Minus,
+  Plus,
+  RotateCcw,
+  Check,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useLanguageDetection } from "../hooks/useLanguageDetection";
+import useTheme from "../hooks/useTheme";
 
-  const AccessibilityButton = () => {
+const AccessibilityButton = () => {
   const [settings, setSettings] = useState({
     fontSize: 16,
     highContrast: false,
     dyslexiaFont: false,
-    reducedMotion: false
+    reducedMotion: false,
   });
 
   // Carregar configurações salvas
   useEffect(() => {
-    const saved = localStorage.getItem('accessibility-settings');
+    const saved = localStorage.getItem("accessibility-settings");
     if (saved) {
       const parsed = JSON.parse(saved);
-      setSettings(prev => ({ ...prev, ...parsed }));
+      setSettings((prev) => ({ ...prev, ...parsed }));
       applyAccessibilityStyles(parsed);
     }
   }, []);
@@ -37,27 +53,27 @@ import useTheme from '../hooks/useTheme';
 
     // High contrast
     if (settings.highContrast) {
-      root.classList.add('high-contrast');
+      root.classList.add("high-contrast");
     } else {
-      root.classList.remove('high-contrast');
+      root.classList.remove("high-contrast");
     }
 
     // Dyslexia font
     if (settings.dyslexiaFont) {
-      root.classList.add('dyslexia-font');
+      root.classList.add("dyslexia-font");
     } else {
-      root.classList.remove('dyslexia-font');
+      root.classList.remove("dyslexia-font");
     }
 
     // Reduced motion
     if (settings.reducedMotion) {
-      root.style.setProperty('--animation-duration', '0s');
+      root.style.setProperty("--animation-duration", "0s");
     } else {
-      root.style.removeProperty('--animation-duration');
+      root.style.removeProperty("--animation-duration");
     }
 
     // Salvar configurações
-    localStorage.setItem('accessibility-settings', JSON.stringify(settings));
+    localStorage.setItem("accessibility-settings", JSON.stringify(settings));
   };
 
   // Toggle setting
@@ -80,7 +96,7 @@ import useTheme from '../hooks/useTheme';
       fontSize: 16,
       highContrast: false,
       dyslexiaFont: false,
-      reducedMotion: false
+      reducedMotion: false,
     };
     setSettings(defaults);
     applyAccessibilityStyles(defaults);
@@ -89,42 +105,42 @@ import useTheme from '../hooks/useTheme';
   const accessibilityOptions = [
     {
       icon: Type,
-      titleKey: 'accessibility.fontSize',
-      descriptionKey: 'accessibility.fontSizeDesc',
-      type: 'slider',
-      key: 'fontSize',
+      titleKey: "accessibility.fontSize",
+      descriptionKey: "accessibility.fontSizeDesc",
+      type: "slider",
+      key: "fontSize",
       min: 12,
       max: 24,
-      step: 1
+      step: 1,
     },
     {
       icon: Eye,
-      titleKey: 'accessibility.highContrast',
-      descriptionKey: 'accessibility.highContrastDesc',
-      type: 'toggle',
-      key: 'highContrast'
+      titleKey: "accessibility.highContrast",
+      descriptionKey: "accessibility.highContrastDesc",
+      type: "toggle",
+      key: "highContrast",
     },
     {
       icon: Palette,
-      titleKey: 'accessibility.dyslexiaFont',
-      descriptionKey: 'accessibility.dyslexiaFontDesc',
-      type: 'toggle',
-      key: 'dyslexiaFont'
+      titleKey: "accessibility.dyslexiaFont",
+      descriptionKey: "accessibility.dyslexiaFontDesc",
+      type: "toggle",
+      key: "dyslexiaFont",
     },
     {
       icon: Moon,
-      titleKey: 'accessibility.reducedMotion',
-      descriptionKey: 'accessibility.reducedMotionDesc',
-      type: 'toggle',
-      key: 'reducedMotion'
-    }
+      titleKey: "accessibility.reducedMotion",
+      descriptionKey: "accessibility.reducedMotionDesc",
+      type: "toggle",
+      key: "reducedMotion",
+    },
   ];
 
-  const hasActiveSettings = Object.values(settings).some(value =>
-    typeof value === 'boolean' ? value : value !== 16
+  const hasActiveSettings = Object.values(settings).some((value) =>
+    typeof value === "boolean" ? value : value !== 16
   );
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <>
@@ -149,7 +165,9 @@ import useTheme from '../hooks/useTheme';
             <Settings className="w-3 h-3" />
           </motion.div>
         </div>
-        <span className="hidden sm:inline font-medium">{t('accessibility.title')}</span>
+        <span className="hidden sm:inline font-medium">
+          {t("accessibility.title")}
+        </span>
 
         {/* Notification dot */}
         {hasActiveSettings && (
@@ -196,8 +214,12 @@ import useTheme from '../hooks/useTheme';
                       <Accessibility className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-base font-bold">{t('accessibility.title')}</h3>
-                      <p className="text-xs text-blue-100">{t('accessibility.subtitle')}</p>
+                      <h3 className="text-base font-bold">
+                        {t("accessibility.title")}
+                      </h3>
+                      <p className="text-xs text-blue-100">
+                        {t("accessibility.subtitle")}
+                      </p>
                     </div>
                   </div>
                   <Button
@@ -222,7 +244,7 @@ import useTheme from '../hooks/useTheme';
                     className="bg-white dark:bg-slate-900 text-foreground border-border flex items-center gap-2 border-2 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 rounded-xl"
                   >
                     <RotateCcw className="w-4 h-4" />
-                    {t('accessibility.reset')}
+                    {t("accessibility.reset")}
                   </Button>
                   <Button
                     variant="outline"
@@ -231,7 +253,7 @@ import useTheme from '../hooks/useTheme';
                     className="flex items-center gap-2 border-2 border-green-300 dark:border-green-600 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950/30 hover:border-green-400 dark:hover:border-green-500 transition-all duration-200 rounded-xl"
                   >
                     <Check className="w-4 h-4" />
-                    {t('accessibility.done')}
+                    {t("accessibility.done")}
                   </Button>
                 </div>
 
@@ -240,14 +262,20 @@ import useTheme from '../hooks/useTheme';
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 bg-gradient-to-r from-slate-100 to-gray-100 dark:from-gray-900/30 dark:to-slate-900/30 rounded-lg flex items-center justify-center shadow-sm text-white hover:opacity-90">
-                        {isDark ? <Moon className="w-4 h-4 text-slate-600 dark:text-slate-400" /> : <Sun className="w-4 h-4 text-slate-600 dark:text-slate-400" />}
+                        {isDark ? (
+                          <Moon className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                        ) : (
+                          <Sun className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                        )}
                       </div>
                       <div>
                         <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
-                          {isDark ? t('accessibility.darkMode') : t('accessibility.lightMode')}
+                          {isDark
+                            ? t("accessibility.darkMode")
+                            : t("accessibility.lightMode")}
                         </h4>
                         <p className="text-xs text-gray-600 dark:text-gray-400">
-                          {t('accessibility.themeDesc')}
+                          {t("accessibility.themeDesc")}
                         </p>
                       </div>
                     </div>
@@ -257,8 +285,14 @@ import useTheme from '../hooks/useTheme';
                       onClick={toggleTheme}
                       className="bg-white dark:bg-slate-900 text-foreground border-border h-8 px-3 dark:bg-gray-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-600 text-xs"
                     >
-                      {isDark ? <Sun className="w-3 h-3 mr-1" /> : <Moon className="w-3 h-3 mr-1" />}
-                      {isDark ? t('accessibility.light') : t('accessibility.dark')}
+                      {isDark ? (
+                        <Sun className="w-3 h-3 mr-1" />
+                      ) : (
+                        <Moon className="w-3 h-3 mr-1" />
+                      )}
+                      {isDark
+                        ? t("accessibility.light")
+                        : t("accessibility.dark")}
                     </Button>
                   </div>
                 </div>
@@ -288,12 +322,20 @@ import useTheme from '../hooks/useTheme';
                       </div>
 
                       <div className="flex-shrink-0">
-                        {option.type === 'slider' ? (
+                        {option.type === "slider" ? (
                           <div className="flex items-center gap-2 min-w-[120px]">
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => updateSetting(option.key, Math.max(option.min, settings[option.key] - option.step))}
+                              onClick={() =>
+                                updateSetting(
+                                  option.key,
+                                  Math.max(
+                                    option.min,
+                                    settings[option.key] - option.step
+                                  )
+                                )
+                              }
                               disabled={settings[option.key] <= option.min}
                               className="h-7 w-7 p-0 rounded-full border-2 border-blue-300 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400"
                             >
@@ -309,7 +351,15 @@ import useTheme from '../hooks/useTheme';
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => updateSetting(option.key, Math.min(option.max, settings[option.key] + option.step))}
+                              onClick={() =>
+                                updateSetting(
+                                  option.key,
+                                  Math.min(
+                                    option.max,
+                                    settings[option.key] + option.step
+                                  )
+                                )
+                              }
                               disabled={settings[option.key] >= option.max}
                               className="h-7 w-7 p-0 rounded-full border-2 border-blue-300 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400"
                             >
@@ -323,15 +373,17 @@ import useTheme from '../hooks/useTheme';
                               onClick={() => toggleSetting(option.key)}
                               className={`relative inline-flex h-7 w-14 items-center rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                                 settings[option.key]
-                                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg shadow-blue-500/30'
-                                  : 'bg-gray-200 dark:bg-gray-700'
+                                  ? "bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg shadow-blue-500/30"
+                                  : "bg-gray-200 dark:bg-gray-700"
                               }`}
                               role="switch"
                               aria-checked={settings[option.key]}
                             >
                               <span
                                 className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition-all duration-300 ${
-                                  settings[option.key] ? 'translate-x-8' : 'translate-x-1'
+                                  settings[option.key]
+                                    ? "translate-x-8"
+                                    : "translate-x-1"
                                 }`}
                               />
                             </button>
@@ -354,11 +406,14 @@ import useTheme from '../hooks/useTheme';
                           {currentLanguage.name}
                         </h4>
                         <p className="text-xs text-green-700 dark:text-green-400">
-                          {t('accessibility.languageDesc')}
+                          {t("accessibility.languageDesc")}
                         </p>
                       </div>
                     </div>
-                    <Select value={currentLanguage.code} onValueChange={setLanguage}>
+                    <Select
+                      value={currentLanguage.code}
+                      onValueChange={setLanguage}
+                    >
                       <SelectTrigger className="w-20 h-8 bg-white dark:bg-gray-700 border border-green-300 dark:border-green-600 text-xs">
                         <SelectValue />
                       </SelectTrigger>
@@ -376,7 +431,7 @@ import useTheme from '../hooks/useTheme';
                 {/* Footer */}
                 <div className="pt-3 border-t border-gray-200 dark:border-gray-600">
                   <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                    {t('accessibility.autoSave')}
+                    {t("accessibility.autoSave")}
                   </p>
                 </div>
               </div>

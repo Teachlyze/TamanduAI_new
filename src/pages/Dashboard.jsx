@@ -1,17 +1,17 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { useLocation, Outlet } from 'react-router-dom';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useLocation, Outlet } from "react-router-dom";
 // useNavigate is imported for future use
-import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
-import ErrorBoundary from '@/components/ui/ErrorBoundary';
-import SkipLinks from '@/components/SkipLinks';
-import { Loader2, AlertCircle } from 'lucide-react';
-import Header from '@/components/dashboard/Header';
-import { SidebarPremium } from '@/components/ui/SidebarPremium';
+import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
+import ErrorBoundary from "@/components/ui/ErrorBoundary";
+import SkipLinks from "@/components/SkipLinks";
+import { Loader2, AlertCircle } from "lucide-react";
+import Header from "@/components/dashboard/Header";
+import { SidebarPremium } from "@/components/ui/SidebarPremium";
 
 // Conteúdo das rotas aninhadas será renderizado via <Outlet />
 
-  const Dashboard = () => {
+const Dashboard = () => {
   const location = useLocation();
   const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false); // Iniciar fechado em mobile
@@ -19,22 +19,31 @@ import { SidebarPremium } from '@/components/ui/SidebarPremium';
   // Track route changes for debugging
   React.useEffect(() => {
     // Clean up function
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {};
+    return () => {};
   }, [location]);
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className="flex h-full min-h-screen bg-background">
       <SkipLinks />
-      <SidebarPremium isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <SidebarPremium
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
       <div className="flex-1 flex flex-col overflow-hidden h-full lg:ml-[280px]">
         <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
-        <main id="main-content" className="flex-1 overflow-x-hidden overflow-y-auto bg-background p-4 md:p-6 h-[calc(100vh-64px)]">
-          <ErrorBoundary errorTitle="Erro no Dashboard" errorMessage="Não foi possível carregar o dashboard. Tente recarregar a página.">
-            <Suspense 
+        <main
+          id="main-content"
+          className="flex-1 overflow-x-hidden overflow-y-auto bg-background p-4 md:p-6 h-[calc(100vh-64px)]"
+        >
+          <ErrorBoundary
+            errorTitle="Erro no Dashboard"
+            errorMessage="Não foi possível carregar o dashboard. Tente recarregar a página."
+          >
+            <Suspense
               fallback={
                 <div className="flex items-center justify-center h-64">
                   <Loader2 className="h-8 w-8 animate-spin text-blue-500" />

@@ -54,7 +54,7 @@ export const [loading, setLoading] = useState(true);
     const isExpanded = expandedItems.has(item.id);
     const Icon = item.icon;
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
   return (
       <div key={item.id}>
@@ -126,7 +126,7 @@ export const [loading, setLoading] = useState(true);
     );
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <aside
@@ -178,7 +178,7 @@ export const EnhancedBreadcrumb = ({
   className = '',
   ...props
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <nav
@@ -231,7 +231,7 @@ export const AdvancedDropdown = ({
     'top-end': 'dropdown-top dropdown-end',
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`dropdown ${placements[placement]} ${className}`}>
@@ -304,7 +304,7 @@ export const EnhancedTabs = ({
     buttons: '',
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`${variants[variant]} ${className}`} {...props}>
@@ -313,7 +313,7 @@ export const EnhancedTabs = ({
           const isActive = activeTab === tab.id;
           const Icon = tab.icon;
 
-          if (loading) return <LoadingScreen />;
+          /* if (loading) return <LoadingScreen />; */
 
   return (
             <button
@@ -389,13 +389,13 @@ export const ContextMenu = ({
   useEffect(() => {
     if (isOpen) {
       document.addEventListener('click', handleClick);
-      if (loading) return <LoadingScreen />;
+      /* if (loading) return <LoadingScreen />; */
 
   return () => document.removeEventListener('click', handleClick);
     }
   }, [isOpen]);
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <>
@@ -495,7 +495,7 @@ export const AdvancedPagination = ({
 
   if (totalPages <= 1) return null;
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`flex items-center justify-between ${className}`} {...props}>
@@ -593,7 +593,7 @@ export const AdvancedSearch = ({
     }
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`relative ${className}`}>
@@ -690,7 +690,7 @@ export const AdvancedFilter = ({
 
   const activeCount = Object.values(activeFilters).filter(Boolean).length;
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`relative ${className}`}>
@@ -825,7 +825,7 @@ export const QuickActionButton = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`fixed bottom-6 right-6 z-40 ${className}`}>

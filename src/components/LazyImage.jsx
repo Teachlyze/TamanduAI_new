@@ -1,24 +1,24 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { motion } from 'framer-motion';
-
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
 /**
  * Lazy Loading Image Component
  * Optimized image loading with blur placeholder
  */
-export const [loading, setLoading] = useState(true);
-  const LazyImage = ({
+export const LazyImage = ({
   src,
   alt,
   placeholder = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"%3E%3Crect fill="%23f3f4f6" width="400" height="300"/%3E%3C/svg%3E',
-  className = '',
+  className = "",
   width,
   height,
-  objectFit = 'cover',
+  objectFit = "cover",
   onLoad,
   ...props
 }) => {
   const [imageSrc, setImageSrc] = useState(placeholder);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [loading, setLoading] = useState(true);
   const imgRef = useRef(null);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export const [loading, setLoading] = useState(true);
         });
       },
       {
-        rootMargin: '50px'
+        rootMargin: "50px",
       }
     );
 
@@ -46,16 +46,16 @@ export const [loading, setLoading] = useState(true);
       observer.observe(imgRef.current);
     }
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
+    return () => {
       if (imgRef.current) {
         observer.unobserve(imgRef.current);
       }
     };
   }, [src, onLoad]);
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <motion.div
@@ -70,7 +70,7 @@ export const [loading, setLoading] = useState(true);
         src={imageSrc}
         alt={alt}
         className={`w-full h-full transition-all duration-500 ${
-          imageLoaded ? 'blur-0' : 'blur-md scale-110'
+          imageLoaded ? "blur-0" : "blur-md scale-110"
         }`}
         style={{ objectFit }}
         {...props}
@@ -81,5 +81,3 @@ export const [loading, setLoading] = useState(true);
     </motion.div>
   );
 };
-
-export default LazyImage;

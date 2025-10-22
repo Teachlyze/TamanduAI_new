@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 // changeLanguage is not used directly in this file, using i18n.changeLanguage instead
 import { Logger } from '../services/logger';
-
+import { useState, useEffect, useRef, useCallback } from 'react';
 // Supported languages with their metadata
 const SUPPORTED_LANGUAGES = [
   { code: 'pt', name: 'Português (BR)', flag: '🇧🇷', nativeName: 'Português' },

@@ -1,13 +1,13 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Loader2 } from 'lucide-react';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { Loader2 } from "lucide-react";
 
 // Sistema avançado de lazy loading com diferentes estratégias
 export const [loading, setLoading] = useState(true);
-  const createLazyComponent = (importFn, options = {}) => {
+const createLazyComponent = (importFn, options = {}) => {
   const {
-    strategy = 'intersection', // 'intersection' | 'interaction' | 'timeout'
+    strategy = "intersection", // 'intersection' | 'interaction' | 'timeout'
     threshold = 0.1,
-    rootMargin = '50px',
+    rootMargin = "50px",
     timeout = 5000,
     fallback = null,
     loadingComponent = null,
@@ -15,18 +15,17 @@ export const [loading, setLoading] = useState(true);
 
   // Componente interno que gerencia o estado de carregamento
   const LazyWrapper = (props) => {
-
     // Lazy component
     const LazyComponent = lazy(() =>
-      importFn().catch(error => {
-        console.error('Erro ao carregar componente lazy:', error);
+      importFn().catch((error) => {
+        console.error("Erro ao carregar componente lazy:", error);
         setHasError(true);
         throw error;
       })
     );
 
     useEffect(() => {
-      if (strategy === 'intersection' && elementRef.current) {
+      if (strategy === "intersection" && elementRef.current) {
         const observer = new IntersectionObserver(
           ([entry]) => {
             if (entry.isIntersecting) {
@@ -38,20 +37,20 @@ export const [loading, setLoading] = useState(true);
         );
 
         observer.observe(elementRef.current);
-        if (loading) return <LoadingScreen />;
+        /* if (loading) return <LoadingScreen />; */
 
-  return () => observer.disconnect();
+        return () => observer.disconnect();
       }
     }, [strategy, threshold, rootMargin]);
 
     useEffect(() => {
-      if (strategy === 'timeout') {
+      if (strategy === "timeout") {
         const timer = setTimeout(() => {
           setIsVisible(true);
         }, timeout);
-        if (loading) return <LoadingScreen />;
+        /* if (loading) return <LoadingScreen />; */
 
-  return () => clearTimeout(timer);
+        return () => clearTimeout(timer);
       }
     }, [strategy, timeout]);
 
@@ -59,11 +58,11 @@ export const [loading, setLoading] = useState(true);
       if (isVisible && !component && !hasError) {
         // Carregar componente em background
         importFn()
-          .then(module => {
+          .then((module) => {
             setComponent(module.default || module);
           })
-          .catch(error => {
-            console.error('Erro ao carregar componente:', error);
+          .catch((error) => {
+            console.error("Erro ao carregar componente:", error);
             setHasError(true);
           });
       }
@@ -71,13 +70,21 @@ export const [loading, setLoading] = useState(true);
 
     // Renderizar baseado no estado
     if (hasError) {
-      if (loading) return <LoadingScreen />;
+      /* if (loading) return <LoadingScreen />; */
 
-  return (
+      return (
         <div className="flex items-center justify-center p-8 text-red-500">
           <div className="text-center">
-            <svg className="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            <svg
+              className="w-8 h-8 mx-auto mb-2"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                clipRule="evenodd"
+              />
             </svg>
             <p className="text-sm">Erro ao carregar componente</p>
           </div>
@@ -86,9 +93,9 @@ export const [loading, setLoading] = useState(true);
     }
 
     if (!isVisible || !component) {
-      if (loading) return <LoadingScreen />;
+      /* if (loading) return <LoadingScreen />; */
 
-  return (
+      return (
         <div ref={elementRef} className="flex items-center justify-center p-8">
           {loadingComponent || (
             <div className="text-center">
@@ -106,10 +113,16 @@ export const [loading, setLoading] = useState(true);
   };
 
   // Wrapper com Suspense para casos onde o componente já foi carregado
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (props) => (
-    <Suspense fallback={fallback || <div className="animate-pulse bg-gray-200 rounded-lg h-32" />}>
+    <Suspense
+      fallback={
+        fallback || (
+          <div className="animate-pulse bg-gray-200 rounded-lg h-32" />
+        )
+      }
+    >
       <LazyWrapper {...props} />
     </Suspense>
   );
@@ -119,14 +132,14 @@ export const [loading, setLoading] = useState(true);
 export const LazyComponents = {
   // Gráficos e visualizações
   Chart: createLazyComponent(
-    () => import('@/components/charts/ChartComponent'),
-    { strategy: 'intersection', threshold: 0.1 }
+    () => import("@/components/charts/ChartComponent"),
+    { strategy: "intersection", threshold: 0.1 }
   ),
 
   // Editor de texto rico
   RichTextEditor: createLazyComponent(
-    () => import('@/components/editor/RichTextEditor'),
-    { strategy: 'interaction' }
+    () => import("@/components/editor/RichTextEditor"),
+    { strategy: "interaction" }
   ),
 
   // Whiteboard/Quadro branco (DESATIVADO - Agora SDK removido)
@@ -137,92 +150,90 @@ export const LazyComponents = {
 
   // Video player
   VideoPlayer: createLazyComponent(
-    () => import('@/components/media/VideoPlayer'),
-    { strategy: 'intersection', threshold: 0.1 }
+    () => import("@/components/media/VideoPlayer"),
+    { strategy: "intersection", threshold: 0.1 }
   ),
 
   // Mapa interativo
   InteractiveMap: createLazyComponent(
-    () => import('@/components/maps/InteractiveMap'),
-    { strategy: 'intersection', threshold: 0.1 }
+    () => import("@/components/maps/InteractiveMap"),
+    { strategy: "intersection", threshold: 0.1 }
   ),
 
   // Calendário avançado
   AdvancedCalendar: createLazyComponent(
-    () => import('@/components/calendar/AdvancedCalendar'),
-    { strategy: 'timeout', timeout: 2000 }
+    () => import("@/components/calendar/AdvancedCalendar"),
+    { strategy: "timeout", timeout: 2000 }
   ),
 
   // Chatbot
   Chatbot: createLazyComponent(
-    () => import('@/components/chat/ChatbotWidget'),
-    { strategy: 'interaction' }
+    () => import("@/components/chat/ChatbotWidget"),
+    { strategy: "interaction" }
   ),
 
   // Formulários complexos
   AdvancedForm: createLazyComponent(
-    () => import('@/components/forms/AdvancedFormBuilder'),
-    { strategy: 'interaction' }
+    () => import("@/components/forms/AdvancedFormBuilder"),
+    { strategy: "interaction" }
   ),
 
   // Dashboard de métricas
   MetricsDashboard: createLazyComponent(
-    () => import('@/components/dashboard/MetricsDashboard'),
-    { strategy: 'intersection', threshold: 0.1 }
+    () => import("@/components/dashboard/MetricsDashboard"),
+    { strategy: "intersection", threshold: 0.1 }
   ),
 
   // Tabela virtualizada
   VirtualizedTable: createLazyComponent(
-    () => import('@/components/tables/VirtualizedTable'),
-    { strategy: 'intersection', threshold: 0.1 }
+    () => import("@/components/tables/VirtualizedTable"),
+    { strategy: "intersection", threshold: 0.1 }
   ),
 
   // Árvore de arquivos
-  FileTree: createLazyComponent(
-    () => import('@/components/files/FileTree'),
-    { strategy: 'interaction' }
-  ),
+  FileTree: createLazyComponent(() => import("@/components/files/FileTree"), {
+    strategy: "interaction",
+  }),
 
   // Terminal/Console
   Terminal: createLazyComponent(
-    () => import('@/components/terminal/TerminalComponent'),
-    { strategy: 'interaction' }
+    () => import("@/components/terminal/TerminalComponent"),
+    { strategy: "interaction" }
   ),
 
   // Visualizador de código
   CodeViewer: createLazyComponent(
-    () => import('@/components/code/CodeViewer'),
-    { strategy: 'interaction' }
+    () => import("@/components/code/CodeViewer"),
+    { strategy: "interaction" }
   ),
 
   // Componente de upload avançado
   AdvancedUploader: createLazyComponent(
-    () => import('@/components/uploads/AdvancedFileUploader'),
-    { strategy: 'interaction' }
+    () => import("@/components/uploads/AdvancedFileUploader"),
+    { strategy: "interaction" }
   ),
 
   // Visualizador de PDF
-  PDFViewer: createLazyComponent(
-    () => import('@/components/pdf/PDFViewer'),
-    { strategy: 'interaction' }
-  ),
+  PDFViewer: createLazyComponent(() => import("@/components/pdf/PDFViewer"), {
+    strategy: "interaction",
+  }),
 
   // Componente de assinatura digital
   SignaturePad: createLazyComponent(
-    () => import('@/components/signature/SignaturePad'),
-    { strategy: 'interaction' }
+    () => import("@/components/signature/SignaturePad"),
+    { strategy: "interaction" }
   ),
 
   // Webcam/Câmera
   WebcamCapture: createLazyComponent(
-    () => import('@/components/media/WebcamCapture'),
-    { strategy: 'interaction' }
+    () => import("@/components/media/WebcamCapture"),
+    { strategy: "interaction" }
   ),
 
   // Reconhecimento de voz
   VoiceRecognition: createLazyComponent(
-    () => import('@/components/voice/VoiceRecognition'),
-    { strategy: 'interaction' }
+    () => import("@/components/voice/VoiceRecognition"),
+    { strategy: "interaction" }
   ),
 };
 
@@ -233,14 +244,22 @@ export const useConditionalLazyLoading = () => {
   useEffect(() => {
     // Detectar se é um dispositivo móvel ou desktop
     const isMobile = window.innerWidth < 768;
-    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    const connection =
+      navigator.connection ||
+      navigator.mozConnection ||
+      navigator.webkitConnection;
 
     // Em dispositivos móveis com conexão lenta, sempre usar lazy loading
-    if (isMobile && connection && (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g')) {
+    if (
+      isMobile &&
+      connection &&
+      (connection.effectiveType === "slow-2g" ||
+        connection.effectiveType === "2g")
+    ) {
       setShouldLazyLoad(true);
     }
     // Em desktop com conexão rápida, pode carregar componentes críticos imediatamente
-    else if (!isMobile && connection && connection.effectiveType === '4g') {
+    else if (!isMobile && connection && connection.effectiveType === "4g") {
       setShouldLazyLoad(false);
     }
   }, []);
@@ -258,7 +277,7 @@ export const useSmartPreloading = () => {
     const component = LazyComponents[componentName];
     if (component && component.preload) {
       component.preload();
-      setPreloadedComponents(prev => new Set([...prev, componentName]));
+      setPreloadedComponents((prev) => new Set([...prev, componentName]));
     }
   };
 
@@ -268,28 +287,28 @@ export const useSmartPreloading = () => {
       // Pré-carregar componentes relacionados à rota atual
       const currentPath = window.location.pathname;
 
-      if (currentPath.includes('/dashboard')) {
-        preloadComponent('MetricsDashboard');
-      } else if (currentPath.includes('/activities')) {
-        preloadComponent('RichTextEditor');
-        preloadComponent('AdvancedForm');
-      } else if (currentPath.includes('/classes')) {
-        preloadComponent('VirtualizedTable');
+      if (currentPath.includes("/dashboard")) {
+        preloadComponent("MetricsDashboard");
+      } else if (currentPath.includes("/activities")) {
+        preloadComponent("RichTextEditor");
+        preloadComponent("AdvancedForm");
+      } else if (currentPath.includes("/classes")) {
+        preloadComponent("VirtualizedTable");
       }
     };
 
     // Pré-carregar inicial baseado na landing page
-    if (window.location.pathname === '/') {
+    if (window.location.pathname === "/") {
       setTimeout(() => {
-        preloadComponent('Chart');
-        preloadComponent('InteractiveMap');
+        preloadComponent("Chart");
+        preloadComponent("InteractiveMap");
       }, 3000);
     }
 
-    window.addEventListener('popstate', handleRouteChange);
-    if (loading) return <LoadingScreen />;
+    window.addEventListener("popstate", handleRouteChange);
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => window.removeEventListener('popstate', handleRouteChange);
+    return () => window.removeEventListener("popstate", handleRouteChange);
   }, [preloadedComponents]);
 
   return {
@@ -322,13 +341,15 @@ export const LazyComponentWrapper = ({
 
   // Em desenvolvimento, logar métricas de performance
   useEffect(() => {
-    if (isLoaded && loadTime && process.env.NODE_ENV === 'development') {
+    if (isLoaded && loadTime && process.env.NODE_ENV === "development") {
       const loadDuration = loadTime - performance.now();
-      console.log(`📊 Componente ${componentName} carregado em ${loadDuration}ms`);
+      console.log(
+        `📊 Componente ${componentName} carregado em ${loadDuration}ms`
+      );
     }
   }, [isLoaded, loadTime, componentName]);
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div data-component={componentName}>

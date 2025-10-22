@@ -1,6 +1,6 @@
 // src/components/ui/AdvancedComponents.jsx
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { motion, AnimatePresence } from 'framer-motion';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar,
   Clock,
@@ -30,61 +30,85 @@ import {
   List,
   Eye,
   EyeOff,
-} from 'lucide-react';
+} from "lucide-react";
 
 /**
  * Componente de calendário interativo aprimorado
  */
 export const [loading, setLoading] = useState(true);
-  const InteractiveCalendar = ({
+const InteractiveCalendar = ({
   events = [],
   selectedDate,
   onDateSelect,
   onEventClick,
-  view = 'month',
-  className = '',
+  view = "month",
+  className = "",
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [calendarView, setCalendarView] = useState(view);
 
-  const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-  const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
+  const daysInMonth = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth() + 1,
+    0
+  ).getDate();
+  const firstDayOfMonth = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    1
+  ).getDay();
 
   const monthNames = [
-    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
   ];
 
-  const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const dayNames = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
   const getEventsForDate = (date) => {
-    return events.filter(event => {
+    return events.filter((event) => {
       const eventDate = new Date(event.date);
       return eventDate.toDateString() === date.toDateString();
     });
   };
 
   const renderDay = (day, isCurrentMonth = true) => {
-    const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+    const date = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      day
+    );
     const dayEvents = getEventsForDate(date);
     const isSelected = selectedDate?.toDateString() === date.toDateString();
     const isToday = new Date().toDateString() === date.toDateString();
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
+    return (
       <motion.div
         key={day}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => onDateSelect?.(date)}
         className={`relative p-2 min-h-[80px] cursor-pointer transition-all duration-200 ${
-          isCurrentMonth ? 'bg-base-100' : 'bg-base-200/50'
-        } ${isSelected ? 'bg-primary/20 border-2 border-primary' : ''} ${
-          isToday ? 'ring-2 ring-accent' : ''
+          isCurrentMonth ? "bg-base-100" : "bg-base-200/50"
+        } ${isSelected ? "bg-primary/20 border-2 border-primary" : ""} ${
+          isToday ? "ring-2 ring-accent" : ""
         } hover:bg-base-200 rounded-lg`}
       >
-        <div className={`text-sm font-medium mb-1 ${isToday ? 'text-accent font-bold' : ''}`}>
+        <div
+          className={`text-sm font-medium mb-1 ${isToday ? "text-accent font-bold" : ""}`}
+        >
           {day}
         </div>
 
@@ -98,9 +122,11 @@ export const [loading, setLoading] = useState(true);
                 onEventClick?.(event);
               }}
               className={`text-xs px-1 py-0.5 rounded truncate ${
-                event.type === 'meeting' ? 'bg-info/20 text-info' :
-                event.type === 'assignment' ? 'bg-warning/20 text-warning' :
-                'bg-success/20 text-success'
+                event.type === "meeting"
+                  ? "bg-info/20 text-info"
+                  : event.type === "assignment"
+                    ? "bg-warning/20 text-warning"
+                    : "bg-success/20 text-success"
               }`}
             >
               {event.title}
@@ -116,7 +142,7 @@ export const [loading, setLoading] = useState(true);
     );
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`card bg-base-100 ${className}`}>
@@ -129,7 +155,11 @@ export const [loading, setLoading] = useState(true);
 
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1))}
+              onClick={() =>
+                setCurrentDate(
+                  (prev) => new Date(prev.getFullYear(), prev.getMonth() - 1)
+                )
+              }
               className="btn btn-ghost btn-sm"
             >
               ←
@@ -141,7 +171,11 @@ export const [loading, setLoading] = useState(true);
               Hoje
             </button>
             <button
-              onClick={() => setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1))}
+              onClick={() =>
+                setCurrentDate(
+                  (prev) => new Date(prev.getFullYear(), prev.getMonth() + 1)
+                )
+              }
               className="btn btn-ghost btn-sm"
             >
               →
@@ -169,8 +203,11 @@ export const [loading, setLoading] = useState(true);
       <div className="card-body p-0">
         {/* Dias da semana */}
         <div className="grid grid-cols-7 gap-0 border-b border-base-200">
-          {dayNames.map(day => (
-            <div key={day} className="p-3 text-center text-sm font-medium text-base-content/70 border-r border-base-200 last:border-r-0">
+          {dayNames.map((day) => (
+            <div
+              key={day}
+              className="p-3 text-center text-sm font-medium text-base-content/70 border-r border-base-200 last:border-r-0"
+            >
               {day}
             </div>
           ))}
@@ -180,15 +217,25 @@ export const [loading, setLoading] = useState(true);
         <div className="grid grid-cols-7 gap-0">
           {/* Dias vazios do mês anterior */}
           {Array.from({ length: firstDayOfMonth }).map((_, index) => (
-            <div key={`empty-${index}`} className="p-2 min-h-[80px] bg-base-200/30"></div>
+            <div
+              key={`empty-${index}`}
+              className="p-2 min-h-[80px] bg-base-200/30"
+            ></div>
           ))}
 
           {/* Dias do mês atual */}
-          {Array.from({ length: daysInMonth }).map((_, index) => renderDay(index + 1, true))}
+          {Array.from({ length: daysInMonth }).map((_, index) =>
+            renderDay(index + 1, true)
+          )}
 
           {/* Dias vazios do próximo mês */}
-          {Array.from({ length: (7 - ((firstDayOfMonth + daysInMonth) % 7)) % 7 }).map((_, index) => (
-            <div key={`next-empty-${index}`} className="p-2 min-h-[80px] bg-base-200/30"></div>
+          {Array.from({
+            length: (7 - ((firstDayOfMonth + daysInMonth) % 7)) % 7,
+          }).map((_, index) => (
+            <div
+              key={`next-empty-${index}`}
+              className="p-2 min-h-[80px] bg-base-200/30"
+            ></div>
           ))}
         </div>
       </div>
@@ -203,28 +250,30 @@ export const ActivityList = ({
   activities = [],
   onActivityClick,
   onStatusChange,
-  viewMode = 'list',
+  viewMode = "list",
   showFilters = true,
-  className = '',
+  className = "",
 }) => {
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [sortBy, setSortBy] = useState('date');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [sortBy, setSortBy] = useState("date");
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredActivities = activities.filter(activity => {
-    const matchesStatus = filterStatus === 'all' || activity.status === filterStatus;
-    const matchesSearch = activity.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         activity.description.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredActivities = activities.filter((activity) => {
+    const matchesStatus =
+      filterStatus === "all" || activity.status === filterStatus;
+    const matchesSearch =
+      activity.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      activity.description.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesStatus && matchesSearch;
   });
 
   const sortedActivities = [...filteredActivities].sort((a, b) => {
     switch (sortBy) {
-      case 'date':
+      case "date":
         return new Date(b.dueDate) - new Date(a.dueDate);
-      case 'title':
+      case "title":
         return a.title.localeCompare(b.title);
-      case 'status':
+      case "status":
         return a.status.localeCompare(b.status);
       default:
         return 0;
@@ -233,23 +282,31 @@ export const ActivityList = ({
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'completed': return CheckCircle;
-      case 'overdue': return AlertTriangle;
-      case 'in_progress': return Clock;
-      default: return BookOpen;
+      case "completed":
+        return CheckCircle;
+      case "overdue":
+        return AlertTriangle;
+      case "in_progress":
+        return Clock;
+      default:
+        return BookOpen;
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'completed': return 'success';
-      case 'overdue': return 'error';
-      case 'in_progress': return 'warning';
-      default: return 'info';
+      case "completed":
+        return "success";
+      case "overdue":
+        return "error";
+      case "in_progress":
+        return "warning";
+      default:
+        return "info";
     }
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -289,10 +346,14 @@ export const ActivityList = ({
           </div>
 
           <div className="flex gap-2">
-            <button className={`btn btn-sm ${viewMode === 'list' ? 'btn-primary' : 'btn-ghost'}`}>
+            <button
+              className={`btn btn-sm ${viewMode === "list" ? "btn-primary" : "btn-ghost"}`}
+            >
               <List className="h-4 w-4" />
             </button>
-            <button className={`btn btn-sm ${viewMode === 'grid' ? 'btn-primary' : 'btn-ghost'}`}>
+            <button
+              className={`btn btn-sm ${viewMode === "grid" ? "btn-primary" : "btn-ghost"}`}
+            >
               <Grid className="h-4 w-4" />
             </button>
           </div>
@@ -300,16 +361,19 @@ export const ActivityList = ({
       )}
 
       {/* Lista de atividades */}
-      <div className={`space-y-3 ${viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' : ''}`}>
+      <div
+        className={`space-y-3 ${viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" : ""}`}
+      >
         <AnimatePresence>
           {sortedActivities.map((activity) => {
             const StatusIcon = getStatusIcon(activity.status);
             const statusColor = getStatusColor(activity.status);
-            const displayPoints = (activity?.points ?? activity?.total_points ?? null);
+            const displayPoints =
+              activity?.points ?? activity?.total_points ?? null;
 
-            if (loading) return <LoadingScreen />;
+            /* if (loading) return <LoadingScreen />; */
 
-  return (
+            return (
               <motion.div
                 key={activity.id}
                 initial={{ opacity: 0, y: 10 }}
@@ -318,7 +382,7 @@ export const ActivityList = ({
                 whileHover={{ scale: 1.02 }}
                 onClick={() => onActivityClick?.(activity)}
                 className={`card bg-base-100 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer ${
-                  viewMode === 'grid' ? 'p-4' : 'p-6'
+                  viewMode === "grid" ? "p-4" : "p-6"
                 }`}
               >
                 <div className="flex items-start gap-3">
@@ -342,7 +406,7 @@ export const ActivityList = ({
 
                       <div className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
-                        {activity.estimatedTime || 'N/A'}
+                        {activity.estimatedTime || "N/A"}
                       </div>
 
                       {displayPoints && (
@@ -356,17 +420,26 @@ export const ActivityList = ({
 
                   <div className="flex flex-col items-end gap-2">
                     <span className={`badge badge-${statusColor} badge-sm`}>
-                      {activity.status === 'completed' ? 'Concluída' :
-                       activity.status === 'overdue' ? 'Atrasada' :
-                       activity.status === 'in_progress' ? 'Em andamento' : 'Pendente'}
+                      {activity.status === "completed"
+                        ? "Concluída"
+                        : activity.status === "overdue"
+                          ? "Atrasada"
+                          : activity.status === "in_progress"
+                            ? "Em andamento"
+                            : "Pendente"}
                     </span>
 
-                    {activity.grade !== undefined && activity.grade !== null && (
-                      <div className="text-right">
-                        <div className="text-sm font-medium">{activity.grade}/{displayPoints || 100}</div>
-                        <div className="text-xs text-base-content/60">Nota</div>
-                      </div>
-                    )}
+                    {activity.grade !== undefined &&
+                      activity.grade !== null && (
+                        <div className="text-right">
+                          <div className="text-sm font-medium">
+                            {activity.grade}/{displayPoints || 100}
+                          </div>
+                          <div className="text-xs text-base-content/60">
+                            Nota
+                          </div>
+                        </div>
+                      )}
                   </div>
                 </div>
               </motion.div>
@@ -378,9 +451,13 @@ export const ActivityList = ({
       {sortedActivities.length === 0 && (
         <div className="text-center py-12">
           <BookOpen className="h-12 w-12 mx-auto mb-4 text-base-content/30" />
-          <h3 className="text-lg font-medium mb-2">Nenhuma atividade encontrada</h3>
+          <h3 className="text-lg font-medium mb-2">
+            Nenhuma atividade encontrada
+          </h3>
           <p className="text-base-content/60">
-            {searchTerm ? 'Tente ajustar os filtros de busca' : 'Ainda não há atividades para exibir'}
+            {searchTerm
+              ? "Tente ajustar os filtros de busca"
+              : "Ainda não há atividades para exibir"}
           </p>
         </div>
       )}
@@ -398,7 +475,7 @@ export const UserProfileCard = ({
   onFollow,
   showStats = true,
   compact = false,
-  className = '',
+  className = "",
 }) => {
   const [isFollowing, setIsFollowing] = useState(user.isFollowing || false);
   const [showFullBio, setShowFullBio] = useState(false);
@@ -408,18 +485,20 @@ export const UserProfileCard = ({
     onFollow?.(!isFollowing);
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`card bg-base-100 ${compact ? 'p-4' : 'p-6'} ${className}`}
+      className={`card bg-base-100 ${compact ? "p-4" : "p-6"} ${className}`}
     >
       <div className="flex items-start gap-4">
         {/* Avatar */}
         <div className="avatar">
-          <div className={`w-${compact ? '12' : '16'} h-${compact ? '12' : '16'} rounded-full bg-primary flex items-center justify-center`}>
+          <div
+            className={`w-${compact ? "12" : "16"} h-${compact ? "12" : "16"} rounded-full bg-primary flex items-center justify-center`}
+          >
             <span className="text-primary-content font-bold text-lg">
               {user.name?.charAt(0).toUpperCase()}
             </span>
@@ -433,18 +512,22 @@ export const UserProfileCard = ({
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between">
             <div>
-              <h3 className={`font-bold ${compact ? 'text-base' : 'text-lg'} text-base-content`}>
+              <h3
+                className={`font-bold ${compact ? "text-base" : "text-lg"} text-base-content`}
+              >
                 {user.name}
               </h3>
-              <p className={`text-base-content/70 ${compact ? 'text-sm' : ''}`}>
+              <p className={`text-base-content/70 ${compact ? "text-sm" : ""}`}>
                 @{user.username}
               </p>
             </div>
 
             <div className="flex items-center gap-2">
               {user.role && (
-                <span className={`badge badge-${user.role === 'teacher' ? 'primary' : 'secondary'} badge-sm`}>
-                  {user.role === 'teacher' ? 'Professor' : 'Aluno'}
+                <span
+                  className={`badge badge-${user.role === "teacher" ? "primary" : "secondary"} badge-sm`}
+                >
+                  {user.role === "teacher" ? "Professor" : "Aluno"}
                 </span>
               )}
 
@@ -457,7 +540,9 @@ export const UserProfileCard = ({
           {/* Bio */}
           {user.bio && (
             <div className="mt-3">
-              <p className={`text-base-content/80 ${compact ? 'text-sm' : ''} ${!showFullBio && user.bio.length > 100 ? 'line-clamp-2' : ''}`}>
+              <p
+                className={`text-base-content/80 ${compact ? "text-sm" : ""} ${!showFullBio && user.bio.length > 100 ? "line-clamp-2" : ""}`}
+              >
                 {user.bio}
               </p>
               {user.bio.length > 100 && (
@@ -465,7 +550,7 @@ export const UserProfileCard = ({
                   onClick={() => setShowFullBio(!showFullBio)}
                   className="text-primary text-sm mt-1 hover:underline"
                 >
-                  {showFullBio ? 'Ver menos' : 'Ver mais'}
+                  {showFullBio ? "Ver menos" : "Ver mais"}
                 </button>
               )}
             </div>
@@ -517,7 +602,7 @@ export const UserProfileCard = ({
         {onFollow && (
           <button
             onClick={handleFollow}
-            className={`btn btn-sm flex-1 ${isFollowing ? 'btn-ghost' : 'btn-primary'}`}
+            className={`btn btn-sm flex-1 ${isFollowing ? "btn-ghost" : "btn-primary"}`}
           >
             {isFollowing ? (
               <>
@@ -546,7 +631,7 @@ export const MessageBubble = ({
   showAvatar = true,
   showTime = true,
   showStatus = false,
-  className = '',
+  className = "",
 }) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -554,13 +639,13 @@ export const MessageBubble = ({
     setIsVisible(true);
   }, []);
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 10, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      className={`flex gap-3 ${isOwn ? 'flex-row-reverse' : 'flex-row'} ${className}`}
+      className={`flex gap-3 ${isOwn ? "flex-row-reverse" : "flex-row"} ${className}`}
     >
       {/* Avatar */}
       {showAvatar && (
@@ -574,33 +659,37 @@ export const MessageBubble = ({
       )}
 
       {/* Mensagem */}
-      <div className={`flex flex-col max-w-[70%] ${isOwn ? 'items-end' : 'items-start'}`}>
+      <div
+        className={`flex flex-col max-w-[70%] ${isOwn ? "items-end" : "items-start"}`}
+      >
         <div
           className={`px-4 py-2 rounded-2xl ${
             isOwn
-              ? 'bg-primary text-primary-content'
-              : 'bg-base-200 text-base-content'
+              ? "bg-primary text-primary-content"
+              : "bg-base-200 text-base-content"
           }`}
         >
           {message.text}
         </div>
 
         {/* Metadata */}
-        <div className={`flex items-center gap-2 mt-1 text-xs text-base-content/60`}>
+        <div
+          className={`flex items-center gap-2 mt-1 text-xs text-base-content/60`}
+        >
           {showTime && (
             <span>
               {new Date(message.timestamp).toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit'
+                hour: "2-digit",
+                minute: "2-digit",
               })}
             </span>
           )}
 
           {showStatus && (
-            <span className={isOwn ? 'text-primary/70' : ''}>
-              {message.status === 'sent' && '✓'}
-              {message.status === 'delivered' && '✓✓'}
-              {message.status === 'read' && '✓✓'}
+            <span className={isOwn ? "text-primary/70" : ""}>
+              {message.status === "sent" && "✓"}
+              {message.status === "delivered" && "✓✓"}
+              {message.status === "read" && "✓✓"}
             </span>
           )}
         </div>
@@ -614,12 +703,12 @@ export const MessageBubble = ({
  */
 export const MediaPlayer = ({
   src,
-  type = 'audio',
+  type = "audio",
   title,
   thumbnail,
   autoplay = false,
   controls = true,
-  className = '',
+  className = "",
 }) => {
   const [isPlaying, setIsPlaying] = useState(autoplay);
   const [currentTime, setCurrentTime] = useState(0);
@@ -665,24 +754,32 @@ export const MediaPlayer = ({
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`card bg-base-100 ${className}`}>
       {/* Thumbnail/Capa */}
       {thumbnail && (
         <div className="relative">
-          <img src={thumbnail} alt={title} className="w-full h-48 object-cover rounded-t-xl" />
-          {type === 'video' && (
+          <img
+            src={thumbnail}
+            alt={title}
+            className="w-full h-48 object-cover rounded-t-xl"
+          />
+          {type === "video" && (
             <div className="absolute inset-0 flex items-center justify-center">
               <button
                 onClick={togglePlay}
                 className="btn btn-circle btn-primary btn-lg"
               >
-                {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
+                {isPlaying ? (
+                  <Pause className="h-6 w-6" />
+                ) : (
+                  <Play className="h-6 w-6" />
+                )}
               </button>
             </div>
           )}
@@ -690,12 +787,10 @@ export const MediaPlayer = ({
       )}
 
       <div className="card-body">
-        {title && (
-          <h3 className="card-title text-base-content">{title}</h3>
-        )}
+        {title && <h3 className="card-title text-base-content">{title}</h3>}
 
         {/* Player de áudio */}
-        {type === 'audio' && (
+        {type === "audio" && (
           <audio
             ref={audioRef}
             src={src}
@@ -714,7 +809,9 @@ export const MediaPlayer = ({
               <div className="w-full bg-base-200 rounded-full h-2">
                 <div
                   className="bg-primary h-2 rounded-full transition-all duration-200"
-                  style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+                  style={{
+                    width: `${duration ? (currentTime / duration) * 100 : 0}%`,
+                  }}
                 />
               </div>
 
@@ -734,7 +831,11 @@ export const MediaPlayer = ({
                 onClick={togglePlay}
                 className="btn btn-primary btn-circle"
               >
-                {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
+                {isPlaying ? (
+                  <Pause className="h-6 w-6" />
+                ) : (
+                  <Play className="h-6 w-6" />
+                )}
               </button>
 
               <button className="btn btn-ghost btn-sm">
@@ -785,19 +886,19 @@ export const ImageGallery = ({
   images = [],
   onImageClick,
   columns = 3,
-  gap = 'gap-4',
-  className = '',
+  gap = "gap-4",
+  className = "",
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(null);
 
   const gridCols = {
-    1: 'grid-cols-1',
-    2: 'grid-cols-2',
-    3: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
-    4: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
+    1: "grid-cols-1",
+    2: "grid-cols-2",
+    3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+    4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <>
@@ -871,13 +972,19 @@ export const ImageGallery = ({
               {images.length > 1 && (
                 <>
                   <button
-                    onClick={() => setSelectedIndex((prev) => (prev - 1 + images.length) % images.length)}
+                    onClick={() =>
+                      setSelectedIndex(
+                        (prev) => (prev - 1 + images.length) % images.length
+                      )
+                    }
                     className="absolute left-4 top-1/2 transform -translate-y-1/2 btn btn-circle btn-ghost btn-sm bg-black/50 text-white hover:bg-black/70"
                   >
                     ←
                   </button>
                   <button
-                    onClick={() => setSelectedIndex((prev) => (prev + 1) % images.length)}
+                    onClick={() =>
+                      setSelectedIndex((prev) => (prev + 1) % images.length)
+                    }
                     className="absolute right-4 top-1/2 transform -translate-y-1/2 btn btn-circle btn-ghost btn-sm bg-black/50 text-white hover:bg-black/70"
                   >
                     →
@@ -898,30 +1005,38 @@ export const ImageGallery = ({
 export const Leaderboard = ({
   users = [],
   currentUserId,
-  metric = 'points',
-  period = 'month',
+  metric = "points",
+  period = "month",
   showAvatars = true,
-  className = '',
+  className = "",
 }) => {
   const getRankIcon = (rank) => {
     switch (rank) {
-      case 1: return <Award className="h-5 w-5 text-yellow-500" />;
-      case 2: return <Award className="h-5 w-5 text-gray-400" />;
-      case 3: return <Award className="h-5 w-5 text-amber-600" />;
-      default: return <span className="text-base-content/60 font-bold">#{rank}</span>;
+      case 1:
+        return <Award className="h-5 w-5 text-yellow-500" />;
+      case 2:
+        return <Award className="h-5 w-5 text-gray-400" />;
+      case 3:
+        return <Award className="h-5 w-5 text-amber-600" />;
+      default:
+        return <span className="text-base-content/60 font-bold">#{rank}</span>;
     }
   };
 
   const getRankBg = (rank) => {
     switch (rank) {
-      case 1: return 'bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200';
-      case 2: return 'bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200';
-      case 3: return 'bg-gradient-to-r from-amber-50 to-amber-100 border-amber-200';
-      default: return 'bg-base-100';
+      case 1:
+        return "bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200";
+      case 2:
+        return "bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200";
+      case 3:
+        return "bg-gradient-to-r from-amber-50 to-amber-100 border-amber-200";
+      default:
+        return "bg-base-100";
     }
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`card bg-base-100 ${className}`}>
@@ -943,16 +1058,16 @@ export const Leaderboard = ({
             const rank = index + 1;
             const isCurrentUser = user.id === currentUserId;
 
-            if (loading) return <LoadingScreen />;
+            /* if (loading) return <LoadingScreen />; */
 
-  return (
+            return (
               <motion.div
                 key={user.id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
                 className={`flex items-center gap-4 p-4 hover:bg-base-200 transition-colors ${
-                  isCurrentUser ? 'bg-primary/5 border-l-4 border-primary' : ''
+                  isCurrentUser ? "bg-primary/5 border-l-4 border-primary" : ""
                 } ${getRankBg(rank)}`}
               >
                 {/* Rank */}
@@ -994,7 +1109,7 @@ export const Leaderboard = ({
                     {user[metric]?.toLocaleString()}
                   </div>
                   <div className="text-xs text-base-content/60 capitalize">
-                    {metric === 'points' ? 'pontos' : metric}
+                    {metric === "points" ? "pontos" : metric}
                   </div>
                 </div>
               </motion.div>
@@ -1014,9 +1129,9 @@ export const ActivityFeed = ({
   onLike,
   onComment,
   onShare,
-  className = '',
+  className = "",
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -1049,9 +1164,7 @@ export const ActivityFeed = ({
                   </span>
                 </div>
 
-                <p className="text-base-content/80 mt-1">
-                  {activity.content}
-                </p>
+                <p className="text-base-content/80 mt-1">{activity.content}</p>
               </div>
             </div>
 
@@ -1071,10 +1184,12 @@ export const ActivityFeed = ({
               <button
                 onClick={() => onLike?.(activity.id)}
                 className={`flex items-center gap-2 text-base-content/70 hover:text-error transition-colors ${
-                  activity.isLiked ? 'text-error' : ''
+                  activity.isLiked ? "text-error" : ""
                 }`}
               >
-                <Heart className={`h-4 w-4 ${activity.isLiked ? 'fill-current' : ''}`} />
+                <Heart
+                  className={`h-4 w-4 ${activity.isLiked ? "fill-current" : ""}`}
+                />
                 <span className="text-sm">{activity.likes || 0}</span>
               </button>
 

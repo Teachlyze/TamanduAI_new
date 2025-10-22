@@ -1,11 +1,19 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { FiPaperclip, FiDownload, FiTrash2, FiEye, FiX, FiCheck, FiAlertCircle } from 'react-icons/fi';
-import { motion, AnimatePresence } from 'framer-motion';
-import FileUploader from './FileUploader';
-import useActivityFiles from '../../hooks/useActivityFiles';
-import { BUCKETS } from '../../services/storageService';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import {
+  FiPaperclip,
+  FiDownload,
+  FiTrash2,
+  FiEye,
+  FiX,
+  FiCheck,
+  FiAlertCircle,
+} from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
+import FileUploader from "./FileUploader";
+import useActivityFiles from "../../hooks/useActivityFiles";
+import { BUCKETS } from "../../services/storageService";
 
-  const ActivityAttachments = ({
+const ActivityAttachments = ({
   activityId,
   userId,
   initialAttachments = [],
@@ -21,8 +29,12 @@ import { BUCKETS } from '../../services/storageService';
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({});
   const [errors, setErrors] = useState([]);
-  
-  const { uploadActivityFile, removeActivityFile } = useActivityFiles(activityId, userId, isDraft);
+
+  const { uploadActivityFile, removeActivityFile } = useActivityFiles(
+    activityId,
+    userId,
+    isDraft
+  );
 
   // Atualiza os anexos quando initialAttachments mudar
   useEffect(() => {
@@ -39,141 +51,151 @@ import { BUCKETS } from '../../services/storageService';
   }, [attachments, onAttachmentsChange]);
 
   // Manipula o upload de novos arquivos
-  const handleUpload = useCallback(async (files) => {
-    if (!files || files.length === 0) return;
-    
-    const newAttachments = [];
-    const newErrors = [];
-    
-    try {
-      setIsUploading(true);
-      
-      for (const file of files) {
-        try {
-          // Verifica se o arquivo já foi adicionado
-          if (attachments.some(a => a.name === file.name)) {
-            newErrors.push(`O arquivo "${file.name}" já foi adicionado.`);
-            continue;
-          }
-          
-          // Cria um objeto de anexo temporário
-          const tempId = `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-          const tempAttachment = {
-            id: tempId,
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            isUploading: true,
-            progress: 0,
-            isNew: true
-          };
-          
-          // Adiciona o anexo temporário à lista
-          setAttachments(prev => [...prev, tempAttachment]);
-          
-          // Atualiza o progresso
-          const onProgress = (progress) => {
-            setUploadProgress(prev => ({
-              ...prev,
-              [tempId]: progress
-            }));
-            
-            setAttachments(prev => 
-              prev.map(a => 
-                a.id === tempId 
-                  ? { ...a, progress }
+  const handleUpload = useCallback(
+    async (files) => {
+      if (!files || files.length === 0) return;
+
+      const newAttachments = [];
+      const newErrors = [];
+
+      try {
+        setIsUploading(true);
+
+        for (const file of files) {
+          try {
+            // Verifica se o arquivo já foi adicionado
+            if (attachments.some((a) => a.name === file.name)) {
+              newErrors.push(`O arquivo "${file.name}" já foi adicionado.`);
+              continue;
+            }
+
+            // Cria um objeto de anexo temporário
+            const tempId = `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            const tempAttachment = {
+              id: tempId,
+              name: file.name,
+              size: file.size,
+              type: file.type,
+              isUploading: true,
+              progress: 0,
+              isNew: true,
+            };
+
+            // Adiciona o anexo temporário à lista
+            setAttachments((prev) => [...prev, tempAttachment]);
+
+            // Atualiza o progresso
+            const onProgress = (progress) => {
+              setUploadProgress((prev) => ({
+                ...prev,
+                [tempId]: progress,
+              }));
+
+              setAttachments((prev) =>
+                prev.map((a) => (a.id === tempId ? { ...a, progress } : a))
+              );
+            };
+
+            // Faz o upload do arquivo
+            const { data: uploadedFile, error } =
+              await uploadActivityFile(file);
+
+            if (error) {
+              throw new Error(
+                `Falha ao fazer upload de ${file.name}: ${error.message}`
+              );
+            }
+
+            // Atualiza o anexo com os dados do upload
+            setAttachments((prev) =>
+              prev.map((a) =>
+                a.id === tempId
+                  ? {
+                      ...a,
+                      ...uploadedFile,
+                      isUploading: false,
+                      isUploaded: true,
+                      progress: 100,
+                    }
                   : a
               )
             );
-          };
-          
-          // Faz o upload do arquivo
-          const { data: uploadedFile, error } = await uploadActivityFile(file);
-          
-          if (error) {
-            throw new Error(`Falha ao fazer upload de ${file.name}: ${error.message}`);
+
+            newAttachments.push({
+              ...uploadedFile,
+              isNew: true,
+            });
+          } catch (error) {
+            console.error("Erro ao fazer upload do arquivo:", error);
+
+            // Atualiza o anexo com o erro
+            setAttachments((prev) =>
+              prev.map((a) =>
+                a.name === file.name
+                  ? {
+                      ...a,
+                      isUploading: false,
+                      error: error.message || "Erro ao fazer upload",
+                      hasError: true,
+                    }
+                  : a
+              )
+            );
+
+            newErrors.push(
+              error.message || `Erro ao fazer upload de ${file.name}`
+            );
           }
-          
-          // Atualiza o anexo com os dados do upload
-          setAttachments(prev => 
-            prev.map(a => 
-              a.id === tempId 
-                ? { 
-                    ...a, 
-                    ...uploadedFile, 
-                    isUploading: false, 
-                    isUploaded: true,
-                    progress: 100 
-                  } 
-                : a
-            )
-          );
-          
-          newAttachments.push({
-            ...uploadedFile,
-            isNew: true
-          });
-          
-        } catch (error) {
-          console.error('Erro ao fazer upload do arquivo:', error);
-          
-          // Atualiza o anexo com o erro
-          setAttachments(prev => 
-            prev.map(a => 
-              a.name === file.name 
-                ? { 
-                    ...a, 
-                    isUploading: false, 
-                    error: error.message || 'Erro ao fazer upload',
-                    hasError: true 
-                  } 
-                : a
-            )
-          );
-          
-          newErrors.push(error.message || `Erro ao fazer upload de ${file.name}`);
         }
+
+        if (newErrors.length > 0) {
+          setErrors((prev) => [...prev, ...newErrors]);
+        }
+
+        return newAttachments;
+      } catch (error) {
+        console.error("Erro no processo de upload:", error);
+        setErrors((prev) => [
+          ...prev,
+          error.message || "Erro ao processar os arquivos",
+        ]);
+        return [];
+      } finally {
+        setIsUploading(false);
+        setUploadProgress({});
       }
-      
-      if (newErrors.length > 0) {
-        setErrors(prev => [...prev, ...newErrors]);
-      }
-      
-      return newAttachments;
-      
-    } catch (error) {
-      console.error('Erro no processo de upload:', error);
-      setErrors(prev => [...prev, error.message || 'Erro ao processar os arquivos']);
-      return [];
-    } finally {
-      setIsUploading(false);
-      setUploadProgress({});
-    }
-  }, [attachments, uploadActivityFile]);
+    },
+    [attachments, uploadActivityFile]
+  );
 
   // Remove um anexo
-  const handleRemove = useCallback(async (file, index) => {
-    if (!file || isSubmitting) return;
-    
-    try {
-      // Se o arquivo já foi enviado, remove do storage
-      if (file.path && !file.isNew) {
-        await removeActivityFile(file.path);
+  const handleRemove = useCallback(
+    async (file, index) => {
+      if (!file || isSubmitting) return;
+
+      try {
+        // Se o arquivo já foi enviado, remove do storage
+        if (file.path && !file.isNew) {
+          await removeActivityFile(file.path);
+        }
+
+        // Remove da lista de anexos
+        setAttachments((prev) => prev.filter((_, i) => i !== index));
+      } catch (error) {
+        console.error("Erro ao remover anexo:", error);
+        setErrors((prev) => [
+          ...prev,
+          `Erro ao remover ${file.name}: ${error.message}`,
+        ]);
       }
-      
-      // Remove da lista de anexos
-      setAttachments(prev => prev.filter((_, i) => i !== index));
-      
-    } catch (error) {
-      console.error('Erro ao remover anexo:', error);
-      setErrors(prev => [...prev, `Erro ao remover ${file.name}: ${error.message}`]);
-    }
-  }, [isSubmitting, removeActivityFile]);
+    },
+    [isSubmitting, removeActivityFile]
+  );
 
   // Abre o arquivo em uma nova aba
   const handlePreview = (file) => {
     if (!file.url) return;
-    window.open(file.url, '_blank', 'noopener,noreferrer');
+    window.open(file.url, "_blank", "noopener,noreferrer");
   };
 
   // Formata o tamanho do arquivo
@@ -186,29 +208,31 @@ import { BUCKETS } from '../../services/storageService';
   // Obtém o ícone do tipo de arquivo
   const getFileIcon = (fileType) => {
     if (!fileType) return <FiPaperclip className="w-4 h-4" />;
-    
-    if (fileType.startsWith('image/')) {
+
+    if (fileType.startsWith("image/")) {
       return <FiPaperclip className="w-4 h-4 text-blue-500" />;
     }
-    
-    if (fileType === 'application/pdf') {
+
+    if (fileType === "application/pdf") {
       return <FiPaperclip className="w-4 h-4 text-red-500" />;
     }
-    
+
     if (
-      fileType === 'application/msword' ||
-      fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      fileType === "application/msword" ||
+      fileType ===
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     ) {
       return <FiPaperclip className="w-4 h-4 text-blue-600" />;
     }
-    
+
     if (
-      fileType === 'application/vnd.ms-excel' ||
-      fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      fileType === "application/vnd.ms-excel" ||
+      fileType ===
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     ) {
       return <FiPaperclip className="w-4 h-4 text-green-600" />;
     }
-    
+
     return <FiPaperclip className="w-4 h-4 text-gray-500" />;
   };
 
@@ -218,13 +242,13 @@ import { BUCKETS } from '../../services/storageService';
       const timer = setTimeout(() => {
         setErrors([]);
       }, 5000);
-      if (loading) return <LoadingScreen />;
+      /* if (loading) return <LoadingScreen />; */
 
-  return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
     }
   }, [errors]);
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className="space-y-4">
@@ -236,11 +260,12 @@ import { BUCKETS } from '../../services/storageService';
         </h3>
         {attachments.length > 0 && (
           <span className="text-xs text-gray-500">
-            {attachments.filter(a => !a.isUploading).length} arquivo(s) carregado(s)
+            {attachments.filter((a) => !a.isUploading).length} arquivo(s)
+            carregado(s)
           </span>
         )}
       </div>
-      
+
       {/* Área de upload (apenas para edição) */}
       {isEditing && attachments.length < maxFiles && (
         <FileUploader
@@ -253,7 +278,7 @@ import { BUCKETS } from '../../services/storageService';
           subLabel={`Máx. ${maxFiles} arquivos • ${maxSize / (1024 * 1024)}MB por arquivo`}
         />
       )}
-      
+
       {/* Lista de anexos */}
       <div className="space-y-2">
         <AnimatePresence>
@@ -264,17 +289,15 @@ import { BUCKETS } from '../../services/storageService';
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, x: -10 }}
               className={`flex items-center justify-between p-3 rounded-lg border ${
-                file.hasError 
-                  ? 'bg-red-50 border-red-200' 
-                  : file.isUploading 
-                    ? 'bg-blue-50 border-blue-200' 
-                    : 'bg-white border-gray-200'
+                file.hasError
+                  ? "bg-red-50 border-red-200"
+                  : file.isUploading
+                    ? "bg-blue-50 border-blue-200"
+                    : "bg-white border-gray-200"
               }`}
             >
               <div className="flex items-center space-x-3 min-w-0">
-                <div className="flex-shrink-0">
-                  {getFileIcon(file.type)}
-                </div>
+                <div className="flex-shrink-0">{getFileIcon(file.type)}</div>
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-gray-900 truncate">
                     {file.name}
@@ -294,14 +317,12 @@ import { BUCKETS } from '../../services/storageService';
                       </span>
                     )}
                     {file.error && (
-                      <span className="text-red-500 text-xs">
-                        {file.error}
-                      </span>
+                      <span className="text-red-500 text-xs">{file.error}</span>
                     )}
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 {!file.isUploading && !file.hasError && (
                   <button
@@ -313,7 +334,7 @@ import { BUCKETS } from '../../services/storageService';
                     <FiEye className="w-4 h-4" />
                   </button>
                 )}
-                
+
                 {!file.isUploading && file.url && (
                   <a
                     href={file.url}
@@ -326,7 +347,7 @@ import { BUCKETS } from '../../services/storageService';
                     <FiDownload className="w-4 h-4" />
                   </a>
                 )}
-                
+
                 {isEditing && (
                   <button
                     type="button"
@@ -343,7 +364,7 @@ import { BUCKETS } from '../../services/storageService';
           ))}
         </AnimatePresence>
       </div>
-      
+
       {/* Mensagens de erro */}
       <AnimatePresence>
         {errors.length > 0 && (
@@ -362,7 +383,9 @@ import { BUCKETS } from '../../services/storageService';
                 <span>{error}</span>
                 <button
                   type="button"
-                  onClick={() => setErrors(prev => prev.filter((_, i) => i !== index))}
+                  onClick={() =>
+                    setErrors((prev) => prev.filter((_, i) => i !== index))
+                  }
                   className="ml-auto text-red-500 hover:text-red-700"
                 >
                   <FiX className="w-4 h-4" />

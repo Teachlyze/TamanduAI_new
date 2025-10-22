@@ -1,5 +1,5 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { useTranslation } from 'react-i18next';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useTranslation } from "react-i18next";
 import {
   Upload,
   File,
@@ -10,15 +10,20 @@ import {
   Plus,
   Loader2,
   AlertCircle,
-  CheckCircle2
-} from 'lucide-react';
-import Button from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { useToast } from '@/components/ui/use-toast';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import { AttachmentService } from '@/services/attachmentService';
+  CheckCircle2,
+} from "lucide-react";
+import Button from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { AttachmentService } from "@/services/attachmentService";
 
-  const MeetingAttachments = ({ meetingId, readOnly = false, onUploadSuccess, onDeleteSuccess }) => {
+const MeetingAttachments = ({
+  meetingId,
+  readOnly = false,
+  onUploadSuccess,
+  onDeleteSuccess,
+}) => {
   const [attachments, setAttachments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
@@ -34,8 +39,8 @@ import { AttachmentService } from '@/services/attachmentService';
       const data = await AttachmentService.getMeetingAttachments(meetingId);
       setAttachments(data || []);
     } catch (error) {
-      console.error('Error loading attachments:', error);
-      setError('Não foi possível carregar os anexos.');
+      console.error("Error loading attachments:", error);
+      setError("Não foi possível carregar os anexos.");
     } finally {
       setIsLoading(false);
     }
@@ -55,12 +60,15 @@ import { AttachmentService } from '@/services/attachmentService';
       setError(null);
 
       for (const file of files) {
-        const result = await AttachmentService.uploadMeetingAttachment(meetingId, file);
-        setAttachments(prev => [...prev, result]);
+        const result = await AttachmentService.uploadMeetingAttachment(
+          meetingId,
+          file
+        );
+        setAttachments((prev) => [...prev, result]);
       }
 
       toast({
-        title: 'Anexos adicionados',
+        title: "Anexos adicionados",
         description: `${files.length} arquivo(s) enviado(s) com sucesso.`,
       });
 
@@ -68,43 +76,43 @@ import { AttachmentService } from '@/services/attachmentService';
         onUploadSuccess();
       }
     } catch (error) {
-      console.error('Error uploading files:', error);
+      console.error("Error uploading files:", error);
       toast({
-        variant: 'destructive',
-        title: 'Erro no upload',
-        description: 'Não foi possível enviar os arquivos.',
+        variant: "destructive",
+        title: "Erro no upload",
+        description: "Não foi possível enviar os arquivos.",
       });
     } finally {
       setIsUploading(false);
       // Clear file input
-      event.target.value = '';
+      event.target.value = "";
     }
   };
 
   // Handle file delete
   const handleDelete = async (attachmentId) => {
-    if (!window.confirm('Tem certeza que deseja excluir este anexo?')) {
+    if (!window.confirm("Tem certeza que deseja excluir este anexo?")) {
       return;
     }
 
     try {
       await AttachmentService.deleteMeetingAttachment(meetingId, attachmentId);
-      setAttachments(prev => prev.filter(att => att.id !== attachmentId));
+      setAttachments((prev) => prev.filter((att) => att.id !== attachmentId));
 
       toast({
-        title: 'Anexo removido',
-        description: 'O arquivo foi removido com sucesso.',
+        title: "Anexo removido",
+        description: "O arquivo foi removido com sucesso.",
       });
 
       if (onDeleteSuccess) {
         onDeleteSuccess();
       }
     } catch (error) {
-      console.error('Error deleting attachment:', error);
+      console.error("Error deleting attachment:", error);
       toast({
-        variant: 'destructive',
-        title: 'Erro ao remover',
-        description: 'Não foi possível remover o arquivo.',
+        variant: "destructive",
+        title: "Erro ao remover",
+        description: "Não foi possível remover o arquivo.",
       });
     }
   };
@@ -112,33 +120,36 @@ import { AttachmentService } from '@/services/attachmentService';
   // Handle file download
   const handleDownload = async (attachment) => {
     try {
-      const url = await AttachmentService.getAttachmentDownloadUrl(meetingId, attachment.id);
-      const link = document.createElement('a');
+      const url = await AttachmentService.getAttachmentDownloadUrl(
+        meetingId,
+        attachment.id
+      );
+      const link = document.createElement("a");
       link.href = url;
       link.download = attachment.name;
-      link.target = '_blank';
+      link.target = "_blank";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } catch (error) {
-      console.error('Error downloading attachment:', error);
+      console.error("Error downloading attachment:", error);
       toast({
-        variant: 'destructive',
-        title: 'Erro no download',
-        description: 'Não foi possível baixar o arquivo.',
+        variant: "destructive",
+        title: "Erro no download",
+        description: "Não foi possível baixar o arquivo.",
       });
     }
   };
 
   // Get file icon based on type
   const getFileIcon = (fileName) => {
-    const extension = fileName.split('.').pop()?.toLowerCase();
+    const extension = fileName.split(".").pop()?.toLowerCase();
 
-    if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(extension)) {
+    if (["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(extension)) {
       return <Image className="w-4 h-4 text-blue-500" />;
     }
 
-    if (['pdf', 'doc', 'docx', 'txt'].includes(extension)) {
+    if (["pdf", "doc", "docx", "txt"].includes(extension)) {
       return <FileText className="w-4 h-4 text-red-500" />;
     }
 
@@ -147,17 +158,17 @@ import { AttachmentService } from '@/services/attachmentService';
 
   // Format file size
   const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
   if (isLoading) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
+    return (
       <div className="flex justify-center py-8">
         <LoadingSpinner size="md" text="Carregando anexos..." />
       </div>
@@ -165,9 +176,9 @@ import { AttachmentService } from '@/services/attachmentService';
   }
 
   if (error) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
+    return (
       <div className="text-center py-8">
         <AlertCircle className="mx-auto h-12 w-12 text-destructive mb-4" />
         <p className="text-muted-foreground">{error}</p>
@@ -182,7 +193,7 @@ import { AttachmentService } from '@/services/attachmentService';
     );
   }
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className="space-y-4">
@@ -197,14 +208,13 @@ import { AttachmentService } from '@/services/attachmentService';
             id="attachment-upload"
             disabled={isUploading}
           />
-          <label
-            htmlFor="attachment-upload"
-            className="cursor-pointer block"
-          >
+          <label htmlFor="attachment-upload" className="cursor-pointer block">
             {isUploading ? (
               <div className="flex flex-col items-center">
                 <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-2" />
-                <p className="text-sm text-muted-foreground">Enviando arquivos...</p>
+                <p className="text-sm text-muted-foreground">
+                  Enviando arquivos...
+                </p>
               </div>
             ) : (
               <div className="flex flex-col items-center">
@@ -227,8 +237,8 @@ import { AttachmentService } from '@/services/attachmentService';
           <File className="mx-auto h-12 w-12 mb-4 opacity-50" />
           <p className="text-sm">
             {readOnly
-              ? 'Nenhum anexo foi adicionado a esta reunião.'
-              : 'Nenhum anexo foi adicionado ainda.'}
+              ? "Nenhum anexo foi adicionado a esta reunião."
+              : "Nenhum anexo foi adicionado ainda."}
           </p>
           {!readOnly && (
             <p className="text-xs mt-1">
@@ -239,7 +249,10 @@ import { AttachmentService } from '@/services/attachmentService';
       ) : (
         <div className="space-y-2">
           {attachments.map((attachment) => (
-            <Card key={attachment.id} className="hover:shadow-md transition-shadow">
+            <Card
+              key={attachment.id}
+              className="hover:shadow-md transition-shadow"
+            >
               <CardContent className="p-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -252,7 +265,10 @@ import { AttachmentService } from '@/services/attachmentService';
                         {formatFileSize(attachment.size)}
                         {attachment.uploaded_at && (
                           <span className="ml-2">
-                            • {new Date(attachment.uploaded_at).toLocaleDateString()}
+                            •{" "}
+                            {new Date(
+                              attachment.uploaded_at
+                            ).toLocaleDateString()}
                           </span>
                         )}
                       </p>

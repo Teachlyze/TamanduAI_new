@@ -1,12 +1,18 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Activity, Zap, AlertTriangle, CheckCircle, TrendingUp } from 'lucide-react';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import {
+  Activity,
+  Zap,
+  AlertTriangle,
+  CheckCircle,
+  TrendingUp,
+} from "lucide-react";
 
 /**
  * Performance Monitor Component
  * Monitors and displays real-time performance metrics
  */
 export const [loading, setLoading] = useState(true);
-  const PerformanceMonitor = ({ enabled = false, position = 'bottom-right' }) => {
+const PerformanceMonitor = ({ enabled = false, position = "bottom-right" }) => {
   const [metrics, setMetrics] = useState({
     fps: 0,
     memoryUsage: 0,
@@ -34,7 +40,7 @@ export const [loading, setLoading] = useState(true);
         frameCount = 0;
         lastTime = currentTime;
 
-        setMetrics(prev => ({ ...prev, fps }));
+        setMetrics((prev) => ({ ...prev, fps }));
       }
 
       requestAnimationFrame(measureFPS);
@@ -46,8 +52,10 @@ export const [loading, setLoading] = useState(true);
     // Monitor memory usage (if available)
     const updateMemoryUsage = () => {
       if (performance.memory) {
-        const memoryMB = Math.round(performance.memory.usedJSHeapSize / 1048576);
-        setMetrics(prev => ({ ...prev, memoryUsage: memoryMB }));
+        const memoryMB = Math.round(
+          performance.memory.usedJSHeapSize / 1048576
+        );
+        setMetrics((prev) => ({ ...prev, memoryUsage: memoryMB }));
       }
     };
 
@@ -56,22 +64,23 @@ export const [loading, setLoading] = useState(true);
     const originalFetch = window.fetch;
     window.fetch = (...args) => {
       requestCount++;
-      setMetrics(prev => ({ ...prev, networkRequests: requestCount }));
+      setMetrics((prev) => ({ ...prev, networkRequests: requestCount }));
       return originalFetch(...args);
     };
 
     // Monitor page load time
     if (performance.timing) {
-      const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
-      setMetrics(prev => ({ ...prev, loadTime }));
+      const loadTime =
+        performance.timing.loadEventEnd - performance.timing.navigationStart;
+      setMetrics((prev) => ({ ...prev, loadTime }));
     }
 
     // Update memory usage periodically
     const memoryInterval = setInterval(updateMemoryUsage, 5000);
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
+    return () => {
       cancelAnimationFrame(fpsInterval);
       clearInterval(memoryInterval);
       window.fetch = originalFetch;
@@ -81,18 +90,18 @@ export const [loading, setLoading] = useState(true);
   // Position styles
   const positionStyles = useMemo(() => {
     const positions = {
-      'top-left': 'top-4 left-4',
-      'top-right': 'top-4 right-4',
-      'bottom-left': 'bottom-4 left-4',
-      'bottom-right': 'bottom-4 right-4',
+      "top-left": "top-4 left-4",
+      "top-right": "top-4 right-4",
+      "bottom-left": "bottom-4 left-4",
+      "bottom-right": "bottom-4 right-4",
     };
-    return positions[position] || positions['bottom-right'];
+    return positions[position] || positions["bottom-right"];
   }, [position]);
 
   if (!enabled || !isVisible) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
+    return (
       <button
         onClick={() => setIsVisible(true)}
         className={`fixed ${positionStyles} z-50 p-2 bg-primary text-primary-foreground rounded-full shadow-lg hover:bg-primary/90 transition-colors`}
@@ -104,9 +113,9 @@ export const [loading, setLoading] = useState(true);
   }
 
   const getPerformanceColor = (value, thresholds) => {
-    if (value >= thresholds.high) return 'text-red-500';
-    if (value >= thresholds.medium) return 'text-yellow-500';
-    return 'text-green-500';
+    if (value >= thresholds.high) return "text-red-500";
+    if (value >= thresholds.medium) return "text-yellow-500";
+    return "text-green-500";
   };
 
   const getPerformanceIcon = (value, thresholds) => {
@@ -115,10 +124,12 @@ export const [loading, setLoading] = useState(true);
     return <CheckCircle className="w-4 h-4" />;
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
-    <div className={`fixed ${positionStyles} z-50 bg-background border border-border rounded-lg shadow-lg p-4 min-w-48`}>
+    <div
+      className={`fixed ${positionStyles} z-50 bg-background border border-border rounded-lg shadow-lg p-4 min-w-48`}
+    >
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-foreground">Performance</h3>
         <button
@@ -134,7 +145,12 @@ export const [loading, setLoading] = useState(true);
           <span className="text-muted-foreground">FPS</span>
           <div className="flex items-center gap-1">
             {getPerformanceIcon(metrics.fps, { medium: 30, high: 15 })}
-            <span className={getPerformanceColor(metrics.fps, { medium: 30, high: 15 })}>
+            <span
+              className={getPerformanceColor(metrics.fps, {
+                medium: 30,
+                high: 15,
+              })}
+            >
               {metrics.fps}
             </span>
           </div>
@@ -144,7 +160,12 @@ export const [loading, setLoading] = useState(true);
           <span className="text-muted-foreground">Memória</span>
           <div className="flex items-center gap-1">
             {getPerformanceIcon(metrics.memoryUsage, { medium: 50, high: 100 })}
-            <span className={getPerformanceColor(metrics.memoryUsage, { medium: 50, high: 100 })}>
+            <span
+              className={getPerformanceColor(metrics.memoryUsage, {
+                medium: 50,
+                high: 100,
+              })}
+            >
               {metrics.memoryUsage}MB
             </span>
           </div>
@@ -152,9 +173,7 @@ export const [loading, setLoading] = useState(true);
 
         <div className="flex items-center justify-between">
           <span className="text-muted-foreground">Load Time</span>
-          <span className="text-muted-foreground">
-            {metrics.loadTime}ms
-          </span>
+          <span className="text-muted-foreground">{metrics.loadTime}ms</span>
         </div>
 
         <div className="flex items-center justify-between">
@@ -181,14 +200,14 @@ export const useWebVitals = (enabled = false) => {
   });
 
   useEffect(() => {
-    if (!enabled || typeof window === 'undefined') return;
+    if (!enabled || typeof window === "undefined") return;
 
     // Web Vitals monitoring would be implemented here
     // This is a placeholder for actual web-vitals integration
     const observer = new PerformanceObserver((list) => {
       list.getEntries().forEach((entry) => {
-        if (entry.entryType === 'measure') {
-          setVitals(prev => ({
+        if (entry.entryType === "measure") {
+          setVitals((prev) => ({
             ...prev,
             [entry.name.toLowerCase()]: entry.duration || entry.startTime,
           }));
@@ -197,14 +216,14 @@ export const useWebVitals = (enabled = false) => {
     });
 
     try {
-      observer.observe({ entryTypes: ['measure', 'navigation'] });
+      observer.observe({ entryTypes: ["measure", "navigation"] });
     } catch (error) {
-      console.warn('Performance Observer not supported:', error);
+      console.warn("Performance Observer not supported:", error);
     }
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
+    return () => {
       observer.disconnect();
     };
   }, [enabled]);
@@ -224,13 +243,13 @@ export const useNetworkStatus = () => {
 
   useEffect(() => {
     const updateOnlineStatus = () => {
-      setStatus(prev => ({ ...prev, online: navigator.onLine }));
+      setStatus((prev) => ({ ...prev, online: navigator.onLine }));
     };
 
     const updateConnectionStatus = () => {
-      if ('connection' in navigator) {
+      if ("connection" in navigator) {
         const connection = navigator.connection;
-        setStatus(prev => ({
+        setStatus((prev) => ({
           ...prev,
           connection: {
             effectiveType: connection.effectiveType,
@@ -241,22 +260,25 @@ export const useNetworkStatus = () => {
       }
     };
 
-    window.addEventListener('online', updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);
+    window.addEventListener("online", updateOnlineStatus);
+    window.addEventListener("offline", updateOnlineStatus);
 
-    if ('connection' in navigator) {
-      navigator.connection.addEventListener('change', updateConnectionStatus);
+    if ("connection" in navigator) {
+      navigator.connection.addEventListener("change", updateConnectionStatus);
       updateConnectionStatus();
     }
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
-      window.removeEventListener('online', updateOnlineStatus);
-      window.removeEventListener('offline', updateOnlineStatus);
+    return () => {
+      window.removeEventListener("online", updateOnlineStatus);
+      window.removeEventListener("offline", updateOnlineStatus);
 
-      if ('connection' in navigator) {
-        navigator.connection.removeEventListener('change', updateConnectionStatus);
+      if ("connection" in navigator) {
+        navigator.connection.removeEventListener(
+          "change",
+          updateConnectionStatus
+        );
       }
     };
   }, []);

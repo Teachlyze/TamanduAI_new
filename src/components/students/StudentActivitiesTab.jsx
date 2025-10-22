@@ -1,98 +1,116 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 // UI Components
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 // Icons
-import { 
-  CheckCircle2, 
-  Clock, 
-  XCircle, 
-  FileText, 
+import {
+  CheckCircle2,
+  Clock,
+  XCircle,
+  FileText,
   BookOpenCheck,
   Search,
   Filter,
-  Download
-} from 'lucide-react';
+  Download,
+} from "lucide-react";
 
-  const formatDate = (dateString) => {
-  if (!dateString) return '';
+const formatDate = (dateString) => {
+  if (!dateString) return "";
   return format(new Date(dateString), "dd/MM/yyyy", { locale: ptBR });
 };
 
 const statusOptions = [
-  { value: 'all', label: 'Todas' },
-  { value: 'completed', label: 'Concluídas' },
-  { value: 'pending', label: 'Pendentes' },
-  { value: 'late', label: 'Atrasadas' },
+  { value: "all", label: "Todas" },
+  { value: "completed", label: "Concluídas" },
+  { value: "pending", label: "Pendentes" },
+  { value: "late", label: "Atrasadas" },
 ];
 
-export const StudentActivitiesTab = ({ 
-  activities, 
+export const StudentActivitiesTab = ({
+  activities,
   isLoadingActivities,
-  subjects = []
+  subjects = [],
 }) => {
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [subjectFilter, setSubjectFilter] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [subjectFilter, setSubjectFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+
   // Get unique subjects from activities
   const uniqueSubjects = [
-    { id: 'all', name: 'Todas as matérias' },
-    ...Array.from(new Set(activities.map(a => a.subject?.name)))
+    { id: "all", name: "Todas as matérias" },
+    ...Array.from(new Set(activities.map((a) => a.subject?.name)))
       .filter(Boolean)
-      .map((name, index) => ({ id: `subject-${index}`, name }))
+      .map((name, index) => ({ id: `subject-${index}`, name })),
   ];
 
   // Filter activities based on filters
-  const filteredActivities = activities.filter(activity => {
-    const matchesStatus = statusFilter === 'all' || 
-      (statusFilter === 'completed' && activity.status === 'completed') ||
-      (statusFilter === 'pending' && activity.status === 'pending') ||
-      (statusFilter === 'late' && activity.status === 'late');
-    
-    const matchesSubject = subjectFilter === 'all' || 
-      activity.subject?.name === subjectFilter;
-    
-    const matchesSearch = activity.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  const filteredActivities = activities.filter((activity) => {
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "completed" && activity.status === "completed") ||
+      (statusFilter === "pending" && activity.status === "pending") ||
+      (statusFilter === "late" && activity.status === "late");
+
+    const matchesSubject =
+      subjectFilter === "all" || activity.subject?.name === subjectFilter;
+
+    const matchesSearch =
+      activity.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       activity.description.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
     return matchesStatus && matchesSubject && matchesSearch;
   });
 
   // Get status badge
   const getStatusBadge = (status) => {
     switch (status) {
-      case 'completed':
-        if (loading) return <LoadingScreen />;
+      case "completed":
+        /* if (loading) return <LoadingScreen />; */
 
-  return (
+        return (
           <Badge variant="success" className="gap-1">
             <CheckCircle2 className="h-3 w-3" />
             Concluída
           </Badge>
         );
-      case 'late':
-        if (loading) return <LoadingScreen />;
+      case "late":
+        /* if (loading) return <LoadingScreen />; */
 
-  return (
+        return (
           <Badge variant="destructive" className="gap-1">
             <XCircle className="h-3 w-3" />
             Atrasada
           </Badge>
         );
       default:
-        if (loading) return <LoadingScreen />;
+        /* if (loading) return <LoadingScreen />; */
 
-  return (
-          <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border gap-1">
+        return (
+          <Badge
+            variant="outline"
+            className="bg-white dark:bg-slate-900 text-foreground border-border gap-1"
+          >
             <Clock className="h-3 w-3" />
             Pendente
           </Badge>
@@ -100,7 +118,7 @@ export const StudentActivitiesTab = ({
     }
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <Card>
@@ -113,7 +131,11 @@ export const StudentActivitiesTab = ({
             </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="bg-white dark:bg-slate-900 text-foreground border-border gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-white dark:bg-slate-900 text-foreground border-border gap-2"
+            >
               <Download className="h-4 w-4" />
               Exportar
             </Button>
@@ -133,7 +155,7 @@ export const StudentActivitiesTab = ({
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          
+
           <div className="flex gap-2">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[150px]">
@@ -148,7 +170,7 @@ export const StudentActivitiesTab = ({
                 ))}
               </SelectContent>
             </Select>
-            
+
             <Select value={subjectFilter} onValueChange={setSubjectFilter}>
               <SelectTrigger className="w-[180px]">
                 <BookOpenCheck className="h-4 w-4 mr-2 opacity-50" />
@@ -164,7 +186,7 @@ export const StudentActivitiesTab = ({
             </Select>
           </div>
         </div>
-        
+
         {/* Activities Table */}
         {isLoadingActivities ? (
           <div className="space-y-4">
@@ -198,13 +220,15 @@ export const StudentActivitiesTab = ({
                   <TableRow key={activity.id}>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-md ${
-                          activity.status === 'completed' 
-                            ? 'bg-green-100 text-green-600 dark:bg-green-900/30' 
-                            : activity.status === 'late' 
-                              ? 'bg-red-100 text-red-600 dark:bg-red-900/30' 
-                              : 'bg-blue-100 text-blue-600 dark:bg-gray-100 dark:bg-gray-800'
-                        }`}>
+                        <div
+                          className={`p-2 rounded-md ${
+                            activity.status === "completed"
+                              ? "bg-green-100 text-green-600 dark:bg-green-900/30"
+                              : activity.status === "late"
+                                ? "bg-red-100 text-red-600 dark:bg-red-900/30"
+                                : "bg-blue-100 text-blue-600 dark:bg-gray-100 dark:bg-gray-800"
+                          }`}
+                        >
                           <FileText className="h-4 w-4" />
                         </div>
                         <div>
@@ -217,16 +241,16 @@ export const StudentActivitiesTab = ({
                     </TableCell>
                     <TableCell>
                       {activity.subject?.name && (
-                        <Badge variant="outline">
-                          {activity.subject.name}
-                        </Badge>
+                        <Badge variant="outline">{activity.subject.name}</Badge>
                       )}
                     </TableCell>
                     <TableCell>{formatDate(activity.dueDate)}</TableCell>
                     <TableCell>{getStatusBadge(activity.status)}</TableCell>
                     <TableCell className="text-right">
                       {activity.grade ? (
-                        <span className="font-medium">{activity.grade.toFixed(1)}</span>
+                        <span className="font-medium">
+                          {activity.grade.toFixed(1)}
+                        </span>
                       ) : (
                         <span className="text-muted-foreground">-</span>
                       )}
@@ -244,7 +268,9 @@ export const StudentActivitiesTab = ({
         ) : (
           <div className="text-center py-12">
             <BookOpenCheck className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
-            <h3 className="text-lg font-medium">Nenhuma atividade encontrada</h3>
+            <h3 className="text-lg font-medium">
+              Nenhuma atividade encontrada
+            </h3>
             <p className="text-sm text-muted-foreground mt-1">
               Nenhuma atividade corresponde aos filtros selecionados.
             </p>
@@ -256,4 +282,3 @@ export const StudentActivitiesTab = ({
 };
 
 export default StudentActivitiesTab;
-

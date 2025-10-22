@@ -55,7 +55,7 @@ export const [loading, setLoading] = useState(true);
     }
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <input
@@ -121,7 +121,7 @@ export const SecureTextarea = React.forwardRef(({
     }
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <textarea
@@ -162,7 +162,7 @@ export const SecureContent = ({
     return <SafeHtml html={safeContent} className={className} {...props} />;
   }
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={className} {...props}>
@@ -203,7 +203,7 @@ export const SecureFormField = ({
 
   const InputComponent = type === 'textarea' ? SecureTextarea : SecureInput;
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`space-y-2 ${className}`}>

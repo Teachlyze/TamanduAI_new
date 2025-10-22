@@ -1,7 +1,7 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { motion, AnimatePresence } from 'framer-motion';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { motion, AnimatePresence } from "framer-motion";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Home,
   BookOpen,
@@ -23,28 +23,32 @@ import {
   Moon,
   Sun,
   Clock,
-  ChevronDown
-} from 'lucide-react';
-import { PremiumButton } from '@/components/ui/PremiumButton';
-import { Badge } from '@/components/ui/badge';
-import { supabase } from '@/lib/supabaseClient';
+  ChevronDown,
+} from "lucide-react";
+import { PremiumButton } from "@/components/ui/PremiumButton";
+import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/lib/supabaseClient";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
-  const StudentSidebar = ({ collapsed, setCollapsed }) => {
+const StudentSidebar = ({ collapsed, setCollapsed }) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [gamification, setGamification] = useState({ xp: 0, level: 1, streak: 0 });
+  const [gamification, setGamification] = useState({
+    xp: 0,
+    level: 1,
+    streak: 0,
+  });
   const [notifications, setNotifications] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return document.documentElement.classList.contains('dark');
+    if (typeof window !== "undefined") {
+      return document.documentElement.classList.contains("dark");
     }
     return false;
   });
@@ -61,145 +65,147 @@ import {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 60000); // Update every minute
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => clearInterval(timer);
+    return () => clearInterval(timer);
   }, []);
 
   const toggleTheme = () => {
     const newMode = !isDarkMode;
     setIsDarkMode(newMode);
     if (newMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
     } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
     }
   };
 
   const formatDateTime = (date) => {
-    return new Intl.DateTimeFormat('pt-BR', {
-      hour: '2-digit',
-      minute: '2-digit',
-      day: '2-digit',
-      month: '2-digit'
-    }).format(date).replace(',', ' •');
+    return new Intl.DateTimeFormat("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      day: "2-digit",
+      month: "2-digit",
+    })
+      .format(date)
+      .replace(",", " •");
   };
 
   const loadGamificationData = async () => {
     try {
       const { data } = await supabase
-        .from('gamification_profiles')
-        .select('xp_total, level, current_streak')
-        .eq('user_id', user.id)
+        .from("gamification_profiles")
+        .select("xp_total, level, current_streak")
+        .eq("user_id", user.id)
         .single();
 
       if (data) {
         setGamification({
           xp: data.xp_total || 0,
           level: data.level || 1,
-          streak: data.current_streak || 0
+          streak: data.current_streak || 0,
         });
       }
     } catch (error) {
-      console.error('Erro ao carregar gamificação:', error);
+      console.error("Erro ao carregar gamificação:", error);
     }
   };
 
   const loadNotifications = async () => {
     try {
       const { count } = await supabase
-        .from('notifications')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('is_read', false);
-      
+        .from("notifications")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .eq("is_read", false);
+
       setNotifications(count || 0);
     } catch (error) {
-      console.error('Erro ao carregar notificações:', error);
+      console.error("Erro ao carregar notificações:", error);
     }
   };
 
   const navItems = [
     {
-      label: 'Dashboard',
+      label: "Dashboard",
       icon: Home,
-      path: '/students',
-      tourId: 'nav-student-dashboard',
-      gradient: 'from-blue-500 to-cyan-500'
+      path: "/students",
+      tourId: "nav-student-dashboard",
+      gradient: "from-blue-500 to-cyan-500",
     },
     {
-      label: 'Minhas Turmas',
+      label: "Minhas Turmas",
       icon: Users,
-      path: '/students/classes',
-      tourId: 'nav-student-classes',
-      gradient: 'from-teal-500 to-emerald-500'
+      path: "/students/classes",
+      tourId: "nav-student-classes",
+      gradient: "from-teal-500 to-emerald-500",
     },
     {
-      label: 'Minhas Atividades',
+      label: "Minhas Atividades",
       icon: FileText,
-      path: '/students/activities',
-      tourId: 'nav-student-activities',
-      gradient: 'from-purple-500 to-pink-500'
+      path: "/students/activities",
+      tourId: "nav-student-activities",
+      gradient: "from-purple-500 to-pink-500",
     },
     {
-      label: 'Gamificação',
+      label: "Gamificação",
       icon: Trophy,
-      path: '/students/gamification',
-      tourId: 'nav-student-gamification',
-      gradient: 'from-yellow-500 to-orange-500',
-      badge: gamification.level
+      path: "/students/gamification",
+      tourId: "nav-student-gamification",
+      gradient: "from-yellow-500 to-orange-500",
+      badge: gamification.level,
     },
     {
-      label: 'Meu Desempenho',
+      label: "Meu Desempenho",
       icon: BarChart3,
-      path: '/students/performance',
-      tourId: 'nav-student-performance',
-      gradient: 'from-rose-500 to-pink-500'
+      path: "/students/performance",
+      tourId: "nav-student-performance",
+      gradient: "from-rose-500 to-pink-500",
     },
     {
-      label: 'Agenda',
+      label: "Agenda",
       icon: Calendar,
-      path: '/students/calendar',
-      tourId: 'nav-student-calendar',
-      gradient: 'from-green-500 to-emerald-500'
+      path: "/students/calendar",
+      tourId: "nav-student-calendar",
+      gradient: "from-green-500 to-emerald-500",
     },
     {
-      label: 'Ranking',
+      label: "Ranking",
       icon: BarChart3,
-      path: '/students/ranking',
-      tourId: 'nav-student-ranking',
-      gradient: 'from-amber-500 to-yellow-500'
+      path: "/students/ranking",
+      tourId: "nav-student-ranking",
+      gradient: "from-amber-500 to-yellow-500",
     },
     {
-      label: 'Missões',
+      label: "Missões",
       icon: Target,
-      path: '/students/missions',
-      tourId: 'nav-student-missions',
-      gradient: 'from-orange-500 to-red-500'
+      path: "/students/missions",
+      tourId: "nav-student-missions",
+      gradient: "from-orange-500 to-red-500",
     },
     {
-      label: 'Histórico',
+      label: "Histórico",
       icon: FileText,
-      path: '/students/history',
-      tourId: 'nav-student-history',
-      gradient: 'from-slate-500 to-gray-600'
-    }
+      path: "/students/history",
+      tourId: "nav-student-history",
+      gradient: "from-slate-500 to-gray-600",
+    },
   ];
 
   const handleLogout = async () => {
     await signOut();
-    navigate('/login');
+    navigate("/login");
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <motion.aside
       initial={{ x: -300 }}
       animate={{ x: 0, width: collapsed ? 80 : 280 }}
-      transition={{ type: 'spring', damping: 20 }}
+      transition={{ type: "spring", damping: 20 }}
       className="fixed left-0 top-0 h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-blue-900/30 dark:via-purple-900/30 dark:to-pink-900/30 border-r border-blue-200/50 dark:border-blue-700/50 backdrop-blur-xl z-40 shadow-2xl"
     >
       <div className="flex flex-col h-full p-4">
@@ -233,7 +239,11 @@ import {
               onClick={() => setCollapsed(!collapsed)}
               className="p-2 rounded-lg hover:bg-muted transition-colors"
             >
-              {collapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+              {collapsed ? (
+                <ChevronRight className="w-5 h-5" />
+              ) : (
+                <ChevronLeft className="w-5 h-5" />
+              )}
             </motion.button>
           </div>
 
@@ -256,17 +266,19 @@ import {
                       <User className="w-3 h-3 text-white" />
                     </div>
                     <span className="text-xs truncate max-w-[80px]">
-                      {user?.user_metadata?.name?.split(' ')[0] || 'Perfil'}
+                      {user?.user_metadata?.name?.split(" ")[0] || "Perfil"}
                     </span>
                     <ChevronDown className="w-3 h-3" />
                   </motion.button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-48">
-                  <DropdownMenuItem onClick={() => navigate('/profile/edit')}>
+                  <DropdownMenuItem onClick={() => navigate("/profile/edit")}>
                     <User className="w-4 h-4 mr-2" />
                     Editar Perfil
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/students/settings')}>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/students/settings")}
+                  >
                     <Settings className="w-4 h-4 mr-2" />
                     Configurações
                   </DropdownMenuItem>
@@ -286,16 +298,20 @@ import {
                   whileTap={{ scale: 0.9 }}
                   onClick={toggleTheme}
                   className="p-1.5 rounded-lg hover:bg-muted transition-colors"
-                  title={isDarkMode ? 'Modo claro' : 'Modo escuro'}
+                  title={isDarkMode ? "Modo claro" : "Modo escuro"}
                 >
-                  {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                  {isDarkMode ? (
+                    <Sun className="w-4 h-4" />
+                  ) : (
+                    <Moon className="w-4 h-4" />
+                  )}
                 </motion.button>
 
                 {/* Notifications */}
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  onClick={() => navigate('/students/notifications')}
+                  onClick={() => navigate("/students/notifications")}
                   className="p-1.5 rounded-lg hover:bg-muted transition-colors relative"
                   title="Notificações"
                 >
@@ -306,7 +322,7 @@ import {
                       animate={{ scale: 1 }}
                       className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold"
                     >
-                      {notifications > 9 ? '9+' : notifications}
+                      {notifications > 9 ? "9+" : notifications}
                     </motion.div>
                   )}
                 </motion.button>
@@ -337,10 +353,14 @@ import {
           >
             {/* Background Pattern */}
             <div className="absolute inset-0 opacity-10">
-              <div className="absolute inset-0" style={{
-                backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
-                backgroundSize: '24px 24px'
-              }} />
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(circle at 2px 2px, white 1px, transparent 0)",
+                  backgroundSize: "24px 24px",
+                }}
+              />
             </div>
 
             <div className="relative z-10">
@@ -364,9 +384,11 @@ import {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-sm truncate">
-                    {user?.user_metadata?.name?.split(' ')[0] || 'Estudante'}
+                    {user?.user_metadata?.name?.split(" ")[0] || "Estudante"}
                   </p>
-                  <p className="text-xs text-white/80 truncate">{user?.email}</p>
+                  <p className="text-xs text-white/80 truncate">
+                    {user?.email}
+                  </p>
                 </div>
               </div>
 
@@ -382,8 +404,8 @@ import {
                 <div className="w-full bg-white/20 rounded-full h-2 overflow-hidden relative">
                   <motion.div
                     initial={{ width: 0 }}
-                    animate={{ width: `${(gamification.xp % 100)}%` }}
-                    transition={{ duration: 1, type: 'spring' }}
+                    animate={{ width: `${gamification.xp % 100}%` }}
+                    transition={{ duration: 1, type: "spring" }}
                     className="h-full bg-gradient-to-r from-yellow-300 via-yellow-200 to-white rounded-full shadow-lg text-white hover:opacity-90"
                   />
                 </div>
@@ -391,28 +413,34 @@ import {
                   {100 - (gamification.xp % 100)} XP para próximo nível
                 </p>
               </div>
-              
+
               {/* Quick Stats */}
               <div className="grid grid-cols-3 gap-2 mt-3">
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.05 }}
                   className="text-center p-1.5 rounded-lg bg-white/10 backdrop-blur-sm"
                 >
-                  <div className="text-sm font-bold text-yellow-300">{gamification.badges || 0}</div>
+                  <div className="text-sm font-bold text-yellow-300">
+                    {gamification.badges || 0}
+                  </div>
                   <div className="text-xs text-white/80">Badges</div>
                 </motion.div>
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.05 }}
                   className="text-center p-1.5 rounded-lg bg-white/10 backdrop-blur-sm"
                 >
-                  <div className="text-sm font-bold text-green-300">{gamification.completed || 0}</div>
+                  <div className="text-sm font-bold text-green-300">
+                    {gamification.completed || 0}
+                  </div>
                   <div className="text-xs text-white/80">Concluídas</div>
                 </motion.div>
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.05 }}
                   className="text-center p-1.5 rounded-lg bg-white/10 backdrop-blur-sm"
                 >
-                  <div className="text-sm font-bold text-blue-300">{gamification.rank || '-'}</div>
+                  <div className="text-sm font-bold text-blue-300">
+                    {gamification.rank || "-"}
+                  </div>
                   <div className="text-xs text-white/80">Ranking</div>
                 </motion.div>
               </div>
@@ -424,21 +452,23 @@ import {
         <nav className="flex-1 space-y-0.5 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-blue-300 dark:scrollbar-thumb-blue-700 scrollbar-track-transparent">
           {navItems.map((item, index) => {
             const Icon = item.icon;
-            if (loading) return <LoadingScreen />;
+            /* if (loading) return <LoadingScreen />; */
 
-  return (
+            return (
               <NavLink
                 key={item.path}
                 to={item.path}
-                end={item.path === '/students'}
+                end={item.path === "/students"}
                 data-tour-id={item.tourId || undefined}
                 className={({ isActive }) =>
                   `group flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 ${
-                    collapsed ? 'justify-center' : ''
+                    collapsed ? "justify-center" : ""
                   } ${
                     isActive
-                      ? 'bg-gradient-to-r ' + item.gradient + ' text-white shadow-lg scale-105'
-                      : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-muted-foreground hover:text-foreground'
+                      ? "bg-gradient-to-r " +
+                        item.gradient +
+                        " text-white shadow-lg scale-105"
+                      : "hover:bg-slate-100 dark:hover:bg-slate-800 text-muted-foreground hover:text-foreground"
                   }`
                 }
               >
@@ -448,7 +478,7 @@ import {
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       whileTap={{ scale: 0.95 }}
                       className={`p-2 rounded-lg ${
-                        isActive ? 'bg-white/20' : 'bg-muted'
+                        isActive ? "bg-white/20" : "bg-muted"
                       }`}
                     >
                       <Icon className="w-5 h-5" />
@@ -463,9 +493,13 @@ import {
                         >
                           <span className="font-medium">{item.label}</span>
                           {item.badge && (
-                            <Badge className={`${
-                              isActive ? 'bg-white/20 text-white' : 'bg-primary/10 text-primary'
-                            } text-xs`}>
+                            <Badge
+                              className={`${
+                                isActive
+                                  ? "bg-white/20 text-white"
+                                  : "bg-primary/10 text-primary"
+                              } text-xs`}
+                            >
                               {item.badge}
                             </Badge>
                           )}
@@ -487,7 +521,7 @@ import {
             whileTap={{ scale: 0.98 }}
             onClick={handleLogout}
             className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-muted-foreground hover:text-red-600 transition-all ${
-              collapsed ? 'justify-center' : ''
+              collapsed ? "justify-center" : ""
             }`}
           >
             <div className="p-2 rounded-lg bg-muted">

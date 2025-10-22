@@ -1,29 +1,45 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { Copy, RefreshCw, Trash2, Check, Clock, Users, Link as LinkIcon } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
-import { formatDistanceToNow, format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import useClassInvites from '@/hooks/useClassInvites';
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
+import {
+  Copy,
+  RefreshCw,
+  Trash2,
+  Check,
+  Clock,
+  Users,
+  Link as LinkIcon,
+} from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { formatDistanceToNow, format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import useClassInvites from "@/hooks/useClassInvites";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 
-  const ClassInviteManager = ({ classId, className }) => {
+const ClassInviteManager = ({ classId, className }) => {
   const { toast } = useToast();
   const [expirationDays, setExpirationDays] = useState(7);
   const [maxUses, setMaxUses] = useState(10);
   const [copiedInviteId, setCopiedInviteId] = useState(null);
-  const [role, setRole] = useState('student');
-  
-  const { 
-    invites, 
-    isLoading, 
-    createInvite, 
-    revokeInvite,
-    fetchInvites 
-  } = useClassInvites(classId);
+  const [role, setRole] = useState("student");
+
+  const { invites, isLoading, createInvite, revokeInvite, fetchInvites } =
+    useClassInvites(classId);
 
   useEffect(() => {
     if (classId) {
@@ -39,7 +55,7 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
         role,
       });
     } catch (error) {
-      console.error('Error creating invite:', error);
+      console.error("Error creating invite:", error);
     }
   };
 
@@ -48,59 +64,69 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
     navigator.clipboard.writeText(inviteLink);
     setCopiedInviteId(invitationCode);
     setTimeout(() => setCopiedInviteId(null), 2000);
-    
+
     toast({
-      title: 'Link copiado!',
-      description: 'O link de convite foi copiado para a área de transferência.',
+      title: "Link copiado!",
+      description:
+        "O link de convite foi copiado para a área de transferência.",
     });
   };
 
   const handleCopyInviteCode = (invitationCode) => {
     navigator.clipboard.writeText(invitationCode);
     toast({
-      title: 'Código copiado!',
-      description: 'O código de convite foi copiado para a área de transferência.',
+      title: "Código copiado!",
+      description:
+        "O código de convite foi copiado para a área de transferência.",
     });
   };
 
   const handleRevokeInvite = async (inviteId) => {
-    if (window.confirm('Tem certeza que deseja revogar este convite? Esta ação não pode ser desfeita.')) {
+    if (
+      window.confirm(
+        "Tem certeza que deseja revogar este convite? Esta ação não pode ser desfeita."
+      )
+    ) {
       await revokeInvite(inviteId);
     }
   };
 
   const formatExpiration = (dateString) => {
-    if (!dateString) return 'Não expira';
-    
+    if (!dateString) return "Não expira";
+
     const date = new Date(dateString);
     const now = new Date();
-    
+
     if (date < now) {
-      return 'Expirado';
+      return "Expirado";
     }
-    
-    return `Expira em ${format(date, 'dd/MM/yyyy HH:mm')} (${formatDistanceToNow(date, { 
-      addSuffix: true,
-      locale: ptBR 
-    })})`;
+
+    return `Expira em ${format(date, "dd/MM/yyyy HH:mm")} (${formatDistanceToNow(
+      date,
+      {
+        addSuffix: true,
+        locale: ptBR,
+      }
+    )})`;
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <Card className={className}>
       <CardHeader>
         <CardTitle>Convites para a turma</CardTitle>
         <CardDescription>
-          Crie links de convite para que alunos possam se juntar a esta turma sem necessidade de aprovação.
+          Crie links de convite para que alunos possam se juntar a esta turma
+          sem necessidade de aprovação.
         </CardDescription>
       </CardHeader>
-      
+
       <CardContent>
         <div className="space-y-6">
           <div className="space-y-4">
             <h3 className="font-medium">Criar novo convite</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="expiration">Dias até expirar</Label>
@@ -113,7 +139,7 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
                   className="max-w-[200px] bg-white dark:bg-slate-900 text-foreground border-border"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="maxUses">Número máximo de usos</Label>
                 <Input
@@ -139,8 +165,8 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
                 </Select>
               </div>
             </div>
-            
-            <Button 
+
+            <Button
               onClick={handleCreateInvite}
               disabled={isLoading}
               className="mt-2 whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-6 py-2.5 bg-white dark:bg-slate-900 text-foreground border-border"
@@ -155,13 +181,13 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
               )}
             </Button>
           </div>
-          
+
           {invites.length > 0 && (
             <div className="space-y-4">
               <h3 className="font-medium">Links ativos</h3>
               <div className="space-y-3">
                 {invites.map((invite) => (
-                  <div 
+                  <div
                     key={invite.id}
                     className="border rounded-lg p-4 space-y-3"
                   >
@@ -169,7 +195,9 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
                       <div className="space-y-2 flex-1 min-w-0">
                         {/* Invitation Code */}
                         <div className="space-y-1">
-                          <Label className="text-xs text-muted-foreground">Código do convite</Label>
+                          <Label className="text-xs text-muted-foreground">
+                            Código do convite
+                          </Label>
                           <div className="flex items-center gap-2">
                             <span className="font-mono text-lg font-bold tracking-wider">
                               {invite.invitation_code}
@@ -177,7 +205,9 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleCopyInviteCode(invite.invitation_code)}
+                              onClick={() =>
+                                handleCopyInviteCode(invite.invitation_code)
+                              }
                               className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-2 py-1"
                             >
                               <Copy className="h-3.5 w-3.5" />
@@ -187,7 +217,9 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
 
                         {/* Invitation Link */}
                         <div className="space-y-1">
-                          <Label className="text-xs text-muted-foreground">Link do convite</Label>
+                          <Label className="text-xs text-muted-foreground">
+                            Link do convite
+                          </Label>
                           <div className="flex items-center gap-2">
                             <LinkIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                             <span className="font-mono text-sm truncate text-muted-foreground">
@@ -195,7 +227,7 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
                             </span>
                           </div>
                         </div>
-                        
+
                         {/* Metadata */}
                         <div className="flex flex-wrap gap-4 text-sm text-muted-foreground pt-2">
                           <div className="flex items-center gap-1">
@@ -204,32 +236,43 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
                           </div>
                           <div className="flex items-center gap-1">
                             <Users className="h-3.5 w-3.5" />
-                            <span>{invite.current_uses || 0} de {invite.max_uses} usos</span>
+                            <span>
+                              {invite.current_uses || 0} de {invite.max_uses}{" "}
+                              usos
+                            </span>
                           </div>
                           {invite.role && (
                             <div className="flex items-center gap-1">
                               <span className="inline-flex items-center px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs">
-                                {invite.role === 'student' ? 'Aluno' : 'Professor'}
+                                {invite.role === "student"
+                                  ? "Aluno"
+                                  : "Professor"}
                               </span>
                             </div>
                           )}
-                          {invite.status && invite.status !== 'active' && (
+                          {invite.status && invite.status !== "active" && (
                             <div className="flex items-center gap-1">
                               <span className="inline-flex items-center px-2 py-0.5 rounded bg-red-50 text-red-700 text-xs">
-                                {invite.status === 'cancelled' ? 'Cancelado' : 
-                                 invite.status === 'expired' ? 'Expirado' : 
-                                 invite.status === 'depleted' ? 'Esgotado' : invite.status}
+                                {invite.status === "cancelled"
+                                  ? "Cancelado"
+                                  : invite.status === "expired"
+                                    ? "Expirado"
+                                    : invite.status === "depleted"
+                                      ? "Esgotado"
+                                      : invite.status}
                               </span>
                             </div>
                           )}
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleCopyInviteLink(invite.invitation_code)}
+                          onClick={() =>
+                            handleCopyInviteLink(invite.invitation_code)
+                          }
                           disabled={copiedInviteId === invite.invitation_code}
                           className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-4 py-2 bg-white dark:bg-slate-900 text-foreground border-border"
                         >
@@ -245,13 +288,13 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
                             </>
                           )}
                         </Button>
-                        
+
                         <Button
                           variant="ghost"
                           size="sm"
                           className="text-destructive hover:text-destructive whitespace-nowrap inline-flex items-center gap-2 min-w-fit px-3 py-2"
                           onClick={() => handleRevokeInvite(invite.id)}
-                          disabled={isLoading || invite.status !== 'active'}
+                          disabled={isLoading || invite.status !== "active"}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

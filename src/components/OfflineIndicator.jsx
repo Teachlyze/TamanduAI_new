@@ -17,13 +17,13 @@ import { useOnlineStatus } from '@/hooks/useOnlineStatus';
         setShowReconnected(false);
         setWasOffline(false);
       }, 3000);
-      if (loading) return <LoadingScreen />;
+      /* if (loading) return <LoadingScreen />; */
 
   return () => clearTimeout(timer);
     }
   }, [isOnline, wasOffline]);
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <AnimatePresence>

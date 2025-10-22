@@ -10,15 +10,37 @@
  * Lista de tags HTML permitidas para sanitização básica
  */
 const ALLOWED_TAGS = new Set([
-  'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-  'ul', 'ol', 'li', 'blockquote', 'code', 'pre', 'a', 'img'
+  "p",
+  "br",
+  "strong",
+  "em",
+  "u",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "ul",
+  "ol",
+  "li",
+  "blockquote",
+  "code",
+  "pre",
+  "a",
+  "img",
 ]);
 
 /**
  * Lista de atributos permitidos
  */
 const ALLOWED_ATTRIBUTES = new Set([
-  'href', 'src', 'alt', 'title', 'class', 'id'
+  "href",
+  "src",
+  "alt",
+  "title",
+  "class",
+  "id",
 ]);
 
 /**
@@ -38,7 +60,7 @@ const DANGEROUS_PATTERNS = [
   /<form[^>]*>.*?<\/form>/gi,
   /<input[^>]*>/gi,
   /<meta[^>]*>/gi,
-  /<link[^>]*>/gi
+  /<link[^>]*>/gi,
 ];
 
 /**
@@ -48,19 +70,19 @@ const DANGEROUS_PATTERNS = [
  * @returns {string} Texto sanitizado
  */
 export const sanitizeText = (input, options = {}) => {
-  if (typeof input !== 'string') {
-    return '';
+  if (typeof input !== "string") {
+    return "";
   }
 
   const {
     allowHtml = false,
     maxLength = 10000,
-    stripAllHtml = false
+    stripAllHtml = false,
   } = options;
 
   // Verificação básica de segurança
   if (!input || input.length === 0) {
-    return '';
+    return "";
   }
 
   // Limitar tamanho para prevenir ataques DoS
@@ -71,13 +93,13 @@ export const sanitizeText = (input, options = {}) => {
   // Se deve remover todo HTML
   if (stripAllHtml) {
     return input
-      .replace(/<[^>]*>/g, '') // Remove todas as tags HTML
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#x27;')
-      .replace(/\//g, '&#x2F;');
+      .replace(/<[^>]*>/g, "") // Remove todas as tags HTML
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#x27;")
+      .replace(/\//g, "&#x2F;");
   }
 
   // Se permitir HTML limitado
@@ -87,12 +109,12 @@ export const sanitizeText = (input, options = {}) => {
 
   // Sanitização básica (sem HTML)
   return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;')
-    .replace(/\//g, '&#x2F;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;")
+    .replace(/\//g, "&#x2F;");
 };
 
 /**
@@ -101,30 +123,30 @@ export const sanitizeText = (input, options = {}) => {
  * @returns {string} HTML sanitizado
  */
 export const sanitizeHtml = (html) => {
-  if (typeof html !== 'string') {
-    return '';
+  if (typeof html !== "string") {
+    return "";
   }
 
   // Primeiro, detectar e remover conteúdo perigoso
   let sanitized = html;
 
-  DANGEROUS_PATTERNS.forEach(pattern => {
-    sanitized = sanitized.replace(pattern, '');
+  DANGEROUS_PATTERNS.forEach((pattern) => {
+    sanitized = sanitized.replace(pattern, "");
   });
 
   // Se não houver HTML restante, retornar texto simples
-  if (!sanitized.includes('<') && !sanitized.includes('>')) {
+  if (!sanitized.includes("<") && !sanitized.includes(">")) {
     return sanitizeText(sanitized, { stripAllHtml: false });
   }
 
   // Parser básico de HTML para sanitização
   return sanitized
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;')
-    .replace(/\//g, '&#x2F;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;")
+    .replace(/\//g, "&#x2F;");
 };
 
 /**
@@ -133,8 +155,8 @@ export const sanitizeHtml = (html) => {
  * @returns {Object} Resultado da validação
  */
 export const validateTextSafety = (input) => {
-  if (typeof input !== 'string') {
-    return { isSafe: false, reason: 'Input deve ser string' };
+  if (typeof input !== "string") {
+    return { isSafe: false, reason: "Input deve ser string" };
   }
 
   const suspiciousPatterns = [
@@ -152,7 +174,7 @@ export const validateTextSafety = (input) => {
     /<input/i,
     /eval\s*\(/i,
     /setTimeout\s*\(/i,
-    /setInterval\s*\(/i
+    /setInterval\s*\(/i,
   ];
 
   for (const pattern of suspiciousPatterns) {
@@ -160,7 +182,7 @@ export const validateTextSafety = (input) => {
       return {
         isSafe: false,
         reason: `Conteúdo potencialmente perigoso detectado: ${pattern.source}`,
-        pattern: pattern.source
+        pattern: pattern.source,
       };
     }
   }
@@ -169,7 +191,7 @@ export const validateTextSafety = (input) => {
   if (input.length > 50000) {
     return {
       isSafe: false,
-      reason: 'Texto muito longo (>50KB)'
+      reason: "Texto muito longo (>50KB)",
     };
   }
 
@@ -182,29 +204,39 @@ export const validateTextSafety = (input) => {
  * @returns {Object} Dados sanitizados
  */
 export const sanitizeFormData = (formData) => {
-  if (!formData || typeof formData !== 'object') {
+  if (!formData || typeof formData !== "object") {
     return {};
   }
 
   const sanitized = {};
 
-  Object.keys(formData).forEach(key => {
+  Object.keys(formData).forEach((key) => {
     const value = formData[key];
 
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       // Sanitizar campos de texto
-      if (key.toLowerCase().includes('description') ||
-          key.toLowerCase().includes('content') ||
-          key.toLowerCase().includes('message') ||
-          key.toLowerCase().includes('comment')) {
-        sanitized[key] = sanitizeText(value, { allowHtml: false, maxLength: 5000 });
+      if (
+        key.toLowerCase().includes("description") ||
+        key.toLowerCase().includes("content") ||
+        key.toLowerCase().includes("message") ||
+        key.toLowerCase().includes("comment")
+      ) {
+        sanitized[key] = sanitizeText(value, {
+          allowHtml: false,
+          maxLength: 5000,
+        });
       } else {
-        sanitized[key] = sanitizeText(value, { stripAllHtml: true, maxLength: 1000 });
+        sanitized[key] = sanitizeText(value, {
+          stripAllHtml: true,
+          maxLength: 1000,
+        });
       }
     } else if (Array.isArray(value)) {
       // Sanitizar arrays
-      sanitized[key] = value.map(item =>
-        typeof item === 'string' ? sanitizeText(item, { stripAllHtml: true }) : item
+      sanitized[key] = value.map((item) =>
+        typeof item === "string"
+          ? sanitizeText(item, { stripAllHtml: true })
+          : item
       );
     } else {
       // Manter outros tipos
@@ -221,19 +253,22 @@ export const sanitizeFormData = (formData) => {
  * @param {Object} options - Opções de sanitização
  * @returns {Array} [value, setValue, isValid]
  */
-export const useSanitizedInput = (initialValue = '', options = {}) => {
-  const [value, setValue] = React.useState(() =>
-    sanitizeText(initialValue, options)
-  );
+export const useSanitizedInput = (initialValue = "", options = {}) => {
+  import { useState, useCallback, useMemo } from "react";
+
+  const [value, setValue] = useState(() => sanitizeText(initialValue, options));
   const [isValid, setIsValid] = React.useState(true);
 
-  const handleChange = React.useCallback((newValue) => {
-    const sanitized = sanitizeText(newValue, options);
-    const validation = validateTextSafety(sanitized);
+  const handleChange = React.useCallback(
+    (newValue) => {
+      const sanitized = sanitizeText(newValue, options);
+      const validation = validateTextSafety(sanitized);
 
-    setValue(sanitized);
-    setIsValid(validation.isSafe);
-  }, [options]);
+      setValue(sanitized);
+      setIsValid(validation.isSafe);
+    },
+    [options]
+  );
 
   return [value, handleChange, isValid];
 };
@@ -243,9 +278,14 @@ export const useSanitizedInput = (initialValue = '', options = {}) => {
  * @param {Object} props - Propriedades do componente
  * @returns {JSX.Element} Elemento renderizado
  */
-export const SafeText = ({ children, as = 'span', className = '', ...props }) => {
+export const SafeText = ({
+  children,
+  as = "span",
+  className = "",
+  ...props
+}) => {
   const sanitizedContent = React.useMemo(() => {
-    if (typeof children === 'string') {
+    if (typeof children === "string") {
       return sanitizeText(children, { stripAllHtml: true });
     }
     return children;
@@ -264,49 +304,49 @@ export const SafeText = ({ children, as = 'span', className = '', ...props }) =>
  * Hook para validação de segurança em formulários
  */
 export const useSecurityValidation = () => {
-  const validateInput = React.useCallback((input, fieldType = 'text') => {
+  const validateInput = React.useCallback((input, fieldType = "text") => {
     const validation = validateTextSafety(input);
 
     if (!validation.isSafe) {
       return {
         isValid: false,
         error: validation.reason,
-        suggestion: 'Conteúdo contém elementos potencialmente perigosos'
+        suggestion: "Conteúdo contém elementos potencialmente perigosos",
       };
     }
 
     // Validações específicas por tipo de campo
     switch (fieldType) {
-      case 'email':
+      case "email":
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(input)) {
           return {
             isValid: false,
-            error: 'Formato de email inválido',
-            suggestion: 'Digite um endereço de email válido'
+            error: "Formato de email inválido",
+            suggestion: "Digite um endereço de email válido",
           };
         }
         break;
 
-      case 'url':
+      case "url":
         try {
           new URL(input);
         } catch {
           return {
             isValid: false,
-            error: 'URL inválida',
-            suggestion: 'Digite uma URL válida (ex: https://exemplo.com)'
+            error: "URL inválida",
+            suggestion: "Digite uma URL válida (ex: https://exemplo.com)",
           };
         }
         break;
 
-      case 'phone':
+      case "phone":
         const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/;
-        if (!phoneRegex.test(input.replace(/\s/g, ''))) {
+        if (!phoneRegex.test(input.replace(/\s/g, ""))) {
           return {
             isValid: false,
-            error: 'Formato de telefone inválido',
-            suggestion: 'Digite um número de telefone válido'
+            error: "Formato de telefone inválido",
+            suggestion: "Digite um número de telefone válido",
           };
         }
         break;
@@ -331,19 +371,19 @@ export const useSecurityValidation = () => {
 export const validateFileSecurity = (file, options = {}) => {
   const {
     maxSize = 10 * 1024 * 1024, // 10MB
-    allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'],
-    checkContent = false
+    allowedTypes = ["image/jpeg", "image/png", "image/gif", "application/pdf"],
+    checkContent = false,
   } = options;
 
   if (!file) {
-    return { isValid: false, error: 'Arquivo não fornecido' };
+    return { isValid: false, error: "Arquivo não fornecido" };
   }
 
   // Verificar tamanho
   if (file.size > maxSize) {
     return {
       isValid: false,
-      error: `Arquivo muito grande. Tamanho máximo: ${Math.round(maxSize / 1024 / 1024)}MB`
+      error: `Arquivo muito grande. Tamanho máximo: ${Math.round(maxSize / 1024 / 1024)}MB`,
     };
   }
 
@@ -351,12 +391,12 @@ export const validateFileSecurity = (file, options = {}) => {
   if (!allowedTypes.includes(file.type)) {
     return {
       isValid: false,
-      error: `Tipo de arquivo não permitido: ${file.type}`
+      error: `Tipo de arquivo não permitido: ${file.type}`,
     };
   }
 
   // Verificação básica de conteúdo (para arquivos de texto)
-  if (checkContent && file.type.startsWith('text/')) {
+  if (checkContent && file.type.startsWith("text/")) {
     return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -365,11 +405,11 @@ export const validateFileSecurity = (file, options = {}) => {
 
         resolve({
           isValid: validation.isSafe,
-          error: validation.isSafe ? null : validation.reason
+          error: validation.isSafe ? null : validation.reason,
         });
       };
       reader.onerror = () => {
-        resolve({ isValid: false, error: 'Erro ao ler arquivo' });
+        resolve({ isValid: false, error: "Erro ao ler arquivo" });
       };
       reader.readAsText(file);
     });
@@ -384,13 +424,13 @@ export const validateFileSecurity = (file, options = {}) => {
  * @returns {string} Nome sanitizado
  */
 export const sanitizeFilename = (filename) => {
-  if (typeof filename !== 'string') {
-    return 'file';
+  if (typeof filename !== "string") {
+    return "file";
   }
 
   return filename
-    .replace(/[<>:"/\\|?*\x00-\x1f]/g, '') // Remove caracteres inválidos para nomes de arquivo
-    .replace(/\.\./g, '') // Remove path traversal
+    .replace(/[<>:"/\\|?*\x00-\x1f]/g, "") // Remove caracteres inválidos para nomes de arquivo
+    .replace(/\.\./g, "") // Remove path traversal
     .substring(0, 255); // Limitar tamanho
 };
 
@@ -400,7 +440,7 @@ export const sanitizeFilename = (filename) => {
  * @param {string} extension - Extensão do arquivo
  * @returns {string} Nome seguro
  */
-export const generateSecureFilename = (originalName, extension = '') => {
+export const generateSecureFilename = (originalName, extension = "") => {
   const sanitized = sanitizeFilename(originalName);
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2, 8);
@@ -433,23 +473,26 @@ export const useXssProtection = () => {
 export const useFormSecurity = () => {
   const { validateInput } = useSecurityValidation();
 
-  const validateForm = React.useCallback((formData) => {
-    const errors = {};
+  const validateForm = React.useCallback(
+    (formData) => {
+      const errors = {};
 
-    Object.keys(formData).forEach(key => {
-      const value = formData[key];
-      const validation = validateInput(value, key);
+      Object.keys(formData).forEach((key) => {
+        const value = formData[key];
+        const validation = validateInput(value, key);
 
-      if (!validation.isValid) {
-        errors[key] = validation.error;
-      }
-    });
+        if (!validation.isValid) {
+          errors[key] = validation.error;
+        }
+      });
 
-    return {
-      isValid: Object.keys(errors).length === 0,
-      errors
-    };
-  }, [validateInput]);
+      return {
+        isValid: Object.keys(errors).length === 0,
+        errors,
+      };
+    },
+    [validateInput]
+  );
 
   return { validateForm, validateInput };
 };
@@ -468,13 +511,13 @@ export const createSafeHtmlConfig = (html, options = {}) => {
   const {
     allowedTags = ALLOWED_TAGS,
     allowedAttributes = ALLOWED_ATTRIBUTES,
-    requireValidation = true
+    requireValidation = true,
   } = options;
 
   if (requireValidation) {
     const validation = validateTextSafety(html);
     if (!validation.isSafe) {
-      console.warn('HTML inseguro bloqueado:', validation.reason);
+      console.warn("HTML inseguro bloqueado:", validation.reason);
       return { __html: sanitizeHtml(html) };
     }
   }
@@ -485,7 +528,7 @@ export const createSafeHtmlConfig = (html, options = {}) => {
 /**
  * Componente para renderização segura de conteúdo rico
  */
-export const SafeHtml = ({ html, className = '', ...props }) => {
+export const SafeHtml = ({ html, className = "", ...props }) => {
   const safeConfig = React.useMemo(() => createSafeHtmlConfig(html), [html]);
 
   return (
@@ -511,5 +554,5 @@ export default {
   useFormSecurity,
   createSafeHtmlConfig,
   SafeText,
-  SafeHtml
+  SafeHtml,
 };

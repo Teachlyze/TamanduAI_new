@@ -1,17 +1,17 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 /**
  * Webcam capture component for taking photos and recording video
  */
 export const [loading, setLoading] = useState(true);
-  const WebcamCapture = ({
+const WebcamCapture = ({
   onCapture,
   onRecord,
-  mode = 'photo', // 'photo' | 'video'
-  className = '',
+  mode = "photo", // 'photo' | 'video'
+  className = "",
   ...props
 }) => {
   const videoRef = useRef(null);
@@ -31,9 +31,9 @@ export const [loading, setLoading] = useState(true);
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           width: { ideal: 1280 },
-          height: { ideal: 720 }
+          height: { ideal: 720 },
         },
-        audio: mode === 'video'
+        audio: mode === "video",
       });
 
       streamRef.current = stream;
@@ -44,15 +44,15 @@ export const [loading, setLoading] = useState(true);
         setIsStreaming(true);
       }
     } catch (err) {
-      console.error('Error accessing camera:', err);
-      setError('Erro ao acessar câmera. Verifique as permissões.');
+      console.error("Error accessing camera:", err);
+      setError("Erro ao acessar câmera. Verifique as permissões.");
     }
   }, [mode]);
 
   // Stop camera stream
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
     }
 
@@ -70,13 +70,13 @@ export const [loading, setLoading] = useState(true);
 
     if (!video || !canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
 
     ctx.drawImage(video, 0, 0);
 
-    const dataURL = canvas.toDataURL('image/png');
+    const dataURL = canvas.toDataURL("image/png");
     onCapture?.(dataURL);
   }, [onCapture]);
 
@@ -92,12 +92,12 @@ export const [loading, setLoading] = useState(true);
 
     mediaRecorder.ondataavailable = (event) => {
       if (event.data.size > 0) {
-        setRecordedChunks(prev => [...prev, event.data]);
+        setRecordedChunks((prev) => [...prev, event.data]);
       }
     };
 
     mediaRecorder.onstop = () => {
-      const blob = new Blob(recordedChunks, { type: 'video/webm' });
+      const blob = new Blob(recordedChunks, { type: "video/webm" });
       const url = URL.createObjectURL(blob);
       onRecord?.(url, blob);
     };
@@ -115,27 +115,30 @@ export const [loading, setLoading] = useState(true);
 
   // Cleanup on unmount
   useEffect(() => {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
+    return () => {
       stopCamera();
     };
   }, [stopCamera]);
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <Card className={`webcam-capture ${className}`} {...props}>
       <CardHeader>
         <CardTitle>
-          {mode === 'photo' ? 'Captura de Foto' : 'Gravação de Vídeo'}
+          {mode === "photo" ? "Captura de Foto" : "Gravação de Vídeo"}
         </CardTitle>
       </CardHeader>
 
       <CardContent>
         <div className="space-y-4">
           {/* Camera view */}
-          <div className="relative border rounded-lg overflow-hidden" style={{ height: '300px' }}>
+          <div
+            className="relative border rounded-lg overflow-hidden"
+            style={{ height: "300px" }}
+          >
             <video
               ref={videoRef}
               className="w-full h-full object-cover"
@@ -171,19 +174,15 @@ export const [loading, setLoading] = useState(true);
           {/* Controls */}
           <div className="flex justify-center gap-2">
             {!isStreaming ? (
-              <Button onClick={startCamera}>
-                📷 Iniciar Câmera
-              </Button>
+              <Button onClick={startCamera}>📷 Iniciar Câmera</Button>
             ) : (
               <>
                 <Button variant="outline" onClick={stopCamera}>
                   ⏹️ Parar Câmera
                 </Button>
 
-                {mode === 'photo' ? (
-                  <Button onClick={capturePhoto}>
-                    📸 Capturar Foto
-                  </Button>
+                {mode === "photo" ? (
+                  <Button onClick={capturePhoto}>📸 Capturar Foto</Button>
                 ) : (
                   <>
                     {!isRecording ? (
@@ -203,10 +202,9 @@ export const [loading, setLoading] = useState(true);
 
           {/* Instructions */}
           <div className="text-sm text-muted-foreground text-center">
-            {mode === 'photo'
+            {mode === "photo"
               ? 'Clique em "Capturar Foto" para tirar uma foto'
-              : 'Clique em "Iniciar Gravação" para começar a gravar vídeo'
-            }
+              : 'Clique em "Iniciar Gravação" para começar a gravar vídeo'}
           </div>
         </div>
       </CardContent>

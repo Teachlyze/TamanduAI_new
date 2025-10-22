@@ -1,22 +1,22 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { cn } from '@/lib/utils';
-import { Button } from './button';
-import { Input } from './input';
-import { Label } from './label';
-import { Textarea } from './textarea';
-import { Select } from './select';
-import { Checkbox } from './checkbox';
-import { AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { cn } from "@/lib/utils";
+import { Button } from "./button";
+import { Input } from "./input";
+import { Label } from "./label";
+import { Textarea } from "./textarea";
+import { Select } from "./select";
+import { Checkbox } from "./checkbox";
+import { AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react";
 
 /**
  * Enhanced Form Field Component
  * Provides consistent styling and validation for form fields
  */
 export const [loading, setLoading] = useState(true);
-  const FormField = ({
+const FormField = ({
   label,
   name,
-  type = 'text',
+  type = "text",
   value,
   onChange,
   onBlur,
@@ -39,19 +39,22 @@ export const [loading, setLoading] = useState(true);
   const errorId = `error-${name}`;
   const helpId = `help-${name}`;
 
-  const isPassword = type === 'password';
-  const inputType = isPassword && showPassword ? 'text' : type;
+  const isPassword = type === "password";
+  const inputType = isPassword && showPassword ? "text" : type;
 
   const hasError = error && touched;
   const isValid = !error && touched && value;
 
   // Handle change with validation
-  const handleChange = useCallback((e) => {
-    const newValue = e.target.value;
-    if (onChange) {
-      onChange(name, newValue);
-    }
-  }, [name, onChange]);
+  const handleChange = useCallback(
+    (e) => {
+      const newValue = e.target.value;
+      if (onChange) {
+        onChange(name, newValue);
+      }
+    },
+    [name, onChange]
+  );
 
   // Handle blur with validation
   const handleBlur = useCallback(() => {
@@ -60,17 +63,17 @@ export const [loading, setLoading] = useState(true);
     }
   }, [name, onBlur]);
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn("space-y-2", className)}>
       {label && (
         <Label
           htmlFor={fieldId}
           className={cn(
-            'text-sm font-semibold',
+            "text-sm font-semibold",
             required && "after:content-['*'] after:text-red-500 after:ml-1",
-            disabled && 'opacity-60'
+            disabled && "opacity-60"
           )}
         >
           {label}
@@ -97,17 +100,16 @@ export const [loading, setLoading] = useState(true);
             disabled={disabled}
             required={required}
             className={cn(
-              Icon && 'pl-10',
-              (isPassword || rightIcon) && 'pr-10',
-              hasError && 'border-red-500 focus:border-red-500 focus:ring-red-500/20',
-              isValid && 'border-green-500 focus:border-green-500 focus:ring-green-500/20',
-              'transition-all duration-200'
+              Icon && "pl-10",
+              (isPassword || rightIcon) && "pr-10",
+              hasError &&
+                "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+              isValid &&
+                "border-green-500 focus:border-green-500 focus:ring-green-500/20",
+              "transition-all duration-200"
             )}
             aria-invalid={hasError}
-            aria-describedby={cn(
-              hasError && errorId,
-              helpText && helpId
-            )}
+            aria-describedby={cn(hasError && errorId, helpText && helpId)}
             {...props}
           />
         )}
@@ -131,18 +133,12 @@ export const [loading, setLoading] = useState(true);
           )}
 
           {/* Validation icons */}
-          {isValid && (
-            <CheckCircle2 className="w-4 h-4 text-green-500" />
-          )}
-          {hasError && (
-            <AlertCircle className="w-4 h-4 text-red-500" />
-          )}
+          {isValid && <CheckCircle2 className="w-4 h-4 text-green-500" />}
+          {hasError && <AlertCircle className="w-4 h-4 text-red-500" />}
 
           {/* Custom right icon */}
           {rightIcon && !hasError && !isValid && (
-            <div className="text-gray-400">
-              {rightIcon}
-            </div>
+            <div className="text-gray-400">{rightIcon}</div>
           )}
         </div>
       </div>
@@ -161,10 +157,7 @@ export const [loading, setLoading] = useState(true);
 
       {/* Help text */}
       {helpText && !hasError && (
-        <div
-          id={helpId}
-          className="text-sm text-gray-500"
-        >
+        <div id={helpId} className="text-sm text-gray-500">
           {helpText}
         </div>
       )}
@@ -194,25 +187,28 @@ export const EnhancedForm = ({
   const formRef = useRef();
 
   // Validate a single field
-  const validateField = useCallback((name, value) => {
-    const validator = validationSchema[name];
-    if (!validator) return null;
+  const validateField = useCallback(
+    (name, value) => {
+      const validator = validationSchema[name];
+      if (!validator) return null;
 
-    try {
-      const result = validator(value, values);
-      return result || null;
-    } catch (error) {
-      console.error(`Validation error for ${name}:`, error);
-      return error.message || 'Erro de validação';
-    }
-  }, [validationSchema, values]);
+      try {
+        const result = validator(value, values);
+        return result || null;
+      } catch (error) {
+        console.error(`Validation error for ${name}:`, error);
+        return error.message || "Erro de validação";
+      }
+    },
+    [validationSchema, values]
+  );
 
   // Validate all fields
   const validateForm = useCallback(() => {
     const newErrors = {};
     let isValid = true;
 
-    Object.keys(validationSchema).forEach(name => {
+    Object.keys(validationSchema).forEach((name) => {
       const error = validateField(name, values[name]);
       if (error) {
         newErrors[name] = error;
@@ -225,59 +221,73 @@ export const EnhancedForm = ({
   }, [validationSchema, values, validateField]);
 
   // Handle field change
-  const handleFieldChange = useCallback((name, value) => {
-    setValues(prev => ({ ...prev, [name]: value }));
+  const handleFieldChange = useCallback(
+    (name, value) => {
+      setValues((prev) => ({ ...prev, [name]: value }));
 
-    if (validateOnChange) {
-      const error = validateField(name, value);
-      setErrors(prev => ({ ...prev, [name]: error }));
-    }
+      if (validateOnChange) {
+        const error = validateField(name, value);
+        setErrors((prev) => ({ ...prev, [name]: error }));
+      }
 
-    if (onChange) {
-      onChange({ ...values, [name]: value }, { ...errors, [name]: validateField(name, value) });
-    }
-  }, [values, errors, validateOnChange, validateField, onChange]);
+      if (onChange) {
+        onChange(
+          { ...values, [name]: value },
+          { ...errors, [name]: validateField(name, value) }
+        );
+      }
+    },
+    [values, errors, validateOnChange, validateField, onChange]
+  );
 
   // Handle field blur
-  const handleFieldBlur = useCallback((name) => {
-    setTouched(prev => ({ ...prev, [name]: true }));
+  const handleFieldBlur = useCallback(
+    (name) => {
+      setTouched((prev) => ({ ...prev, [name]: true }));
 
-    if (validateOnBlur) {
-      const error = validateField(name, values[name]);
-      setErrors(prev => ({ ...prev, [name]: error }));
-    }
-  }, [validateOnBlur, validateField, values]);
+      if (validateOnBlur) {
+        const error = validateField(name, values[name]);
+        setErrors((prev) => ({ ...prev, [name]: error }));
+      }
+    },
+    [validateOnBlur, validateField, values]
+  );
 
   // Handle form submission
-  const handleSubmit = useCallback(async (e) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
 
-    // Mark all fields as touched
-    setTouched(Object.keys(values).reduce((acc, key) => ({ ...acc, [key]: true }), {}));
+      // Mark all fields as touched
+      setTouched(
+        Object.keys(values).reduce((acc, key) => ({ ...acc, [key]: true }), {})
+      );
 
-    // Validate form
-    const isValid = validateForm();
+      // Validate form
+      const isValid = validateForm();
 
-    if (!isValid) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      await onSubmit(values);
-
-      if (resetOnSubmit) {
-        setValues(initialValues);
-        setErrors({});
-        setTouched({});
+      if (!isValid) {
+        return;
       }
-    } catch (error) {
-      console.error('Form submission error:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [values, validateForm, onSubmit, resetOnSubmit, initialValues]);
+
+      setIsSubmitting(true);
+
+      try {
+        await onSubmit(values);
+
+        if (resetOnSubmit) {
+          setValues(initialValues);
+          setErrors({});
+          setTouched({});
+        }
+      } catch (error) {
+        console.error("Form submission error:", error);
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [values, validateForm, onSubmit, resetOnSubmit, initialValues]
+  );
 
   // Reset form
   const resetForm = useCallback(() => {
@@ -288,43 +298,47 @@ export const EnhancedForm = ({
   }, [initialValues]);
 
   // Form context value
-  const formContext = useMemo(() => ({
-    values,
-    errors,
-    touched,
-    isSubmitting,
-    handleFieldChange,
-    handleFieldBlur,
-    handleSubmit,
-    resetForm,
-    setValue: (name, value) => handleFieldChange(name, value),
-    setError: (name, error) => setErrors(prev => ({ ...prev, [name]: error })),
-    validateField,
-    validateForm,
-  }), [
-    values,
-    errors,
-    touched,
-    isSubmitting,
-    handleFieldChange,
-    handleFieldBlur,
-    handleSubmit,
-    resetForm,
-    validateField,
-    validateForm,
-  ]);
+  const formContext = useMemo(
+    () => ({
+      values,
+      errors,
+      touched,
+      isSubmitting,
+      handleFieldChange,
+      handleFieldBlur,
+      handleSubmit,
+      resetForm,
+      setValue: (name, value) => handleFieldChange(name, value),
+      setError: (name, error) =>
+        setErrors((prev) => ({ ...prev, [name]: error })),
+      validateField,
+      validateForm,
+    }),
+    [
+      values,
+      errors,
+      touched,
+      isSubmitting,
+      handleFieldChange,
+      handleFieldBlur,
+      handleSubmit,
+      resetForm,
+      validateField,
+      validateForm,
+    ]
+  );
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <form
       ref={formRef}
       onSubmit={handleSubmit}
-      className={cn('space-y-6', className)}
+      className={cn("space-y-6", className)}
       noValidate
       {...props}
     >
-      {typeof children === 'function' ? children(formContext) : children}
+      {typeof children === "function" ? children(formContext) : children}
     </form>
   );
 };
@@ -333,25 +347,12 @@ export const EnhancedForm = ({
  * Form Field Factory for creating consistent form fields
  */
 export const createFormField = (FieldComponent) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
-  return ({
-    name,
-    label,
-    type = 'text',
-    validation,
-    ...props
-  }) => {
-    if (loading) return <LoadingScreen />;
+  return ({ name, label, type = "text", validation, ...props }) => {
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
-      <FormField
-        name={name}
-        label={label}
-        type={type}
-        {...props}
-      />
-    );
+    return <FormField name={name} label={label} type={type} {...props} />;
   };
 };
 
@@ -360,8 +361,8 @@ export const createFormField = (FieldComponent) => {
  */
 export const validators = {
   required: (value) => {
-    if (!value || (typeof value === 'string' && !value.trim())) {
-      return 'Este campo é obrigatório';
+    if (!value || (typeof value === "string" && !value.trim())) {
+      return "Este campo é obrigatório";
     }
     return null;
   },
@@ -370,7 +371,7 @@ export const validators = {
     if (!value) return null;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(value)) {
-      return 'E-mail inválido';
+      return "E-mail inválido";
     }
     return null;
   },
@@ -394,7 +395,7 @@ export const validators = {
   pattern: (regex, message) => (value) => {
     if (!value) return null;
     if (!regex.test(value)) {
-      return message || 'Formato inválido';
+      return message || "Formato inválido";
     }
     return null;
   },
@@ -402,7 +403,7 @@ export const validators = {
   confirmPassword: (passwordField) => (value, values) => {
     if (!value) return null;
     if (value !== values[passwordField]) {
-      return 'Senhas não coincidem';
+      return "Senhas não coincidem";
     }
     return null;
   },
@@ -413,14 +414,14 @@ export const validators = {
       new URL(value);
       return null;
     } catch {
-      return 'URL inválida';
+      return "URL inválida";
     }
   },
 
   number: (value) => {
     if (!value) return null;
     if (isNaN(Number(value))) {
-      return 'Deve ser um número válido';
+      return "Deve ser um número válido";
     }
     return null;
   },
@@ -448,56 +449,55 @@ export const validators = {
  * Form submission handler with loading states
  */
 export const useFormSubmission = (onSubmit, options = {}) => {
-  const {
-    validate,
-    resetOnSuccess = false,
-    showSuccessToast = true,
-  } = options;
+  const { validate, resetOnSuccess = false, showSuccessToast = true } = options;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
-  const handleSubmit = useCallback(async (values) => {
-    setIsSubmitting(true);
-    setSubmitError(null);
+  const handleSubmit = useCallback(
+    async (values) => {
+      setIsSubmitting(true);
+      setSubmitError(null);
 
-    try {
-      // Validate if validator provided
-      if (validate) {
-        const validationResult = validate(values);
-        if (!validationResult.isValid) {
-          setSubmitError('Por favor, corrija os erros no formulário');
-          return { success: false, errors: validationResult.errors };
+      try {
+        // Validate if validator provided
+        if (validate) {
+          const validationResult = validate(values);
+          if (!validationResult.isValid) {
+            setSubmitError("Por favor, corrija os erros no formulário");
+            return { success: false, errors: validationResult.errors };
+          }
         }
+
+        // Submit form
+        const result = await onSubmit(values);
+
+        // Reset form if specified
+        if (resetOnSuccess) {
+          // Reset logic would be handled by parent component
+        }
+
+        // Show success toast if enabled
+        if (showSuccessToast && window.toast) {
+          window.toast.success("Dados salvos com sucesso!");
+        }
+
+        return { success: true, data: result };
+      } catch (error) {
+        console.error("Form submission error:", error);
+        setSubmitError(error.message || "Erro ao enviar formulário");
+
+        if (window.toast) {
+          window.toast.error(error.message || "Erro ao enviar formulário");
+        }
+
+        return { success: false, error };
+      } finally {
+        setIsSubmitting(false);
       }
-
-      // Submit form
-      const result = await onSubmit(values);
-
-      // Reset form if specified
-      if (resetOnSuccess) {
-        // Reset logic would be handled by parent component
-      }
-
-      // Show success toast if enabled
-      if (showSuccessToast && window.toast) {
-        window.toast.success('Dados salvos com sucesso!');
-      }
-
-      return { success: true, data: result };
-    } catch (error) {
-      console.error('Form submission error:', error);
-      setSubmitError(error.message || 'Erro ao enviar formulário');
-
-      if (window.toast) {
-        window.toast.error(error.message || 'Erro ao enviar formulário');
-      }
-
-      return { success: false, error };
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [onSubmit, validate, resetOnSuccess, showSuccessToast]);
+    },
+    [onSubmit, validate, resetOnSuccess, showSuccessToast]
+  );
 
   return {
     isSubmitting,
@@ -510,10 +510,7 @@ export const useFormSubmission = (onSubmit, options = {}) => {
  * Auto-save functionality for forms
  */
 export const useAutoSave = (values, onSave, options = {}) => {
-  const {
-    delay = 2000,
-    enabled = true,
-  } = options;
+  const { delay = 2000, enabled = true } = options;
 
   const timeoutRef = useRef();
   const lastSavedRef = useRef();
@@ -526,13 +523,13 @@ export const useAutoSave = (values, onSave, options = {}) => {
       lastSavedRef.current = Date.now();
 
       if (window.toast) {
-        window.toast.success('Alterações salvas automaticamente');
+        window.toast.success("Alterações salvas automaticamente");
       }
     } catch (error) {
-      console.error('Auto-save error:', error);
+      console.error("Auto-save error:", error);
 
       if (window.toast) {
-        window.toast.error('Erro ao salvar automaticamente');
+        window.toast.error("Erro ao salvar automaticamente");
       }
     }
   }, [values, onSave, enabled]);
@@ -545,9 +542,9 @@ export const useAutoSave = (values, onSave, options = {}) => {
 
     timeoutRef.current = setTimeout(save, delay);
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
+    return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }

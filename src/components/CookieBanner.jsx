@@ -1,10 +1,11 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
-import { Cookie, Shield, Settings, X, Check } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
+import { Cookie, Shield, Settings, X, Check } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 
-  const COOKIE_CONSENT_KEY = 'cookie-consent';
+const COOKIE_CONSENT_KEY = "cookie-consent";
 
 const CookieBanner = () => {
   const { t } = useTranslation();
@@ -13,7 +14,7 @@ const CookieBanner = () => {
   const [preferences, setPreferences] = useState({
     necessary: true,
     analytics: false,
-    marketing: false
+    marketing: false,
   });
 
   useEffect(() => {
@@ -24,9 +25,9 @@ const CookieBanner = () => {
       const timer = setTimeout(() => {
         setShowBanner(true);
       }, 1000);
-      if (loading) return <LoadingScreen />;
+      /* if (loading) return <LoadingScreen />; */
 
-  return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
     }
   }, []);
 
@@ -35,7 +36,7 @@ const CookieBanner = () => {
       necessary: true,
       analytics: true,
       marketing: true,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
     localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(allAccepted));
     setShowBanner(false);
@@ -45,7 +46,7 @@ const CookieBanner = () => {
   const handleSavePreferences = () => {
     const consent = {
       ...preferences,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
     localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(consent));
     setShowBanner(false);
@@ -53,37 +54,46 @@ const CookieBanner = () => {
   };
 
   const togglePreference = (key) => {
-    if (key === 'necessary') return; // Necessary cookies can't be disabled
-    setPreferences(prev => ({
+    if (key === "necessary") return; // Necessary cookies can't be disabled
+    setPreferences((prev) => ({
       ...prev,
-      [key]: !prev[key]
+      [key]: !prev[key],
     }));
   };
 
   const cookieTypes = [
     {
-      key: 'necessary',
-      title: t('cookie.necessary', 'Cookies Necessários'),
-      description: t('cookie.necessaryDesc', 'Essenciais para o funcionamento do site'),
-      required: true
+      key: "necessary",
+      title: t("cookie.necessary", "Cookies Necessários"),
+      description: t(
+        "cookie.necessaryDesc",
+        "Essenciais para o funcionamento do site"
+      ),
+      required: true,
     },
     {
-      key: 'analytics',
-      title: t('cookie.analytics', 'Cookies Analíticos'),
-      description: t('cookie.analyticsDesc', 'Nos ajudam a entender como você usa nosso site'),
-      required: false
+      key: "analytics",
+      title: t("cookie.analytics", "Cookies Analíticos"),
+      description: t(
+        "cookie.analyticsDesc",
+        "Nos ajudam a entender como você usa nosso site"
+      ),
+      required: false,
     },
     {
-      key: 'marketing',
-      title: t('cookie.marketing', 'Cookies de Marketing'),
-      description: t('cookie.marketingDesc', 'Usados para personalizar anúncios e conteúdo'),
-      required: false
-    }
+      key: "marketing",
+      title: t("cookie.marketing", "Cookies de Marketing"),
+      description: t(
+        "cookie.marketingDesc",
+        "Usados para personalizar anúncios e conteúdo"
+      ),
+      required: false,
+    },
   ];
 
   if (!showBanner) return null;
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <AnimatePresence>
@@ -105,8 +115,8 @@ const CookieBanner = () => {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className={`fixed ${showCustomize ? 'bottom-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:max-w-2xl' : 'bottom-0 left-0 right-0'} z-[1000] bg-white dark:bg-gray-800 shadow-2xl ${showCustomize ? 'rounded-2xl' : 'rounded-t-2xl md:rounded-2xl md:bottom-4 md:left-1/2 md:-translate-x-1/2 md:max-w-4xl'} border-t-4 border-blue-600`}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className={`fixed ${showCustomize ? "bottom-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:max-w-2xl" : "bottom-0 left-0 right-0"} z-[1000] bg-white dark:bg-gray-800 shadow-2xl ${showCustomize ? "rounded-2xl" : "rounded-t-2xl md:rounded-2xl md:bottom-4 md:left-1/2 md:-translate-x-1/2 md:max-w-4xl"} border-t-4 border-blue-600`}
           >
             <div className="p-6">
               {!showCustomize ? (
@@ -118,10 +128,13 @@ const CookieBanner = () => {
                     </div>
                     <div className="flex-1">
                       <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
-                        {t('cookie.title', '🍪 Cookies & Privacidade')}
+                        {t("cookie.title", "🍪 Cookies & Privacidade")}
                       </h3>
                       <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-                        {t('cookie.description', 'Usamos cookies para melhorar sua experiência. Você tem total controle sobre suas preferências de privacidade.')}
+                        {t(
+                          "cookie.description",
+                          "Usamos cookies para melhorar sua experiência. Você tem total controle sobre suas preferências de privacidade."
+                        )}
                       </p>
                       <div className="mt-4 flex flex-col sm:flex-row gap-3">
                         <button
@@ -129,19 +142,22 @@ const CookieBanner = () => {
                           className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 hover:opacity-90"
                         >
                           <Check className="w-4 h-4" />
-                          {t('cookie.acceptAll', 'Aceitar Todos')}
+                          {t("cookie.acceptAll", "Aceitar Todos")}
                         </button>
                         <button
                           onClick={() => setShowCustomize(true)}
                           className="px-6 py-2.5 border-2 border-gray-300 dark:border-gray-600 hover:border-blue-600 dark:hover:border-blue-500 text-gray-700 dark:text-gray-300 font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
                         >
                           <Settings className="w-4 h-4" />
-                          {t('cookie.customize', 'Personalizar')}
+                          {t("cookie.customize", "Personalizar")}
                         </button>
                       </div>
                       <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
-                        {t('cookie.privacyPolicy', 'Política de Privacidade')}:{' '}
-                        <Link to="/privacy-policy" className="text-blue-600 hover:underline">
+                        {t("cookie.privacyPolicy", "Política de Privacidade")}:{" "}
+                        <Link
+                          to="/privacy-policy"
+                          className="text-blue-600 hover:underline"
+                        >
                           Saiba mais
                         </Link>
                       </p>
@@ -157,7 +173,7 @@ const CookieBanner = () => {
                         <Shield className="w-5 h-5 text-white" />
                       </div>
                       <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                        {t('cookie.title', '🍪 Cookies & Privacidade')}
+                        {t("cookie.title", "🍪 Cookies & Privacidade")}
                       </h3>
                     </div>
                     <button
@@ -174,8 +190,8 @@ const CookieBanner = () => {
                         key={cookie.key}
                         className={`p-4 rounded-xl border-2 transition-colors ${
                           preferences[cookie.key]
-                            ? 'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-muted/30'
-                            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
+                            ? "border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-muted/30"
+                            : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
                         }`}
                       >
                         <div className="flex items-start justify-between">
@@ -198,14 +214,18 @@ const CookieBanner = () => {
                             <button
                               onClick={() => togglePreference(cookie.key)}
                               className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                                preferences[cookie.key] ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-700'
+                                preferences[cookie.key]
+                                  ? "bg-blue-600"
+                                  : "bg-gray-200 dark:bg-gray-700"
                               }`}
                               role="switch"
                               aria-checked={preferences[cookie.key]}
                             >
                               <span
                                 className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                                  preferences[cookie.key] ? 'translate-x-5' : 'translate-x-0'
+                                  preferences[cookie.key]
+                                    ? "translate-x-5"
+                                    : "translate-x-0"
                                 }`}
                               />
                             </button>
@@ -220,24 +240,30 @@ const CookieBanner = () => {
                       onClick={handleAcceptAll}
                       className="flex-1 px-4 py-2.5 border-2 border-gray-300 dark:border-gray-600 hover:border-blue-600 dark:hover:border-blue-500 text-gray-700 dark:text-gray-300 font-medium rounded-xl transition-all duration-200"
                     >
-                      {t('cookie.acceptAll', 'Aceitar Todos')}
+                      {t("cookie.acceptAll", "Aceitar Todos")}
                     </button>
                     <button
                       onClick={handleSavePreferences}
                       className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 hover:opacity-90"
                     >
                       <Check className="w-4 h-4" />
-                      {t('cookie.savePreferences', 'Salvar Preferências')}
+                      {t("cookie.savePreferences", "Salvar Preferências")}
                     </button>
                   </div>
 
                   <p className="mt-4 text-xs text-center text-gray-500 dark:text-gray-400">
-                    <Link to="/privacy-policy" className="text-blue-600 hover:underline">
-                      {t('cookie.privacyPolicy', 'Política de Privacidade')}
+                    <Link
+                      to="/privacy-policy"
+                      className="text-blue-600 hover:underline"
+                    >
+                      {t("cookie.privacyPolicy", "Política de Privacidade")}
                     </Link>
-                    {' • '}
-                    <Link to="/terms-of-use" className="text-blue-600 hover:underline">
-                      {t('cookie.termsOfUse', 'Termos de Uso')}
+                    {" • "}
+                    <Link
+                      to="/terms-of-use"
+                      className="text-blue-600 hover:underline"
+                    >
+                      {t("cookie.termsOfUse", "Termos de Uso")}
                     </Link>
                   </p>
                 </>
@@ -251,4 +277,3 @@ const CookieBanner = () => {
 };
 
 export default CookieBanner;
-

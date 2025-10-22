@@ -1,49 +1,50 @@
-import { motion } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
-import { 
-  BookOpen, 
-  Mail, 
-  Lock, 
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  BookOpen,
+  Mail,
+  Lock,
   User,
   ArrowRight,
   Shield,
   Zap,
   Check,
   Sparkles,
-  Building2
-} from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { navigateToHome } from '@/utils/roleNavigation';
-import toast from 'react-hot-toast';
-import { PremiumInput } from '@/components/ui/PremiumInput';
-import { PremiumButton } from '@/components/ui/PremiumButton';
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
+  Building2,
+} from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { navigateToHome } from "@/utils/roleNavigation";
+import toast from "react-hot-toast";
+import { PremiumInput } from "@/components/ui/PremiumInput";
+import { PremiumButton } from "@/components/ui/PremiumButton";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 const RegisterPagePremium = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    cpf: '',
-    age: '',
-    role: 'student',
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    cpf: "",
+    age: "",
+    role: "student",
     termsAccepted: false,
-    privacyAccepted: false
+    privacyAccepted: false,
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  
+
   const { signUp, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
       // Get user role and navigate to appropriate home
-      const role = user.user_metadata?.role || 'student';
+      const role = user.user_metadata?.role || "student";
       navigateToHome(navigate, role);
     } else if (!authLoading) {
       setIsCheckingAuth(false);
@@ -66,93 +67,93 @@ const RegisterPagePremium = () => {
 
   const validateField = (name, value) => {
     const newErrors = { ...errors };
-    
+
     switch (name) {
-      case 'name':
+      case "name":
         if (!value.trim()) {
-          newErrors.name = 'Nome é obrigatório';
+          newErrors.name = "Nome é obrigatório";
         } else if (value.length < 2) {
-          newErrors.name = 'Nome muito curto';
+          newErrors.name = "Nome muito curto";
         } else {
           delete newErrors.name;
         }
         break;
-        
-      case 'email':
+
+      case "email":
         if (!value) {
-          newErrors.email = 'E-mail é obrigatório';
+          newErrors.email = "E-mail é obrigatório";
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          newErrors.email = 'E-mail inválido';
+          newErrors.email = "E-mail inválido";
         } else {
           delete newErrors.email;
         }
         break;
-        
-      case 'password':
+
+      case "password":
         if (!value) {
-          newErrors.password = 'Senha é obrigatória';
+          newErrors.password = "Senha é obrigatória";
         } else if (value.length < 8) {
-          newErrors.password = 'Mínimo 8 caracteres';
+          newErrors.password = "Mínimo 8 caracteres";
         } else {
           delete newErrors.password;
         }
         setPasswordStrength(calculatePasswordStrength(value));
         break;
-        
-      case 'confirmPassword':
+
+      case "confirmPassword":
         if (value !== formData.password) {
-          newErrors.confirmPassword = 'As senhas não coincidem';
+          newErrors.confirmPassword = "As senhas não coincidem";
         } else {
           delete newErrors.confirmPassword;
         }
         break;
 
-      case 'cpf':
+      case "cpf":
         // Remove non-digits
-        const cleanCpf = value.replace(/\D/g, '');
+        const cleanCpf = value.replace(/\D/g, "");
         if (!cleanCpf) {
-          newErrors.cpf = 'CPF é obrigatório';
+          newErrors.cpf = "CPF é obrigatório";
         } else if (cleanCpf.length !== 11) {
-          newErrors.cpf = 'CPF deve ter 11 dígitos';
+          newErrors.cpf = "CPF deve ter 11 dígitos";
         } else {
           delete newErrors.cpf;
         }
         break;
 
-      case 'age':
+      case "age":
         const ageNum = parseInt(value);
         if (!value) {
-          newErrors.age = 'Idade é obrigatória';
+          newErrors.age = "Idade é obrigatória";
         } else if (ageNum < 14 || ageNum > 120) {
-          newErrors.age = 'Idade inválida';
+          newErrors.age = "Idade inválida";
         } else {
           delete newErrors.age;
         }
         break;
-        
+
       default:
         break;
     }
-    
+
     setErrors(newErrors);
     return newErrors;
   };
 
   const handleChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (touched[field]) {
       validateField(field, value);
     }
   };
 
   const handleBlur = (field) => {
-    setTouched(prev => ({ ...prev, [field]: true }));
+    setTouched((prev) => ({ ...prev, [field]: true }));
     validateField(field, formData[field]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Mark all as touched
     setTouched({
       name: true,
@@ -160,78 +161,80 @@ const RegisterPagePremium = () => {
       password: true,
       confirmPassword: true,
       cpf: true,
-      age: true
+      age: true,
     });
-    
+
     // Validate all
     const allErrors = {
-      ...validateField('name', formData.name),
-      ...validateField('email', formData.email),
-      ...validateField('password', formData.password),
-      ...validateField('confirmPassword', formData.confirmPassword),
-      ...validateField('cpf', formData.cpf),
-      ...validateField('age', formData.age)
+      ...validateField("name", formData.name),
+      ...validateField("email", formData.email),
+      ...validateField("password", formData.password),
+      ...validateField("confirmPassword", formData.confirmPassword),
+      ...validateField("cpf", formData.cpf),
+      ...validateField("age", formData.age),
     };
-    
+
     if (Object.keys(allErrors).length > 0) {
-      toast.error('Por favor, corrija os erros no formulário');
+      toast.error("Por favor, corrija os erros no formulário");
       return;
     }
 
     if (!formData.termsAccepted) {
-      toast.error('Você deve aceitar os termos de uso');
+      toast.error("Você deve aceitar os termos de uso");
       return;
     }
 
     if (!formData.privacyAccepted) {
-      toast.error('Você deve aceitar a política de privacidade');
+      toast.error("Você deve aceitar a política de privacidade");
       return;
     }
 
     setLoading(true);
-    
+
     try {
       const result = await signUp({
         email: formData.email,
         password: formData.password,
         name: formData.name,
         role: formData.role,
-        cpf: formData.cpf.replace(/\D/g, ''),
-        age: parseInt(formData.age)
+        cpf: formData.cpf.replace(/\D/g, ""),
+        age: parseInt(formData.age),
       });
-      
+
       if (result.error) {
         throw result.error;
       }
-      
-      toast.success('Conta criada com sucesso! Verifique seu email para confirmar.');
-      navigate('/verify-email');
+
+      toast.success(
+        "Conta criada com sucesso! Verifique seu email para confirmar."
+      );
+      navigate("/verify-email");
     } catch (error) {
-      console.error('Register error:', error);
-      toast.error(error.message || 'Erro ao criar conta');
+      console.error("Register error:", error);
+      toast.error(error.message || "Erro ao criar conta");
     } finally {
       setLoading(false);
     }
   };
 
   const getPasswordStrengthColor = () => {
-    if (passwordStrength <= 1) return 'bg-destructive';
-    if (passwordStrength <= 3) return 'bg-warning';
-    return 'bg-success';
+    if (passwordStrength <= 1) return "bg-destructive";
+    if (passwordStrength <= 3) return "bg-warning";
+    return "bg-success";
   };
 
   const getPasswordStrengthText = () => {
-    if (passwordStrength <= 1) return 'Fraca';
-    if (passwordStrength <= 3) return 'Média';
-    return 'Forte';
+    if (passwordStrength <= 1) return "Fraca";
+    if (passwordStrength <= 3) return "Média";
+    return "Forte";
   };
 
   const benefits = [
-    'Chatbot IA personalizado para suas turmas',
-    'Gestão completa de alunos e atividades',
-    'Relatórios detalhados de desempenho',
-    'Videoconferências integradas',
-    'Suporte premium 24/7'
+    "Chatbot IA personalizado para suas turmas",
+    "Gestão completa de alunos e atividades",
+    "Relatórios detalhados de desempenho",
+    "Videoconferências integradas",
+    "Suporte premium 24/7",
   ];
 
   return (
@@ -286,8 +289,8 @@ const RegisterPagePremium = () => {
               label="Nome completo"
               type="text"
               value={formData.name}
-              onChange={(e) => handleChange('name', e.target.value)}
-              onBlur={() => handleBlur('name')}
+              onChange={(e) => handleChange("name", e.target.value)}
+              onBlur={() => handleBlur("name")}
               leftIcon={User}
               error={touched.name && errors.name}
               success={touched.name && !errors.name && formData.name}
@@ -300,8 +303,8 @@ const RegisterPagePremium = () => {
               label="E-mail"
               type="email"
               value={formData.email}
-              onChange={(e) => handleChange('email', e.target.value)}
-              onBlur={() => handleBlur('email')}
+              onChange={(e) => handleChange("email", e.target.value)}
+              onBlur={() => handleBlur("email")}
               leftIcon={Mail}
               error={touched.email && errors.email}
               success={touched.email && !errors.email && formData.email}
@@ -316,25 +319,31 @@ const RegisterPagePremium = () => {
                 type="password"
                 autoComplete="new-password"
                 value={formData.password}
-                onChange={(e) => handleChange('password', e.target.value)}
-                onBlur={() => handleBlur('password')}
+                onChange={(e) => handleChange("password", e.target.value)}
+                onBlur={() => handleBlur("password")}
                 leftIcon={Lock}
                 error={touched.password && errors.password}
-                success={touched.password && !errors.password && formData.password}
+                success={
+                  touched.password && !errors.password && formData.password
+                }
                 required
                 placeholder="••••••••"
               />
-              
+
               {/* Password Strength Indicator */}
               {formData.password && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
+                  animate={{ opacity: 1, height: "auto" }}
                   className="space-y-1"
                 >
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">Força da senha</span>
-                    <span className={`font-medium ${passwordStrength > 3 ? 'text-success' : passwordStrength > 1 ? 'text-warning' : 'text-destructive'}`}>
+                    <span className="text-muted-foreground">
+                      Força da senha
+                    </span>
+                    <span
+                      className={`font-medium ${passwordStrength > 3 ? "text-success" : passwordStrength > 1 ? "text-warning" : "text-destructive"}`}
+                    >
                       {getPasswordStrengthText()}
                     </span>
                   </div>
@@ -354,11 +363,15 @@ const RegisterPagePremium = () => {
               type="password"
               autoComplete="new-password"
               value={formData.confirmPassword}
-              onChange={(e) => handleChange('confirmPassword', e.target.value)}
-              onBlur={() => handleBlur('confirmPassword')}
+              onChange={(e) => handleChange("confirmPassword", e.target.value)}
+              onBlur={() => handleBlur("confirmPassword")}
               leftIcon={Lock}
               error={touched.confirmPassword && errors.confirmPassword}
-              success={touched.confirmPassword && !errors.confirmPassword && formData.confirmPassword}
+              success={
+                touched.confirmPassword &&
+                !errors.confirmPassword &&
+                formData.confirmPassword
+              }
               required
               placeholder="••••••••"
             />
@@ -370,15 +383,15 @@ const RegisterPagePremium = () => {
                 value={formData.cpf}
                 onChange={(e) => {
                   // Format CPF: 000.000.000-00
-                  let value = e.target.value.replace(/\D/g, '');
+                  let value = e.target.value.replace(/\D/g, "");
                   if (value.length <= 11) {
-                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-                    handleChange('cpf', value);
+                    value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                    value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                    value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+                    handleChange("cpf", value);
                   }
                 }}
-                onBlur={() => handleBlur('cpf')}
+                onBlur={() => handleBlur("cpf")}
                 error={touched.cpf && errors.cpf}
                 success={touched.cpf && !errors.cpf && formData.cpf}
                 required
@@ -390,8 +403,8 @@ const RegisterPagePremium = () => {
                 label="Idade"
                 type="number"
                 value={formData.age}
-                onChange={(e) => handleChange('age', e.target.value)}
-                onBlur={() => handleBlur('age')}
+                onChange={(e) => handleChange("age", e.target.value)}
+                onBlur={() => handleBlur("age")}
                 error={touched.age && errors.age}
                 success={touched.age && !errors.age && formData.age}
                 required
@@ -408,26 +421,34 @@ const RegisterPagePremium = () => {
               </label>
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { value: 'teacher', label: 'Professor', icon: Shield },
-                  { value: 'student', label: 'Aluno', icon: Sparkles },
-                  { value: 'school', label: 'Escola', icon: Building2 }
-                ].map(role => (
+                  { value: "teacher", label: "Professor", icon: Shield },
+                  { value: "student", label: "Aluno", icon: Sparkles },
+                  { value: "school", label: "Escola", icon: Building2 },
+                ].map((role) => (
                   <button
                     key={role.value}
                     type="button"
-                    onClick={() => handleChange('role', role.value)}
+                    onClick={() => handleChange("role", role.value)}
                     className={`p-4 rounded-xl border-2 transition-all ${
                       formData.role === role.value
-                        ? 'border-primary bg-primary/10'
-                        : 'border-border hover:border-primary/50'
+                        ? "border-primary bg-primary/10"
+                        : "border-border hover:border-primary/50"
                     }`}
                   >
-                    <role.icon className={`w-6 h-6 mx-auto mb-2 ${
-                      formData.role === role.value ? 'text-primary' : 'text-muted-foreground'
-                    }`} />
-                    <span className={`text-sm font-medium ${
-                      formData.role === role.value ? 'text-primary' : 'text-foreground'
-                    }`}>
+                    <role.icon
+                      className={`w-6 h-6 mx-auto mb-2 ${
+                        formData.role === role.value
+                          ? "text-primary"
+                          : "text-muted-foreground"
+                      }`}
+                    />
+                    <span
+                      className={`text-sm font-medium ${
+                        formData.role === role.value
+                          ? "text-primary"
+                          : "text-foreground"
+                      }`}
+                    >
                       {role.label}
                     </span>
                   </button>
@@ -441,12 +462,17 @@ const RegisterPagePremium = () => {
                 <input
                   type="checkbox"
                   checked={formData.termsAccepted}
-                  onChange={(e) => handleChange('termsAccepted', e.target.checked)}
+                  onChange={(e) =>
+                    handleChange("termsAccepted", e.target.checked)
+                  }
                   className="w-5 h-5 rounded border-border text-primary focus:ring-2 focus:ring-primary mt-0.5"
                 />
                 <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                  Aceito os{' '}
-                  <Link to="/terms-of-use" className="text-primary hover:underline font-medium">
+                  Aceito os{" "}
+                  <Link
+                    to="/terms-of-use"
+                    className="text-primary hover:underline font-medium"
+                  >
                     Termos de Uso
                   </Link>
                 </span>
@@ -456,12 +482,17 @@ const RegisterPagePremium = () => {
                 <input
                   type="checkbox"
                   checked={formData.privacyAccepted}
-                  onChange={(e) => handleChange('privacyAccepted', e.target.checked)}
+                  onChange={(e) =>
+                    handleChange("privacyAccepted", e.target.checked)
+                  }
                   className="w-5 h-5 rounded border-border text-primary focus:ring-2 focus:ring-primary mt-0.5"
                 />
                 <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                  Aceito a{' '}
-                  <Link to="/privacy-policy" className="text-primary hover:underline font-medium">
+                  Aceito a{" "}
+                  <Link
+                    to="/privacy-policy"
+                    className="text-primary hover:underline font-medium"
+                  >
                     Política de Privacidade
                   </Link>
                 </span>
@@ -487,7 +518,7 @@ const RegisterPagePremium = () => {
             transition={{ delay: 0.4 }}
             className="mt-6 text-center text-muted-foreground"
           >
-            Já tem uma conta?{' '}
+            Já tem uma conta?{" "}
             <Link
               to="/login"
               className="text-primary font-semibold hover:underline"
@@ -502,10 +533,14 @@ const RegisterPagePremium = () => {
       <div className="hidden lg:flex lg:flex-1 bg-gradient-primary relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
-            backgroundSize: '40px 40px'
-          }} />
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+              backgroundSize: "40px 40px",
+            }}
+          />
         </div>
 
         <div className="relative z-10 flex flex-col justify-center px-12 text-white">
@@ -516,10 +551,13 @@ const RegisterPagePremium = () => {
           >
             <Zap className="w-16 h-16 mb-6" />
             <h2 className="text-4xl font-bold mb-6">
-              Junte-se a milhares<br />de educadores
+              Junte-se a milhares
+              <br />
+              de educadores
             </h2>
             <p className="text-xl text-white/90 mb-12">
-              Plataforma completa com IA para revolucionar<br />
+              Plataforma completa com IA para revolucionar
+              <br />
               sua forma de ensinar e aprender.
             </p>
 
@@ -550,7 +588,7 @@ const RegisterPagePremium = () => {
             >
               <div className="flex items-center gap-4 mb-3">
                 <div className="flex -space-x-2">
-                  {[1, 2, 3, 4].map(i => (
+                  {[1, 2, 3, 4].map((i) => (
                     <div
                       key={i}
                       className="w-10 h-10 rounded-full bg-white/30 border-2 border-white"
@@ -563,8 +601,10 @@ const RegisterPagePremium = () => {
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                {[1, 2, 3, 4, 5].map(i => (
-                  <span key={i} className="text-yellow-300 text-xl">★</span>
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <span key={i} className="text-yellow-300 text-xl">
+                    ★
+                  </span>
                 ))}
                 <span className="ml-2 text-sm">4.9/5.0 de satisfação</span>
               </div>

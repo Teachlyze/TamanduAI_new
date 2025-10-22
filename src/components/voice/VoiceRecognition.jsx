@@ -1,42 +1,44 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 /**
  * Voice recognition component for speech-to-text functionality
  */
 export const [loading, setLoading] = useState(true);
-  const VoiceRecognition = ({
+const VoiceRecognition = ({
   onResult,
   onError,
-  language = 'pt-BR',
+  language = "pt-BR",
   continuous = false,
   interimResults = true,
-  className = '',
+  className = "",
   ...props
 }) => {
   const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState('');
-  const [interimTranscript, setInterimTranscript] = useState('');
-  const [finalTranscript, setFinalTranscript] = useState('');
+  const [transcript, setTranscript] = useState("");
+  const [interimTranscript, setInterimTranscript] = useState("");
+  const [finalTranscript, setFinalTranscript] = useState("");
   const [error, setError] = useState(null);
 
   const recognitionRef = useRef(null);
   const timeoutRef = useRef(null);
 
   // Check for browser support
-  const isSupported = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
+  const isSupported =
+    "webkitSpeechRecognition" in window || "SpeechRecognition" in window;
 
   // Initialize speech recognition
   useEffect(() => {
     if (!isSupported) {
-      setError('Reconhecimento de voz não é suportado neste navegador');
+      setError("Reconhecimento de voz não é suportado neste navegador");
       return;
     }
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
 
     recognition.continuous = continuous;
@@ -47,14 +49,14 @@ export const [loading, setLoading] = useState(true);
     recognition.onstart = () => {
       setIsListening(true);
       setError(null);
-      setTranscript('');
-      setInterimTranscript('');
-      setFinalTranscript('');
+      setTranscript("");
+      setInterimTranscript("");
+      setFinalTranscript("");
     };
 
     recognition.onresult = (event) => {
-      let interimTranscript = '';
-      let finalTranscript = '';
+      let interimTranscript = "";
+      let finalTranscript = "";
 
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const result = event.results[i];
@@ -69,7 +71,7 @@ export const [loading, setLoading] = useState(true);
       setFinalTranscript(finalTranscript);
 
       if (finalTranscript) {
-        setTranscript(prev => prev + finalTranscript);
+        setTranscript((prev) => prev + finalTranscript);
         onResult?.(finalTranscript);
 
         // Auto-stop if not continuous
@@ -98,9 +100,9 @@ export const [loading, setLoading] = useState(true);
 
     recognitionRef.current = recognition;
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
+    return () => {
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
@@ -108,7 +110,15 @@ export const [loading, setLoading] = useState(true);
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [isSupported, continuous, interimResults, language, onResult, onError, error]);
+  }, [
+    isSupported,
+    continuous,
+    interimResults,
+    language,
+    onResult,
+    onError,
+    error,
+  ]);
 
   // Start listening
   const startListening = useCallback(() => {
@@ -127,15 +137,15 @@ export const [loading, setLoading] = useState(true);
 
   // Clear transcript
   const clearTranscript = useCallback(() => {
-    setTranscript('');
-    setInterimTranscript('');
-    setFinalTranscript('');
+    setTranscript("");
+    setInterimTranscript("");
+    setFinalTranscript("");
   }, []);
 
   if (!isSupported) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
+    return (
       <Card className={`voice-recognition ${className}`} {...props}>
         <CardContent className="flex items-center justify-center h-32">
           <p className="text-muted-foreground">
@@ -146,7 +156,7 @@ export const [loading, setLoading] = useState(true);
     );
   }
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <Card className={`voice-recognition ${className}`} {...props}>
@@ -154,12 +164,10 @@ export const [loading, setLoading] = useState(true);
         <div className="flex items-center justify-between">
           <CardTitle>Reconhecimento de Voz</CardTitle>
           <div className="flex items-center gap-2">
-            <Badge variant={isListening ? 'default' : 'secondary'}>
-              {isListening ? '🎤 Ouvindo' : '🔇 Silenciado'}
+            <Badge variant={isListening ? "default" : "secondary"}>
+              {isListening ? "🎤 Ouvindo" : "🔇 Silenciado"}
             </Badge>
-            <span className="text-sm text-muted-foreground">
-              {language}
-            </span>
+            <span className="text-sm text-muted-foreground">{language}</span>
           </div>
         </div>
       </CardHeader>
@@ -212,17 +220,14 @@ export const [loading, setLoading] = useState(true);
 
           {/* Error message */}
           {error && (
-            <div className="text-sm text-destructive text-center">
-              {error}
-            </div>
+            <div className="text-sm text-destructive text-center">{error}</div>
           )}
 
           {/* Instructions */}
           <div className="text-sm text-muted-foreground text-center">
             {continuous
-              ? 'O reconhecimento continuará automaticamente até ser parado manualmente'
-              : 'Fale após clicar em "Iniciar" - será interrompido automaticamente'
-            }
+              ? "O reconhecimento continuará automaticamente até ser parado manualmente"
+              : 'Fale após clicar em "Iniciar" - será interrompido automaticamente'}
           </div>
         </div>
       </CardContent>

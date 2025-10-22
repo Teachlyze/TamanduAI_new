@@ -1,165 +1,347 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import ProtectedRoute from '../components/ProtectedRoute';
-import RoleProtectedRoute from '../components/RoleProtectedRoute';
-import Loading from '../components/Loading';
-import ErrorBoundary from '../components/ui/ErrorBoundary';
-
+import { Routes, Route, Navigate } from "react-router-dom";
+import ProtectedRoute from "../components/ProtectedRoute";
+import RoleProtectedRoute from "../components/RoleProtectedRoute";
+import Loading from "../components/Loading";
+import ErrorBoundary from "../components/ui/ErrorBoundary";
+import React, { Suspense } from "react";
 // Helper function for dynamic imports with error handling
 const lazyLoad = (importFunction) => {
-  return lazy(() => importFunction().catch(() => ({
-    default: () => (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-600">Error loading component</h2>
-          <p className="mt-2">Please try refreshing the page.</p>
+  return React.lazy(() =>
+    importFunction().catch(() => ({
+      default: () => (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-red-600">
+              Error loading component
+            </h2>
+            <p className="mt-2">Please try refreshing the page.</p>
+          </div>
         </div>
-      </div>
-    )
-  })));
+      ),
+    }))
+  );
 };
 
 // Lazy load route components
-const MeetingRoutes = lazyLoad(() => import('./meetingRoutes'));
+const MeetingRoutes = lazyLoad(() => import("./meetingRoutes"));
 // Whiteboard removido - não faz parte do sistema
 // const WhiteboardRoutes = lazyLoad(() => import('./whiteboardRoutes'));
 
 // Lazy load components for better performance
-const Dashboard = lazyLoad(() => import('../pages/DashboardHome'));
-const LandingPage = lazyLoad(() => import('../pages/LandingPage'));
-const LoginPage = lazyLoad(() => import('../pages/LoginPagePremium'));
-const RegisterPage = lazyLoad(() => import('../pages/RegisterPagePremium'));
-const RegisterTeacherPage = lazyLoad(() => import('../pages/RegisterTeacherPage'));
-const ForgotPasswordPage = lazyLoad(() => import('../pages/auth/ForgotPasswordPagePremium'));
-const ResetPasswordPage = lazyLoad(() => import('../pages/auth/ResetPasswordPagePremium'));
-const EmailConfirmationPage = lazyLoad(() => import('../pages/EmailConfirmationPage'));
-const PricingPage = lazyLoad(() => import('../pages/PricingPage'));
-const PrivacyPolicy = lazyLoad(() => import('../pages/PrivacyPolicy'));
-const TermsOfUse = lazyLoad(() => import('../pages/TermsOfUse'));
-const ImprovedDocumentationPage = lazyLoad(() => import('../pages/docs/DocumentationPage'));
-const SpecCoveragePage = lazyLoad(() => import('../pages/admin/SpecCoveragePage'));
-const ContactPage = lazyLoad(() => import('../pages/ContactPage'));
-const BetaPage = lazyLoad(() => import('../pages/BetaPage'));
-const LogoutPage = lazyLoad(() => import('../pages/LogoutPage'));
-const JoinClassPage = lazyLoad(() => import('../pages/JoinClassPage'));
-const JoinClassWithCodePage = lazyLoad(() => import('../pages/JoinClassWithCodePage'));
-const UserProfilePage = lazyLoad(() => import('../pages/UserProfilePagePremium'));
-const StrategicPlanPage = lazyLoad(() => import('../pages/StrategicPlanPage'));
+const Dashboard = lazyLoad(() => import("../pages/DashboardHome"));
+const LandingPage = lazyLoad(() => import("../pages/LandingPage"));
+const LoginPage = lazyLoad(() => import("../pages/LoginPagePremium"));
+const RegisterPage = lazyLoad(() => import("../pages/RegisterPagePremium"));
+const RegisterTeacherPage = lazyLoad(
+  () => import("../pages/RegisterTeacherPage")
+);
+const ForgotPasswordPage = lazyLoad(
+  () => import("../pages/auth/ForgotPasswordPagePremium")
+);
+const ResetPasswordPage = lazyLoad(
+  () => import("../pages/auth/ResetPasswordPagePremium")
+);
+const EmailConfirmationPage = lazyLoad(
+  () => import("../pages/EmailConfirmationPage")
+);
+const PricingPage = lazyLoad(() => import("../pages/PricingPage"));
+const PrivacyPolicy = lazyLoad(() => import("../pages/PrivacyPolicy"));
+const TermsOfUse = lazyLoad(() => import("../pages/TermsOfUse"));
+const ImprovedDocumentationPage = lazyLoad(
+  () => import("../pages/docs/DocumentationPage")
+);
+const SpecCoveragePage = lazyLoad(
+  () => import("../pages/admin/SpecCoveragePage")
+);
+const ContactPage = lazyLoad(() => import("../pages/ContactPage"));
+const BetaPage = lazyLoad(() => import("../pages/BetaPage"));
+const LogoutPage = lazyLoad(() => import("../pages/LogoutPage"));
+const JoinClassPage = lazyLoad(() => import("../pages/JoinClassPage"));
+const JoinClassWithCodePage = lazyLoad(
+  () => import("../pages/JoinClassWithCodePage")
+);
+const UserProfilePage = lazyLoad(
+  () => import("../pages/UserProfilePagePremium")
+);
+const StrategicPlanPage = lazyLoad(() => import("../pages/StrategicPlanPage"));
 
 // Dashboard Components
-const RoleBasedDashboard = lazyLoad(() => import('../components/dashboard/RoleBasedDashboard'));
-const DashboardHome = lazyLoad(() => import('../components/dashboard/DashboardHome'));
-const ClassesPage = lazyLoad(() => import('../components/dashboard/ClassesPage'));
+const RoleBasedDashboard = lazyLoad(
+  () => import("../components/dashboard/RoleBasedDashboard")
+);
+const DashboardHome = lazyLoad(
+  () => import("../components/dashboard/DashboardHome")
+);
+const ClassesPage = lazyLoad(
+  () => import("../components/dashboard/ClassesPage")
+);
 // const ClassDetailsPage = lazyLoad(() => import('../components/dashboard/ClassDetailsPage')); // Arquivo deletado
-const StudentsPage = lazyLoad(() => import('../components/students/StudentsPage'));
-const StudentProfilePage = lazyLoad(() => import('../pages/dashboard/StudentProfilePage'));
-const InviteStudentPage = lazyLoad(() => import('../pages/students/InviteStudentPage'));
-const ActivitiesPage = lazyLoad(() => import('../components/dashboard/ActivitiesPage'));
-const ActivityPage = lazyLoad(() => import('../pages/ActivityPage'));
-const ReportsPage = lazyLoad(() => import('../components/dashboard/ReportsPage'));
-const ChatbotPage = lazyLoad(() => import('../components/dashboard/ChatbotPageWrapper'));
-const NotificationTest = lazyLoad(() => import('../pages/notifications/NotificationTest'));
-const AcademicHistoryPage = lazyLoad(() => import('../pages/dashboard/AcademicHistoryPage'));
-const PerformanceAnalyticsPage = lazyLoad(() => import('../pages/dashboard/PerformanceAnalyticsPage'));
-const SettingsPage = lazyLoad(() => import('../components/dashboard/SettingsPage'));
-const AgendaPage = lazyLoad(() => import('../pages/AgendaPagePremium'));
-const AnalyticsPage = lazyLoad(() => import('../pages/AnalyticsPagePremium'));
-const ActivitySubmissionsPage = lazyLoad(() => import('../pages/classes/ActivitySubmissionsPage'));
-const CreateClassroomForm = lazyLoad(() => import('../components/classrooms/CreateClassroomForm'));
-const ClassroomsPagePremium = lazyLoad(() => import('../pages/ClassroomsPagePremium'));
-const ActivitiesListPage = lazyLoad(() => import('../pages/ActivitiesListPagePremium'));
-const CreateActivityPage = lazyLoad(() => import('../pages/CreateActivityPage'));
-const ActivityErrorBoundary = lazyLoad(() => import('../components/ui/ActivityErrorBoundary'));
-const DraftsPage = lazyLoad(() => import('../pages/activities/DraftsPage'));
-const StudentActivitiesPage = lazyLoad(() => import('../pages/student/StudentActivitiesPage'));
-const StudentGamificationPage = lazyLoad(() => import('../pages/student/StudentGamificationPage'));
-const ActivityDetailsPage = lazyLoad(() => import('../components/activities/ActivityDetailsPage'));
-const NotificationCenter = lazyLoad(() => import('../pages/notifications/NotificationCenter'));
-const PrivacyPreferences = lazyLoad(() => import('@/components/PrivacyPreferences'));
-const OnboardingPage = lazyLoad(() => import('../pages/OnboardingPage'));
+const StudentsPage = lazyLoad(
+  () => import("../components/students/StudentsPage")
+);
+const StudentProfilePage = lazyLoad(
+  () => import("../pages/dashboard/StudentProfilePage")
+);
+const InviteStudentPage = lazyLoad(
+  () => import("../pages/students/InviteStudentPage")
+);
+const ActivitiesPage = lazyLoad(
+  () => import("../components/dashboard/ActivitiesPage")
+);
+const ActivityPage = lazyLoad(() => import("../pages/ActivityPage"));
+const ReportsPage = lazyLoad(
+  () => import("../components/dashboard/ReportsPage")
+);
+const ChatbotPage = lazyLoad(
+  () => import("../components/dashboard/ChatbotPageWrapper")
+);
+const NotificationTest = lazyLoad(
+  () => import("../pages/notifications/NotificationTest")
+);
+const AcademicHistoryPage = lazyLoad(
+  () => import("../pages/dashboard/AcademicHistoryPage")
+);
+const PerformanceAnalyticsPage = lazyLoad(
+  () => import("../pages/dashboard/PerformanceAnalyticsPage")
+);
+const SettingsPage = lazyLoad(
+  () => import("../components/dashboard/SettingsPage")
+);
+const AgendaPage = lazyLoad(() => import("../pages/AgendaPagePremium"));
+const AnalyticsPage = lazyLoad(() => import("../pages/AnalyticsPagePremium"));
+const ActivitySubmissionsPage = lazyLoad(
+  () => import("../pages/classes/ActivitySubmissionsPage")
+);
+const CreateClassroomForm = lazyLoad(
+  () => import("../components/classrooms/CreateClassroomForm")
+);
+const ClassroomsPagePremium = lazyLoad(
+  () => import("../pages/ClassroomsPagePremium")
+);
+const ActivitiesListPage = lazyLoad(
+  () => import("../pages/ActivitiesListPagePremium")
+);
+const CreateActivityPage = lazyLoad(
+  () => import("../pages/CreateActivityPage")
+);
+const ActivityErrorBoundary = lazyLoad(
+  () => import("../components/ui/ActivityErrorBoundary")
+);
+const DraftsPage = lazyLoad(() => import("../pages/activities/DraftsPage"));
+const StudentActivitiesPage = lazyLoad(
+  () => import("../pages/student/StudentActivitiesPage")
+);
+const StudentGamificationPage = lazyLoad(
+  () => import("../pages/student/StudentGamificationPage")
+);
+const ActivityDetailsPage = lazyLoad(
+  () => import("../components/activities/ActivityDetailsPage")
+);
+const NotificationCenter = lazyLoad(
+  () => import("../pages/notifications/NotificationCenter")
+);
+const PrivacyPreferences = lazyLoad(
+  () => import("@/components/PrivacyPreferences")
+);
+const OnboardingPage = lazyLoad(() => import("../pages/OnboardingPage"));
 
 // Additional pages
-const StudentHistoryPage = lazyLoad(() => import('../pages/StudentHistoryPage'));
-const JoinClassInvitationPage = lazyLoad(() => import('../pages/JoinClassInvitationPage'));
-const ActivityPublishPage = lazyLoad(() => import('../pages/ActivityPublishPage'));
-const VerifyEmailPage = lazyLoad(() => import('../pages/VerifyEmailPage'));
-const ActivitySubmissionsPageNew = lazyLoad(() => import('../pages/activities/ActivitySubmissionsPage'));
-const ClassActivitiesPage = lazyLoad(() => import('../pages/classes/ClassActivitiesPage'));
-const ClassSchedulePage = lazyLoad(() => import('../pages/classes/ClassSchedulePage'));
-const CorrectionsPage = lazyLoad(() => import('../pages/activities/CorrectionsPage'));
-const UserProfileEditPage = lazyLoad(() => import('../pages/profile/UserProfileEditPage'));
+const StudentHistoryPage = lazyLoad(
+  () => import("../pages/StudentHistoryPage")
+);
+const JoinClassInvitationPage = lazyLoad(
+  () => import("../pages/JoinClassInvitationPage")
+);
+const ActivityPublishPage = lazyLoad(
+  () => import("../pages/ActivityPublishPage")
+);
+const VerifyEmailPage = lazyLoad(() => import("../pages/VerifyEmailPage"));
+const ActivitySubmissionsPageNew = lazyLoad(
+  () => import("../pages/activities/ActivitySubmissionsPage")
+);
+const ClassActivitiesPage = lazyLoad(
+  () => import("../pages/classes/ClassActivitiesPage")
+);
+const ClassSchedulePage = lazyLoad(
+  () => import("../pages/classes/ClassSchedulePage")
+);
+const CorrectionsPage = lazyLoad(
+  () => import("../pages/activities/CorrectionsPage")
+);
+const UserProfileEditPage = lazyLoad(
+  () => import("../pages/profile/UserProfileEditPage")
+);
 
 // School pages
-const SchoolDashboard = lazyLoad(() => import('../pages/school/SchoolDashboard'));
-const SchoolTeachersPage = lazyLoad(() => import('../pages/school/SchoolTeachersPage'));
-const SchoolClassesPage = lazyLoad(() => import('../pages/school/SchoolClassesPage'));
-const SchoolReportsPage = lazyLoad(() => import('../pages/school/SchoolReportsPage'));
-const SchoolCommsPage = lazyLoad(() => import('../pages/school/SchoolCommsPage'));
-const SchoolSettingsPage = lazyLoad(() => import('../pages/school/SchoolSettingsPage'));
-const SchoolRankingPage = lazyLoad(() => import('../pages/school/SchoolRankingPage'));
-const SchoolStudentsPage = lazyLoad(() => import('../pages/school/SchoolStudentsPage'));
-const SchoolAnalyticsPage = lazyLoad(() => import('../components/school/SchoolAnalyticsPage'));
-const SchoolAnalyticsMLPage = lazyLoad(() => import('../pages/school/SchoolAnalyticsMLPage'));
-const SchoolClassMembersPage = lazyLoad(() => import('../components/school/SchoolClassMembersPage'));
-const InviteTeacherPage = lazyLoad(() => import('../pages/school/InviteTeacherPage'));
-const RewardSettingsPage = lazyLoad(() => import('../pages/school/RewardSettingsPage'));
+const SchoolDashboard = lazyLoad(
+  () => import("../pages/school/SchoolDashboard")
+);
+const SchoolTeachersPage = lazyLoad(
+  () => import("../pages/school/SchoolTeachersPage")
+);
+const SchoolClassesPage = lazyLoad(
+  () => import("../pages/school/SchoolClassesPage")
+);
+const SchoolReportsPage = lazyLoad(
+  () => import("../pages/school/SchoolReportsPage")
+);
+const SchoolCommsPage = lazyLoad(
+  () => import("../pages/school/SchoolCommsPage")
+);
+const SchoolSettingsPage = lazyLoad(
+  () => import("../pages/school/SchoolSettingsPage")
+);
+const SchoolRankingPage = lazyLoad(
+  () => import("../pages/school/SchoolRankingPage")
+);
+const SchoolStudentsPage = lazyLoad(
+  () => import("../pages/school/SchoolStudentsPage")
+);
+const SchoolAnalyticsPage = lazyLoad(
+  () => import("../components/school/SchoolAnalyticsPage")
+);
+const SchoolAnalyticsMLPage = lazyLoad(
+  () => import("../pages/school/SchoolAnalyticsMLPage")
+);
+const SchoolClassMembersPage = lazyLoad(
+  () => import("../components/school/SchoolClassMembersPage")
+);
+const InviteTeacherPage = lazyLoad(
+  () => import("../pages/school/InviteTeacherPage")
+);
+const RewardSettingsPage = lazyLoad(
+  () => import("../pages/school/RewardSettingsPage")
+);
 
 // Student pages
-const StudentDashboard = lazyLoad(() => import('../pages/student/StudentDashboard'));
-const StudentPerformancePage = lazyLoad(() => import('../pages/student/StudentPerformancePage'));
-const StudentClassesPage = lazyLoad(() => import('../components/student/StudentClassesPage'));
-const StudentClassDetailsPage = lazyLoad(() => import('../components/student/StudentClassDetailsPage'));
-const StudentActivityDetailsPage = lazyLoad(() => import('../components/student/StudentActivityDetailsPage'));
-const StudentCalendarPage = lazyLoad(() => import('../components/student/StudentCalendarPageEnhanced'));
-const StudentRankingPage = lazyLoad(() => import('../components/student/StudentRankingPage'));
-const StudentDiscussionPage = lazyLoad(() => import('../components/student/StudentDiscussionPage'));
-const StudentMissionsPage = lazyLoad(() => import('../components/student/StudentMissionsPage'));
+const StudentDashboard = lazyLoad(
+  () => import("../pages/student/StudentDashboard")
+);
+const StudentPerformancePage = lazyLoad(
+  () => import("../pages/student/StudentPerformancePage")
+);
+const StudentClassesPage = lazyLoad(
+  () => import("../components/student/StudentClassesPage")
+);
+const StudentClassDetailsPage = lazyLoad(
+  () => import("../components/student/StudentClassDetailsPage")
+);
+const StudentActivityDetailsPage = lazyLoad(
+  () => import("../components/student/StudentActivityDetailsPage")
+);
+const StudentCalendarPage = lazyLoad(
+  () => import("../components/student/StudentCalendarPageEnhanced")
+);
+const StudentRankingPage = lazyLoad(
+  () => import("../components/student/StudentRankingPage")
+);
+const StudentDiscussionPage = lazyLoad(
+  () => import("../components/student/StudentDiscussionPage")
+);
+const StudentMissionsPage = lazyLoad(
+  () => import("../components/student/StudentMissionsPage")
+);
 
 // Teacher pages
-const TeacherDashboard = lazyLoad(() => import('../pages/teacher/TeacherDashboard'));
-const TeacherClassroomsPage = lazyLoad(() => import('../pages/teacher/TeacherClassroomsPage'));
-const TeacherActivitiesPage = lazyLoad(() => import('../pages/teacher/TeacherActivitiesPage'));
-const TeacherStudentsPage = lazyLoad(() => import('../pages/teacher/TeacherStudentsPage'));
-const TeacherRankingPage = lazyLoad(() => import('../pages/teacher/TeacherRankingPage'));
-const TeacherAnalyticsPage = lazyLoad(() => import('../components/teacher/TeacherAnalyticsPage'));
-const TeacherClassMembersPage = lazyLoad(() => import('../components/teacher/TeacherClassMembersPage'));
-const TeacherChatbotSettingsPage = lazyLoad(() => import('../components/teacher/TeacherChatbotSettingsPage'));
-const StudentDetailPage = lazyLoad(() => import('../pages/teacher/StudentDetailPage'));
-const MissionsListPage = lazyLoad(() => import('../pages/teacher/MissionsListPage'));
-const CreateMissionPage = lazyLoad(() => import('../pages/teacher/CreateMissionPage'));
-const MissionDetailPage = lazyLoad(() => import('../pages/teacher/MissionDetailPage'));
-const QuestionBankPage = lazyLoad(() => import('../pages/teacher/QuestionBankPage'));
-const CreateQuestionPage = lazyLoad(() => import('../pages/teacher/CreateQuestionPage'));
-const AnalyticsMLPage = lazyLoad(() => import('../pages/teacher/AnalyticsMLPage'));
-const EditClassPage = lazyLoad(() => import('../pages/teacher/EditClassPage'));
+const TeacherDashboard = lazyLoad(
+  () => import("../pages/teacher/TeacherDashboard")
+);
+const TeacherClassroomsPage = lazyLoad(
+  () => import("../pages/teacher/TeacherClassroomsPage")
+);
+const TeacherActivitiesPage = lazyLoad(
+  () => import("../pages/teacher/TeacherActivitiesPage")
+);
+const TeacherStudentsPage = lazyLoad(
+  () => import("../pages/teacher/TeacherStudentsPage")
+);
+const TeacherRankingPage = lazyLoad(
+  () => import("../pages/teacher/TeacherRankingPage")
+);
+const TeacherAnalyticsPage = lazyLoad(
+  () => import("../components/teacher/TeacherAnalyticsPage")
+);
+const TeacherClassMembersPage = lazyLoad(
+  () => import("../components/teacher/TeacherClassMembersPage")
+);
+const TeacherChatbotSettingsPage = lazyLoad(
+  () => import("../components/teacher/TeacherChatbotSettingsPage")
+);
+const StudentDetailPage = lazyLoad(
+  () => import("../pages/teacher/StudentDetailPage")
+);
+const MissionsListPage = lazyLoad(
+  () => import("../pages/teacher/MissionsListPage")
+);
+const CreateMissionPage = lazyLoad(
+  () => import("../pages/teacher/CreateMissionPage")
+);
+const MissionDetailPage = lazyLoad(
+  () => import("../pages/teacher/MissionDetailPage")
+);
+const QuestionBankPage = lazyLoad(
+  () => import("../pages/teacher/QuestionBankPage")
+);
+const CreateQuestionPage = lazyLoad(
+  () => import("../pages/teacher/CreateQuestionPage")
+);
+const AnalyticsMLPage = lazyLoad(
+  () => import("../pages/teacher/AnalyticsMLPage")
+);
+const EditClassPage = lazyLoad(() => import("../pages/teacher/EditClassPage"));
 
 // New Class Systems - Janeiro 2025
-const ClassFeedPage = lazyLoad(() => import('../pages/classes/ClassFeedPage'));
-const GradingQueuePage = lazyLoad(() => import('../pages/teacher/GradingQueuePage'));
-const GradingPage = lazyLoad(() => import('../pages/teacher/GradingPage'));
-const ClassGradesPage = lazyLoad(() => import('../pages/teacher/ClassGradesPage'));
-const ClassMaterialsPage = lazyLoad(() => import('../pages/teacher/ClassMaterialsPage'));
-const ClassAnalyticsPage = lazyLoad(() => import('../pages/teacher/ClassAnalyticsPage'));
-const ClassAttendancePage = lazyLoad(() => import('../pages/teacher/ClassAttendancePage'));
+const ClassFeedPage = lazyLoad(() => import("../pages/classes/ClassFeedPage"));
+const GradingQueuePage = lazyLoad(
+  () => import("../pages/teacher/GradingQueuePage")
+);
+const GradingPage = lazyLoad(() => import("../pages/teacher/GradingPage"));
+const ClassGradesPage = lazyLoad(
+  () => import("../pages/teacher/ClassGradesPage")
+);
+const ClassMaterialsPage = lazyLoad(
+  () => import("../pages/teacher/ClassMaterialsPage")
+);
+const ClassAnalyticsPage = lazyLoad(
+  () => import("../pages/teacher/ClassAnalyticsPage")
+);
+const ClassAttendancePage = lazyLoad(
+  () => import("../pages/teacher/ClassAttendancePage")
+);
 
 // Layouts
-const StudentLayout = lazyLoad(() => import('../components/student/StudentLayout'));
-const TeacherLayout = lazyLoad(() => import('../components/teacher/TeacherLayout'));
-const SchoolLayout = lazyLoad(() => import('../components/school/SchoolLayout'));
+const StudentLayout = lazyLoad(
+  () => import("../components/student/StudentLayout")
+);
+const TeacherLayout = lazyLoad(
+  () => import("../components/teacher/TeacherLayout")
+);
+const SchoolLayout = lazyLoad(
+  () => import("../components/school/SchoolLayout")
+);
 
 // Error pages
-const NotFound = lazyLoad(() => import('../pages/errors/NotFound'));
-const AccessDenied = lazyLoad(() => import('../pages/errors/AccessDenied'));
+const NotFound = lazyLoad(() => import("../pages/errors/NotFound"));
+const AccessDenied = lazyLoad(() => import("../pages/errors/AccessDenied"));
 
 // HMR test component only in development
-const HMRTest = import.meta.env.DEV ? React.lazy(() => import('../hmr-test')) : null;
+const HMRTest = import.meta.env.DEV
+  ? React.lazy(() => import("../hmr-test"))
+  : null;
 
 const AppRoutes = () => {
   return (
     <Routes>
       {/* Rotas Públicas */}
       {/* Redirects para caminhos legados/errados */}
-      <Route path="/dashboard/student/*" element={<Navigate to="/students" replace />} />
-      <Route path="/dashboard/school/*" element={<Navigate to="/school" replace />} />
+      <Route
+        path="/dashboard/student/*"
+        element={<Navigate to="/students" replace />}
+      />
+      <Route
+        path="/dashboard/school/*"
+        element={<Navigate to="/school" replace />}
+      />
       <Route path="/student/*" element={<Navigate to="/students" replace />} />
       <Route path="/escola/*" element={<Navigate to="/school" replace />} />
       <Route
@@ -250,7 +432,7 @@ const AppRoutes = () => {
           </Suspense>
         }
       />
-      
+
       <Route
         path="/admin/spec-coverage"
         element={
@@ -307,7 +489,10 @@ const AppRoutes = () => {
           </Suspense>
         }
       />
-      <Route path="/onboarding" element={<Navigate to="/dashboard" replace />} />
+      <Route
+        path="/onboarding"
+        element={<Navigate to="/dashboard" replace />}
+      />
 
       {/* Profile Edit - Accessible for all authenticated users */}
       <Route
@@ -372,8 +557,11 @@ const AppRoutes = () => {
       <Route
         path="/students"
         element={
-          <RoleProtectedRoute allowedRoles={['student']}>
-            <ErrorBoundary errorTitle="Erro" errorMessage="Não foi possível carregar a página. Tente recarregar.">
+          <RoleProtectedRoute allowedRoles={["student"]}>
+            <ErrorBoundary
+              errorTitle="Erro"
+              errorMessage="Não foi possível carregar a página. Tente recarregar."
+            >
               <Suspense fallback={<Loading />}>
                 <StudentLayout />
               </Suspense>
@@ -433,7 +621,11 @@ const AppRoutes = () => {
           path="quizzes"
           element={
             <Suspense fallback={<Loading />}>
-              {React.createElement(lazyLoad(() => import('../pages/student/StudentPublicQuizzesPage')))}
+              {React.createElement(
+                lazyLoad(
+                  () => import("../pages/student/StudentPublicQuizzesPage")
+                )
+              )}
             </Suspense>
           }
         />
@@ -441,7 +633,9 @@ const AppRoutes = () => {
           path="quizzes/:quizId"
           element={
             <Suspense fallback={<Loading />}>
-              {React.createElement(lazyLoad(() => import('../pages/student/StudentQuizPlayPage')))}
+              {React.createElement(
+                lazyLoad(() => import("../pages/student/StudentQuizPlayPage"))
+              )}
             </Suspense>
           }
         />
@@ -517,8 +711,11 @@ const AppRoutes = () => {
       <Route
         path="/dashboard"
         element={
-          <RoleProtectedRoute allowedRoles={['teacher']}>
-            <ErrorBoundary errorTitle="Erro no Dashboard" errorMessage="Não foi possível carregar o dashboard. Tente recarregar a página.">
+          <RoleProtectedRoute allowedRoles={["teacher"]}>
+            <ErrorBoundary
+              errorTitle="Erro no Dashboard"
+              errorMessage="Não foi possível carregar o dashboard. Tente recarregar a página."
+            >
               <Suspense fallback={<Loading />}>
                 <TeacherLayout />
               </Suspense>
@@ -537,7 +734,10 @@ const AppRoutes = () => {
         <Route
           path="classes"
           element={
-            <ErrorBoundary errorTitle="Erro ao carregar Turmas" errorMessage="Não foi possível carregar a página de turmas. Tente recarregar a página.">
+            <ErrorBoundary
+              errorTitle="Erro ao carregar Turmas"
+              errorMessage="Não foi possível carregar a página de turmas. Tente recarregar a página."
+            >
               <Suspense fallback={<Loading />}>
                 <ClassesPage />
               </Suspense>
@@ -915,8 +1115,11 @@ const AppRoutes = () => {
       <Route
         path="/school"
         element={
-          <RoleProtectedRoute allowedRoles={['school']}>
-            <ErrorBoundary errorTitle="Erro" errorMessage="Não foi possível carregar a página. Tente recarregar.">
+          <RoleProtectedRoute allowedRoles={["school"]}>
+            <ErrorBoundary
+              errorTitle="Erro"
+              errorMessage="Não foi possível carregar a página. Tente recarregar."
+            >
               <Suspense fallback={<Loading />}>
                 <SchoolLayout />
               </Suspense>

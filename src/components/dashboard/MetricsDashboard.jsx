@@ -1,10 +1,16 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 /**
  * Advanced metrics dashboard with real-time data visualization and analytics
@@ -18,62 +24,62 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
  * @param {string} props.className - Additional CSS classes
  */
 export const [loading, setLoading] = useState(true);
-  const MetricsDashboard = ({
+const MetricsDashboard = ({
   metrics = [],
   onMetricClick,
   onRefresh,
   autoRefresh = true,
   refreshInterval = 30,
-  timeRange = '24h',
-  className = '',
+  timeRange = "24h",
+  className = "",
   ...props
 }) => {
   const [dashboardData, setDashboardData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(null);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
 
   // Mock data for demonstration
   const defaultMetrics = [
     {
-      id: 'users',
-      title: 'Usuários Ativos',
+      id: "users",
+      title: "Usuários Ativos",
       value: 1234,
       change: 12.5,
-      trend: 'up',
-      unit: 'usuários',
-      color: 'blue',
-      icon: '👥',
+      trend: "up",
+      unit: "usuários",
+      color: "blue",
+      icon: "👥",
     },
     {
-      id: 'revenue',
-      title: 'Receita Mensal',
+      id: "revenue",
+      title: "Receita Mensal",
       value: 45678,
       change: -2.3,
-      trend: 'down',
-      unit: 'R$',
-      color: 'green',
-      icon: '💰',
+      trend: "down",
+      unit: "R$",
+      color: "green",
+      icon: "💰",
     },
     {
-      id: 'performance',
-      title: 'Performance',
+      id: "performance",
+      title: "Performance",
       value: 94.2,
       change: 5.1,
-      trend: 'up',
-      unit: '%',
-      color: 'purple',
-      icon: '⚡',
+      trend: "up",
+      unit: "%",
+      color: "purple",
+      icon: "⚡",
     },
     {
-      id: 'errors',
-      title: 'Erros',
+      id: "errors",
+      title: "Erros",
       value: 23,
       change: -15.2,
-      trend: 'up',
-      unit: 'erros',
-      color: 'red',
-      icon: '🚨',
+      trend: "up",
+      unit: "erros",
+      color: "red",
+      icon: "🚨",
     },
   ];
 
@@ -83,30 +89,30 @@ export const [loading, setLoading] = useState(true);
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const mockData = {
         overview: defaultMetrics,
         performance: [
-          { name: 'CPU', value: 45, color: '#3b82f6' },
-          { name: 'Memória', value: 67, color: '#10b981' },
-          { name: 'Disco', value: 34, color: '#f59e0b' },
-          { name: 'Rede', value: 23, color: '#ef4444' },
+          { name: "CPU", value: 45, color: "#3b82f6" },
+          { name: "Memória", value: 67, color: "#10b981" },
+          { name: "Disco", value: 34, color: "#f59e0b" },
+          { name: "Rede", value: 23, color: "#ef4444" },
         ],
         activity: [
-          { time: '00:00', users: 120, pageViews: 340 },
-          { time: '04:00', users: 89, pageViews: 210 },
-          { time: '08:00', users: 234, pageViews: 567 },
-          { time: '12:00', users: 345, pageViews: 890 },
-          { time: '16:00', users: 287, pageViews: 654 },
-          { time: '20:00', users: 198, pageViews: 432 },
+          { time: "00:00", users: 120, pageViews: 340 },
+          { time: "04:00", users: 89, pageViews: 210 },
+          { time: "08:00", users: 234, pageViews: 567 },
+          { time: "12:00", users: 345, pageViews: 890 },
+          { time: "16:00", users: 287, pageViews: 654 },
+          { time: "20:00", users: 198, pageViews: 432 },
         ],
       };
 
       setDashboardData(mockData);
       setLastUpdated(new Date());
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
+      console.error("Error loading dashboard data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -118,16 +124,19 @@ export const [loading, setLoading] = useState(true);
 
     if (autoRefresh) {
       const interval = setInterval(loadDashboardData, refreshInterval * 1000);
-      if (loading) return <LoadingScreen />;
+      /* if (loading) return <LoadingScreen />; */
 
-  return () => clearInterval(interval);
+      return () => clearInterval(interval);
     }
   }, [loadDashboardData, autoRefresh, refreshInterval]);
 
   // Handle metric click
-  const handleMetricClick = useCallback((metric) => {
-    onMetricClick?.(metric);
-  }, [onMetricClick]);
+  const handleMetricClick = useCallback(
+    (metric) => {
+      onMetricClick?.(metric);
+    },
+    [onMetricClick]
+  );
 
   // Handle refresh
   const handleRefresh = useCallback(() => {
@@ -147,14 +156,16 @@ export const [loading, setLoading] = useState(true);
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">
-          {metric.unit === 'R$' ? `${metric.unit} ${metric.value.toLocaleString()}` : `${metric.value.toLocaleString()} ${metric.unit}`}
+          {metric.unit === "R$"
+            ? `${metric.unit} ${metric.value.toLocaleString()}`
+            : `${metric.value.toLocaleString()} ${metric.unit}`}
         </div>
         <div className="flex items-center text-xs text-muted-foreground">
           <Badge
-            variant={metric.trend === 'up' ? 'default' : 'destructive'}
-            className={`mr-2 ${metric.trend === 'up' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+            variant={metric.trend === "up" ? "default" : "destructive"}
+            className={`mr-2 ${metric.trend === "up" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
           >
-            {metric.trend === 'up' ? '↗' : '↘'} {Math.abs(metric.change)}%
+            {metric.trend === "up" ? "↗" : "↘"} {Math.abs(metric.change)}%
           </Badge>
           vs período anterior
         </div>
@@ -199,7 +210,10 @@ export const [loading, setLoading] = useState(true);
       <CardContent>
         <div className="space-y-2">
           {data.map((item, index) => (
-            <div key={index} className="flex items-center justify-between text-sm">
+            <div
+              key={index}
+              className="flex items-center justify-between text-sm"
+            >
               <span className="text-muted-foreground">{item.time}h</span>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
@@ -219,12 +233,12 @@ export const [loading, setLoading] = useState(true);
   );
 
   if (isLoading && !dashboardData.overview) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
+    return (
       <div className={`metrics-dashboard ${className}`}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map(i => (
+          {[1, 2, 3, 4].map((i) => (
             <Card key={i}>
               <CardContent className="p-6">
                 <div className="animate-pulse">
@@ -240,7 +254,7 @@ export const [loading, setLoading] = useState(true);
     );
   }
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`metrics-dashboard ${className}`} {...props}>
@@ -256,7 +270,10 @@ export const [loading, setLoading] = useState(true);
         </div>
 
         <div className="flex items-center gap-2">
-          <Select value={timeRange} onValueChange={(value) => setTimeRange(value)}>
+          <Select
+            value={timeRange}
+            onValueChange={(value) => setTimeRange(value)}
+          >
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>
@@ -269,13 +286,17 @@ export const [loading, setLoading] = useState(true);
           </Select>
 
           <Button onClick={handleRefresh} disabled={isLoading}>
-            {isLoading ? '🔄' : '🔄'} Atualizar
+            {isLoading ? "🔄" : "🔄"} Atualizar
           </Button>
         </div>
       </div>
 
       {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-4"
+      >
         <TabsList>
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
           <TabsTrigger value="performance">Performance</TabsTrigger>
@@ -284,7 +305,7 @@ export const [loading, setLoading] = useState(true);
 
         <TabsContent value="overview" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {dashboardData.overview?.map(metric => (
+            {dashboardData.overview?.map((metric) => (
               <MetricCard key={metric.id} metric={metric} />
             ))}
           </div>

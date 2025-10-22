@@ -80,10 +80,10 @@ export class PerformanceOptimizer {
     const usagePercent = (memoryInfo.used / memoryInfo.total) * 100;
 
     if (usagePercent > 80) {
-      this.triggerOptimization('high_memory_usage', {
+      this.triggerOptimization("high_memory_usage", {
         usagePercent,
         threshold: 80,
-        action: 'memory_cleanup',
+        action: "memory_cleanup",
       });
     }
 
@@ -109,16 +109,19 @@ export class PerformanceOptimizer {
    */
   clearUnusedCaches() {
     // Limpar caches de componentes React não utilizados
-    if (window.React && window.React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED) {
+    if (
+      window.React &&
+      window.React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
+    ) {
       // Esta é uma abordagem simplificada - em produção usar React DevTools
       // console.log('🧹 Cleared unused component caches');
     }
 
     // Limpar caches de service workers
-    if ('caches' in window) {
-      caches.keys().then(names => {
-        names.forEach(name => {
-          if (name.includes('temp') || name.includes('old')) {
+    if ("caches" in window) {
+      caches.keys().then((names) => {
+        names.forEach((name) => {
+          if (name.includes("temp") || name.includes("old")) {
             caches.delete(name);
           }
         });
@@ -148,11 +151,12 @@ export class PerformanceOptimizer {
       }
 
       // Verificar performance de renderização
-      if (renderTime > 100) { // Mais de 100ms é lento
-        this.triggerOptimization('slow_render', {
+      if (renderTime > 100) {
+        // Mais de 100ms é lento
+        this.triggerOptimization("slow_render", {
           renderTime,
           threshold: 100,
-          action: 'render_optimization',
+          action: "render_optimization",
         });
       }
 
@@ -187,12 +191,13 @@ export class PerformanceOptimizer {
           duration,
           status: response.status,
           timestamp: startTime,
-          method: args[1]?.method || 'GET',
+          method: args[1]?.method || "GET",
         });
 
         // Verificar requisições lentas
-        if (duration > 3000) { // Mais de 3 segundos
-          this.triggerOptimization('slow_network_request', {
+        if (duration > 3000) {
+          // Mais de 3 segundos
+          this.triggerOptimization("slow_network_request", {
             url,
             duration,
             threshold: 3000,
@@ -243,22 +248,34 @@ export class PerformanceOptimizer {
    */
   registerDefaultOptimizations() {
     // Otimização para alto uso de memória
-    this.registerOptimizationRule('high_memory_usage', (data) => data.usagePercent > 80, (data) => {
-      this.clearUnusedCaches();
-      this.deprioritizeNonCriticalFeatures();
-    });
+    this.registerOptimizationRule(
+      "high_memory_usage",
+      (data) => data.usagePercent > 80,
+      (data) => {
+        this.clearUnusedCaches();
+        this.deprioritizeNonCriticalFeatures();
+      }
+    );
 
     // Otimização para renderização lenta
-    this.registerOptimizationRule('slow_render', (data) => data.renderTime > 100, (data) => {
-      this.enableVirtualization();
-      this.reduceAnimationComplexity();
-    });
+    this.registerOptimizationRule(
+      "slow_render",
+      (data) => data.renderTime > 100,
+      (data) => {
+        this.enableVirtualization();
+        this.reduceAnimationComplexity();
+      }
+    );
 
     // Otimização para requisições lentas
-    this.registerOptimizationRule('slow_network_request', (data) => data.duration > 3000, (data) => {
-      this.enableRequestBatching();
-      this.implementRequestCaching(data.url);
-    });
+    this.registerOptimizationRule(
+      "slow_network_request",
+      (data) => data.duration > 3000,
+      (data) => {
+        this.enableRequestBatching();
+        this.implementRequestCaching(data.url);
+      }
+    );
   }
 
   /**
@@ -266,14 +283,14 @@ export class PerformanceOptimizer {
    */
   enableVirtualization() {
     // Adicionar classe CSS para habilitar virtualização
-    document.body.classList.add('virtual-scroll-enabled');
+    document.body.classList.add("virtual-scroll-enabled");
   }
 
   /**
    * Reduz complexidade de animações
    */
   reduceAnimationComplexity() {
-    document.body.classList.add('reduced-animations');
+    document.body.classList.add("reduced-animations");
   }
 
   /**
@@ -309,40 +326,61 @@ export class PerformanceOptimizer {
     const now = Date.now();
 
     // Calcular médias
-    const avgRenderTime = this.metrics.renderTime.length > 0
-      ? this.metrics.renderTime.reduce((sum, r) => sum + r.time, 0) / this.metrics.renderTime.length
-      : 0;
+    const avgRenderTime =
+      this.metrics.renderTime.length > 0
+        ? this.metrics.renderTime.reduce((sum, r) => sum + r.time, 0) /
+          this.metrics.renderTime.length
+        : 0;
 
-    const avgMemoryUsage = this.metrics.memoryUsage.length > 0
-      ? this.metrics.memoryUsage.reduce((sum, m) => sum + (m.used / m.total) * 100, 0) / this.metrics.memoryUsage.length
-      : 0;
+    const avgMemoryUsage =
+      this.metrics.memoryUsage.length > 0
+        ? this.metrics.memoryUsage.reduce(
+            (sum, m) => sum + (m.used / m.total) * 100,
+            0
+          ) / this.metrics.memoryUsage.length
+        : 0;
 
-    const avgNetworkTime = this.metrics.networkRequests.length > 0
-      ? this.metrics.networkRequests.reduce((sum, r) => sum + r.duration, 0) / this.metrics.networkRequests.length
-      : 0;
+    const avgNetworkTime =
+      this.metrics.networkRequests.length > 0
+        ? this.metrics.networkRequests.reduce((sum, r) => sum + r.duration, 0) /
+          this.metrics.networkRequests.length
+        : 0;
 
     return {
       renderTime: {
         average: avgRenderTime.toFixed(2),
-        latest: this.metrics.renderTime[this.metrics.renderTime.length - 1]?.time || 0,
-        trend: this.calculateTrend(this.metrics.renderTime.map(r => r.time)),
+        latest:
+          this.metrics.renderTime[this.metrics.renderTime.length - 1]?.time ||
+          0,
+        trend: this.calculateTrend(this.metrics.renderTime.map((r) => r.time)),
       },
       memoryUsage: {
         average: avgMemoryUsage.toFixed(2),
-        latest: this.metrics.memoryUsage[this.metrics.memoryUsage.length - 1]?.used || 0,
-        trend: this.calculateTrend(this.metrics.memoryUsage.map(m => (m.used / m.total) * 100)),
+        latest:
+          this.metrics.memoryUsage[this.metrics.memoryUsage.length - 1]?.used ||
+          0,
+        trend: this.calculateTrend(
+          this.metrics.memoryUsage.map((m) => (m.used / m.total) * 100)
+        ),
       },
       networkRequests: {
         average: avgNetworkTime.toFixed(2),
         count: this.metrics.networkRequests.length,
-        slowRequests: this.metrics.networkRequests.filter(r => r.duration > 3000).length,
+        slowRequests: this.metrics.networkRequests.filter(
+          (r) => r.duration > 3000
+        ).length,
       },
       cache: {
         hits: this.metrics.cacheHits,
         misses: this.metrics.cacheMisses,
-        hitRate: this.metrics.cacheHits + this.metrics.cacheMisses > 0
-          ? ((this.metrics.cacheHits / (this.metrics.cacheHits + this.metrics.cacheMisses)) * 100).toFixed(2)
-          : 0,
+        hitRate:
+          this.metrics.cacheHits + this.metrics.cacheMisses > 0
+            ? (
+                (this.metrics.cacheHits /
+                  (this.metrics.cacheHits + this.metrics.cacheMisses)) *
+                100
+              ).toFixed(2)
+            : 0,
       },
       timestamp: now,
     };
@@ -374,28 +412,31 @@ export class PerformanceOptimizer {
 
     if (metrics.renderTime.average > 50) {
       suggestions.push({
-        type: 'render',
-        priority: 'high',
-        message: 'Renderização lenta detectada. Considere usar React.memo ou virtualização.',
-        action: 'enableVirtualization',
+        type: "render",
+        priority: "high",
+        message:
+          "Renderização lenta detectada. Considere usar React.memo ou virtualização.",
+        action: "enableVirtualization",
       });
     }
 
     if (metrics.memoryUsage.average > 75) {
       suggestions.push({
-        type: 'memory',
-        priority: 'high',
-        message: 'Alto uso de memória. Considere limpeza de caches e componentes não utilizados.',
-        action: 'clearUnusedCaches',
+        type: "memory",
+        priority: "high",
+        message:
+          "Alto uso de memória. Considere limpeza de caches e componentes não utilizados.",
+        action: "clearUnusedCaches",
       });
     }
 
     if (metrics.networkRequests.slowRequests > 0) {
       suggestions.push({
-        type: 'network',
-        priority: 'medium',
-        message: 'Requisições lentas detectadas. Implemente cache e otimização de rede.',
-        action: 'implementRequestCaching',
+        type: "network",
+        priority: "medium",
+        message:
+          "Requisições lentas detectadas. Implemente cache e otimização de rede.",
+        action: "implementRequestCaching",
       });
     }
 
@@ -407,7 +448,9 @@ export class PerformanceOptimizer {
  * Hook para usar otimizações de performance
  */
 export const usePerformanceOptimization = () => {
-  const optimizer = React.useRef(new PerformanceOptimizer());
+  import { useRef, useEffect, useCallback } from "react";
+
+  const optimizer = useRef(new PerformanceOptimizer());
 
   React.useEffect(() => {
     optimizer.current.registerDefaultOptimizations();
@@ -418,7 +461,7 @@ export const usePerformanceOptimization = () => {
     };
   }, []);
 
-  const getMetrics = React.useCallback(() => {
+  const getMetrics = useCallback(() => {
     return optimizer.current.getMetrics();
   }, []);
 
@@ -440,7 +483,7 @@ export const usePerformanceOptimization = () => {
 /**
  * Componente de painel de performance
  */
-export const PerformanceDashboard = ({ className = '' }) => {
+export const PerformanceDashboard = ({ className = "" }) => {
   const { getMetrics, getSuggestions } = usePerformanceOptimization();
   const [metrics, setMetrics] = React.useState(null);
   const [suggestions, setSuggestions] = React.useState([]);
@@ -458,7 +501,9 @@ export const PerformanceDashboard = ({ className = '' }) => {
   }, [getMetrics, getSuggestions]);
 
   if (!metrics) {
-    return <div className={`animate-pulse ${className}`}>Carregando métricas...</div>;
+    return (
+      <div className={`animate-pulse ${className}`}>Carregando métricas...</div>
+    );
   }
 
   return (
@@ -503,9 +548,9 @@ export const PerformanceDashboard = ({ className = '' }) => {
               <div
                 key={index}
                 className={`p-3 rounded-lg border ${
-                  suggestion.priority === 'high'
-                    ? 'bg-red-50 border-red-200 text-red-800'
-                    : 'bg-yellow-50 border-yellow-200 text-yellow-800'
+                  suggestion.priority === "high"
+                    ? "bg-red-50 border-red-200 text-red-800"
+                    : "bg-yellow-50 border-yellow-200 text-yellow-800"
                 }`}
               >
                 <p className="font-medium">{suggestion.message}</p>
@@ -519,27 +564,31 @@ export const PerformanceDashboard = ({ className = '' }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="p-4 bg-gray-50 rounded-lg">
           <h5 className="font-medium mb-2">Tendência de Render</h5>
-          <div className={`text-lg font-bold ${
-            metrics.renderTime.trend > 0 ? 'text-red-600' : 'text-green-600'
-          }`}>
-            {metrics.renderTime.trend > 0 ? '↗' : '↘'} {Math.abs(metrics.renderTime.trend).toFixed(1)}%
+          <div
+            className={`text-lg font-bold ${
+              metrics.renderTime.trend > 0 ? "text-red-600" : "text-green-600"
+            }`}
+          >
+            {metrics.renderTime.trend > 0 ? "↗" : "↘"}{" "}
+            {Math.abs(metrics.renderTime.trend).toFixed(1)}%
           </div>
         </div>
 
         <div className="p-4 bg-gray-50 rounded-lg">
           <h5 className="font-medium mb-2">Tendência de Memória</h5>
-          <div className={`text-lg font-bold ${
-            metrics.memoryUsage.trend > 0 ? 'text-red-600' : 'text-green-600'
-          }`}>
-            {metrics.memoryUsage.trend > 0 ? '↗' : '↘'} {Math.abs(metrics.memoryUsage.trend).toFixed(1)}%
+          <div
+            className={`text-lg font-bold ${
+              metrics.memoryUsage.trend > 0 ? "text-red-600" : "text-green-600"
+            }`}
+          >
+            {metrics.memoryUsage.trend > 0 ? "↗" : "↘"}{" "}
+            {Math.abs(metrics.memoryUsage.trend).toFixed(1)}%
           </div>
         </div>
 
         <div className="p-4 bg-gray-50 rounded-lg">
           <h5 className="font-medium mb-2">Status do Sistema</h5>
-          <div className="text-lg font-bold text-green-600">
-            ✅ Saudável
-          </div>
+          <div className="text-lg font-bold text-green-600">✅ Saudável</div>
         </div>
       </div>
     </div>
@@ -552,7 +601,7 @@ export const PerformanceDashboard = ({ className = '' }) => {
 export const performanceOptimizer = new PerformanceOptimizer();
 
 // Inicializar otimizações padrão
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   performanceOptimizer.registerDefaultOptimizations();
 
   // Iniciar monitoramento após 1 segundo para não interferir na carga inicial

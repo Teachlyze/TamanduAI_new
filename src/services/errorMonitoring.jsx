@@ -3,7 +3,10 @@
  * Sistema avançado de monitoramento de erros e alertas
  */
 // Feature flag to control admin alert notifications in dev/prod
-const ENABLE_ALERT_NOTIFICATIONS = (import.meta?.env?.VITE_ENABLE_ALERT_NOTIFICATIONS || '').toString().toLowerCase() === 'true';
+const ENABLE_ALERT_NOTIFICATIONS =
+  (import.meta?.env?.VITE_ENABLE_ALERT_NOTIFICATIONS || "")
+    .toString()
+    .toLowerCase() === "true";
 
 export class ErrorMonitor {
   constructor() {
@@ -33,7 +36,7 @@ export class ErrorMonitor {
       id: errorId,
       message: error.message || error.toString(),
       stack: error.stack,
-      type: error.name || 'Unknown',
+      type: error.name || "Unknown",
       timestamp,
       context,
       userId: context.userId,
@@ -63,7 +66,7 @@ export class ErrorMonitor {
     this.sendToExternalService(errorRecord);
 
     // Log local
-    console.error('Error recorded:', errorRecord);
+    console.error("Error recorded:", errorRecord);
 
     return errorId;
   }
@@ -83,8 +86,8 @@ export class ErrorMonitor {
    * Gera ID único para o erro
    */
   generateErrorId(error) {
-    const errorString = `${error.name || 'Unknown'}:${error.message || error.toString()}`;
-    const hash = this.simpleHash(errorString + (error.stack || ''));
+    const errorString = `${error.name || "Unknown"}:${error.message || error.toString()}`;
+    const hash = this.simpleHash(errorString + (error.stack || ""));
     return `err_${Date.now()}_${hash}`;
   }
 
@@ -95,7 +98,7 @@ export class ErrorMonitor {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(36);
@@ -117,12 +120,12 @@ export class ErrorMonitor {
     }
 
     if (recentErrors >= this.errorThreshold) {
-      this.generateAlert('error_threshold_exceeded', {
+      this.generateAlert("error_threshold_exceeded", {
         errorCount: recentErrors,
         threshold: this.errorThreshold,
         timeWindow: this.timeWindow,
         recentErrors: Array.from(this.errors.values())
-          .filter(e => e.timestamp >= windowStart && !e.resolved)
+          .filter((e) => e.timestamp >= windowStart && !e.resolved)
           .slice(-5), // Últimos 5 erros
       });
     }
@@ -130,7 +133,7 @@ export class ErrorMonitor {
     // Alertas por tipo de erro
     const typeCount = this.metrics.errorsByType.get(errorRecord.type) || 0;
     if (typeCount >= 5) {
-      this.generateAlert('error_type_spike', {
+      this.generateAlert("error_type_spike", {
         errorType: errorRecord.type,
         count: typeCount,
       });
@@ -157,7 +160,7 @@ export class ErrorMonitor {
     }
 
     // Log do alerta
-    console.warn('Alert generated:', alert);
+    console.warn("Alert generated:", alert);
   }
 
   /**
@@ -167,21 +170,21 @@ export class ErrorMonitor {
     try {
       // Enviar para serviço de notificações interno (habilitado por flag)
       if (!ENABLE_ALERT_NOTIFICATIONS) return;
-      await fetch('/api/alerts', {
-        method: 'POST',
+      await fetch("/api/alerts", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          type: 'system_alert',
+          type: "system_alert",
           title: `Alerta: ${alert.type}`,
           message: `Erro crítico detectado no sistema`,
           data: alert,
-          priority: 'high',
+          priority: "high",
         }),
       });
     } catch (error) {
-      console.error('Failed to send alert notification:', error);
+      console.error("Failed to send alert notification:", error);
     }
   }
 
@@ -209,13 +212,13 @@ export class ErrorMonitor {
 
       // Enviar métricas para serviço de analytics
       if (window.gtag) {
-        window.gtag('event', 'exception', {
+        window.gtag("event", "exception", {
           description: errorRecord.message,
           fatal: false,
         });
       }
     } catch (error) {
-      console.error('Failed to send to external service:', error);
+      console.error("Failed to send to external service:", error);
     }
   }
 
@@ -226,8 +229,9 @@ export class ErrorMonitor {
     const now = Date.now();
     const windowStart = now - this.timeWindow;
 
-    const recentErrors = Array.from(this.errors.values())
-      .filter(e => e.timestamp >= windowStart);
+    const recentErrors = Array.from(this.errors.values()).filter(
+      (e) => e.timestamp >= windowStart
+    );
 
     const errorsByHour = this.groupErrorsByHour(recentErrors);
     const topErrors = this.getTopErrors(5);
@@ -238,7 +242,7 @@ export class ErrorMonitor {
       errorRate: this.calculateErrorRate(),
       errorsByHour,
       topErrors,
-      alerts: this.alerts.filter(a => !a.acknowledged),
+      alerts: this.alerts.filter((a) => !a.acknowledged),
       timestamp: now,
     };
   }
@@ -250,8 +254,9 @@ export class ErrorMonitor {
     const now = Date.now();
     const windowStart = now - this.timeWindow;
 
-    const errorsInWindow = Array.from(this.errors.values())
-      .filter(e => e.timestamp >= windowStart).length;
+    const errorsInWindow = Array.from(this.errors.values()).filter(
+      (e) => e.timestamp >= windowStart
+    ).length;
 
     const minutes = this.timeWindow / 60000;
     return (errorsInWindow / minutes).toFixed(2);
@@ -263,7 +268,7 @@ export class ErrorMonitor {
   groupErrorsByHour(errors) {
     const hours = {};
 
-    errors.forEach(error => {
+    errors.forEach((error) => {
       const hour = new Date(error.timestamp).getHours();
       hours[hour] = (hours[hour] || 0) + 1;
     });
@@ -277,7 +282,7 @@ export class ErrorMonitor {
   getTopErrors(limit = 5) {
     const errorCounts = new Map();
 
-    this.errors.forEach(error => {
+    this.errors.forEach((error) => {
       const key = `${error.type}:${error.message}`;
       errorCounts.set(key, (errorCounts.get(key) || 0) + 1);
     });
@@ -292,7 +297,7 @@ export class ErrorMonitor {
    * Limpa erros antigos (mais de 24h)
    */
   cleanupOldErrors() {
-    const cutoff = Date.now() - (24 * 60 * 60 * 1000); // 24 horas
+    const cutoff = Date.now() - 24 * 60 * 60 * 1000; // 24 horas
 
     for (const [id, error] of this.errors.entries()) {
       if (error.timestamp < cutoff) {
@@ -301,9 +306,7 @@ export class ErrorMonitor {
     }
 
     // Limpar alertas antigos
-    this.alerts = this.alerts.filter(alert =>
-      alert.timestamp > cutoff
-    );
+    this.alerts = this.alerts.filter((alert) => alert.timestamp > cutoff);
   }
 }
 
@@ -316,35 +319,47 @@ export const useErrorMonitoring = () => {
   React.useEffect(() => {
     // Monitorar erros não tratados
     const handleUnhandledError = (event) => {
-      monitor.current.recordError(event.error || event.reason, {
-        type: 'unhandled',
-        url: window.location.href,
-      }, []); // TODO: Add dependencies
+      monitor.current.recordError(
+        event.error || event.reason,
+        {
+          type: "unhandled",
+          url: window.location.href,
+        },
+        []
+      ); // TODO: Add dependencies
     };
 
     const handleUnhandledRejection = (event) => {
       monitor.current.recordError(event.reason, {
-        type: 'unhandled_promise_rejection',
+        type: "unhandled_promise_rejection",
         url: window.location.href,
       });
     };
 
-    window.addEventListener('error', handleUnhandledError);
-    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    window.addEventListener("error", handleUnhandledError);
+    window.addEventListener("unhandledrejection", handleUnhandledRejection);
 
     // Cleanup periódica
-    const cleanupInterval = setInterval(() => {
-      monitor.current.cleanupOldErrors();
-    }, 60 * 60 * 1000); // A cada hora
+    const cleanupInterval = setInterval(
+      () => {
+        monitor.current.cleanupOldErrors();
+      },
+      60 * 60 * 1000
+    ); // A cada hora
 
     return () => {
-      window.removeEventListener('error', handleUnhandledError);
-      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+      window.removeEventListener("error", handleUnhandledError);
+      window.removeEventListener(
+        "unhandledrejection",
+        handleUnhandledRejection
+      );
       clearInterval(cleanupInterval);
     };
   }, []);
 
-  const recordError = React.useCallback((error, context = {}) => {
+  import { useCallback } from "react";
+
+  const recordError = useCallback((error, context = {}) => {
     return monitor.current.recordError(error, context);
   }, []);
 
@@ -366,7 +381,7 @@ export const useErrorMonitoring = () => {
 /**
  * Componente para exibir métricas de erro
  */
-export const ErrorMetricsDashboard = ({ className = '' }) => {
+export const ErrorMetricsDashboard = ({ className = "" }) => {
   const { getMetrics } = useErrorMonitoring();
   const [metrics, setMetrics] = React.useState(null);
 
@@ -427,9 +442,12 @@ export const ErrorMetricsDashboard = ({ className = '' }) => {
           <h4 className="font-semibold">Erros Mais Frequentes</h4>
           <div className="space-y-1">
             {metrics.topErrors.map((error, index) => (
-              <div key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+              <div
+                key={index}
+                className="flex justify-between items-center p-2 bg-gray-50 rounded"
+              >
                 <span className="text-sm truncate flex-1 mr-2">
-                  {error.key.split(':').slice(-1)[0]}
+                  {error.key.split(":").slice(-1)[0]}
                 </span>
                 <span className="text-sm font-medium text-gray-600">
                   {error.count}
@@ -450,7 +468,7 @@ export const apiErrorMiddleware = (error, context = {}) => {
   const monitor = new ErrorMonitor();
 
   monitor.recordError(error, {
-    type: 'api_error',
+    type: "api_error",
     ...context,
     timestamp: Date.now(),
   });
@@ -464,20 +482,20 @@ export const apiErrorMiddleware = (error, context = {}) => {
 export const errorMonitor = new ErrorMonitor();
 
 // Inicializar monitoramento global
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   // Monitorar erros não tratados
-  window.addEventListener('error', (event) => {
+  window.addEventListener("error", (event) => {
     errorMonitor.recordError(event.error || event.message, {
-      type: 'global_error',
+      type: "global_error",
       filename: event.filename,
       lineno: event.lineno,
       colno: event.colno,
     });
   });
 
-  window.addEventListener('unhandledrejection', (event) => {
+  window.addEventListener("unhandledrejection", (event) => {
     errorMonitor.recordError(event.reason, {
-      type: 'unhandled_promise_rejection',
+      type: "unhandled_promise_rejection",
     });
   });
 }

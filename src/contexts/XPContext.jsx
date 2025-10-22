@@ -1,9 +1,15 @@
-import { supabase } from '@/lib/supabaseClient';
-import { useAuth } from '@/hooks/useAuth';
-import toast from 'react-hot-toast';
-import { motion } from 'framer-motion';
-import { Zap, Star } from 'lucide-react';
-
+import { supabase } from "@/lib/supabaseClient";
+import { useAuth } from "@/hooks/useAuth";
+import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+import { Zap, Star } from "lucide-react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 const XPContext = createContext();
 
 export const XPProvider = ({ children }) => {
@@ -13,7 +19,7 @@ export const XPProvider = ({ children }) => {
     level: 1,
     currentLevelXP: 0,
     nextLevelXP: 100,
-    loading: true
+    loading: true,
   });
 
   // Calcular level baseado em XP total
@@ -27,13 +33,13 @@ export const XPProvider = ({ children }) => {
   // Carregar XP do usuário
   const loadXP = useCallback(async () => {
     if (!user?.id) return;
-    
+
     try {
       // Buscar XP total do usuário
       const { data: logs, error } = await supabase
-        .from('xp_log')
-        .select('xp')
-        .eq('user_id', user.id);
+        .from("xp_log")
+        .select("xp")
+        .eq("user_id", user.id);
 
       if (error) throw error;
 
@@ -43,35 +49,38 @@ export const XPProvider = ({ children }) => {
       setXpData({
         totalXP,
         ...levelData,
-        loading: false
+        loading: false,
       });
 
       // Atualizar gamification_profiles se existir (safe: ignora erros se tabela não existir)
       try {
         const { data: profile, error: profileError } = await supabase
-          .from('gamification_profiles')
-          .select('id')
-          .eq('user_id', user.id)
+          .from("gamification_profiles")
+          .select("id")
+          .eq("user_id", user.id)
           .maybeSingle();
 
         // Ignore 404 or 42501 errors (table doesn't exist or RLS denies)
         if (!profileError && profile) {
           await supabase
-            .from('gamification_profiles')
-            .update({ 
-              xp_total: totalXP, 
+            .from("gamification_profiles")
+            .update({
+              xp_total: totalXP,
               level: levelData.level,
-              updated_at: new Date().toISOString()
+              updated_at: new Date().toISOString(),
             })
-            .eq('user_id', user.id);
+            .eq("user_id", user.id);
         }
       } catch (gamificationError) {
         // Silently ignore gamification_profiles errors
-        console.debug('gamification_profiles not available:', gamificationError?.message);
+        console.debug(
+          "gamification_profiles not available:",
+          gamificationError?.message
+        );
       }
     } catch (error) {
-      console.error('Erro ao carregar XP:', error);
-      setXpData(prev => ({ ...prev, loading: false }));
+      console.error("Erro ao carregar XP:", error);
+      setXpData((prev) => ({ ...prev, loading: false }));
     }
   }, [user?.id]);
 
@@ -85,32 +94,30 @@ export const XPProvider = ({ children }) => {
 
     try {
       // Inserir no xp_log
-      const { error: logError } = await supabase
-        .from('xp_log')
-        .insert({
-          user_id: user.id,
-          xp: amount,
-          source,
-          metadata,
-          created_at: new Date().toISOString()
-        });
+      const { error: logError } = await supabase.from("xp_log").insert({
+        user_id: user.id,
+        xp: amount,
+        source,
+        metadata,
+        created_at: new Date().toISOString(),
+      });
 
       if (logError) throw logError;
 
       // Criar notificação
       const { error: notifError } = await supabase
-        .from('notifications')
+        .from("notifications")
         .insert({
           user_id: user.id,
-          title: '🎉 XP Ganho!',
+          title: "🎉 XP Ganho!",
           message: `Você ganhou ${amount} XP em ${source}!`,
-          type: 'xp_gained',
+          type: "xp_gained",
           is_read: false,
           metadata: { xp: amount, source, ...metadata },
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         });
 
-      if (notifError) console.error('Erro ao criar notificação:', notifError);
+      if (notifError) console.error("Erro ao criar notificação:", notifError);
 
       // Atualizar estado local
       const newTotalXP = xpData.totalXP + amount;
@@ -120,7 +127,7 @@ export const XPProvider = ({ children }) => {
       setXpData({
         totalXP: newTotalXP,
         ...levelData,
-        loading: false
+        loading: false,
       });
 
       // Toast animado
@@ -145,7 +152,7 @@ export const XPProvider = ({ children }) => {
 
       toast.custom(<CustomToast />, {
         duration: 3000,
-        position: 'top-right'
+        position: "top-right",
       });
 
       // Se subiu de nível, mostrar toast especial
@@ -158,9 +165,9 @@ export const XPProvider = ({ children }) => {
               className="flex items-center gap-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-6 rounded-2xl shadow-2xl border-4 border-white/30"
             >
               <motion.div
-                animate={{ 
+                animate={{
                   scale: [1, 1.2, 1],
-                  rotate: [0, 10, -10, 0]
+                  rotate: [0, 10, -10, 0],
                 }}
                 transition={{ duration: 1, repeat: Infinity }}
               >
@@ -168,21 +175,22 @@ export const XPProvider = ({ children }) => {
               </motion.div>
               <div>
                 <div className="font-bold text-2xl">Level UP! 🎊</div>
-                <div className="text-sm">Você alcançou o nível {levelData.level}!</div>
+                <div className="text-sm">
+                  Você alcançou o nível {levelData.level}!
+                </div>
               </div>
             </motion.div>
           );
 
           toast.custom(<LevelUpToast />, {
             duration: 5000,
-            position: 'top-center'
+            position: "top-center",
           });
         }, 1000);
       }
-
     } catch (error) {
-      console.error('Erro ao adicionar XP:', error);
-      toast.error('Erro ao registrar XP');
+      console.error("Erro ao adicionar XP:", error);
+      toast.error("Erro ao registrar XP");
     }
   };
 
@@ -191,14 +199,14 @@ export const XPProvider = ({ children }) => {
     if (!user?.id) return;
 
     const subscription = supabase
-      .channel('xp_changes')
+      .channel("xp_changes")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'xp_log',
-          filter: `user_id=eq.${user.id}`
+          event: "INSERT",
+          schema: "public",
+          table: "xp_log",
+          filter: `user_id=eq.${user.id}`,
         },
         (payload) => {
           // Recarregar XP quando houver nova inserção
@@ -222,7 +230,7 @@ export const XPProvider = ({ children }) => {
 export const useXP = () => {
   const context = useContext(XPContext);
   if (!context) {
-    throw new Error('useXP must be used within XPProvider');
+    throw new Error("useXP must be used within XPProvider");
   }
   return context;
 };

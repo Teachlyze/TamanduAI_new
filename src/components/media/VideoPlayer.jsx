@@ -1,7 +1,7 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Slider } from '@/components/ui/slider';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
 
 /**
  * Advanced video player component with custom controls and accessibility features
@@ -21,14 +21,14 @@ import { Slider } from '@/components/ui/slider';
  * @param {Function} props.onLoadedData - Loaded data handler
  */
 export const [loading, setLoading] = useState(true);
-  const VideoPlayer = ({
+const VideoPlayer = ({
   src,
   poster,
   autoPlay = false,
   muted = false,
   loop = false,
   controls = true,
-  className = '',
+  className = "",
   onPlay,
   onPause,
   onEnded,
@@ -54,7 +54,7 @@ export const [loading, setLoading] = useState(true);
   const formatTime = useCallback((time) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   }, []);
 
   // Toggle play/pause
@@ -71,8 +71,8 @@ export const [loading, setLoading] = useState(true);
         onPlay?.();
       }
     } catch (err) {
-      console.error('Error toggling play:', err);
-      setError('Erro ao reproduzir vídeo');
+      console.error("Error toggling play:", err);
+      setError("Erro ao reproduzir vídeo");
       onError?.(err);
     }
   }, [isPlaying, onPlay, onPause, onError]);
@@ -129,30 +129,38 @@ export const [loading, setLoading] = useState(true);
         }
       }
     } catch (err) {
-      console.error('Error toggling fullscreen:', err);
+      console.error("Error toggling fullscreen:", err);
     }
   }, [isFullscreen]);
 
   // Handle fullscreen change
   useEffect(() => {
     const handleFullscreenChange = () => {
-      setIsFullscreen(!!(
-        document.fullscreenElement ||
-        document.webkitFullscreenElement ||
-        document.msFullscreenElement
-      ));
+      setIsFullscreen(
+        !!(
+          document.fullscreenElement ||
+          document.webkitFullscreenElement ||
+          document.msFullscreenElement
+        )
+      );
     };
 
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('msfullscreenchange', handleFullscreenChange);
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+    document.addEventListener("msfullscreenchange", handleFullscreenChange);
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-      document.removeEventListener('msfullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      document.removeEventListener(
+        "webkitfullscreenchange",
+        handleFullscreenChange
+      );
+      document.removeEventListener(
+        "msfullscreenchange",
+        handleFullscreenChange
+      );
     };
   }, []);
 
@@ -187,26 +195,26 @@ export const [loading, setLoading] = useState(true);
 
     const handleError = () => {
       setIsLoading(false);
-      setError('Erro ao carregar vídeo');
-      onError?.(new Error('Video load error'));
+      setError("Erro ao carregar vídeo");
+      onError?.(new Error("Video load error"));
     };
 
-    video.addEventListener('loadeddata', handleLoadedData);
-    video.addEventListener('timeupdate', handleTimeUpdate);
-    video.addEventListener('play', handlePlay);
-    video.addEventListener('pause', handlePause);
-    video.addEventListener('ended', handleEnded);
-    video.addEventListener('error', handleError);
+    video.addEventListener("loadeddata", handleLoadedData);
+    video.addEventListener("timeupdate", handleTimeUpdate);
+    video.addEventListener("play", handlePlay);
+    video.addEventListener("pause", handlePause);
+    video.addEventListener("ended", handleEnded);
+    video.addEventListener("error", handleError);
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
-      video.removeEventListener('loadeddata', handleLoadedData);
-      video.removeEventListener('timeupdate', handleTimeUpdate);
-      video.removeEventListener('play', handlePlay);
-      video.removeEventListener('pause', handlePause);
-      video.removeEventListener('ended', handleEnded);
-      video.removeEventListener('error', handleError);
+    return () => {
+      video.removeEventListener("loadeddata", handleLoadedData);
+      video.removeEventListener("timeupdate", handleTimeUpdate);
+      video.removeEventListener("play", handlePlay);
+      video.removeEventListener("pause", handlePause);
+      video.removeEventListener("ended", handleEnded);
+      video.removeEventListener("error", handleError);
     };
   }, [onLoadedData, onTimeUpdate, onEnded, onError]);
 
@@ -225,9 +233,11 @@ export const [loading, setLoading] = useState(true);
     };
 
     if (containerRef.current) {
-      containerRef.current.addEventListener('mousemove', resetTimeout);
-      containerRef.current.addEventListener('mouseenter', () => setShowControls(true));
-      containerRef.current.addEventListener('mouseleave', () => {
+      containerRef.current.addEventListener("mousemove", resetTimeout);
+      containerRef.current.addEventListener("mouseenter", () =>
+        setShowControls(true)
+      );
+      containerRef.current.addEventListener("mouseleave", () => {
         if (isPlaying) {
           setShowControls(false);
         }
@@ -236,20 +246,20 @@ export const [loading, setLoading] = useState(true);
 
     resetTimeout();
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
+    return () => {
       clearTimeout(timeout);
       if (containerRef.current) {
-        containerRef.current.removeEventListener('mousemove', resetTimeout);
+        containerRef.current.removeEventListener("mousemove", resetTimeout);
       }
     };
   }, [controls, isPlaying]);
 
   if (!src) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
+    return (
       <Card className={`video-player ${className}`}>
         <CardContent className="flex items-center justify-center h-64">
           <p className="text-muted-foreground">Nenhum vídeo fornecido</p>
@@ -258,7 +268,7 @@ export const [loading, setLoading] = useState(true);
     );
   }
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <Card className={`video-player ${className}`} ref={containerRef} {...props}>
@@ -289,7 +299,10 @@ export const [loading, setLoading] = useState(true);
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <div className="text-white text-center">
               <p className="mb-2">{error}</p>
-              <Button variant="outline" onClick={() => window.location.reload()}>
+              <Button
+                variant="outline"
+                onClick={() => window.location.reload()}
+              >
                 Recarregar
               </Button>
             </div>
@@ -300,7 +313,7 @@ export const [loading, setLoading] = useState(true);
         {controls && (
           <div
             className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 transition-opacity duration-300 ${
-              showControls || !isPlaying ? 'opacity-100' : 'opacity-0'
+              showControls || !isPlaying ? "opacity-100" : "opacity-0"
             }`}
           >
             <div className="flex items-center gap-4 text-white">
@@ -311,7 +324,7 @@ export const [loading, setLoading] = useState(true);
                 onClick={togglePlay}
                 className="text-white hover:bg-white hover:bg-opacity-20"
               >
-                {isPlaying ? '⏸️' : '▶️'}
+                {isPlaying ? "⏸️" : "▶️"}
               </Button>
 
               {/* Time display */}
@@ -338,7 +351,7 @@ export const [loading, setLoading] = useState(true);
                   onClick={toggleMute}
                   className="text-white hover:bg-white hover:bg-opacity-20"
                 >
-                  {isMuted ? '🔇' : '🔊'}
+                  {isMuted ? "🔇" : "🔊"}
                 </Button>
                 <div className="w-20">
                   <Slider
@@ -358,7 +371,7 @@ export const [loading, setLoading] = useState(true);
                 onClick={toggleFullscreen}
                 className="text-white hover:bg-white hover:bg-opacity-20"
               >
-                {isFullscreen ? '🪟' : '⛶'}
+                {isFullscreen ? "🪟" : "⛶"}
               </Button>
             </div>
           </div>

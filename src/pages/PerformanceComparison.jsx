@@ -1,10 +1,19 @@
-import { motion } from 'framer-motion';
-import { Users, TrendingUp, Award, Target, BarChart3, ArrowUp, ArrowDown } from 'lucide-react';
-import { PremiumCard, StatsCard } from '@/components/ui/PremiumCard';
-import { PremiumButton } from '@/components/ui/PremiumButton';
-import { supabase } from '@/lib/supabaseClient';
-import { Line, Bar } from 'react-chartjs-2';
-import toast from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  Users,
+  TrendingUp,
+  Award,
+  Target,
+  BarChart3,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
+import { PremiumCard, StatsCard } from "@/components/ui/PremiumCard";
+import { PremiumButton } from "@/components/ui/PremiumButton";
+import { supabase } from "@/lib/supabaseClient";
+import { Line, Bar } from "react-chartjs-2";
+import toast from "react-hot-toast";
 
 export default function PerformanceComparison({ classId }) {
   const [loading, setLoading] = useState(true);
@@ -25,16 +34,18 @@ export default function PerformanceComparison({ classId }) {
 
       // Buscar alunos da turma com suas submissões
       const { data: classStudents, error: studentsError } = await supabase
-        .from('class_members')
-        .select(`
+        .from("class_members")
+        .select(
+          `
           user_id,
           profiles:user_id (
             id,
             name,
             email
           )
-        `)
-        .eq('class_id', classId);
+        `
+        )
+        .eq("class_id", classId);
 
       if (studentsError) throw studentsError;
 
@@ -42,95 +53,113 @@ export default function PerformanceComparison({ classId }) {
       const studentsWithGrades = await Promise.all(
         classStudents.map(async (cs) => {
           const { data: submissions } = await supabase
-            .from('submissions')
-            .select(`
+            .from("submissions")
+            .select(
+              `
               grade,
               activities (points),
               submitted_at,
               activity_id
-            `)
-            .eq('student_id', cs.student_id)
-            .not('grade', 'is', null);
+            `
+            )
+            .eq("student_id", cs.student_id)
+            .not("grade", "is", null);
 
-          const totalPoints = submissions?.reduce((sum, s) => sum + (s.activities?.points || 0), 0) || 0;
-          const earnedPoints = submissions?.reduce((sum, s) => sum + (s.grade || 0), 0) || 0;
-          const avgGrade = totalPoints > 0 ? ((earnedPoints / totalPoints) * 100) : 0;
-          
+          const totalPoints =
+            submissions?.reduce(
+              (sum, s) => sum + (s.activities?.points || 0),
+              0
+            ) || 0;
+          const earnedPoints =
+            submissions?.reduce((sum, s) => sum + (s.grade || 0), 0) || 0;
+          const avgGrade =
+            totalPoints > 0 ? (earnedPoints / totalPoints) * 100 : 0;
+
           const submissionCount = submissions?.length || 0;
-          const onTime = submissions?.filter(s => 
-            new Date(s.submitted_at) <= new Date(s.activities?.due_date)
-          ).length || 0;
-          const onTimeRate = submissionCount > 0 ? ((onTime / submissionCount) * 100) : 0;
+          const onTime =
+            submissions?.filter(
+              (s) =>
+                new Date(s.submitted_at) <= new Date(s.activities?.due_date)
+            ).length || 0;
+          const onTimeRate =
+            submissionCount > 0 ? (onTime / submissionCount) * 100 : 0;
 
           return {
             id: cs.student_id,
-            name: cs.students?.name || 'Aluno',
+            name: cs.students?.name || "Aluno",
             email: cs.students?.email,
             avgGrade: avgGrade.toFixed(1),
             submissionCount,
             onTimeRate: onTimeRate.toFixed(1),
             earnedPoints,
-            totalPoints
+            totalPoints,
           };
         })
       );
 
       // Calcular média da turma
-      const classAvg = studentsWithGrades.length > 0
-        ? studentsWithGrades.reduce((sum, s) => sum + parseFloat(s.avgGrade), 0) / studentsWithGrades.length
-        : 0;
+      const classAvg =
+        studentsWithGrades.length > 0
+          ? studentsWithGrades.reduce(
+              (sum, s) => sum + parseFloat(s.avgGrade),
+              0
+            ) / studentsWithGrades.length
+          : 0;
 
       // Ordenar alunos por desempenho
-      const sorted = [...studentsWithGrades].sort((a, b) => b.avgGrade - a.avgGrade);
+      const sorted = [...studentsWithGrades].sort(
+        (a, b) => b.avgGrade - a.avgGrade
+      );
 
       // Top 5 performers
       const top = sorted.slice(0, 5);
 
       // Alunos que precisam de atenção (abaixo da média ou < 60%)
-      const attention = sorted.filter(s => parseFloat(s.avgGrade) < classAvg || parseFloat(s.avgGrade) < 60);
+      const attention = sorted.filter(
+        (s) => parseFloat(s.avgGrade) < classAvg || parseFloat(s.avgGrade) < 60
+      );
 
       setStudents(sorted);
       setClassAverage(classAvg);
       setTopPerformers(top);
       setNeedsAttention(attention);
-
     } catch (error) {
-      console.error('Erro ao carregar comparação:', error);
-      toast.error('Erro ao carregar comparação de desempenho');
+      console.error("Erro ao carregar comparação:", error);
+      toast.error("Erro ao carregar comparação de desempenho");
     } finally {
       setLoading(false);
     }
   };
 
   const chartData = {
-    labels: students.map(s => s.name),
+    labels: students.map((s) => s.name),
     datasets: [
       {
-        label: 'Desempenho do Aluno',
-        data: students.map(s => parseFloat(s.avgGrade)),
-        backgroundColor: students.map(s => 
-          parseFloat(s.avgGrade) >= classAverage 
-            ? 'rgba(34, 197, 94, 0.8)' 
-            : 'rgba(239, 68, 68, 0.8)'
+        label: "Desempenho do Aluno",
+        data: students.map((s) => parseFloat(s.avgGrade)),
+        backgroundColor: students.map((s) =>
+          parseFloat(s.avgGrade) >= classAverage
+            ? "rgba(34, 197, 94, 0.8)"
+            : "rgba(239, 68, 68, 0.8)"
         ),
-        borderColor: students.map(s => 
-          parseFloat(s.avgGrade) >= classAverage 
-            ? 'rgba(34, 197, 94, 1)' 
-            : 'rgba(239, 68, 68, 1)'
+        borderColor: students.map((s) =>
+          parseFloat(s.avgGrade) >= classAverage
+            ? "rgba(34, 197, 94, 1)"
+            : "rgba(239, 68, 68, 1)"
         ),
-        borderWidth: 2
+        borderWidth: 2,
       },
       {
-        label: 'Média da Turma',
+        label: "Média da Turma",
         data: students.map(() => classAverage),
-        type: 'line',
-        borderColor: 'rgba(59, 130, 246, 1)',
+        type: "line",
+        borderColor: "rgba(59, 130, 246, 1)",
         borderWidth: 2,
         borderDash: [5, 5],
         fill: false,
-        pointRadius: 0
-      }
-    ]
+        pointRadius: 0,
+      },
+    ],
   };
 
   if (loading) {
@@ -154,20 +183,22 @@ export default function PerformanceComparison({ classId }) {
           title="Média da Turma"
           value={`${classAverage.toFixed(1)}%`}
           change={`${students.length} alunos`}
-          trend={classAverage >= 70 ? 'up' : 'down'}
+          trend={classAverage >= 70 ? "up" : "down"}
           icon={Award}
         />
         <StatsCard
           title="Top Performer"
-          value={topPerformers[0]?.avgGrade + '%'}
+          value={topPerformers[0]?.avgGrade + "%"}
           change={topPerformers[0]?.name}
           trend="up"
           icon={TrendingUp}
         />
         <StatsCard
           title="Acima da Média"
-          value={students.filter(s => parseFloat(s.avgGrade) >= classAverage).length.toString()}
-          change={`${((students.filter(s => parseFloat(s.avgGrade) >= classAverage).length / students.length) * 100).toFixed(0)}%`}
+          value={students
+            .filter((s) => parseFloat(s.avgGrade) >= classAverage)
+            .length.toString()}
+          change={`${((students.filter((s) => parseFloat(s.avgGrade) >= classAverage).length / students.length) * 100).toFixed(0)}%`}
           trend="up"
           icon={Target}
         />
@@ -193,7 +224,7 @@ export default function PerformanceComparison({ classId }) {
               responsive: true,
               maintainAspectRatio: false,
               plugins: {
-                legend: { display: true, position: 'top' },
+                legend: { display: true, position: "top" },
                 tooltip: {
                   callbacks: {
                     label: (context) => {
@@ -202,23 +233,23 @@ export default function PerformanceComparison({ classId }) {
                         return [
                           `Desempenho: ${context.parsed.y.toFixed(1)}%`,
                           `Entregas: ${student.submissionCount}`,
-                          `No prazo: ${student.onTimeRate}%`
+                          `No prazo: ${student.onTimeRate}%`,
                         ];
                       }
                       return `Média da turma: ${context.parsed.y.toFixed(1)}%`;
-                    }
-                  }
-                }
+                    },
+                  },
+                },
               },
               scales: {
                 y: {
                   beginAtZero: true,
                   max: 100,
                   ticks: {
-                    callback: (value) => value + '%'
-                  }
-                }
-              }
+                    callback: (value) => value + "%",
+                  },
+                },
+              },
             }}
             height={400}
           />
@@ -249,7 +280,8 @@ export default function PerformanceComparison({ classId }) {
                     <div>
                       <p className="font-semibold">{student.name}</p>
                       <p className="text-xs text-muted-foreground">
-                        {student.submissionCount} entregas • {student.onTimeRate}% no prazo
+                        {student.submissionCount} entregas •{" "}
+                        {student.onTimeRate}% no prazo
                       </p>
                     </div>
                   </div>
@@ -286,7 +318,8 @@ export default function PerformanceComparison({ classId }) {
                   <div>
                     <p className="font-semibold">{student.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {student.submissionCount} entregas • {student.onTimeRate}% no prazo
+                      {student.submissionCount} entregas • {student.onTimeRate}%
+                      no prazo
                     </p>
                   </div>
                   <div className="text-right">
@@ -294,7 +327,8 @@ export default function PerformanceComparison({ classId }) {
                       {student.avgGrade}%
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {(classAverage - parseFloat(student.avgGrade)).toFixed(1)} abaixo
+                      {(classAverage - parseFloat(student.avgGrade)).toFixed(1)}{" "}
+                      abaixo
                     </p>
                   </div>
                 </motion.div>

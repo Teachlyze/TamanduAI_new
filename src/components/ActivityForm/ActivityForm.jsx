@@ -1,55 +1,79 @@
-import { useCallback, useEffect, useState } from 'react';
-import Editor from '@/components/editor/LexicalEditor';
-import { useForm } from 'react-hook-form';
-import { $getRoot } from 'lexical';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { motion, AnimatePresence } from 'framer-motion';
-import Button from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { useToast } from '@/components/ui/use-toast';
-import { useAppNavigation } from '@/hooks/useAppNavigation';
-import { UploadCloud, Plus, Save, ArrowLeft, FileText, CheckCircle2, AlertCircle, Loader2, Wifi, WifiOff, CheckCircle } from 'lucide-react';
-import QuestionBuilder from './QuestionBuilder';
+import { useCallback, useEffect, useState } from "react";
+import Editor from "@/components/editor/LexicalEditor";
+import { useForm } from "react-hook-form";
+import { $getRoot } from "lexical";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { motion, AnimatePresence } from "framer-motion";
+import Button from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/components/ui/use-toast";
+import { useAppNavigation } from "@/hooks/useAppNavigation";
+import {
+  UploadCloud,
+  Plus,
+  Save,
+  ArrowLeft,
+  FileText,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  Wifi,
+  WifiOff,
+  CheckCircle,
+} from "lucide-react";
+import QuestionBuilder from "./QuestionBuilder";
 
 // Schema for form validation
-  const activitySchema = z.object({
-  title: z.string().min(5, 'O título deve ter pelo menos 5 caracteres'),
-  description: z.string().min(10, 'A descrição deve ter pelo menos 10 caracteres'),
+const activitySchema = z.object({
+  title: z.string().min(5, "O título deve ter pelo menos 5 caracteres"),
+  description: z
+    .string()
+    .min(10, "A descrição deve ter pelo menos 10 caracteres"),
   instructions: z.string().optional(),
-  dueDate: z.string().refine(val => !val || new Date(val) > new Date(), {
-    message: 'A data de entrega deve ser futura',
+  dueDate: z.string().refine((val) => !val || new Date(val) > new Date(), {
+    message: "A data de entrega deve ser futura",
   }),
-  points: z.number().min(0, 'A pontuação deve ser um número positivo'),
-  questions: z.array(z.object({
-    title: z.string().min(1, 'O enunciado da pergunta é obrigatório'),
-    type: z.string().min(1, 'O tipo da pergunta é obrigatório'),
-    required: z.boolean().default(true),
-    helpText: z.string().optional(),
-    options: z.array(z.string()).optional(),
-  })).optional(),
+  points: z.number().min(0, "A pontuação deve ser um número positivo"),
+  questions: z
+    .array(
+      z.object({
+        title: z.string().min(1, "O enunciado da pergunta é obrigatório"),
+        type: z.string().min(1, "O tipo da pergunta é obrigatório"),
+        required: z.boolean().default(true),
+        helpText: z.string().optional(),
+        options: z.array(z.string()).optional(),
+      })
+    )
+    .optional(),
 });
 
 const QUESTION_TYPES = [
-  { value: 'text', label: 'Resposta Curta', icon: FileText },
-  { value: 'paragraph', label: 'Parágrafo', icon: FileText },
-  { value: 'multiple_choice', label: 'Múltipla Escolha', icon: FileText },
-  { value: 'checkbox', label: 'Caixas de Seleção', icon: FileText },
-  { value: 'dropdown', label: 'Lista Suspensa', icon: FileText },
-  { value: 'code', label: 'Código', icon: FileText },
-  { value: 'image', label: 'Upload de Imagem', icon: UploadCloud },
+  { value: "text", label: "Resposta Curta", icon: FileText },
+  { value: "paragraph", label: "Parágrafo", icon: FileText },
+  { value: "multiple_choice", label: "Múltipla Escolha", icon: FileText },
+  { value: "checkbox", label: "Caixas de Seleção", icon: FileText },
+  { value: "dropdown", label: "Lista Suspensa", icon: FileText },
+  { value: "code", label: "Código", icon: FileText },
+  { value: "image", label: "Upload de Imagem", icon: UploadCloud },
 ];
 
 const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
   const { toast } = useToast();
   const { goBack } = useAppNavigation();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [connectionStatus, setConnectionStatus] = useState('checking');
+  const [connectionStatus, setConnectionStatus] = useState("checking");
   const [questions, setQuestions] = useState([]);
   const [isMounted, setIsMounted] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -58,28 +82,28 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
   useEffect(() => {
     const handleOnline = () => {
       setIsOnline(true);
-      setConnectionStatus('online');
+      setConnectionStatus("online");
     };
     const handleOffline = () => {
       setIsOnline(false);
-      setConnectionStatus('offline');
+      setConnectionStatus("offline");
     };
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     // Initial check
     if (navigator.onLine) {
-      setConnectionStatus('online');
+      setConnectionStatus("online");
     } else {
-      setConnectionStatus('offline');
+      setConnectionStatus("offline");
     }
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
     };
   }, []);
 
@@ -93,10 +117,10 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
   } = useForm({
     resolver: zodResolver(activitySchema),
     defaultValues: {
-      title: '',
-      description: '',
-      instructions: '',
-      dueDate: '',
+      title: "",
+      description: "",
+      instructions: "",
+      dueDate: "",
       points: 10,
       questions: [],
       ...initialData,
@@ -105,94 +129,110 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
 
   // Update questions in form state
   useEffect(() => {
-    setValue('questions', questions);
+    setValue("questions", questions);
   }, [questions, setValue]);
 
   // Handle form submission
-  const handleFormSubmit = useCallback(async (data) => {
-    try {
-      setShowSuccess(true);
+  const handleFormSubmit = useCallback(
+    async (data) => {
+      try {
+        setShowSuccess(true);
 
-      // Validate that we have at least a title and description
-      if (!data.title?.trim()) {
-        throw new Error('Título é obrigatório');
-      }
-      if (!data.description?.trim()) {
-        throw new Error('Descrição é obrigatória');
-      }
+        // Validate that we have at least a title and description
+        if (!data.title?.trim()) {
+          throw new Error("Título é obrigatório");
+        }
+        if (!data.description?.trim()) {
+          throw new Error("Descrição é obrigatória");
+        }
 
-      await onSubmit(data);
-    } catch (error) {
-      setShowSuccess(false);
-      console.error('[ActivityForm] Form submission error:', error);
-      toast({
-        title: '❌ Erro ao salvar atividade',
-        description: error.message || 'Ocorreu um erro ao tentar salvar a atividade. Verifique os dados e tente novamente.',
-        variant: 'destructive',
-        duration: 5000,
-      });
-    }
-  }, [onSubmit, toast]);
+        await onSubmit(data);
+      } catch (error) {
+        setShowSuccess(false);
+        console.error("[ActivityForm] Form submission error:", error);
+        toast({
+          title: "❌ Erro ao salvar atividade",
+          description:
+            error.message ||
+            "Ocorreu um erro ao tentar salvar a atividade. Verifique os dados e tente novamente.",
+          variant: "destructive",
+          duration: 5000,
+        });
+      }
+    },
+    [onSubmit, toast]
+  );
 
   // Handle image upload
-  const handleImageUpload = useCallback(async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleImageUpload = useCallback(
+    async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
 
-    // Validate file type and size
-    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+      // Validate file type and size
+      const ALLOWED_TYPES = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
+      const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      toast({
-        title: 'Tipo de arquivo não suportado',
-        description: 'Por favor, envie uma imagem no formato JPG, PNG, GIF ou WebP.',
-        variant: 'destructive',
-      });
-      return;
-    }
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        toast({
+          title: "Tipo de arquivo não suportado",
+          description:
+            "Por favor, envie uma imagem no formato JPG, PNG, GIF ou WebP.",
+          variant: "destructive",
+        });
+        return;
+      }
 
-    if (file.size > MAX_SIZE) {
-      toast({
-        title: 'Arquivo muito grande',
-        description: 'O tamanho máximo permitido é 5MB.',
-        variant: 'destructive',
-      });
-      return;
-    }
+      if (file.size > MAX_SIZE) {
+        toast({
+          title: "Arquivo muito grande",
+          description: "O tamanho máximo permitido é 5MB.",
+          variant: "destructive",
+        });
+        return;
+      }
 
-    // Create preview URL
-    const previewUrl = URL.createObjectURL(file);
-    setValue('image', { file, previewUrl });
-  }, [setValue, toast]);
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(file);
+      setValue("image", { file, previewUrl });
+    },
+    [setValue, toast]
+  );
 
   // Question management
   const addQuestion = useCallback(() => {
     const newQuestion = {
-      title: '',
-      type: 'text',
+      title: "",
+      type: "text",
       required: true,
-      helpText: '',
+      helpText: "",
       options: [],
     };
-    setQuestions(prev => [...prev, newQuestion]);
+    setQuestions((prev) => [...prev, newQuestion]);
   }, []);
 
   const updateQuestion = useCallback((index, updatedQuestion) => {
-    setQuestions(prev => prev.map((q, i) => i === index ? updatedQuestion : q));
+    setQuestions((prev) =>
+      prev.map((q, i) => (i === index ? updatedQuestion : q))
+    );
   }, []);
 
   const deleteQuestion = useCallback((index) => {
-    setQuestions(prev => prev.filter((_, i) => i !== index));
+    setQuestions((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
   // Clean up preview URLs on unmount
   useEffect(() => {
     setIsMounted(true);
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
-      const image = watch('image');
+    return () => {
+      const image = watch("image");
       if (image?.previewUrl) {
         URL.revokeObjectURL(image.previewUrl);
       }
@@ -200,7 +240,7 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
   }, [watch]);
 
   // Watch for image changes to handle cleanup
-  const currentImage = watch('image');
+  const currentImage = watch("image");
 
   // Reset form when initialData changes
   useEffect(() => {
@@ -211,18 +251,19 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
   }, [initialData, reset]);
 
   if (!isMounted) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
+    return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
-  const progressPercentage = questions.length > 0 ? Math.min((questions.length / 10) * 100, 100) : 0;
+  const progressPercentage =
+    questions.length > 0 ? Math.min((questions.length / 10) * 100, 100) : 0;
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -231,28 +272,27 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className={`rounded-lg p-3 border ${
-          connectionStatus === 'online'
-            ? 'bg-green-50 border-green-200 text-green-800'
-            : connectionStatus === 'offline'
-            ? 'bg-red-50 border-red-200 text-red-800'
-            : 'bg-yellow-50 border-yellow-200 text-yellow-800'
+          connectionStatus === "online"
+            ? "bg-green-50 border-green-200 text-green-800"
+            : connectionStatus === "offline"
+              ? "bg-red-50 border-red-200 text-red-800"
+              : "bg-yellow-50 border-yellow-200 text-yellow-800"
         }`}
       >
         <div className="flex items-center gap-2">
-          {connectionStatus === 'online' ? (
+          {connectionStatus === "online" ? (
             <Wifi className="w-4 h-4" />
-          ) : connectionStatus === 'offline' ? (
+          ) : connectionStatus === "offline" ? (
             <WifiOff className="w-4 h-4" />
           ) : (
             <Loader2 className="w-4 h-4 animate-spin" />
           )}
           <span className="text-sm font-medium">
-            {connectionStatus === 'online'
-              ? 'Conectado à internet'
-              : connectionStatus === 'offline'
-              ? 'Sem conexão com a internet'
-              : 'Verificando conexão...'
-            }
+            {connectionStatus === "online"
+              ? "Conectado à internet"
+              : connectionStatus === "offline"
+                ? "Sem conexão com a internet"
+                : "Verificando conexão..."}
           </span>
           {!isOnline && (
             <span className="text-xs opacity-75">
@@ -274,7 +314,7 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
               Progresso da Atividade
             </span>
             <span className="text-sm text-gray-500">
-              {questions.length} pergunta{questions.length !== 1 ? 's' : ''}
+              {questions.length} pergunta{questions.length !== 1 ? "s" : ""}
             </span>
           </div>
           <Progress value={progressPercentage} className="h-2" />
@@ -303,7 +343,7 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
                 </Label>
                 <Input
                   id="title"
-                  {...register('title')}
+                  {...register("title")}
                   placeholder="Digite um título descritivo para sua atividade..."
                   className="bg-white dark:bg-slate-900 text-foreground text-base"
                   error={errors.title?.message}
@@ -327,15 +367,18 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
                 </Label>
                 <div className="border rounded-md">
                   <Editor
-                    initialValue={watch('description') || ''}
+                    initialValue={watch("description") || ""}
                     onChange={(editorState) => {
                       try {
                         editorState.read(() => {
                           const text = $getRoot().getTextContent();
-                          setValue('description', text, { shouldValidate: true, shouldDirty: true });
+                          setValue("description", text, {
+                            shouldValidate: true,
+                            shouldDirty: true,
+                          });
                         });
                       } catch (e) {
-                        console.warn('Lexical description onChange error:', e);
+                        console.warn("Lexical description onChange error:", e);
                       }
                     }}
                   />
@@ -359,15 +402,18 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
                 </Label>
                 <div className="border rounded-md">
                   <Editor
-                    initialValue={watch('instructions') || ''}
+                    initialValue={watch("instructions") || ""}
                     onChange={(editorState) => {
                       try {
                         editorState.read(() => {
                           const text = $getRoot().getTextContent();
-                          setValue('instructions', text, { shouldValidate: true, shouldDirty: true });
+                          setValue("instructions", text, {
+                            shouldValidate: true,
+                            shouldDirty: true,
+                          });
                         });
                       } catch (e) {
-                        console.warn('Lexical instructions onChange error:', e);
+                        console.warn("Lexical instructions onChange error:", e);
                       }
                     }}
                   />
@@ -383,7 +429,7 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
                   <Input
                     id="dueDate"
                     type="datetime-local"
-                    {...register('dueDate')}
+                    {...register("dueDate")}
                     min={new Date().toISOString().slice(0, 16)}
                     error={errors.dueDate?.message}
                   />
@@ -403,7 +449,7 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
                     type="number"
                     min="0"
                     step="0.5"
-                    {...register('points', { valueAsNumber: true })}
+                    {...register("points", { valueAsNumber: true })}
                     error={errors.points?.message}
                   />
                   {errors.points && (
@@ -417,7 +463,9 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
 
               {/* Image Upload */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium">Imagem de Capa (opcional)</Label>
+                <Label className="text-sm font-medium">
+                  Imagem de Capa (opcional)
+                </Label>
                 {currentImage?.previewUrl ? (
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -434,7 +482,7 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
                       variant="destructive"
                       size="sm"
                       className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
-                      onClick={() => setValue('image', null)}
+                      onClick={() => setValue("image", null)}
                     >
                       Remover
                     </Button>
@@ -448,9 +496,14 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         <UploadCloud className="w-8 h-8 mb-2 text-gray-400" />
                         <p className="text-sm text-gray-500 text-center">
-                          <span className="font-semibold">Clique para enviar</span> ou arraste uma imagem
+                          <span className="font-semibold">
+                            Clique para enviar
+                          </span>{" "}
+                          ou arraste uma imagem
                         </p>
-                        <p className="text-xs text-gray-400 mt-1">PNG, JPG, GIF até 5MB</p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          PNG, JPG, GIF até 5MB
+                        </p>
                       </div>
                       <input
                         type="file"
@@ -508,7 +561,8 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
                     Nenhuma pergunta adicionada
                   </h3>
                   <p className="text-gray-500 mb-6">
-                    Comece adicionando perguntas para criar uma atividade interativa.
+                    Comece adicionando perguntas para criar uma atividade
+                    interativa.
                   </p>
                   <Button
                     type="button"
@@ -559,7 +613,8 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
           <div className="flex items-center gap-4">
             {questions.length > 0 && (
               <span className="text-sm text-gray-500">
-                {questions.length} pergunta{questions.length !== 1 ? 's' : ''} configurada{questions.length !== 1 ? 's' : ''}
+                {questions.length} pergunta{questions.length !== 1 ? "s" : ""}{" "}
+                configurada{questions.length !== 1 ? "s" : ""}
               </span>
             )}
 
@@ -568,12 +623,12 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
               disabled={isSubmitting || showSuccess || !isOnline}
               className={`shadow-lg hover:shadow-xl transition-all duration-300 ${
                 isSubmitting
-                  ? 'bg-gray-400 cursor-not-allowed'
+                  ? "bg-gray-400 cursor-not-allowed"
                   : showSuccess
-                    ? 'bg-green-500 hover:bg-green-600'
+                    ? "bg-green-500 hover:bg-green-600"
                     : !isOnline
-                    ? 'bg-gray-300 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600'
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600"
               } text-white`}
             >
               {isSubmitting ? (

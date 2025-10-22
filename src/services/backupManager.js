@@ -10,7 +10,7 @@ export class BackupManager {
       autoBackup: true,
       backupInterval: 24 * 60 * 60 * 1000, // 24 horas
       maxBackups: 7, // Manter apenas 7 backups
-      backupTypes: ['database', 'files', 'redis', 'config'],
+      backupTypes: ["database", "files", "redis", "config"],
       encryption: false,
       compression: true,
     };
@@ -44,7 +44,7 @@ export class BackupManager {
    */
   async createFullBackup(options = {}) {
     if (this.isRunning) {
-      throw new Error('Backup already in progress');
+      throw new Error("Backup already in progress");
     }
 
     this.isRunning = true;
@@ -56,28 +56,28 @@ export class BackupManager {
 
       const backupData = {
         id: backupId,
-        type: 'full',
+        type: "full",
         timestamp: startTime,
         components: {},
       };
 
       // Backup do banco de dados
-      if (this.config.backupTypes.includes('database')) {
+      if (this.config.backupTypes.includes("database")) {
         backupData.components.database = await this.backupDatabase();
       }
 
       // Backup de arquivos
-      if (this.config.backupTypes.includes('files')) {
+      if (this.config.backupTypes.includes("files")) {
         backupData.components.files = await this.backupFiles();
       }
 
       // Backup do Redis
-      if (this.config.backupTypes.includes('redis')) {
+      if (this.config.backupTypes.includes("redis")) {
         backupData.components.redis = await this.backupRedis();
       }
 
       // Backup de configurações
-      if (this.config.backupTypes.includes('config')) {
+      if (this.config.backupTypes.includes("config")) {
         backupData.components.config = await this.backupConfig();
       }
 
@@ -95,7 +95,7 @@ export class BackupManager {
 
       return backupId;
     } catch (error) {
-      console.error('❌ Backup failed:', error);
+      console.error("❌ Backup failed:", error);
       throw error;
     } finally {
       this.isRunning = false;
@@ -107,10 +107,10 @@ export class BackupManager {
    */
   async backupDatabase() {
     try {
-      const response = await fetch('/api/admin/backup/database', {
-        method: 'POST',
+      const response = await fetch("/api/admin/backup/database", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -120,13 +120,13 @@ export class BackupManager {
 
       const result = await response.json();
       return {
-        type: 'postgresql',
+        type: "postgresql",
         size: result.size,
         tables: result.tables,
         timestamp: Date.now(),
       };
     } catch (error) {
-      console.error('Database backup error:', error);
+      console.error("Database backup error:", error);
       throw error;
     }
   }
@@ -136,10 +136,10 @@ export class BackupManager {
    */
   async backupFiles() {
     try {
-      const response = await fetch('/api/admin/backup/files', {
-        method: 'POST',
+      const response = await fetch("/api/admin/backup/files", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -149,13 +149,13 @@ export class BackupManager {
 
       const result = await response.json();
       return {
-        type: 'filesystem',
+        type: "filesystem",
         size: result.size,
         files: result.files,
         timestamp: Date.now(),
       };
     } catch (error) {
-      console.error('Files backup error:', error);
+      console.error("Files backup error:", error);
       throw error;
     }
   }
@@ -165,10 +165,10 @@ export class BackupManager {
    */
   async backupRedis() {
     try {
-      const response = await fetch('/api/admin/backup/redis', {
-        method: 'POST',
+      const response = await fetch("/api/admin/backup/redis", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -178,13 +178,13 @@ export class BackupManager {
 
       const result = await response.json();
       return {
-        type: 'redis',
+        type: "redis",
         size: result.size,
         keys: result.keys,
         timestamp: Date.now(),
       };
     } catch (error) {
-      console.error('Redis backup error:', error);
+      console.error("Redis backup error:", error);
       throw error;
     }
   }
@@ -196,7 +196,7 @@ export class BackupManager {
     const configData = {
       environment: import.meta.env.MODE,
       timestamp: Date.now(),
-      version: process.env.npm_package_version || '1.0.0',
+      version: process.env.npm_package_version || "1.0.0",
       // Não incluir dados sensíveis
       safeConfig: {
         // Configurações públicas apenas
@@ -204,7 +204,7 @@ export class BackupManager {
     };
 
     return {
-      type: 'config',
+      type: "config",
       size: JSON.stringify(configData).length,
       data: configData,
       timestamp: Date.now(),
@@ -256,7 +256,7 @@ export class BackupManager {
     // Simulação de encriptação
     const encrypted = new Uint8Array(dataBuffer.length);
     for (let i = 0; i < dataBuffer.length; i++) {
-      encrypted[i] = dataBuffer[i] ^ 0xFF; // XOR simples
+      encrypted[i] = dataBuffer[i] ^ 0xff; // XOR simples
     }
 
     return Array.from(encrypted);
@@ -268,7 +268,7 @@ export class BackupManager {
   async saveBackup(backupData) {
     try {
       // Salvar no Supabase Storage
-      const { createClient } = await import('@supabase/supabase-js');
+      const { createClient } = await import("@supabase/supabase-js");
       const supabase = createClient(
         import.meta.env.VITE_SUPABASE_URL,
         import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY
@@ -278,7 +278,7 @@ export class BackupManager {
       const filePath = `backups/${fileName}`;
 
       const { error } = await supabase.storage
-        .from('system-backups')
+        .from("system-backups")
         .upload(filePath, JSON.stringify(backupData));
 
       if (error) {
@@ -286,7 +286,7 @@ export class BackupManager {
       }
 
       // Registrar backup no banco
-      await supabase.from('system_backups').insert({
+      await supabase.from("system_backups").insert({
         id: backupData.id,
         type: backupData.type,
         size: backupData.size,
@@ -296,7 +296,7 @@ export class BackupManager {
 
       // console.log(`💾 Backup saved: ${fileName}`);
     } catch (error) {
-      console.error('Failed to save backup:', error);
+      console.error("Failed to save backup:", error);
       throw error;
     }
   }
@@ -306,23 +306,23 @@ export class BackupManager {
    */
   async listBackups() {
     try {
-      const { createClient } = await import('@supabase/supabase-js');
+      const { createClient } = await import("@supabase/supabase-js");
       const supabase = createClient(
         import.meta.env.VITE_SUPABASE_URL,
         import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY
       );
 
       const { data, error } = await supabase
-        .from('system_backups')
-        .select('*')
-        .order('created_at', { ascending: false })
+        .from("system_backups")
+        .select("*")
+        .order("created_at", { ascending: false })
         .limit(20);
 
       if (error) throw error;
 
       return data || [];
     } catch (error) {
-      console.error('Failed to list backups:', error);
+      console.error("Failed to list backups:", error);
       return [];
     }
   }
@@ -334,7 +334,7 @@ export class BackupManager {
     try {
       // console.log(`🔄 Restoring backup: ${backupId}`);
 
-      const { createClient } = await import('@supabase/supabase-js');
+      const { createClient } = await import("@supabase/supabase-js");
       const supabase = createClient(
         import.meta.env.VITE_SUPABASE_URL,
         import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY
@@ -342,16 +342,16 @@ export class BackupManager {
 
       // Buscar dados do backup
       const { data: backupRecord, error: recordError } = await supabase
-        .from('system_backups')
-        .select('*')
-        .eq('id', backupId)
+        .from("system_backups")
+        .select("*")
+        .eq("id", backupId)
         .single();
 
       if (recordError) throw recordError;
 
       // Baixar arquivo do backup
       const { data: backupFile, error: fileError } = await supabase.storage
-        .from('system-backups')
+        .from("system-backups")
         .download(`backups/backup-${backupId}.json`);
 
       if (fileError) throw fileError;
@@ -363,19 +363,25 @@ export class BackupManager {
       const restoreResults = {};
 
       if (backupData.components.database) {
-        restoreResults.database = await this.restoreDatabase(backupData.components.database);
+        restoreResults.database = await this.restoreDatabase(
+          backupData.components.database
+        );
       }
 
       if (backupData.components.files) {
-        restoreResults.files = await this.restoreFiles(backupData.components.files);
+        restoreResults.files = await this.restoreFiles(
+          backupData.components.files
+        );
       }
 
       if (backupData.components.redis) {
-        restoreResults.redis = await this.restoreRedis(backupData.components.redis);
+        restoreResults.redis = await this.restoreRedis(
+          backupData.components.redis
+        );
       }
 
       // Registrar restauração
-      await supabase.from('system_restores').insert({
+      await supabase.from("system_restores").insert({
         backup_id: backupId,
         results: restoreResults,
         restored_at: new Date().toISOString(),
@@ -384,7 +390,7 @@ export class BackupManager {
       // console.log(`✅ Backup restored: ${backupId}`);
       return restoreResults;
     } catch (error) {
-      console.error('Failed to restore backup:', error);
+      console.error("Failed to restore backup:", error);
       throw error;
     }
   }
@@ -394,10 +400,10 @@ export class BackupManager {
    */
   async restoreDatabase(databaseBackup) {
     try {
-      const response = await fetch('/api/admin/restore/database', {
-        method: 'POST',
+      const response = await fetch("/api/admin/restore/database", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(databaseBackup),
       });
@@ -408,7 +414,7 @@ export class BackupManager {
 
       return await response.json();
     } catch (error) {
-      console.error('Database restore error:', error);
+      console.error("Database restore error:", error);
       throw error;
     }
   }
@@ -418,10 +424,10 @@ export class BackupManager {
    */
   async restoreFiles(filesBackup) {
     try {
-      const response = await fetch('/api/admin/restore/files', {
-        method: 'POST',
+      const response = await fetch("/api/admin/restore/files", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(filesBackup),
       });
@@ -432,7 +438,7 @@ export class BackupManager {
 
       return await response.json();
     } catch (error) {
-      console.error('Files restore error:', error);
+      console.error("Files restore error:", error);
       throw error;
     }
   }
@@ -442,10 +448,10 @@ export class BackupManager {
    */
   async restoreRedis(redisBackup) {
     try {
-      const response = await fetch('/api/admin/restore/redis', {
-        method: 'POST',
+      const response = await fetch("/api/admin/restore/redis", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(redisBackup),
       });
@@ -456,7 +462,7 @@ export class BackupManager {
 
       return await response.json();
     } catch (error) {
-      console.error('Redis restore error:', error);
+      console.error("Redis restore error:", error);
       throw error;
     }
   }
@@ -466,7 +472,7 @@ export class BackupManager {
    */
   async cleanupOldBackups() {
     try {
-      const { createClient } = await import('@supabase/supabase-js');
+      const { createClient } = await import("@supabase/supabase-js");
       const supabase = createClient(
         import.meta.env.VITE_SUPABASE_URL,
         import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY
@@ -474,29 +480,29 @@ export class BackupManager {
 
       // Buscar backups antigos
       const { data: oldBackups, error } = await supabase
-        .from('system_backups')
-        .select('id')
-        .order('created_at', { ascending: false })
+        .from("system_backups")
+        .select("id")
+        .order("created_at", { ascending: false })
         .range(this.config.maxBackups, 1000);
 
       if (error) throw error;
 
       if (oldBackups && oldBackups.length > 0) {
         // Remover registros antigos
-        const oldIds = oldBackups.map(b => b.id);
-        await supabase.from('system_backups').delete().in('id', oldIds);
+        const oldIds = oldBackups.map((b) => b.id);
+        await supabase.from("system_backups").delete().in("id", oldIds);
 
         // Remover arquivos antigos
         for (const backup of oldBackups) {
           await supabase.storage
-            .from('system-backups')
+            .from("system-backups")
             .remove([`backups/backup-${backup.id}.json`]);
         }
 
         // console.log(`🗑️ Cleaned up ${oldBackups.length} old backups`);
       }
     } catch (error) {
-      console.error('Failed to cleanup old backups:', error);
+      console.error("Failed to cleanup old backups:", error);
     }
   }
 
@@ -505,7 +511,7 @@ export class BackupManager {
    */
   async verifyBackup(backupId) {
     try {
-      const { createClient } = await import('@supabase/supabase-js');
+      const { createClient } = await import("@supabase/supabase-js");
       const supabase = createClient(
         import.meta.env.VITE_SUPABASE_URL,
         import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY
@@ -513,29 +519,29 @@ export class BackupManager {
 
       // Verificar se arquivo existe
       const { data: files, error: listError } = await supabase.storage
-        .from('system-backups')
-        .list('backups', {
-          search: `backup-${backupId}.json`
+        .from("system-backups")
+        .list("backups", {
+          search: `backup-${backupId}.json`,
         });
 
       if (listError || !files || files.length === 0) {
-        return { valid: false, error: 'Backup file not found' };
+        return { valid: false, error: "Backup file not found" };
       }
 
       // Verificar se registro existe no banco
       const { data: record, error: recordError } = await supabase
-        .from('system_backups')
-        .select('*')
-        .eq('id', backupId)
+        .from("system_backups")
+        .select("*")
+        .eq("id", backupId)
         .single();
 
       if (recordError || !record) {
-        return { valid: false, error: 'Backup record not found' };
+        return { valid: false, error: "Backup record not found" };
       }
 
       return { valid: true, backup: record };
     } catch (error) {
-      console.error('Backup verification error:', error);
+      console.error("Backup verification error:", error);
       return { valid: false, error: error.message };
     }
   }
@@ -545,16 +551,16 @@ export class BackupManager {
    */
   async getBackupStats() {
     try {
-      const { createClient } = await import('@supabase/supabase-js');
+      const { createClient } = await import("@supabase/supabase-js");
       const supabase = createClient(
         import.meta.env.VITE_SUPABASE_URL,
         import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY
       );
 
       const { data: backups, error } = await supabase
-        .from('system_backups')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("system_backups")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
 
@@ -562,24 +568,27 @@ export class BackupManager {
         totalBackups: backups?.length || 0,
         totalSize: backups?.reduce((sum, b) => sum + (b.size || 0), 0) || 0,
         lastBackup: backups?.[0]?.created_at || null,
-        nextBackup: new Date(Date.now() + this.config.backupInterval).toISOString(),
+        nextBackup: new Date(
+          Date.now() + this.config.backupInterval
+        ).toISOString(),
         components: {},
       };
 
       // Estatísticas por componente
-      backups?.forEach(backup => {
-        Object.keys(backup.components || {}).forEach(component => {
+      backups?.forEach((backup) => {
+        Object.keys(backup.components || {}).forEach((component) => {
           if (!stats.components[component]) {
             stats.components[component] = { count: 0, totalSize: 0 };
           }
           stats.components[component].count++;
-          stats.components[component].totalSize += backup.components[component].size || 0;
+          stats.components[component].totalSize +=
+            backup.components[component].size || 0;
         });
       });
 
       return stats;
     } catch (error) {
-      console.error('Failed to get backup stats:', error);
+      console.error("Failed to get backup stats:", error);
       return null;
     }
   }
@@ -601,7 +610,7 @@ export const useBackupManager = () => {
         const backupList = await manager.listBackups();
         setBackups(backupList);
       } catch (error) {
-        console.error('Failed to load backups:', error);
+        console.error("Failed to load backups:", error);
       }
     };
 
@@ -613,7 +622,9 @@ export const useBackupManager = () => {
     return () => clearInterval(interval);
   }, [manager]);
 
-  const createBackup = React.useCallback(async () => {
+  import { useCallback } from "react";
+
+  const createBackup = useCallback(async () => {
     setIsLoading(true);
     try {
       const backupId = await manager.createFullBackup();
@@ -622,32 +633,35 @@ export const useBackupManager = () => {
       setBackups(backupList);
       return backupId;
     } catch (error) {
-      console.error('Failed to create backup:', error);
+      console.error("Failed to create backup:", error);
       throw error;
     } finally {
       setIsLoading(false);
     }
   }, [manager]);
 
-  const restoreBackup = React.useCallback(async (backupId) => {
-    setIsLoading(true);
-    try {
-      const result = await manager.restoreBackup(backupId);
-      return result;
-    } catch (error) {
-      console.error('Failed to restore backup:', error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [manager]);
+  const restoreBackup = React.useCallback(
+    async (backupId) => {
+      setIsLoading(true);
+      try {
+        const result = await manager.restoreBackup(backupId);
+        return result;
+      } catch (error) {
+        console.error("Failed to restore backup:", error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [manager]
+  );
 
   const loadStats = React.useCallback(async () => {
     try {
       const backupStats = await manager.getBackupStats();
       setStats(backupStats);
     } catch (error) {
-      console.error('Failed to load stats:', error);
+      console.error("Failed to load stats:", error);
     }
   }, [manager]);
 
@@ -671,7 +685,7 @@ export const useBackupManager = () => {
 export const backupManager = new BackupManager();
 
 // Iniciar backup automático se em produção
-if (import.meta.env.MODE === 'production') {
+if (import.meta.env.MODE === "production") {
   backupManager.startAutoBackup();
 }
 

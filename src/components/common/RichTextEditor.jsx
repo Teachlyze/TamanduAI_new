@@ -1,10 +1,10 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
-  const RichTextEditor = ({
-  value = '',
+const RichTextEditor = ({
+  value = "",
   onChange,
-  placeholder = 'Start typing...',
-  className = '',
+  placeholder = "Start typing...",
+  className = "",
   readOnly = false,
   style = {},
   ...props
@@ -39,9 +39,9 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
   };
 
   if (readOnly) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
+    return (
       <div
         className={`border rounded-md p-3 min-h-[200px] bg-gray-50 ${className}`}
         style={style}
@@ -51,15 +51,18 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
     );
   }
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
-    <div className={`border rounded-md ${isFocused ? 'border-blue-500' : 'border-gray-300'} ${className}`} style={style}>
+    <div
+      className={`border rounded-md ${isFocused ? "border-blue-500" : "border-gray-300"} ${className}`}
+      style={style}
+    >
       {/* Toolbar */}
       <div className="border-b border-gray-200 p-2 flex gap-1 bg-gray-50">
         <button
           type="button"
-          onClick={() => execCommand('bold')}
+          onClick={() => execCommand("bold")}
           className="px-2 py-1 text-sm bg-white border rounded hover:bg-gray-100"
           title="Bold"
         >
@@ -67,7 +70,7 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
         </button>
         <button
           type="button"
-          onClick={() => execCommand('italic')}
+          onClick={() => execCommand("italic")}
           className="px-2 py-1 text-sm bg-white border rounded hover:bg-gray-100"
           title="Italic"
         >
@@ -75,7 +78,7 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
         </button>
         <button
           type="button"
-          onClick={() => execCommand('underline')}
+          onClick={() => execCommand("underline")}
           className="px-2 py-1 text-sm bg-white border rounded hover:bg-gray-100"
           title="Underline"
         >
@@ -84,7 +87,7 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
         <div className="w-px h-6 bg-gray-300 mx-1" />
         <button
           type="button"
-          onClick={() => execCommand('justifyLeft')}
+          onClick={() => execCommand("justifyLeft")}
           className="px-2 py-1 text-sm bg-white border rounded hover:bg-gray-100"
           title="Align Left"
         >
@@ -92,7 +95,7 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
         </button>
         <button
           type="button"
-          onClick={() => execCommand('justifyCenter')}
+          onClick={() => execCommand("justifyCenter")}
           className="px-2 py-1 text-sm bg-white border rounded hover:bg-gray-100"
           title="Align Center"
         >
@@ -100,7 +103,7 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
         </button>
         <button
           type="button"
-          onClick={() => execCommand('justifyRight')}
+          onClick={() => execCommand("justifyRight")}
           className="px-2 py-1 text-sm bg-white border rounded hover:bg-gray-100"
           title="Align Right"
         >
@@ -116,7 +119,7 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
         onFocus={handleFocus}
         onBlur={handleBlur}
         className="p-3 min-h-[200px] focus:outline-none"
-        style={{ minHeight: style.minHeight || '200px' }}
+        style={{ minHeight: style.minHeight || "200px" }}
         data-placeholder={placeholder}
         suppressContentEditableWarning={true}
         {...props}

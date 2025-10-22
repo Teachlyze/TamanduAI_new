@@ -222,7 +222,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
       fetchMeetingDetails(, []); // TODO: Add dependencies
     }, []); // TODO: Add dependencies
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
   return () => {
       if (subscription) {
@@ -233,7 +233,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 
   // Loading state
   if (isLoading) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
   return (
       <div className="container mx-auto py-12 px-4">
@@ -273,7 +273,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 
   // Error state
   if (error || !meeting) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
   return (
       <div className="container mx-auto py-12 px-4">
@@ -341,7 +341,7 @@ const MeetingDetailsPageContent = ({
 }) => {
   const { date, time } = formatDateTime(meeting.start_time);
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <ErrorBoundary

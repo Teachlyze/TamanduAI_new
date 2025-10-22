@@ -15,7 +15,7 @@ export const [loading, setLoading] = useState(true);
   actions,
   className = '',
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <header className={`sticky top-0 z-50 bg-base-100/95 backdrop-blur-sm border-b border-base-200 p-4 ${className}`}>
@@ -53,7 +53,7 @@ export const MobileCard = ({
   padding = 'p-4',
   className = '',
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`bg-base-100 rounded-lg border border-base-200 shadow-sm ${padding} ${className}`}>
@@ -92,7 +92,7 @@ export const MobileGrid = ({
   gap = 'gap-4',
   className = '',
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`grid grid-cols-${cols} sm:grid-cols-${Math.min(cols + 1, 4)} ${gap} ${className}`}>
@@ -110,7 +110,7 @@ export const MobileList = ({
   className = '',
   divider = true,
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`divide-y divide-base-200 ${className}`}>
@@ -131,7 +131,7 @@ export const MobileForm = ({
   onSubmit,
   className = '',
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <form onSubmit={onSubmit} className={`space-y-4 ${className}`}>
@@ -147,7 +147,7 @@ export const MobileScrollContainer = ({
   children,
   className = '',
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`overflow-x-auto -mx-4 px-4 ${className}`}>
@@ -184,7 +184,7 @@ export const MobileBadge = ({
     lg: 'px-3 py-1 text-sm',
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <span className={`inline-flex items-center rounded-full font-medium ${variants[variant]} ${sizes[size]} ${className}`}>
@@ -201,7 +201,7 @@ export const MobileDropdown = ({
   items,
   className = '',
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`dropdown dropdown-end ${className}`}>
@@ -239,7 +239,7 @@ export const useIsMobile = () => {
     checkMobile();
     window.addEventListener('resize', checkMobile);
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
   return () => window.removeEventListener('resize', checkMobile);
   }, []);
@@ -264,7 +264,7 @@ export const MobileText = ({
     xl: 'text-xl',
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <p className={`${sizeClasses[size]} text-base-content ${truncate ? 'truncate' : ''} ${className}`}>

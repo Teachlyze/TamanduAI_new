@@ -62,7 +62,7 @@ import { getClassActivities } from '@/services/apiSupabase';
   };
 
   if (isLoading) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
   return (
       <div className="flex justify-center items-center h-64">
@@ -74,7 +74,7 @@ import { getClassActivities } from '@/services/apiSupabase';
 
   // Error handling for denied access (RLS)
   if (error && (typeof error === 'string' ? error.toLowerCase().includes('permission') || error.toLowerCase().includes('recursion') : false)) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
   return (
       <div className="flex flex-col justify-center items-center min-h-screen bg-gray-50">
@@ -87,7 +87,7 @@ import { getClassActivities } from '@/services/apiSupabase';
   }
 
   if (error) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
   return (
       <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
@@ -97,7 +97,7 @@ import { getClassActivities } from '@/services/apiSupabase';
     );
   }
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className="container mx-auto p-4">

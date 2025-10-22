@@ -1,10 +1,10 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Clock, Play, Pause, RotateCcw, Award, Target } from 'lucide-react';
-import { PremiumCard, PremiumButton, toast } from '@/components/ui';
-import { supabase } from '@/lib/supabaseClient';
-import { useAuth } from '@/hooks/useAuth';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { Clock, Play, Pause, RotateCcw, Award, Target } from "lucide-react";
+import { PremiumCard, PremiumButton, toast } from "@/components/ui";
+import { supabase } from "@/lib/supabaseClient";
+import { useAuth } from "@/hooks/useAuth";
 
-  const PomodoroWidget = ({ variant = 'full', onComplete }) => {
+const PomodoroWidget = ({ variant = "full", onComplete }) => {
   const { user } = useAuth();
   const [minutes, setMinutes] = useState(25);
   const [seconds, setSeconds] = useState(0);
@@ -32,9 +32,9 @@ import { useAuth } from '@/hooks/useAuth';
       clearInterval(intervalRef.current);
     }
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => clearInterval(intervalRef.current);
+    return () => clearInterval(intervalRef.current);
   }, [isActive, minutes, seconds]);
 
   const handleSessionComplete = async () => {
@@ -48,29 +48,29 @@ import { useAuth } from '@/hooks/useAuth';
       // Calcular XP baseado no tempo de sessão
       const xpEarned = minutes === 25 ? 10 : minutes === 50 ? 20 : 5;
 
-      if (user && user.user_metadata?.role === 'student') {
+      if (user && user.user_metadata?.role === "student") {
         try {
           // Registrar XP
-          await supabase.from('xp_log').insert({
+          await supabase.from("xp_log").insert({
             user_id: user.id,
             xp: xpEarned,
             reason: `Pomodoro completo (${minutes + 1} min)`,
-            source: 'pomodoro',
+            source: "pomodoro",
           });
 
           toast({
-            title: '🎉 Sessão Completa!',
+            title: "🎉 Sessão Completa!",
             description: `Parabéns! Você ganhou ${xpEarned} XP!`,
-            variant: 'success',
+            variant: "success",
           });
         } catch (error) {
-          console.error('Erro ao registrar XP:', error);
+          console.error("Erro ao registrar XP:", error);
         }
       } else {
         toast({
-          title: '✅ Sessão Completa!',
-          description: 'Ótimo trabalho! Hora de uma pausa.',
-          variant: 'success',
+          title: "✅ Sessão Completa!",
+          description: "Ótimo trabalho! Hora de uma pausa.",
+          variant: "success",
         });
       }
 
@@ -81,9 +81,9 @@ import { useAuth } from '@/hooks/useAuth';
     } else {
       // Intervalo completo
       toast({
-        title: '⏰ Intervalo Completo!',
-        description: 'Hora de voltar ao trabalho!',
-        variant: 'default',
+        title: "⏰ Intervalo Completo!",
+        description: "Hora de voltar ao trabalho!",
+        variant: "default",
       });
       setIsBreak(false);
       setMinutes(25);
@@ -95,7 +95,7 @@ import { useAuth } from '@/hooks/useAuth';
 
   const playSound = () => {
     try {
-      const audio = new Audio('/notification.mp3');
+      const audio = new Audio("/notification.mp3");
       audio.play().catch(() => {
         // Fallback se não tiver o arquivo de som
         if (window.navigator.vibrate) {
@@ -125,28 +125,42 @@ import { useAuth } from '@/hooks/useAuth';
     setSeconds(0);
   };
 
-  const progress = ((((isBreak ? 5 : 25) - minutes) * 60 + (60 - seconds)) / ((isBreak ? 5 : 25) * 60)) * 100;
+  const progress =
+    ((((isBreak ? 5 : 25) - minutes) * 60 + (60 - seconds)) /
+      ((isBreak ? 5 : 25) * 60)) *
+    100;
 
-  if (variant === 'compact') {
-    if (loading) return <LoadingScreen />;
+  if (variant === "compact") {
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
+    return (
       <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-lg border border-purple-200 dark:border-purple-800 text-white hover:opacity-90">
         <Clock className="w-5 h-5 text-purple-600" />
         <div className="flex-1">
           <div className="text-2xl font-bold font-mono">
-            {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+            {String(minutes).padStart(2, "0")}:
+            {String(seconds).padStart(2, "0")}
           </div>
-          <div className="text-xs text-muted-foreground">{isBreak ? 'Intervalo' : 'Foco'}</div>
+          <div className="text-xs text-muted-foreground">
+            {isBreak ? "Intervalo" : "Foco"}
+          </div>
         </div>
-        <PremiumButton size="sm" onClick={toggleTimer} variant={isActive ? 'destructive' : 'default'}>
-          {isActive ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+        <PremiumButton
+          size="sm"
+          onClick={toggleTimer}
+          variant={isActive ? "destructive" : "default"}
+        >
+          {isActive ? (
+            <Pause className="w-4 h-4" />
+          ) : (
+            <Play className="w-4 h-4" />
+          )}
         </PremiumButton>
       </div>
     );
   }
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <PremiumCard variant="elevated">
@@ -159,10 +173,12 @@ import { useAuth } from '@/hooks/useAuth';
             </div>
             <div>
               <h3 className="text-lg font-bold">Pomodoro Timer</h3>
-              <p className="text-sm text-muted-foreground">{isBreak ? 'Tempo de Intervalo' : 'Tempo de Foco'}</p>
+              <p className="text-sm text-muted-foreground">
+                {isBreak ? "Tempo de Intervalo" : "Tempo de Foco"}
+              </p>
             </div>
           </div>
-          {user?.user_metadata?.role === 'student' && (
+          {user?.user_metadata?.role === "student" && (
             <div className="flex items-center gap-2 px-3 py-1 bg-yellow-500/10 rounded-lg">
               <Award className="w-4 h-4 text-yellow-600" />
               <span className="text-sm font-semibold text-yellow-600">
@@ -209,15 +225,23 @@ import { useAuth } from '@/hooks/useAuth';
           {/* Time Text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="text-6xl font-bold font-mono bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent text-white hover:opacity-90">
-              {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+              {String(minutes).padStart(2, "0")}:
+              {String(seconds).padStart(2, "0")}
             </div>
-            <div className="text-sm text-muted-foreground mt-2">{Math.round(progress)}% completo</div>
+            <div className="text-sm text-muted-foreground mt-2">
+              {Math.round(progress)}% completo
+            </div>
           </div>
         </div>
 
         {/* Controls */}
         <div className="flex gap-3">
-          <PremiumButton onClick={toggleTimer} className="flex-1" size="lg" variant={isActive ? 'destructive' : 'default'}>
+          <PremiumButton
+            onClick={toggleTimer}
+            className="flex-1"
+            size="lg"
+            variant={isActive ? "destructive" : "default"}
+          >
             {isActive ? (
               <>
                 <Pause className="w-5 h-5 mr-2" />
@@ -238,13 +262,22 @@ import { useAuth } from '@/hooks/useAuth';
         {/* Preset Times */}
         {!isActive && (
           <div className="flex gap-2">
-            <button onClick={() => setCustomTime(25)} className="flex-1 px-3 py-2 text-sm bg-muted hover:bg-muted/80 rounded-lg transition-colors">
+            <button
+              onClick={() => setCustomTime(25)}
+              className="flex-1 px-3 py-2 text-sm bg-muted hover:bg-muted/80 rounded-lg transition-colors"
+            >
               25 min
             </button>
-            <button onClick={() => setCustomTime(50)} className="flex-1 px-3 py-2 text-sm bg-muted hover:bg-muted/80 rounded-lg transition-colors">
+            <button
+              onClick={() => setCustomTime(50)}
+              className="flex-1 px-3 py-2 text-sm bg-muted hover:bg-muted/80 rounded-lg transition-colors"
+            >
               50 min
             </button>
-            <button onClick={() => setCustomTime(5)} className="flex-1 px-3 py-2 text-sm bg-muted hover:bg-muted/80 rounded-lg transition-colors">
+            <button
+              onClick={() => setCustomTime(5)}
+              className="flex-1 px-3 py-2 text-sm bg-muted hover:bg-muted/80 rounded-lg transition-colors"
+            >
               5 min
             </button>
           </div>
@@ -253,20 +286,26 @@ import { useAuth } from '@/hooks/useAuth';
         {/* Stats */}
         <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
           <div className="text-center">
-            <div className="text-2xl font-bold text-purple-600">{sessionsCompleted}</div>
+            <div className="text-2xl font-bold text-purple-600">
+              {sessionsCompleted}
+            </div>
             <div className="text-xs text-muted-foreground">Sessões Hoje</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-pink-600">{sessionsCompleted * 25}</div>
+            <div className="text-2xl font-bold text-pink-600">
+              {sessionsCompleted * 25}
+            </div>
             <div className="text-xs text-muted-foreground">Minutos de Foco</div>
           </div>
         </div>
 
         {/* Info */}
-        {user?.user_metadata?.role === 'student' && (
+        {user?.user_metadata?.role === "student" && (
           <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 p-3 rounded-lg text-center text-white hover:opacity-90">
             <p className="text-sm text-muted-foreground">
-              ✨ Complete sessões e ganhe <strong className="text-purple-600">10 XP</strong> por sessão de 25min!
+              ✨ Complete sessões e ganhe{" "}
+              <strong className="text-purple-600">10 XP</strong> por sessão de
+              25min!
             </p>
           </div>
         )}

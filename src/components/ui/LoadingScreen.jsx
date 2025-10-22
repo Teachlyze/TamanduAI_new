@@ -1,11 +1,11 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { BookOpen, Loader2 } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { BookOpen, Loader2 } from "lucide-react";
 
 /**
  * Premium Loading Screen - Beautiful loading state
  */
-export const LoadingScreen = ({ message = 'Carregando...' }) => {
+export const LoadingScreen = ({ message = "Carregando..." }) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-card to-background">
       {/* Background Particles */}
@@ -16,17 +16,17 @@ export const LoadingScreen = ({ message = 'Carregando...' }) => {
             className="absolute w-2 h-2 bg-primary/20 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`
+              top: `${Math.random() * 100}%`,
             }}
             animate={{
               y: [0, -30, 0],
               x: [0, Math.random() * 20 - 10, 0],
-              opacity: [0.2, 0.5, 0.2]
+              opacity: [0.2, 0.5, 0.2],
             }}
             transition={{
               duration: 3 + Math.random() * 2,
               repeat: Infinity,
-              delay: Math.random() * 2
+              delay: Math.random() * 2,
             }}
           />
         ))}
@@ -41,7 +41,7 @@ export const LoadingScreen = ({ message = 'Carregando...' }) => {
           transition={{
             type: "spring",
             stiffness: 260,
-            damping: 20
+            damping: 20,
           }}
           className="mb-8"
         >
@@ -51,13 +51,13 @@ export const LoadingScreen = ({ message = 'Carregando...' }) => {
         </motion.div>
 
         {/* Loading Spinner */}
-        <motion.div
+        {/* <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           className="mx-auto mb-6"
         >
           <Loader2 className="w-12 h-12 text-primary" />
-        </motion.div>
+        </motion.div> */}
 
         {/* Loading Text */}
         <motion.p
@@ -77,12 +77,12 @@ export const LoadingScreen = ({ message = 'Carregando...' }) => {
               className="w-2 h-2 bg-primary rounded-full"
               animate={{
                 scale: [1, 1.5, 1],
-                opacity: [0.3, 1, 0.3]
+                opacity: [0.3, 1, 0.3],
               }}
               transition={{
                 duration: 1.5,
                 repeat: Infinity,
-                delay: i * 0.2
+                delay: i * 0.2,
               }}
             />
           ))}
@@ -95,28 +95,26 @@ export const LoadingScreen = ({ message = 'Carregando...' }) => {
 /**
  * Inline Loading - For use inside components
  */
-export const InlineLoading = ({ message, size = 'md' }) => {
+/* export const InlineLoading = ({ message, size = "md" }) => {
   const sizes = {
-    sm: 'w-4 h-4',
-    md: 'w-8 h-8',
-    lg: 'w-12 h-12'
+    sm: "w-4 h-4",
+    md: "w-8 h-8",
+    lg: "w-12 h-12",
   };
 
   return (
     <div className="flex flex-col items-center justify-center py-8">
       <Loader2 className={`${sizes[size]} text-primary animate-spin mb-3`} />
-      {message && (
-        <p className="text-sm text-muted-foreground">{message}</p>
-      )}
+      {message && <p className="text-sm text-muted-foreground">{message}</p>}
     </div>
   );
 };
-
+ */
 /**
  * Skeleton Screen - For content loading
  */
-export const SkeletonScreen = ({ type = 'card' }) => {
-  if (type === 'card') {
+export const SkeletonScreen = ({ type = "card" }) => {
+  if (type === "card") {
     return (
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
@@ -135,7 +133,7 @@ export const SkeletonScreen = ({ type = 'card' }) => {
     );
   }
 
-  if (type === 'table') {
+  if (type === "table") {
     return (
       <div className="space-y-3">
         {[1, 2, 3, 4, 5].map((i) => (

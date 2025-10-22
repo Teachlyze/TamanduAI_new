@@ -1,17 +1,17 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { useAuth } from '@/hooks/useAuth';
-import { useLocation } from 'react-router-dom';
-import { supabase } from '@/lib/supabaseClient';
-import { X, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useAuth } from "@/hooks/useAuth";
+import { useLocation } from "react-router-dom";
+import { supabase } from "@/lib/supabaseClient";
+import { X, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 
 /**
  * Painel de Debug - Remover em produção!
  * Mostra informações sobre autenticação e roteamento
- * 
+ *
  * Para usar: Adicionar no Layout principal temporariamente
  * <DebugPanel />
  */
-  const DebugPanel = () => {
+const DebugPanel = () => {
   const { user } = useAuth();
   const location = useLocation();
   const [show, setShow] = useState(true);
@@ -22,16 +22,13 @@ import { X, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
   }, []);
 
   const checkTables = async () => {
-    const tables = ['classes', 'activities', 'class_members', 'submissions'];
+    const tables = ["classes", "activities", "class_members", "submissions"];
     const status = {};
 
     for (const table of tables) {
       try {
-        const { error } = await supabase
-          .from(table)
-          .select('id')
-          .limit(1);
-        
+        const { error } = await supabase.from(table).select("id").limit(1);
+
         status[table] = !error;
       } catch (e) {
         status[table] = false;
@@ -45,14 +42,14 @@ import { X, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 
   const role = user?.user_metadata?.role || user?.role;
   const expectedPaths = {
-    student: '/students',
-    teacher: '/dashboard',
-    school: '/school'
+    student: "/students",
+    teacher: "/dashboard",
+    school: "/school",
   };
   const expectedPath = expectedPaths[role];
   const isCorrectPath = location.pathname.startsWith(expectedPath);
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className="fixed bottom-4 right-4 z-[9999] max-w-md">
@@ -74,11 +71,13 @@ import { X, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
           {/* User Info */}
           <div className="p-2 bg-gray-50 dark:bg-gray-700 rounded">
             <div className="font-semibold mb-1">👤 Usuário:</div>
-            <div>Email: {user?.email || 'N/A'}</div>
+            <div>Email: {user?.email || "N/A"}</div>
             <div className="flex items-center gap-2">
-              Role: 
-              <span className={`px-2 py-0.5 rounded ${role ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                {role || '❌ NÃO DEFINIDO'}
+              Role:
+              <span
+                className={`px-2 py-0.5 rounded ${role ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+              >
+                {role || "❌ NÃO DEFINIDO"}
               </span>
             </div>
           </div>
@@ -88,7 +87,7 @@ import { X, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
             <div className="font-semibold mb-1">📍 Rota:</div>
             <div>Atual: {location.pathname}</div>
             <div className="flex items-center gap-2">
-              Esperada: {expectedPath || 'N/A'}
+              Esperada: {expectedPath || "N/A"}
               {isCorrectPath ? (
                 <CheckCircle className="w-4 h-4 text-green-500" />
               ) : (
@@ -113,7 +112,9 @@ import { X, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
           </div>
 
           {/* Actions */}
-          {(!role || !isCorrectPath || Object.values(tablesStatus).some(v => !v)) && (
+          {(!role ||
+            !isCorrectPath ||
+            Object.values(tablesStatus).some((v) => !v)) && (
             <div className="p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded border border-yellow-300">
               <div className="font-semibold mb-1 text-yellow-700 dark:text-yellow-400">
                 ⚠️ Ações Necessárias:
@@ -128,7 +129,7 @@ import { X, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
                   • Rota incorreta para o role
                 </div>
               )}
-              {Object.values(tablesStatus).some(v => !v) && (
+              {Object.values(tablesStatus).some((v) => !v) && (
                 <div className="text-yellow-700 dark:text-yellow-300">
                   • Executar migração SQL
                 </div>
@@ -139,7 +140,7 @@ import { X, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
           {/* Quick Actions */}
           <div className="flex gap-2 pt-2">
             <button
-              onClick={() => window.location.href = expectedPath}
+              onClick={() => (window.location.href = expectedPath)}
               className="flex-1 px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
             >
               Ir para rota correta

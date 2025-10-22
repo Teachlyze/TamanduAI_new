@@ -1,38 +1,45 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
-  const TailwindCheck = () => {
+const TailwindCheck = () => {
   useEffect(() => {
-    console.log('[TailwindCheck] Componente montado');
-    
+    console.log("[TailwindCheck] Componente montado");
+
     // Verifica se o Tailwind está injetando estilos
     const styleSheets = Array.from(document.styleSheets);
-    const hasTailwind = styleSheets.some(sheet => {
+    const hasTailwind = styleSheets.some((sheet) => {
       try {
-        return sheet.href && (sheet.href.includes('tailwind') || 
-               (sheet.ownerNode && sheet.ownerNode.textContent.includes('tailwind')));
+        return (
+          sheet.href &&
+          (sheet.href.includes("tailwind") ||
+            (sheet.ownerNode &&
+              sheet.ownerNode.textContent.includes("tailwind")))
+        );
       } catch (e) {
         return false;
       }
     });
-    
-    console.log('[TailwindCheck] Tailwind detectado nos estilos:', hasTailwind);
-    
+
+    console.log("[TailwindCheck] Tailwind detectado nos estilos:", hasTailwind);
+
     // Verifica se as classes do Tailwind estão disponíveis
-    const testEl = document.createElement('div');
-    testEl.className = 'hidden';
+    const testEl = document.createElement("div");
+    testEl.className = "hidden";
     document.body.appendChild(testEl);
-    const isTailwindWorking = window.getComputedStyle(testEl).display === 'none';
+    const isTailwindWorking =
+      window.getComputedStyle(testEl).display === "none";
     document.body.removeChild(testEl);
-    
-    console.log('[TailwindCheck] Classes do Tailwind funcionando:', isTailwindWorking);
-    
+
+    console.log(
+      "[TailwindCheck] Classes do Tailwind funcionando:",
+      isTailwindWorking
+    );
+
     // Verifica se as fontes personalizadas estão carregadas
     const isFontLoaded = document.fonts.check('1rem "Inter"');
-    console.log('[TailwindCheck] Fonte Inter carregada:', isFontLoaded);
-    
+    console.log("[TailwindCheck] Fonte Inter carregada:", isFontLoaded);
   }, []);
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className="fixed bottom-4 right-4 bg-white p-4 rounded-lg shadow-lg border border-gray-200 z-50 max-w-sm">

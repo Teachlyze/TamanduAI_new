@@ -1,20 +1,19 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, ArrowRight, ArrowLeft, Check } from 'lucide-react';
-import { PremiumButton } from './ui/PremiumButton';
-
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, ArrowRight, ArrowLeft, Check } from "lucide-react";
+import { PremiumButton } from "./ui/PremiumButton";
+import { useState, useEffect } from "react";
 /**
  * Onboarding Tour Component
  * Guided tour for first-time users
  */
-export const [loading, setLoading] = useState(true);
-  const OnboardingTour = ({ steps = [], onComplete, onSkip }) => {
+export const OnboardingTour = ({ steps = [], onComplete, onSkip }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     // Check if user has completed onboarding
-    const hasCompletedOnboarding = localStorage.getItem('onboarding-completed');
+    const hasCompletedOnboarding = localStorage.getItem("onboarding-completed");
     if (!hasCompletedOnboarding && steps.length > 0) {
       setIsActive(true);
     }
@@ -22,7 +21,7 @@ export const [loading, setLoading] = useState(true);
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
-      setCurrentStep(prev => prev + 1);
+      setCurrentStep((prev) => prev + 1);
     } else {
       handleComplete();
     }
@@ -30,18 +29,18 @@ export const [loading, setLoading] = useState(true);
 
   const handlePrevious = () => {
     if (currentStep > 0) {
-      setCurrentStep(prev => prev - 1);
+      setCurrentStep((prev) => prev - 1);
     }
   };
 
   const handleComplete = () => {
-    localStorage.setItem('onboarding-completed', 'true');
+    localStorage.setItem("onboarding-completed", "true");
     setIsActive(false);
     onComplete?.();
   };
 
   const handleSkip = () => {
-    localStorage.setItem('onboarding-completed', 'true');
+    localStorage.setItem("onboarding-completed", "true");
     setIsActive(false);
     onSkip?.();
   };
@@ -51,7 +50,7 @@ export const [loading, setLoading] = useState(true);
   const currentStepData = steps[currentStep];
   const isLastStep = currentStep === steps.length - 1;
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <AnimatePresence>
@@ -103,11 +102,13 @@ export const [loading, setLoading] = useState(true);
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="fixed z-[102]"
             style={{
-              top: currentStepData.position?.top || '50%',
-              left: currentStepData.position?.left || '50%',
-              transform: currentStepData.position?.top ? 'translateX(-50%)' : 'translate(-50%, -50%)',
-              maxWidth: '420px',
-              width: '90%'
+              top: currentStepData.position?.top || "50%",
+              left: currentStepData.position?.left || "50%",
+              transform: currentStepData.position?.top
+                ? "translateX(-50%)"
+                : "translate(-50%, -50%)",
+              maxWidth: "420px",
+              width: "90%",
             }}
           >
             <div className="bg-card rounded-2xl shadow-themed-lg border border-border p-6">
@@ -143,10 +144,10 @@ export const [loading, setLoading] = useState(true);
                     key={index}
                     className={`h-1.5 rounded-full transition-all ${
                       index === currentStep
-                        ? 'w-8 bg-primary'
+                        ? "w-8 bg-primary"
                         : index < currentStep
-                        ? 'w-1.5 bg-success'
-                        : 'w-1.5 bg-muted'
+                          ? "w-1.5 bg-success"
+                          : "w-1.5 bg-muted"
                     }`}
                   />
                 ))}
@@ -169,12 +170,12 @@ export const [loading, setLoading] = useState(true);
                     </PremiumButton>
                   )}
                   <PremiumButton
-                    variant={isLastStep ? 'gradient' : 'primary'}
+                    variant={isLastStep ? "gradient" : "primary"}
                     size="sm"
                     rightIcon={isLastStep ? Check : ArrowRight}
                     onClick={handleNext}
                   >
-                    {isLastStep ? 'Concluir' : 'Próximo'}
+                    {isLastStep ? "Concluir" : "Próximo"}
                   </PremiumButton>
                 </div>
               </div>
@@ -191,23 +192,21 @@ export const [loading, setLoading] = useState(true);
  */
 export const useOnboarding = () => {
   const startOnboarding = () => {
-    localStorage.removeItem('onboarding-completed');
+    localStorage.removeItem("onboarding-completed");
     window.location.reload();
   };
 
   const resetOnboarding = () => {
-    localStorage.removeItem('onboarding-completed');
+    localStorage.removeItem("onboarding-completed");
   };
 
   const hasCompletedOnboarding = () => {
-    return localStorage.getItem('onboarding-completed') === 'true';
+    return localStorage.getItem("onboarding-completed") === "true";
   };
 
   return {
     startOnboarding,
     resetOnboarding,
-    hasCompletedOnboarding
+    hasCompletedOnboarding,
   };
 };
-
-export default OnboardingTour;

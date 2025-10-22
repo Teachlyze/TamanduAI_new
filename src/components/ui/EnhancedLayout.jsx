@@ -1,23 +1,23 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Bell, User, Settings, LogOut } from 'lucide-react';
-import { Button } from './button';
-import { useAuth } from '@/contexts/AuthContext';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X, Bell, User, Settings, LogOut } from "lucide-react";
+import { Button } from "./button";
+import { useAuth } from "@/contexts/AuthContext";
 
 /**
  * Layout aprimorado com melhor responsividade e acessibilidade
  * Usa princípios de design system com Tailwind + DaisyUI
  */
 export const [loading, setLoading] = useState(true);
-  const EnhancedLayout = ({
+const EnhancedLayout = ({
   children,
   title,
   subtitle,
   showSidebar = true,
   sidebarContent,
   headerActions,
-  className = '',
-  maxWidth = '7xl',
+  className = "",
+  maxWidth = "7xl",
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -34,42 +34,46 @@ export const [loading, setLoading] = useState(true);
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => window.removeEventListener('resize', checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // Fechar sidebar ao clicar fora em mobile
   useEffect(() => {
     if (sidebarOpen && isMobile) {
       const handleClickOutside = (event) => {
-        if (!event.target.closest('.sidebar') && !event.target.closest('.sidebar-toggle')) {
+        if (
+          !event.target.closest(".sidebar") &&
+          !event.target.closest(".sidebar-toggle")
+        ) {
           setSidebarOpen(false);
         }
       };
 
-      document.addEventListener('mousedown', handleClickOutside);
-      if (loading) return <LoadingScreen />;
+      document.addEventListener("mousedown", handleClickOutside);
+      /* if (loading) return <LoadingScreen />; */
 
-  return () => document.removeEventListener('mousedown', handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [sidebarOpen, isMobile]);
 
   const sidebarVariants = {
     closed: {
-      x: '-100%',
+      x: "-100%",
       transition: {
-        type: 'spring',
+        type: "spring",
         stiffness: 400,
         damping: 40,
       },
     },
     open: {
-      x: '0%',
+      x: "0%",
       transition: {
-        type: 'spring',
+        type: "spring",
         stiffness: 400,
         damping: 40,
       },
@@ -77,11 +81,11 @@ export const [loading, setLoading] = useState(true);
   };
 
   const overlayVariants = {
-    closed: { opacity: 0, display: 'none' },
-    open: { opacity: 1, display: 'block' },
+    closed: { opacity: 0, display: "none" },
+    open: { opacity: 1, display: "block" },
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`min-h-screen bg-base-100 ${className}`}>
@@ -99,7 +103,11 @@ export const [loading, setLoading] = useState(true);
                   className="sidebar-toggle lg:hidden"
                   aria-label="Toggle sidebar"
                 >
-                  {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                  {sidebarOpen ? (
+                    <X className="h-5 w-5" />
+                  ) : (
+                    <Menu className="h-5 w-5" />
+                  )}
                 </Button>
               )}
 
@@ -110,9 +118,7 @@ export const [loading, setLoading] = useState(true);
                   </h1>
                 )}
                 {subtitle && (
-                  <p className="text-sm text-base-content/70">
-                    {subtitle}
-                  </p>
+                  <p className="text-sm text-base-content/70">{subtitle}</p>
                 )}
               </div>
             </div>
@@ -123,16 +129,30 @@ export const [loading, setLoading] = useState(true);
 
               {/* User menu */}
               <div className="dropdown dropdown-end">
-                <Button variant="ghost" size="sm" className="avatar avatar-ring" tabIndex={0}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="avatar avatar-ring"
+                  tabIndex={0}
+                >
                   <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
                     <User className="h-4 w-4 text-primary-content" />
                   </div>
                 </Button>
 
-                <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow-lg bg-base-100 rounded-box w-52">
-                  <li><a href="/profile">Perfil</a></li>
-                  <li><a href="/settings">Configurações</a></li>
-                  <li><a href="/notifications">Notificações</a></li>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content z-[1] menu p-2 shadow-lg bg-base-100 rounded-box w-52"
+                >
+                  <li>
+                    <a href="/profile">Perfil</a>
+                  </li>
+                  <li>
+                    <a href="/settings">Configurações</a>
+                  </li>
+                  <li>
+                    <a href="/notifications">Notificações</a>
+                  </li>
                   <li className="divider"></li>
                   <li>
                     <button
@@ -172,13 +192,11 @@ export const [loading, setLoading] = useState(true);
               animate={isMobile ? (sidebarOpen ? "open" : "closed") : "open"}
               variants={sidebarVariants}
               className={`sidebar fixed lg:static inset-y-0 left-0 z-50 w-64 bg-base-100 border-r border-base-200 transform lg:transform-none ${
-                isMobile ? 'lg:w-0' : ''
+                isMobile ? "lg:w-0" : ""
               }`}
             >
               <div className="flex flex-col h-full p-4">
-                <div className="flex-1 overflow-y-auto">
-                  {sidebarContent}
-                </div>
+                <div className="flex-1 overflow-y-auto">{sidebarContent}</div>
 
                 {/* Footer do sidebar */}
                 <div className="mt-auto pt-4 border-t border-base-200">
@@ -194,7 +212,9 @@ export const [loading, setLoading] = useState(true);
         {/* Main Content */}
         <main className={`flex-1 overflow-hidden`}>
           <div className={`container mx-auto px-4 sm:px-6 lg:px-8 py-6`}>
-            <div className={`mx-auto ${maxWidth === 'none' ? 'max-w-none' : `max-w-${maxWidth}`}`}>
+            <div
+              className={`mx-auto ${maxWidth === "none" ? "max-w-none" : `max-w-${maxWidth}`}`}
+            >
               {children}
             </div>
           </div>
@@ -211,9 +231,9 @@ export const EnhancedSidebar = ({
   items = [],
   activeItem,
   onItemClick,
-  className = '',
+  className = "",
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <nav className={`space-y-1 ${className}`}>
@@ -221,27 +241,29 @@ export const EnhancedSidebar = ({
         const isActive = activeItem === item.id;
         const Icon = item.icon;
 
-        if (loading) return <LoadingScreen />;
+        /* if (loading) return <LoadingScreen />; */
 
-  return (
+        return (
           <button
             key={item.id}
             onClick={() => onItemClick?.(item.id)}
             className={`w-full flex items-center gap-3 px-3 py-2 text-left rounded-lg transition-all duration-200 ${
               isActive
-                ? 'bg-primary text-primary-content shadow-sm'
-                : 'text-base-content hover:bg-base-200 hover:text-base-content'
+                ? "bg-primary text-primary-content shadow-sm"
+                : "text-base-content hover:bg-base-200 hover:text-base-content"
             }`}
-            aria-current={isActive ? 'page' : undefined}
+            aria-current={isActive ? "page" : undefined}
           >
             {Icon && <Icon className="h-5 w-5" />}
             <span className="font-medium">{item.label}</span>
             {item.badge && (
-              <span className={`ml-auto px-2 py-1 text-xs rounded-full ${
-                item.badge.variant === 'error'
-                  ? 'bg-error text-error-content'
-                  : 'bg-primary text-primary-content'
-              }`}>
+              <span
+                className={`ml-auto px-2 py-1 text-xs rounded-full ${
+                  item.badge.variant === "error"
+                    ? "bg-error text-error-content"
+                    : "bg-primary text-primary-content"
+                }`}
+              >
                 {item.badge.text}
               </span>
             )}
@@ -260,41 +282,38 @@ export const EnhancedCard = ({
   subtitle,
   children,
   actions,
-  variant = 'default',
-  className = '',
+  variant = "default",
+  className = "",
   ...props
 }) => {
   const variants = {
-    default: 'bg-base-100 border-base-200',
-    outlined: 'bg-transparent border-2 border-base-300',
-    elevated: 'bg-base-100 shadow-lg border-transparent',
-    glass: 'glass border-base-200/50',
+    default: "bg-base-100 border-base-200",
+    outlined: "bg-transparent border-2 border-base-300",
+    elevated: "bg-base-100 shadow-lg border-transparent",
+    glass: "glass border-base-200/50",
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
-    <div
-      className={`card ${variants[variant]} ${className}`}
-      {...props}
-    >
+    <div className={`card ${variants[variant]} ${className}`} {...props}>
       {(title || subtitle || actions) && (
         <div className="card-header">
           <div className="card-title">
-            {title && <h3 className="text-lg font-semibold text-base-content">{title}</h3>}
-            {subtitle && <p className="text-sm text-base-content/70 mt-1">{subtitle}</p>}
+            {title && (
+              <h3 className="text-lg font-semibold text-base-content">
+                {title}
+              </h3>
+            )}
+            {subtitle && (
+              <p className="text-sm text-base-content/70 mt-1">{subtitle}</p>
+            )}
           </div>
-          {actions && (
-            <div className="card-actions">
-              {actions}
-            </div>
-          )}
+          {actions && <div className="card-actions">{actions}</div>}
         </div>
       )}
 
-      <div className="card-body">
-        {children}
-      </div>
+      <div className="card-body">{children}</div>
     </div>
   );
 };
@@ -304,53 +323,52 @@ export const EnhancedCard = ({
  */
 export const EnhancedButton = ({
   children,
-  variant = 'primary',
-  size = 'md',
+  variant = "primary",
+  size = "md",
   loading = false,
   disabled = false,
   fullWidth = false,
-  className = '',
+  className = "",
   ...props
 }) => {
-  const baseClasses = 'btn transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2';
+  const baseClasses =
+    "btn transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
 
   const variants = {
-    primary: 'btn-primary',
-    secondary: 'btn-secondary',
-    accent: 'btn-accent',
-    ghost: 'btn-ghost',
-    outline: 'btn-outline',
-    error: 'btn-error',
-    success: 'btn-success',
-    warning: 'btn-warning',
+    primary: "btn-primary",
+    secondary: "btn-secondary",
+    accent: "btn-accent",
+    ghost: "btn-ghost",
+    outline: "btn-outline",
+    error: "btn-error",
+    success: "btn-success",
+    warning: "btn-warning",
   };
 
   const sizes = {
-    xs: 'btn-xs',
-    sm: 'btn-sm',
-    md: '',
-    lg: 'btn-lg',
-    xl: 'btn-xl',
+    xs: "btn-xs",
+    sm: "btn-sm",
+    md: "",
+    lg: "btn-lg",
+    xl: "btn-xl",
   };
 
   const classes = [
     baseClasses,
     variants[variant],
     sizes[size],
-    fullWidth ? 'w-full' : '',
-    loading ? 'loading' : '',
-    disabled ? 'btn-disabled' : '',
+    fullWidth ? "w-full" : "",
+    loading ? "loading" : "",
+    disabled ? "btn-disabled" : "",
     className,
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(" ");
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
-    <button
-      className={classes}
-      disabled={disabled || loading}
-      {...props}
-    >
+    <button className={classes} disabled={disabled || loading} {...props}>
       {loading && <span className="loading-spinner"></span>}
       {children}
     </button>
@@ -362,24 +380,24 @@ export const EnhancedButton = ({
  */
 export const ResponsiveContainer = ({
   children,
-  size = 'lg',
-  className = '',
+  size = "lg",
+  className = "",
   padding = true,
 }) => {
   const sizeClasses = {
-    sm: 'max-w-md',
-    md: 'max-w-2xl',
-    lg: 'max-w-4xl',
-    xl: 'max-w-6xl',
-    '2xl': 'max-w-7xl',
-    none: 'max-w-none',
+    sm: "max-w-md",
+    md: "max-w-2xl",
+    lg: "max-w-4xl",
+    xl: "max-w-6xl",
+    "2xl": "max-w-7xl",
+    none: "max-w-none",
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div
-      className={`mx-auto ${sizeClasses[size]} ${padding ? 'px-4 sm:px-6 lg:px-8' : ''} ${className}`}
+      className={`mx-auto ${sizeClasses[size]} ${padding ? "px-4 sm:px-6 lg:px-8" : ""} ${className}`}
     >
       {children}
     </div>

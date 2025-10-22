@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect } from 'react';
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-
+import { createContext, useContext, useEffect } from "react";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import React, { useRef, useState } from "react";
 // Contexto para gerenciar acessibilidade global
 const AccessibilityContext = createContext({
   announce: () => {},
@@ -12,7 +12,9 @@ const AccessibilityContext = createContext({
 export const useAccessibility = () => {
   const context = useContext(AccessibilityContext);
   if (!context) {
-    throw new Error('useAccessibility must be used within an AccessibilityProvider');
+    throw new Error(
+      "useAccessibility must be used within an AccessibilityProvider"
+    );
   }
   return context;
 };
@@ -22,10 +24,10 @@ export const AccessibilityProvider = ({ children }) => {
   const announcementRef = useRef(null);
 
   // Função para anunciar mudanças para screen readers
-  const announce = (message, priority = 'polite') => {
+  const announce = (message, priority = "polite") => {
     if (announcementRef.current) {
       announcementRef.current.textContent = message;
-      announcementRef.current.setAttribute('aria-live', priority);
+      announcementRef.current.setAttribute("aria-live", priority);
     }
   };
 
@@ -41,19 +43,22 @@ export const AccessibilityProvider = ({ children }) => {
     if (element) {
       element.focus();
       // Anunciar elemento focado
-      const label = element.getAttribute('aria-label') || element.textContent || 'Elemento';
+      const label =
+        element.getAttribute("aria-label") || element.textContent || "Elemento";
       announce(`Focado em: ${label}`);
     }
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
-    <AccessibilityContext.Provider value={{
-      announce,
-      setPageTitle,
-      focusElement,
-    }}>
+    <AccessibilityContext.Provider
+      value={{
+        announce,
+        setPageTitle,
+        focusElement,
+      }}
+    >
       {/* Live region para anúncios */}
       <div
         ref={announcementRef}
@@ -86,9 +91,9 @@ export const useFocusManagement = (options = {}) => {
       }
     }
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
+    return () => {
       if (restoreFocus && previousFocusRef.current) {
         previousFocusRef.current.focus();
       }
@@ -107,7 +112,7 @@ export const useFocusManagement = (options = {}) => {
     const lastElement = focusableElements[focusableElements.length - 1];
 
     const handleTabKey = (e) => {
-      if (e.key !== 'Tab') return;
+      if (e.key !== "Tab") return;
 
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {
@@ -122,12 +127,12 @@ export const useFocusManagement = (options = {}) => {
       }
     };
 
-    container.addEventListener('keydown', handleTabKey);
+    container.addEventListener("keydown", handleTabKey);
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
-      container.removeEventListener('keydown', handleTabKey);
+    return () => {
+      container.removeEventListener("keydown", handleTabKey);
     };
   };
 
@@ -141,27 +146,27 @@ export const useLiveAnnouncements = () => {
   const { announce } = useAccessibility();
 
   const announceError = (message) => {
-    announce(`Erro: ${message}`, 'assertive');
+    announce(`Erro: ${message}`, "assertive");
   };
 
   const announceSuccess = (message) => {
-    announce(`Sucesso: ${message}`, 'polite');
+    announce(`Sucesso: ${message}`, "polite");
   };
 
   const announceWarning = (message) => {
-    announce(`Aviso: ${message}`, 'polite');
+    announce(`Aviso: ${message}`, "polite");
   };
 
   const announceInfo = (message) => {
-    announce(message, 'polite');
+    announce(message, "polite");
   };
 
-  const announceLoading = (message = 'Carregando...') => {
-    announce(message, 'polite');
+  const announceLoading = (message = "Carregando...") => {
+    announce(message, "polite");
   };
 
   const announceNavigation = (from, to) => {
-    announce(`Navegando de ${from} para ${to}`, 'polite');
+    announce(`Navegando de ${from} para ${to}`, "polite");
   };
 
   return {
@@ -177,7 +182,7 @@ export const useLiveAnnouncements = () => {
 // Hook para gerenciar navegação por teclado
 export const useKeyboardNavigation = (items = [], options = {}) => {
   const {
-    orientation = 'vertical',
+    orientation = "vertical",
     loop = true,
     onSelect = () => {},
   } = options;
@@ -186,10 +191,10 @@ export const useKeyboardNavigation = (items = [], options = {}) => {
 
   const handleKeyDown = (e) => {
     switch (e.key) {
-      case 'ArrowUp':
-        if (orientation === 'vertical') {
+      case "ArrowUp":
+        if (orientation === "vertical") {
           e.preventDefault();
-          setFocusedIndex(prev =>
+          setFocusedIndex((prev) =>
             loop
               ? (prev - 1 + items.length) % items.length
               : Math.max(0, prev - 1)
@@ -197,10 +202,10 @@ export const useKeyboardNavigation = (items = [], options = {}) => {
         }
         break;
 
-      case 'ArrowDown':
-        if (orientation === 'vertical') {
+      case "ArrowDown":
+        if (orientation === "vertical") {
           e.preventDefault();
-          setFocusedIndex(prev =>
+          setFocusedIndex((prev) =>
             loop
               ? (prev + 1) % items.length
               : Math.min(items.length - 1, prev + 1)
@@ -208,10 +213,10 @@ export const useKeyboardNavigation = (items = [], options = {}) => {
         }
         break;
 
-      case 'ArrowLeft':
-        if (orientation === 'horizontal') {
+      case "ArrowLeft":
+        if (orientation === "horizontal") {
           e.preventDefault();
-          setFocusedIndex(prev =>
+          setFocusedIndex((prev) =>
             loop
               ? (prev - 1 + items.length) % items.length
               : Math.max(0, prev - 1)
@@ -219,10 +224,10 @@ export const useKeyboardNavigation = (items = [], options = {}) => {
         }
         break;
 
-      case 'ArrowRight':
-        if (orientation === 'horizontal') {
+      case "ArrowRight":
+        if (orientation === "horizontal") {
           e.preventDefault();
-          setFocusedIndex(prev =>
+          setFocusedIndex((prev) =>
             loop
               ? (prev + 1) % items.length
               : Math.min(items.length - 1, prev + 1)
@@ -230,18 +235,18 @@ export const useKeyboardNavigation = (items = [], options = {}) => {
         }
         break;
 
-      case 'Home':
+      case "Home":
         e.preventDefault();
         setFocusedIndex(0);
         break;
 
-      case 'End':
+      case "End":
         e.preventDefault();
         setFocusedIndex(items.length - 1);
         break;
 
-      case 'Enter':
-      case ' ':
+      case "Enter":
+      case " ":
         e.preventDefault();
         if (items[focusedIndex]) {
           onSelect(items[focusedIndex], focusedIndex);
@@ -273,21 +278,21 @@ export const useAccessibleErrors = () => {
   const { announceError } = useLiveAnnouncements();
 
   const setError = (field, message) => {
-    setErrors(prev => ({ ...prev, [field]: message }));
+    setErrors((prev) => ({ ...prev, [field]: message }));
     if (message) {
       announceError(`Erro no campo ${field}: ${message}`);
     }
   };
 
   const clearError = (field) => {
-    setErrors(prev => ({ ...prev, [field]: null }));
+    setErrors((prev) => ({ ...prev, [field]: null }));
   };
 
   const clearAllErrors = () => {
     setErrors({});
   };
 
-  const hasErrors = Object.values(errors).some(error => error !== null);
+  const hasErrors = Object.values(errors).some((error) => error !== null);
 
   return {
     errors,
@@ -301,12 +306,12 @@ export const useAccessibleErrors = () => {
 // Componente para regiões live acessíveis
 export const LiveRegion = ({
   children,
-  priority = 'polite',
+  priority = "polite",
   atomic = true,
-  className = '',
+  className = "",
   ...props
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div
@@ -322,20 +327,23 @@ export const LiveRegion = ({
 
 // Componente para anúncios visuais acessíveis
 export const AccessibleAlert = ({
-  type = 'info',
+  type = "info",
   title,
   children,
-  className = '',
+  className = "",
   ...props
 }) => {
   const alertClasses = {
-    info: 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-muted/30 dark:border-blue-800 dark:text-blue-200',
-    success: 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200',
-    warning: 'bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200',
-    error: 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200',
+    info: "bg-blue-50 border-blue-200 text-blue-800 dark:bg-muted/30 dark:border-blue-800 dark:text-blue-200",
+    success:
+      "bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200",
+    warning:
+      "bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200",
+    error:
+      "bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200",
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div
@@ -351,43 +359,49 @@ export const AccessibleAlert = ({
 };
 
 // Componente para botões acessíveis
-export const AccessibleButton = React.forwardRef(({
-  children,
-  variant = 'primary',
-  size = 'md',
-  loading = false,
-  disabled = false,
-  onClick,
-  'aria-label': ariaLabel,
-  'aria-describedby': ariaDescribedBy,
-  className = '',
-  ...props
-}, ref) => {
-  const buttonClasses = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-300',
-    secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 disabled:bg-gray-100 dark:bg-gray-700 dark:text-gray-100',
-    outline: 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50 disabled:border-blue-300 disabled:text-blue-300',
-    ghost: 'text-blue-600 hover:bg-blue-50 disabled:text-blue-300',
-  };
+export const AccessibleButton = React.forwardRef(
+  (
+    {
+      children,
+      variant = "primary",
+      size = "md",
+      loading = false,
+      disabled = false,
+      onClick,
+      "aria-label": ariaLabel,
+      "aria-describedby": ariaDescribedBy,
+      className = "",
+      ...props
+    },
+    ref
+  ) => {
+    const buttonClasses = {
+      primary: "bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-300",
+      secondary:
+        "bg-gray-200 text-gray-900 hover:bg-gray-300 disabled:bg-gray-100 dark:bg-gray-700 dark:text-gray-100",
+      outline:
+        "border-2 border-blue-600 text-blue-600 hover:bg-blue-50 disabled:border-blue-300 disabled:text-blue-300",
+      ghost: "text-blue-600 hover:bg-blue-50 disabled:text-blue-300",
+    };
 
-  const sizeClasses = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-base',
-    lg: 'px-6 py-3 text-lg',
-  };
+    const sizeClasses = {
+      sm: "px-3 py-1.5 text-sm",
+      md: "px-4 py-2 text-base",
+      lg: "px-6 py-3 text-lg",
+    };
 
-  if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
-    <button
-      ref={ref}
-      type="button"
-      disabled={disabled || loading}
-      onClick={onClick}
-      aria-label={ariaLabel || (loading ? 'Carregando...' : undefined)}
-      aria-describedby={ariaDescribedBy}
-      aria-busy={loading}
-      className={`
+    return (
+      <button
+        ref={ref}
+        type="button"
+        disabled={disabled || loading}
+        onClick={onClick}
+        aria-label={ariaLabel || (loading ? "Carregando..." : undefined)}
+        aria-describedby={ariaDescribedBy}
+        aria-busy={loading}
+        className={`
         ${buttonClasses[variant]}
         ${sizeClasses[size]}
         rounded-md font-medium
@@ -396,34 +410,35 @@ export const AccessibleButton = React.forwardRef(({
         transition-all duration-200
         ${className}
       `}
-      {...props}
-    >
-      {loading && (
-        <span className="inline-flex items-center mr-2">
-          <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-              fill="none"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            />
-          </svg>
-        </span>
-      )}
-      {children}
-    </button>
-  );
-});
+        {...props}
+      >
+        {loading && (
+          <span className="inline-flex items-center mr-2">
+            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+                fill="none"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          </span>
+        )}
+        {children}
+      </button>
+    );
+  }
+);
 
-AccessibleButton.displayName = 'AccessibleButton';
+AccessibleButton.displayName = "AccessibleButton";
 
 export default {
   AccessibilityProvider,
@@ -436,4 +451,3 @@ export default {
   AccessibleAlert,
   AccessibleButton,
 };
-

@@ -1,102 +1,109 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import { navigateToHome } from '@/utils/roleNavigation';
-import { 
-  ArrowRight, 
-  ArrowLeft, 
-  Check, 
-  Users, 
-  BookOpen, 
-  Calendar, 
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { navigateToHome } from "@/utils/roleNavigation";
+import {
+  ArrowRight,
+  ArrowLeft,
+  Check,
+  Users,
+  BookOpen,
+  Calendar,
   MessageCircle,
   Award,
   Sparkles,
-  X
-} from 'lucide-react';
-import { PremiumCard } from '@/components/ui/PremiumCard';
-import { PremiumButton } from '@/components/ui/PremiumButton';
-import confetti from 'canvas-confetti';
+  X,
+} from "lucide-react";
+import { PremiumCard } from "@/components/ui/PremiumCard";
+import { PremiumButton } from "@/components/ui/PremiumButton";
+import confetti from "canvas-confetti";
 
 const onboardingSteps = [
   {
     id: 1,
-    title: 'Bem-vindo ao TamanduAI! 🎉',
-    description: 'A plataforma educacional completa com IA que vai revolucionar sua forma de ensinar.',
+    title: "Bem-vindo ao TamanduAI! 🎉",
+    description:
+      "A plataforma educacional completa com IA que vai revolucionar sua forma de ensinar.",
     icon: Sparkles,
-    gradient: 'from-blue-500 to-purple-600',
+    gradient: "from-blue-500 to-purple-600",
     features: [
-      'Gestão completa de turmas e alunos',
-      'Atividades interativas e avaliações',
-      'Relatórios e analytics em tempo real',
-      'Chatbot IA para suporte 24/7'
-    ]
+      "Gestão completa de turmas e alunos",
+      "Atividades interativas e avaliações",
+      "Relatórios e analytics em tempo real",
+      "Chatbot IA para suporte 24/7",
+    ],
   },
   {
     id: 2,
-    title: 'Crie sua primeira turma',
-    description: 'Organize seus alunos e comece a gerenciar suas aulas de forma profissional.',
+    title: "Crie sua primeira turma",
+    description:
+      "Organize seus alunos e comece a gerenciar suas aulas de forma profissional.",
     icon: Users,
-    gradient: 'from-emerald-500 to-teal-600',
+    gradient: "from-emerald-500 to-teal-600",
     action: {
-      label: 'Criar Turma Agora',
-      path: '/dashboard/classes'
+      label: "Criar Turma Agora",
+      path: "/dashboard/classes",
     },
-    tip: '💡 Dica: Use códigos de convite para que alunos entrem automaticamente!'
+    tip: "💡 Dica: Use códigos de convite para que alunos entrem automaticamente!",
   },
   {
     id: 3,
-    title: 'Publique atividades',
-    description: 'Crie atividades, provas e trabalhos com nosso editor intuitivo.',
+    title: "Publique atividades",
+    description:
+      "Crie atividades, provas e trabalhos com nosso editor intuitivo.",
     icon: BookOpen,
-    gradient: 'from-orange-500 to-red-600',
+    gradient: "from-orange-500 to-red-600",
     action: {
-      label: 'Criar Atividade',
-      path: '/dashboard/activities/new'
+      label: "Criar Atividade",
+      path: "/dashboard/activities/new",
     },
-    tip: '⚡ Sistema anti-plágio com IA detecta automaticamente!'
+    tip: "⚡ Sistema anti-plágio com IA detecta automaticamente!",
   },
   {
     id: 4,
-    title: 'Organize sua agenda',
-    description: 'Mantenha controle de aulas, reuniões e prazos em um só lugar.',
+    title: "Organize sua agenda",
+    description:
+      "Mantenha controle de aulas, reuniões e prazos em um só lugar.",
     icon: Calendar,
-    gradient: 'from-pink-500 to-rose-600',
+    gradient: "from-pink-500 to-rose-600",
     action: {
-      label: 'Ver Agenda',
-      path: '/dashboard/agenda'
+      label: "Ver Agenda",
+      path: "/dashboard/agenda",
     },
-    tip: '📅 Receba notificações em tempo real de eventos importantes!'
+    tip: "📅 Receba notificações em tempo real de eventos importantes!",
   },
   {
     id: 5,
-    title: 'Chatbot IA sempre disponível',
-    description: 'Treine o chatbot com materiais da sua turma para ajudar alunos 24/7.',
+    title: "Chatbot IA sempre disponível",
+    description:
+      "Treine o chatbot com materiais da sua turma para ajudar alunos 24/7.",
     icon: MessageCircle,
-    gradient: 'from-purple-500 to-indigo-600',
+    gradient: "from-purple-500 to-indigo-600",
     action: {
-      label: 'Configurar Chatbot',
-      path: '/dashboard/chatbot'
+      label: "Configurar Chatbot",
+      path: "/dashboard/chatbot",
     },
-    tip: '🤖 O chatbot aprende com seus materiais e responde com base neles!'
+    tip: "🤖 O chatbot aprende com seus materiais e responde com base neles!",
   },
   {
     id: 6,
-    title: 'Pronto para começar! 🚀',
-    description: 'Você está pronto para transformar sua experiência educacional.',
+    title: "Pronto para começar! 🚀",
+    description:
+      "Você está pronto para transformar sua experiência educacional.",
     icon: Award,
-    gradient: 'from-yellow-500 to-orange-600',
+    gradient: "from-yellow-500 to-orange-600",
     action: {
-      label: 'Ir para Dashboard',
-      path: null // Will be determined by role
+      label: "Ir para Dashboard",
+      path: null, // Will be determined by role
     },
     features: [
-      '✅ Notificações em tempo real',
-      '✅ Anti-plágio com IA',
-      '✅ Exportação PDF/Excel',
-      '✅ Suporte completo'
-    ]
-  }
+      "✅ Notificações em tempo real",
+      "✅ Anti-plágio com IA",
+      "✅ Exportação PDF/Excel",
+      "✅ Suporte completo",
+    ],
+  },
 ];
 
 export default function OnboardingInteractive() {
@@ -114,37 +121,37 @@ export default function OnboardingInteractive() {
       confetti({
         particleCount: 100,
         spread: 70,
-        origin: { y: 0.6 }
+        origin: { y: 0.6 },
       });
       setCompleted(true);
-      
+
       // Salvar que o usuário completou o onboarding
-      localStorage.setItem('onboarding_completed', 'true');
-      
+      localStorage.setItem("onboarding_completed", "true");
+
       // Redirecionar após animação
       setTimeout(() => {
-        const role = user?.user_metadata?.role || 'student';
+        const role = user?.user_metadata?.role || "student";
         navigateToHome(navigate, role);
       }, 2000);
     } else {
-      setCurrentStep(prev => prev + 1);
+      setCurrentStep((prev) => prev + 1);
     }
   };
 
   const handlePrevious = () => {
     if (currentStep > 0) {
-      setCurrentStep(prev => prev - 1);
+      setCurrentStep((prev) => prev - 1);
     }
   };
 
   const handleSkip = () => {
-    localStorage.setItem('onboarding_completed', 'true');
-    const role = user?.user_metadata?.role || 'student';
+    localStorage.setItem("onboarding_completed", "true");
+    const role = user?.user_metadata?.role || "student";
     navigateToHome(navigate, role);
   };
 
   const handleAction = (path) => {
-    localStorage.setItem('onboarding_completed', 'true');
+    localStorage.setItem("onboarding_completed", "true");
     navigate(path);
   };
 
@@ -166,9 +173,7 @@ export default function OnboardingInteractive() {
             <div
               key={index}
               className={`flex-1 h-1 rounded-full transition-all ${
-                index <= currentStep
-                  ? 'bg-primary'
-                  : 'bg-muted'
+                index <= currentStep ? "bg-primary" : "bg-muted"
               }`}
             />
           ))}
@@ -187,17 +192,23 @@ export default function OnboardingInteractive() {
           >
             <PremiumCard variant="elevated" className="overflow-hidden">
               {/* Icon header */}
-              <div className={`h-48 bg-gradient-to-br ${step.gradient} flex items-center justify-center relative overflow-hidden`}>
+              <div
+                className={`h-48 bg-gradient-to-br ${step.gradient} flex items-center justify-center relative overflow-hidden`}
+              >
                 <div className="absolute inset-0 opacity-20">
-                  <div className="absolute inset-0" style={{
-                    backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px)',
-                    backgroundSize: '20px 20px'
-                  }} />
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(circle at 20% 50%, white 1px, transparent 1px)",
+                      backgroundSize: "20px 20px",
+                    }}
+                  />
                 </div>
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ delay: 0.2, type: 'spring' }}
+                  transition={{ delay: 0.2, type: "spring" }}
                   className="relative z-10"
                 >
                   <Icon className="w-24 h-24 text-white" />
@@ -288,8 +299,8 @@ export default function OnboardingInteractive() {
                       onClick={() => setCurrentStep(index)}
                       className={`w-2 h-2 rounded-full transition-all ${
                         index === currentStep
-                          ? 'bg-primary w-8'
-                          : 'bg-muted hover:bg-muted-foreground/20'
+                          ? "bg-primary w-8"
+                          : "bg-muted hover:bg-muted-foreground/20"
                       }`}
                       aria-label={`Ir para passo ${index + 1}`}
                     />
@@ -300,9 +311,9 @@ export default function OnboardingInteractive() {
                   variant="gradient"
                   rightIcon={isLastStep ? Check : ArrowRight}
                   onClick={handleNext}
-                  aria-label={isLastStep ? 'Finalizar' : 'Próximo passo'}
+                  aria-label={isLastStep ? "Finalizar" : "Próximo passo"}
                 >
-                  {isLastStep ? 'Finalizar' : 'Próximo'}
+                  {isLastStep ? "Finalizar" : "Próximo"}
                 </PremiumButton>
               </div>
             </PremiumCard>
@@ -322,12 +333,12 @@ export default function OnboardingInteractive() {
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ type: 'spring', damping: 15 }}
+              transition={{ type: "spring", damping: 15 }}
               className="bg-white dark:bg-gray-800 rounded-2xl p-12 text-center"
             >
               <motion.div
                 animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                 className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center"
               >
                 <Check className="w-12 h-12 text-white" />

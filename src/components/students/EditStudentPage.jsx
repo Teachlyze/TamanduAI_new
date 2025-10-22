@@ -1,79 +1,121 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { createClient } from '@supabase/supabase-js';
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useParams, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { createClient } from "@supabase/supabase-js";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 // UI Components
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { toast } from '@/components/ui/use-toast';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Switch } from '@/components/ui/switch';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "@/components/ui/use-toast";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Switch } from "@/components/ui/switch";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 // Icons
-import { 
-  Loader2, 
-  ArrowLeft, 
+import {
+  Loader2,
+  ArrowLeft,
   Save,
-  Camera, 
-  User, 
-  Mail, 
-  Phone, 
+  Camera,
+  User,
+  Mail,
+  Phone,
   Calendar,
   MapPin,
   AlertCircle,
   Trash2,
   GraduationCap,
   Users,
-  FileText
-} from 'lucide-react';
+  FileText,
+} from "lucide-react";
 
 // Initialize Supabase client
-  const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
 const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Form validation schema
-const studentFormSchema = z.object({
-  name: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
-  email: z.string().email('E-mail inválido'),
-  phone: z.string().min(10, 'Telefone inválido'),
-  status: z.enum(['active', 'inactive']),
-  birthDate: z.string().optional(),
-  address: z.string().optional(),
-  notes: z.string().optional(),
-  classId: z.string().min(1, 'Selecione uma turma'),
-  enrollmentNumber: z.string().optional(),
-  grade: z.string().optional(),
-  shift: z.string().optional(),
-  emergencyContact: z.string().optional(),
-  medicalInfo: z.string().optional(),
-  parentName: z.string().optional(),
-  parentPhone: z.string().optional(),
-  parentEmail: z.string().email('E-mail do responsável inválido').or(z.literal('')).optional(),
-  hasParentInfo: z.boolean().default(false)
-}).refine(data => {
-  if (data.hasParentInfo) {
-    return z.object({
-      parentName: z.string().min(3, 'Nome do responsável é obrigatório'),
-      parentPhone: z.string().min(10, 'Telefone do responsável é obrigatório'),
-      parentEmail: z.string().email('E-mail do responsável inválido')
-    }).safeParse(data).success;
-  }
-  return true;
-}, {
-  message: 'Preencha todas as informações do responsável',
-  path: ['parentName']
-});
+const studentFormSchema = z
+  .object({
+    name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
+    email: z.string().email("E-mail inválido"),
+    phone: z.string().min(10, "Telefone inválido"),
+    status: z.enum(["active", "inactive"]),
+    birthDate: z.string().optional(),
+    address: z.string().optional(),
+    notes: z.string().optional(),
+    classId: z.string().min(1, "Selecione uma turma"),
+    enrollmentNumber: z.string().optional(),
+    grade: z.string().optional(),
+    shift: z.string().optional(),
+    emergencyContact: z.string().optional(),
+    medicalInfo: z.string().optional(),
+    parentName: z.string().optional(),
+    parentPhone: z.string().optional(),
+    parentEmail: z
+      .string()
+      .email("E-mail do responsável inválido")
+      .or(z.literal(""))
+      .optional(),
+    hasParentInfo: z.boolean().default(false),
+  })
+  .refine(
+    (data) => {
+      if (data.hasParentInfo) {
+        return z
+          .object({
+            parentName: z.string().min(3, "Nome do responsável é obrigatório"),
+            parentPhone: z
+              .string()
+              .min(10, "Telefone do responsável é obrigatório"),
+            parentEmail: z.string().email("E-mail do responsável inválido"),
+          })
+          .safeParse(data).success;
+      }
+      return true;
+    },
+    {
+      message: "Preencha todas as informações do responsável",
+      path: ["parentName"],
+    }
+  );
 
 const EditStudentPage = () => {
   const { id } = useParams();
@@ -82,90 +124,93 @@ const EditStudentPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [availableClasses, setAvailableClasses] = useState([]);
   const [avatarFile, setAvatarFile] = useState(null);
-  const [avatarPreview, setAvatarPreview] = useState('');
+  const [avatarPreview, setAvatarPreview] = useState("");
 
   // Initialize form with react-hook-form and zod
   const form = useForm({
     resolver: zodResolver(studentFormSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      phone: '',
-      status: 'active',
-      birthDate: '',
-      address: '',
-      notes: '',
-      classId: '',
-      enrollmentNumber: '',
-      grade: '',
-      shift: '',
-      emergencyContact: '',
-      medicalInfo: '',
-      parentName: '',
-      parentPhone: '',
-      parentEmail: '',
-      hasParentInfo: false
-    }
+      name: "",
+      email: "",
+      phone: "",
+      status: "active",
+      birthDate: "",
+      address: "",
+      notes: "",
+      classId: "",
+      enrollmentNumber: "",
+      grade: "",
+      shift: "",
+      emergencyContact: "",
+      medicalInfo: "",
+      parentName: "",
+      parentPhone: "",
+      parentEmail: "",
+      hasParentInfo: false,
+    },
   });
 
   // Watch hasParentInfo to conditionally show/hide parent fields
-  const hasParentInfo = form.watch('hasParentInfo');
+  const hasParentInfo = form.watch("hasParentInfo");
 
   // Fetch student data and available classes
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        
+
         // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
+        await new Promise((resolve) => setTimeout(resolve, 800));
+
         const mockStudent = {
           id: id,
-          name: 'Ana Silva',
-          email: 'ana.silva@email.com',
-          phone: '(11) 99999-9999',
-          status: 'active',
-          birthDate: '2010-05-15',
-          address: 'Rua das Flores, 123 - São Paulo/SP',
-          notes: 'Aluna dedicada e participativa.',
-          classId: '1',
-          enrollmentNumber: '2024001',
-          grade: '9º Ano',
-          shift: 'Manhã',
-          emergencyContact: '(11) 98888-8888 - Maria Silva (Mãe)',
-          medicalInfo: 'Alergia a amendoim',
-          parentName: 'Maria Silva',
-          parentPhone: '(11) 98888-7777',
-          parentEmail: 'maria.silva@email.com'
+          name: "Ana Silva",
+          email: "ana.silva@email.com",
+          phone: "(11) 99999-9999",
+          status: "active",
+          birthDate: "2010-05-15",
+          address: "Rua das Flores, 123 - São Paulo/SP",
+          notes: "Aluna dedicada e participativa.",
+          classId: "1",
+          enrollmentNumber: "2024001",
+          grade: "9º Ano",
+          shift: "Manhã",
+          emergencyContact: "(11) 98888-8888 - Maria Silva (Mãe)",
+          medicalInfo: "Alergia a amendoim",
+          parentName: "Maria Silva",
+          parentPhone: "(11) 98888-7777",
+          parentEmail: "maria.silva@email.com",
         };
 
         const mockClasses = [
-          { id: '1', name: 'Matemática 9A' },
-          { id: '2', name: 'Português 9A' },
-          { id: '3', name: 'Ciências 9A' },
-          { id: '4', name: 'História 9A' },
-          { id: '5', name: 'Geografia 9A' }
+          { id: "1", name: "Matemática 9A" },
+          { id: "2", name: "Português 9A" },
+          { id: "3", name: "Ciências 9A" },
+          { id: "4", name: "História 9A" },
+          { id: "5", name: "Geografia 9A" },
         ];
 
         setAvailableClasses(mockClasses);
-        
+
         // Set form values if student data exists
         if (mockStudent) {
           form.reset({
             ...mockStudent,
-            hasParentInfo: !!mockStudent.parentName
+            hasParentInfo: !!mockStudent.parentName,
           });
-          
+
           // Set avatar preview
-          setAvatarPreview(`https://ui-avatars.com/api/?name=${encodeURIComponent(mockStudent.name)}&background=4f46e5&color=fff`);
+          setAvatarPreview(
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(mockStudent.name)}&background=4f46e5&color=fff`
+          );
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
         toast({
-          variant: 'destructive',
-          title: 'Erro ao carregar dados',
-          description: 'Não foi possível carregar os dados do aluno. Tente novamente mais tarde.'
+          variant: "destructive",
+          title: "Erro ao carregar dados",
+          description:
+            "Não foi possível carregar os dados do aluno. Tente novamente mais tarde.",
         });
       } finally {
         setIsLoading(false);
@@ -179,26 +224,27 @@ const EditStudentPage = () => {
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
+
     // Validate file type and size
-    if (!file.type.startsWith('image/')) {
+    if (!file.type.startsWith("image/")) {
       toast({
-        variant: 'destructive',
-        title: 'Formato inválido',
-        description: 'Por favor, selecione um arquivo de imagem válido.'
+        variant: "destructive",
+        title: "Formato inválido",
+        description: "Por favor, selecione um arquivo de imagem válido.",
       });
       return;
     }
-    
-    if (file.size > 2 * 1024 * 1024) { // 2MB
+
+    if (file.size > 2 * 1024 * 1024) {
+      // 2MB
       toast({
-        variant: 'destructive',
-        title: 'Arquivo muito grande',
-        description: 'A imagem não pode ser maior que 2MB.'
+        variant: "destructive",
+        title: "Arquivo muito grande",
+        description: "A imagem não pode ser maior que 2MB.",
       });
       return;
     }
-    
+
     setAvatarFile(file);
     setAvatarPreview(URL.createObjectURL(file));
   };
@@ -210,7 +256,7 @@ const EditStudentPage = () => {
     setIsSubmitting(true);
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       toast({
         title: "Aluno atualizado com sucesso!",
@@ -219,13 +265,13 @@ const EditStudentPage = () => {
 
       // Navigate back to student details
       navigate(`/dashboard/students/${id}`);
-
     } catch (error) {
-      console.error('Error updating student:', error);
+      console.error("Error updating student:", error);
       toast({
-        variant: 'destructive',
-        title: 'Erro ao atualizar aluno',
-        description: 'Não foi possível atualizar os dados do aluno. Tente novamente mais tarde.'
+        variant: "destructive",
+        title: "Erro ao atualizar aluno",
+        description:
+          "Não foi possível atualizar os dados do aluno. Tente novamente mais tarde.",
       });
     } finally {
       setIsSubmitting(false);
@@ -236,46 +282,48 @@ const EditStudentPage = () => {
   const handleDeleteStudent = async () => {
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       toast({
         title: "Aluno excluído",
         description: "O aluno foi removido com sucesso.",
       });
-      
-      navigate('/dashboard/students');
+
+      navigate("/dashboard/students");
     } catch (error) {
       toast({
-        variant: 'destructive',
-        title: 'Erro ao excluir aluno',
-        description: 'Não foi possível excluir o aluno. Tente novamente.'
+        variant: "destructive",
+        title: "Erro ao excluir aluno",
+        description: "Não foi possível excluir o aluno. Tente novamente.",
       });
     }
   };
 
   // Loading state
   if (isLoading) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
+    return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         <div className="flex items-center justify-center min-h-screen">
           <div className="flex flex-col items-center space-y-4">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-            <p className="text-muted-foreground">Carregando dados do aluno...</p>
+            <p className="text-muted-foreground">
+              Carregando dados do aluno...
+            </p>
           </div>
         </div>
       </div>
     );
   }
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="w-full space-y-8 p-6">
         {/* Header com gradiente */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-3xl p-8 text-white hover:opacity-90"
@@ -283,8 +331,8 @@ const EditStudentPage = () => {
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="relative z-10">
             <div className="flex items-center gap-4 mb-4">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="icon"
                 onClick={() => navigate(`/dashboard/students/${id}`)}
                 className="text-white hover:bg-white/20 h-10 w-10"
@@ -293,11 +341,13 @@ const EditStudentPage = () => {
               </Button>
               <div>
                 <h1 className="text-4xl font-bold">Editar Aluno</h1>
-                <p className="text-blue-100 text-lg">Atualize as informações do aluno</p>
+                <p className="text-blue-100 text-lg">
+                  Atualize as informações do aluno
+                </p>
               </div>
             </div>
           </div>
-          
+
           {/* Elementos decorativos */}
           <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
           <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
@@ -307,7 +357,7 @@ const EditStudentPage = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Left Column - Avatar and Basic Info */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 }}
@@ -330,10 +380,15 @@ const EditStudentPage = () => {
                       <div className="relative">
                         <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
                           {avatarPreview ? (
-                            <AvatarImage src={avatarPreview} alt={form.getValues('name')} />
+                            <AvatarImage
+                              src={avatarPreview}
+                              alt={form.getValues("name")}
+                            />
                           ) : (
                             <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-2xl hover:opacity-90">
-                              {form.getValues('name') ? form.getValues('name').charAt(0).toUpperCase() : 'A'}
+                              {form.getValues("name")
+                                ? form.getValues("name").charAt(0).toUpperCase()
+                                : "A"}
                             </AvatarFallback>
                           )}
                         </Avatar>
@@ -375,7 +430,10 @@ const EditStudentPage = () => {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Status do Aluno</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Selecione o status" />
@@ -397,7 +455,10 @@ const EditStudentPage = () => {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Turma</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Selecione uma turma" />
@@ -420,7 +481,7 @@ const EditStudentPage = () => {
               </motion.div>
 
               {/* Middle Column - Personal Info */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
@@ -561,10 +622,7 @@ const EditStudentPage = () => {
                         <FormItem>
                           <FormLabel>Número de Matrícula</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Ex: 2024001"
-                              {...field}
-                            />
+                            <Input placeholder="Ex: 2024001" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -578,7 +636,10 @@ const EditStudentPage = () => {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Série/Ano</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
                               <FormControl>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Série" />
@@ -589,9 +650,15 @@ const EditStudentPage = () => {
                                 <SelectItem value="7º Ano">7º Ano</SelectItem>
                                 <SelectItem value="8º Ano">8º Ano</SelectItem>
                                 <SelectItem value="9º Ano">9º Ano</SelectItem>
-                                <SelectItem value="1º Ano EM">1º Ano EM</SelectItem>
-                                <SelectItem value="2º Ano EM">2º Ano EM</SelectItem>
-                                <SelectItem value="3º Ano EM">3º Ano EM</SelectItem>
+                                <SelectItem value="1º Ano EM">
+                                  1º Ano EM
+                                </SelectItem>
+                                <SelectItem value="2º Ano EM">
+                                  2º Ano EM
+                                </SelectItem>
+                                <SelectItem value="3º Ano EM">
+                                  3º Ano EM
+                                </SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -605,7 +672,10 @@ const EditStudentPage = () => {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Turno</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
                               <FormControl>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Turno" />
@@ -615,7 +685,9 @@ const EditStudentPage = () => {
                                 <SelectItem value="Manhã">Manhã</SelectItem>
                                 <SelectItem value="Tarde">Tarde</SelectItem>
                                 <SelectItem value="Noite">Noite</SelectItem>
-                                <SelectItem value="Integral">Integral</SelectItem>
+                                <SelectItem value="Integral">
+                                  Integral
+                                </SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -628,7 +700,7 @@ const EditStudentPage = () => {
               </motion.div>
 
               {/* Right Column - Additional Info */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
@@ -655,14 +727,18 @@ const EditStudentPage = () => {
                               />
                             </FormControl>
                             <FormLabel className="!mt-0 text-sm">
-                              {field.value ? 'Com responsável' : 'Sem responsável'}
+                              {field.value
+                                ? "Com responsável"
+                                : "Sem responsável"}
                             </FormLabel>
                           </FormItem>
                         )}
                       />
                     </div>
                   </CardHeader>
-                  <CardContent className={cn("space-y-4", !hasParentInfo && "opacity-50")}>
+                  <CardContent
+                    className={cn("space-y-4", !hasParentInfo && "opacity-50")}
+                  >
                     <FormField
                       control={form.control}
                       name="parentName"
@@ -814,15 +890,16 @@ const EditStudentPage = () => {
                       <div>
                         <p className="text-sm font-medium">Excluir Aluno</p>
                         <p className="text-sm text-muted-foreground">
-                          Esta ação não pode ser desfeita. O aluno será removido permanentemente.
+                          Esta ação não pode ser desfeita. O aluno será removido
+                          permanentemente.
                         </p>
                       </div>
                     </div>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button 
-                          type="button" 
-                          variant="destructive" 
+                        <Button
+                          type="button"
+                          variant="destructive"
                           className="w-full bg-red-600 hover:bg-red-700"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
@@ -831,14 +908,18 @@ const EditStudentPage = () => {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                          <AlertDialogTitle>
+                            Confirmar exclusão
+                          </AlertDialogTitle>
                           <AlertDialogDescription>
-                            Tem certeza que deseja excluir este aluno? Esta ação não pode ser desfeita e todos os dados relacionados serão perdidos permanentemente.
+                            Tem certeza que deseja excluir este aluno? Esta ação
+                            não pode ser desfeita e todos os dados relacionados
+                            serão perdidos permanentemente.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction 
+                          <AlertDialogAction
                             onClick={handleDeleteStudent}
                             className="bg-red-600 hover:bg-red-700"
                           >
@@ -853,7 +934,7 @@ const EditStudentPage = () => {
             </div>
 
             {/* Action Buttons */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}

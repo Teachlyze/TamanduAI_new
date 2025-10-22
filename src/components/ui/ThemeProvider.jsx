@@ -1,41 +1,41 @@
 // src/components/ui/ThemeProvider.jsx
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 /**
  * Contexto para gerenciamento de temas
  * Suporta modo automático, claro e escuro
  */
-  const ThemeContext = createContext({
-  theme: 'auto',
+const ThemeContext = createContext({
+  theme: "auto",
   setTheme: () => {},
-  resolvedTheme: 'light',
+  resolvedTheme: "light",
 });
 
 /**
  * Provider de tema aprimorado
  */
-export const TamanduAIThemeProvider = ({ children, defaultTheme = 'auto' }) => {
+export const TamanduAIThemeProvider = ({ children, defaultTheme = "auto" }) => {
   const [theme, setTheme] = useState(defaultTheme);
-  const [resolvedTheme, setResolvedTheme] = useState('light');
+  const [resolvedTheme, setResolvedTheme] = useState("light");
 
   // Detectar tema do sistema
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     const updateResolvedTheme = () => {
-      if (theme === 'auto') {
-        setResolvedTheme(mediaQuery.matches ? 'dark' : 'light');
+      if (theme === "auto") {
+        setResolvedTheme(mediaQuery.matches ? "dark" : "light");
       } else {
         setResolvedTheme(theme);
       }
     };
 
     updateResolvedTheme();
-    mediaQuery.addEventListener('change', updateResolvedTheme);
+    mediaQuery.addEventListener("change", updateResolvedTheme);
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => mediaQuery.removeEventListener('change', updateResolvedTheme);
+    return () => mediaQuery.removeEventListener("change", updateResolvedTheme);
   }, [theme]);
 
   // Aplicar tema ao DOM
@@ -43,28 +43,31 @@ export const TamanduAIThemeProvider = ({ children, defaultTheme = 'auto' }) => {
     const root = document.documentElement;
 
     // Remover classes de tema anteriores
-    root.classList.remove('light', 'dark');
+    root.classList.remove("light", "dark");
 
     // Aplicar novo tema
-    if (resolvedTheme === 'dark') {
-      root.classList.add('dark');
+    if (resolvedTheme === "dark") {
+      root.classList.add("dark");
     } else {
-      root.classList.add('light');
+      root.classList.add("light");
     }
 
     // Atualizar variável CSS para animações condicionais
-    root.style.setProperty('--animation-duration', resolvedTheme === 'dark' ? '0.2s' : '0.3s');
+    root.style.setProperty(
+      "--animation-duration",
+      resolvedTheme === "dark" ? "0.2s" : "0.3s"
+    );
   }, [resolvedTheme]);
 
   // Carregar tema salvo
   useEffect(() => {
     try {
-      const savedTheme = localStorage.getItem('tamanduai-theme');
-      if (savedTheme && ['light', 'dark', 'auto'].includes(savedTheme)) {
+      const savedTheme = localStorage.getItem("tamanduai-theme");
+      if (savedTheme && ["light", "dark", "auto"].includes(savedTheme)) {
         setTheme(savedTheme);
       }
     } catch (error) {
-      console.warn('Failed to load saved theme:', error);
+      console.warn("Failed to load saved theme:", error);
     }
   }, []);
 
@@ -72,9 +75,9 @@ export const TamanduAIThemeProvider = ({ children, defaultTheme = 'auto' }) => {
   const handleSetTheme = (newTheme) => {
     setTheme(newTheme);
     try {
-      localStorage.setItem('tamanduai-theme', newTheme);
+      localStorage.setItem("tamanduai-theme", newTheme);
     } catch (error) {
-      console.warn('Failed to save theme:', error);
+      console.warn("Failed to save theme:", error);
     }
   };
 
@@ -82,18 +85,16 @@ export const TamanduAIThemeProvider = ({ children, defaultTheme = 'auto' }) => {
     theme,
     setTheme: handleSetTheme,
     resolvedTheme,
-    toggle: () => handleSetTheme(resolvedTheme === 'dark' ? 'light' : 'dark'),
-    setLight: () => handleSetTheme('light'),
-    setDark: () => handleSetTheme('dark'),
-    setAuto: () => handleSetTheme('auto'),
+    toggle: () => handleSetTheme(resolvedTheme === "dark" ? "light" : "dark"),
+    setLight: () => handleSetTheme("light"),
+    setDark: () => handleSetTheme("dark"),
+    setAuto: () => handleSetTheme("auto"),
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 };
 
@@ -103,7 +104,7 @@ export const TamanduAIThemeProvider = ({ children, defaultTheme = 'auto' }) => {
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useTheme must be used within TamanduAIThemeProvider');
+    throw new Error("useTheme must be used within TamanduAIThemeProvider");
   }
   return context;
 };
@@ -111,35 +112,40 @@ export const useTheme = () => {
 /**
  * Componente de seletor de tema
  */
-export const ThemeSelector = ({ className = '' }) => {
+export const ThemeSelector = ({ className = "" }) => {
   const { theme, setTheme, resolvedTheme } = useTheme();
 
   const themes = [
-    { value: 'light', label: 'Claro', icon: '☀️' },
-    { value: 'auto', label: 'Automático', icon: '🖥️' },
-    { value: 'dark', label: 'Escuro', icon: '🌙' },
+    { value: "light", label: "Claro", icon: "☀️" },
+    { value: "auto", label: "Automático", icon: "🖥️" },
+    { value: "dark", label: "Escuro", icon: "🌙" },
   ];
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`dropdown dropdown-end ${className}`}>
       <button tabIndex={0} className="btn btn-ghost btn-sm">
         <span className="text-lg">
-          {themes.find(t => t.value === theme)?.icon}
+          {themes.find((t) => t.value === theme)?.icon}
         </span>
         <span className="hidden sm:inline">
-          {themes.find(t => t.value === theme)?.label}
+          {themes.find((t) => t.value === theme)?.label}
         </span>
       </button>
 
-      <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow-lg bg-base-100 rounded-box w-40">
+      <ul
+        tabIndex={0}
+        className="dropdown-content z-[1] menu p-2 shadow-lg bg-base-100 rounded-box w-40"
+      >
         {themes.map((themeOption) => (
           <li key={themeOption.value}>
             <button
               onClick={() => setTheme(themeOption.value)}
               className={`flex items-center gap-2 ${
-                theme === themeOption.value ? 'bg-primary text-primary-content' : ''
+                theme === themeOption.value
+                  ? "bg-primary text-primary-content"
+                  : ""
               }`}
             >
               <span>{themeOption.icon}</span>
@@ -158,19 +164,21 @@ export const ThemeSelector = ({ className = '' }) => {
 /**
  * Componente de indicador de tema atual
  */
-export const ThemeIndicator = ({ showLabel = true, className = '' }) => {
+export const ThemeIndicator = ({ showLabel = true, className = "" }) => {
   const { resolvedTheme } = useTheme();
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <div className={`w-3 h-3 rounded-full ${
-        resolvedTheme === 'dark' ? 'bg-yellow-400' : 'bg-gray-400'
-      }`} />
+      <div
+        className={`w-3 h-3 rounded-full ${
+          resolvedTheme === "dark" ? "bg-yellow-400" : "bg-gray-400"
+        }`}
+      />
       {showLabel && (
         <span className="text-sm text-base-content/70 capitalize">
-          {resolvedTheme === 'dark' ? 'Modo Escuro' : 'Modo Claro'}
+          {resolvedTheme === "dark" ? "Modo Escuro" : "Modo Claro"}
         </span>
       )}
     </div>

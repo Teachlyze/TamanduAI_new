@@ -1,6 +1,6 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 /**
  * Interactive whiteboard canvas component with drawing capabilities
@@ -15,20 +15,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
  * @param {string} props.className - Additional CSS classes
  */
 export const [loading, setLoading] = useState(true);
-  const WhiteboardCanvas = ({
+const WhiteboardCanvas = ({
   width = 800,
   height = 600,
-  strokeColor = '#000000',
+  strokeColor = "#000000",
   strokeWidth = 2,
   onSave,
   onClear,
   readOnly = false,
-  className = '',
+  className = "",
   ...props
 }) => {
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [currentTool, setCurrentTool] = useState('pen'); // 'pen', 'eraser'
+  const [currentTool, setCurrentTool] = useState("pen"); // 'pen', 'eraser'
   const [currentColor, setCurrentColor] = useState(strokeColor);
   const [currentWidth, setCurrentWidth] = useState(strokeWidth);
   const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
@@ -41,7 +41,7 @@ export const [loading, setLoading] = useState(true);
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     ctxRef.current = ctx;
@@ -51,15 +51,14 @@ export const [loading, setLoading] = useState(true);
     canvas.height = height;
 
     // Initialize canvas with white background
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = "white";
     ctx.fillRect(0, 0, width, height);
 
     // Set initial drawing properties
     ctx.strokeStyle = currentColor;
     ctx.lineWidth = currentWidth;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
   }, [width, height, currentColor, currentWidth]);
 
   // Get mouse/touch position relative to canvas
@@ -88,41 +87,47 @@ export const [loading, setLoading] = useState(true);
   }, []);
 
   // Start drawing
-  const startDrawing = useCallback((e) => {
-    if (readOnly) return;
+  const startDrawing = useCallback(
+    (e) => {
+      if (readOnly) return;
 
-    const pos = getPosition(e);
-    setLastPos(pos);
-    setIsDrawing(true);
+      const pos = getPosition(e);
+      setLastPos(pos);
+      setIsDrawing(true);
 
-    const ctx = ctxRef.current;
-    if (!ctx) return;
+      const ctx = ctxRef.current;
+      if (!ctx) return;
 
-    ctx.beginPath();
-    ctx.moveTo(pos.x, pos.y);
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
 
-    if (currentTool === 'eraser') {
-      ctx.globalCompositeOperation = 'destination-out';
-    } else {
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.strokeStyle = currentColor;
-      ctx.lineWidth = currentWidth;
-    }
-  }, [readOnly, getPosition, currentTool, currentColor, currentWidth]);
+      if (currentTool === "eraser") {
+        ctx.globalCompositeOperation = "destination-out";
+      } else {
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = currentWidth;
+      }
+    },
+    [readOnly, getPosition, currentTool, currentColor, currentWidth]
+  );
 
   // Draw
-  const draw = useCallback((e) => {
-    if (!isDrawing || readOnly) return;
+  const draw = useCallback(
+    (e) => {
+      if (!isDrawing || readOnly) return;
 
-    const pos = getPosition(e);
-    const ctx = ctxRef.current;
-    if (!ctx) return;
+      const pos = getPosition(e);
+      const ctx = ctxRef.current;
+      if (!ctx) return;
 
-    ctx.lineTo(pos.x, pos.y);
-    ctx.stroke();
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
 
-    setLastPos(pos);
-  }, [isDrawing, readOnly, getPosition]);
+      setLastPos(pos);
+    },
+    [isDrawing, readOnly, getPosition]
+  );
 
   // Stop drawing
   const stopDrawing = useCallback(() => {
@@ -131,7 +136,7 @@ export const [loading, setLoading] = useState(true);
     const ctx = ctxRef.current;
     if (!ctx) return;
 
-    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalCompositeOperation = "source-over";
   }, []);
 
   // Clear canvas
@@ -141,7 +146,7 @@ export const [loading, setLoading] = useState(true);
 
     if (!canvas || !ctx) return;
 
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     if (onClear) {
@@ -154,36 +159,39 @@ export const [loading, setLoading] = useState(true);
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const dataURL = canvas.toDataURL('image/png');
+    const dataURL = canvas.toDataURL("image/png");
 
     if (onSave) {
       onSave(dataURL);
     }
 
     // Also trigger download
-    const link = document.createElement('a');
-    link.download = 'whiteboard-canvas.png';
+    const link = document.createElement("a");
+    link.download = "whiteboard-canvas.png";
     link.href = dataURL;
     link.click();
   }, [onSave]);
 
   // Handle tool changes
-  const handleToolChange = useCallback((tool) => {
-    setCurrentTool(tool);
+  const handleToolChange = useCallback(
+    (tool) => {
+      setCurrentTool(tool);
 
-    const ctx = ctxRef.current;
-    if (!ctx) return;
+      const ctx = ctxRef.current;
+      if (!ctx) return;
 
-    if (tool === 'eraser') {
-      ctx.globalCompositeOperation = 'destination-out';
-    } else {
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.strokeStyle = currentColor;
-      ctx.lineWidth = currentWidth;
-    }
-  }, [currentColor, currentWidth]);
+      if (tool === "eraser") {
+        ctx.globalCompositeOperation = "destination-out";
+      } else {
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = currentWidth;
+      }
+    },
+    [currentColor, currentWidth]
+  );
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <Card className={`whiteboard-canvas ${className}`} {...props}>
@@ -197,16 +205,16 @@ export const [loading, setLoading] = useState(true);
               <div className="flex items-center gap-1 border rounded-lg p-1">
                 <Button
                   size="sm"
-                  variant={currentTool === 'pen' ? 'default' : 'outline'}
-                  onClick={() => handleToolChange('pen')}
+                  variant={currentTool === "pen" ? "default" : "outline"}
+                  onClick={() => handleToolChange("pen")}
                   className="px-2"
                 >
                   ✏️
                 </Button>
                 <Button
                   size="sm"
-                  variant={currentTool === 'eraser' ? 'default' : 'outline'}
-                  onClick={() => handleToolChange('eraser')}
+                  variant={currentTool === "eraser" ? "default" : "outline"}
+                  onClick={() => handleToolChange("eraser")}
                   className="px-2"
                 >
                   🧽
@@ -215,11 +223,21 @@ export const [loading, setLoading] = useState(true);
 
               {/* Color Picker */}
               <div className="flex items-center gap-1">
-                {['#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'].map((color) => (
+                {[
+                  "#000000",
+                  "#FF0000",
+                  "#00FF00",
+                  "#0000FF",
+                  "#FFFF00",
+                  "#FF00FF",
+                  "#00FFFF",
+                ].map((color) => (
                   <button
                     key={color}
                     className={`w-6 h-6 rounded-full border-2 ${
-                      currentColor === color ? 'border-gray-800' : 'border-gray-300'
+                      currentColor === color
+                        ? "border-gray-800"
+                        : "border-gray-300"
                     }`}
                     style={{ backgroundColor: color }}
                     onClick={() => {
@@ -238,7 +256,9 @@ export const [loading, setLoading] = useState(true);
                   <button
                     key={width}
                     className={`w-8 h-8 rounded border-2 flex items-center justify-center text-xs ${
-                      currentWidth === width ? 'border-gray-800 bg-gray-100' : 'border-gray-300'
+                      currentWidth === width
+                        ? "border-gray-800 bg-gray-100"
+                        : "border-gray-300"
                     }`}
                     onClick={() => {
                       setCurrentWidth(width);
@@ -272,9 +292,9 @@ export const [loading, setLoading] = useState(true);
             ref={canvasRef}
             className="block cursor-crosshair"
             style={{
-              maxWidth: '100%',
-              height: 'auto',
-              touchAction: 'none' // Prevent scrolling on touch devices
+              maxWidth: "100%",
+              height: "auto",
+              touchAction: "none", // Prevent scrolling on touch devices
             }}
             onMouseDown={startDrawing}
             onMouseMove={draw}
@@ -296,7 +316,9 @@ export const [loading, setLoading] = useState(true);
 
           {readOnly && (
             <div className="absolute inset-0 bg-gray-50 bg-opacity-50 flex items-center justify-center">
-              <span className="text-gray-500 text-lg">Modo somente leitura</span>
+              <span className="text-gray-500 text-lg">
+                Modo somente leitura
+              </span>
             </div>
           )}
         </div>

@@ -1,14 +1,13 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { xpEventBus } from '@/hooks/useGamification';
-import XPNotification from './XPNotification';
-
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { xpEventBus } from "@/hooks/useGamification";
+import XPNotification from "./XPNotification";
+import { useState, useEffect } from "react";
 /**
  * Provider global para notificações de XP
  * Adicione este componente no nível raiz da aplicação (ou no DashboardLayout)
  */
-  const XPNotificationProvider = ({ children }) => {
+const XPNotificationProvider = ({ children }) => {
   const [notification, setNotification] = useState(null);
-
   useEffect(() => {
     const unsubscribe = xpEventBus.subscribe((xp, reason) => {
       setNotification({ xp, reason, show: true }, []); // TODO: Add dependencies
@@ -20,8 +19,6 @@ import XPNotification from './XPNotification';
   const handleClose = () => {
     setNotification(null);
   };
-
-  if (loading) return <LoadingScreen />;
 
   return (
     <>

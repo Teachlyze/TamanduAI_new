@@ -1,19 +1,32 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { motion } from 'framer-motion';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from '@/components/ui/use-toast';
-import { 
-  Shield, 
-  User, 
-  Bell, 
-  Lock, 
-  Download, 
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { motion } from "framer-motion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "@/components/ui/use-toast";
+import {
+  Shield,
+  User,
+  Bell,
+  Lock,
+  Download,
   Settings as SettingsIcon,
   Palette,
   Globe,
@@ -24,11 +37,11 @@ import {
   Mail,
   Eye,
   UserCheck,
-  Accessibility
-} from 'lucide-react';
-import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
+  Accessibility,
+} from "lucide-react";
+import AccessibilitySettings from "@/components/ui/AccessibilitySettings";
 
-  const SettingsPage = () => {
+const SettingsPage = () => {
   const [settings, setSettings] = useState({
     notifications: {
       email: true,
@@ -37,16 +50,16 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
       marketing: false,
     },
     privacy: {
-      profileVisibility: 'public',
+      profileVisibility: "public",
       dataSharing: false,
       analytics: true,
       cookies: true,
     },
     account: {
-      email: '',
-      language: 'pt-BR',
-      timezone: 'America/Sao_Paulo',
-      theme: 'system',
+      email: "",
+      language: "pt-BR",
+      timezone: "America/Sao_Paulo",
+      theme: "system",
     },
   });
 
@@ -56,13 +69,13 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
   useEffect(() => {
     const loadSettings = () => {
       try {
-        const savedSettings = localStorage.getItem('tamanduai-settings');
+        const savedSettings = localStorage.getItem("tamanduai-settings");
         if (savedSettings) {
           const parsedSettings = JSON.parse(savedSettings);
           setSettings(parsedSettings);
         }
       } catch (error) {
-        console.error('Error loading settings:', error);
+        console.error("Error loading settings:", error);
       } finally {
         setIsLoading(false);
       }
@@ -74,39 +87,39 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
   const handleSaveSettings = async (section) => {
     try {
       // Save to localStorage
-      localStorage.setItem('tamanduai-settings', JSON.stringify(settings));
+      localStorage.setItem("tamanduai-settings", JSON.stringify(settings));
 
       // Show success message
       toast({
-        title: 'Configurações salvas',
-        description: 'Suas configurações foram atualizadas com sucesso!',
+        title: "Configurações salvas",
+        description: "Suas configurações foram atualizadas com sucesso!",
       });
 
       // Here you could also save to backend if needed
       // await saveSettingsToBackend(settings);
-
     } catch (error) {
-      console.error('Error saving settings:', error);
+      console.error("Error saving settings:", error);
       toast({
-        title: 'Erro ao salvar',
-        description: 'Não foi possível salvar suas configurações. Tente novamente.',
-        variant: 'destructive',
+        title: "Erro ao salvar",
+        description:
+          "Não foi possível salvar suas configurações. Tente novamente.",
+        variant: "destructive",
       });
     }
   };
 
   const handleExportData = () => {
     toast({
-      title: 'Exportação iniciada',
-      description: 'Seus dados serão enviados por email em até 24 horas.',
+      title: "Exportação iniciada",
+      description: "Seus dados serão enviados por email em até 24 horas.",
     });
   };
 
   const handleDeleteAccount = () => {
     toast({
       variant: "destructive",
-      title: 'Ação não permitida',
-      description: 'Entre em contato com o suporte para excluir sua conta.',
+      title: "Ação não permitida",
+      description: "Entre em contato com o suporte para excluir sua conta.",
     });
   };
 
@@ -115,17 +128,19 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
     if (!isLoading && settings.account.theme) {
       const root = window.document.documentElement;
 
-      if (settings.account.theme === 'dark') {
-        root.classList.add('dark');
-      } else if (settings.account.theme === 'light') {
-        root.classList.remove('dark');
+      if (settings.account.theme === "dark") {
+        root.classList.add("dark");
+      } else if (settings.account.theme === "light") {
+        root.classList.remove("dark");
       } else {
         // System theme - check system preference
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const systemDark = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
         if (systemDark) {
-          root.classList.add('dark');
+          root.classList.add("dark");
         } else {
-          root.classList.remove('dark');
+          root.classList.remove("dark");
         }
       }
     }
@@ -133,9 +148,9 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
 
   // Show loading state while settings are being loaded
   if (isLoading) {
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
+    return (
       <div className="w-full space-y-8">
         <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-3xl p-8 text-white">
           <div className="animate-pulse">
@@ -153,7 +168,7 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
     );
   }
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className="w-full space-y-8">
@@ -171,7 +186,8 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
                 ⚙️ Configurações
               </h1>
               <p className="text-purple-100 text-lg max-w-2xl">
-                Gerencie suas preferências de conta, notificações e privacidade para uma experiência personalizada.
+                Gerencie suas preferências de conta, notificações e privacidade
+                para uma experiência personalizada.
               </p>
             </div>
             <div className="hidden lg:block">
@@ -181,7 +197,7 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
             </div>
           </div>
         </div>
-        
+
         {/* Background decoration */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-white/10 to-transparent rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-white/5 to-transparent rounded-full blur-2xl"></div>
@@ -195,7 +211,7 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
       >
         <Tabs defaultValue="account" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 bg-gray-100 dark:bg-gray-800 rounded-2xl p-2 h-auto gap-2">
-            <TabsTrigger 
+            <TabsTrigger
               value="account"
               className="flex items-center gap-3 rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-sm transition-all py-3"
             >
@@ -204,7 +220,7 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
               </div>
               <span className="font-medium">Conta</span>
             </TabsTrigger>
-            <TabsTrigger 
+            <TabsTrigger
               value="accessibility"
               className="flex items-center gap-3 rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-sm transition-all py-3"
             >
@@ -213,7 +229,7 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
               </div>
               <span className="font-medium">Acessibilidade</span>
             </TabsTrigger>
-            <TabsTrigger 
+            <TabsTrigger
               value="notifications"
               className="flex items-center gap-3 rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-sm transition-all py-3"
             >
@@ -222,7 +238,7 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
               </div>
               <span className="font-medium">Notificações</span>
             </TabsTrigger>
-            <TabsTrigger 
+            <TabsTrigger
               value="privacy"
               className="flex items-center gap-3 rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-sm transition-all py-3"
             >
@@ -254,77 +270,108 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
                 <CardContent className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="flex items-center gap-2">
+                      <Label
+                        htmlFor="email"
+                        className="flex items-center gap-2"
+                      >
                         <Mail className="w-4 h-4" />
                         E-mail
                       </Label>
-                      <Input 
-                        id="email" 
-                        type="email" 
+                      <Input
+                        id="email"
+                        type="email"
                         value={settings.account.email}
-                        onChange={(e) => setSettings({
-                          ...settings,
-                          account: { ...settings.account, email: e.target.value }
-                        })}
+                        onChange={(e) =>
+                          setSettings({
+                            ...settings,
+                            account: {
+                              ...settings.account,
+                              email: e.target.value,
+                            },
+                          })
+                        }
                         placeholder="seu@email.com"
                         className="rounded-xl"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="language" className="flex items-center gap-2">
+                      <Label
+                        htmlFor="language"
+                        className="flex items-center gap-2"
+                      >
                         <Globe className="w-4 h-4" />
                         Idioma
                       </Label>
                       <Select
                         value={settings.account.language}
-                        onValueChange={(value) => setSettings({
-                          ...settings,
-                          account: { ...settings.account, language: value }
-                        })}
+                        onValueChange={(value) =>
+                          setSettings({
+                            ...settings,
+                            account: { ...settings.account, language: value },
+                          })
+                        }
                       >
                         <SelectTrigger className="rounded-xl">
                           <SelectValue placeholder="Selecione um idioma" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="pt-BR">🇧🇷 Português (Brasil)</SelectItem>
+                          <SelectItem value="pt-BR">
+                            🇧🇷 Português (Brasil)
+                          </SelectItem>
                           <SelectItem value="en-US">🇺🇸 English (US)</SelectItem>
                           <SelectItem value="es-ES">🇪🇸 Español</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="timezone" className="flex items-center gap-2">
+                      <Label
+                        htmlFor="timezone"
+                        className="flex items-center gap-2"
+                      >
                         <Globe className="w-4 h-4" />
                         Fuso Horário
                       </Label>
                       <Select
                         value={settings.account.timezone}
-                        onValueChange={(value) => setSettings({
-                          ...settings,
-                          account: { ...settings.account, timezone: value }
-                        })}
+                        onValueChange={(value) =>
+                          setSettings({
+                            ...settings,
+                            account: { ...settings.account, timezone: value },
+                          })
+                        }
                       >
                         <SelectTrigger className="rounded-xl">
                           <SelectValue placeholder="Selecione o fuso horário" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="America/Sao_Paulo">São Paulo (GMT-3)</SelectItem>
-                          <SelectItem value="America/New_York">Nova York (GMT-5)</SelectItem>
-                          <SelectItem value="Europe/London">Londres (GMT+0)</SelectItem>
+                          <SelectItem value="America/Sao_Paulo">
+                            São Paulo (GMT-3)
+                          </SelectItem>
+                          <SelectItem value="America/New_York">
+                            Nova York (GMT-5)
+                          </SelectItem>
+                          <SelectItem value="Europe/London">
+                            Londres (GMT+0)
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="theme" className="flex items-center gap-2">
+                      <Label
+                        htmlFor="theme"
+                        className="flex items-center gap-2"
+                      >
                         <Palette className="w-4 h-4" />
                         Tema
                       </Label>
                       <Select
                         value={settings.account.theme}
-                        onValueChange={(value) => setSettings({
-                          ...settings,
-                          account: { ...settings.account, theme: value }
-                        })}
+                        onValueChange={(value) =>
+                          setSettings({
+                            ...settings,
+                            account: { ...settings.account, theme: value },
+                          })
+                        }
                       >
                         <SelectTrigger className="rounded-xl">
                           <SelectValue placeholder="Selecione o tema" />
@@ -339,8 +386,8 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button 
-                    onClick={() => handleSaveSettings('account')}
+                  <Button
+                    onClick={() => handleSaveSettings("account")}
                     className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 rounded-xl text-white hover:opacity-90"
                   >
                     <CheckCircle2 className="w-4 h-4 mr-2" />
@@ -372,19 +419,30 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
                         <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                       </div>
                       <div className="space-y-0.5">
-                        <Label htmlFor="email-notifications" className="text-base font-medium">Notificações por e-mail</Label>
+                        <Label
+                          htmlFor="email-notifications"
+                          className="text-base font-medium"
+                        >
+                          Notificações por e-mail
+                        </Label>
                         <p className="text-sm text-muted-foreground">
-                          Receba atualizações importantes sobre atividades e turmas.
+                          Receba atualizações importantes sobre atividades e
+                          turmas.
                         </p>
                       </div>
                     </div>
                     <Switch
                       id="email-notifications"
                       checked={settings.notifications.email}
-                      onCheckedChange={(checked) => setSettings({
-                        ...settings,
-                        notifications: { ...settings.notifications, email: checked }
-                      })}
+                      onCheckedChange={(checked) =>
+                        setSettings({
+                          ...settings,
+                          notifications: {
+                            ...settings.notifications,
+                            email: checked,
+                          },
+                        })
+                      }
                     />
                   </div>
 
@@ -394,7 +452,12 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
                         <Smartphone className="w-5 h-5 text-green-600 dark:text-green-400" />
                       </div>
                       <div className="space-y-0.5">
-                        <Label htmlFor="push-notifications" className="text-base font-medium">Notificações no navegador</Label>
+                        <Label
+                          htmlFor="push-notifications"
+                          className="text-base font-medium"
+                        >
+                          Notificações no navegador
+                        </Label>
                         <p className="text-sm text-muted-foreground">
                           Receba notificações em tempo real no seu navegador.
                         </p>
@@ -403,10 +466,15 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
                     <Switch
                       id="push-notifications"
                       checked={settings.notifications.push}
-                      onCheckedChange={(checked) => setSettings({
-                        ...settings,
-                        notifications: { ...settings.notifications, push: checked }
-                      })}
+                      onCheckedChange={(checked) =>
+                        setSettings({
+                          ...settings,
+                          notifications: {
+                            ...settings.notifications,
+                            push: checked,
+                          },
+                        })
+                      }
                     />
                   </div>
 
@@ -416,19 +484,30 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
                         <Bell className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                       </div>
                       <div className="space-y-0.5">
-                        <Label htmlFor="desktop-notifications" className="text-base font-medium">Notificações desktop</Label>
+                        <Label
+                          htmlFor="desktop-notifications"
+                          className="text-base font-medium"
+                        >
+                          Notificações desktop
+                        </Label>
                         <p className="text-sm text-muted-foreground">
-                          Receba notificações na área de trabalho do seu computador.
+                          Receba notificações na área de trabalho do seu
+                          computador.
                         </p>
                       </div>
                     </div>
                     <Switch
                       id="desktop-notifications"
                       checked={settings.notifications.desktop}
-                      onCheckedChange={(checked) => setSettings({
-                        ...settings,
-                        notifications: { ...settings.notifications, desktop: checked }
-                      })}
+                      onCheckedChange={(checked) =>
+                        setSettings({
+                          ...settings,
+                          notifications: {
+                            ...settings.notifications,
+                            desktop: checked,
+                          },
+                        })
+                      }
                     />
                   </div>
 
@@ -438,7 +517,12 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
                         <Mail className="w-5 h-5 text-orange-600 dark:text-orange-400" />
                       </div>
                       <div className="space-y-0.5">
-                        <Label htmlFor="marketing-notifications" className="text-base font-medium">E-mails promocionais</Label>
+                        <Label
+                          htmlFor="marketing-notifications"
+                          className="text-base font-medium"
+                        >
+                          E-mails promocionais
+                        </Label>
                         <p className="text-sm text-muted-foreground">
                           Receba novidades, dicas e ofertas especiais.
                         </p>
@@ -447,17 +531,22 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
                     <Switch
                       id="marketing-notifications"
                       checked={settings.notifications.marketing}
-                      onCheckedChange={(checked) => setSettings({
-                        ...settings,
-                        notifications: { ...settings.notifications, marketing: checked }
-                      })}
+                      onCheckedChange={(checked) =>
+                        setSettings({
+                          ...settings,
+                          notifications: {
+                            ...settings.notifications,
+                            marketing: checked,
+                          },
+                        })
+                      }
                     />
                   </div>
                 </div>
               </CardContent>
               <CardFooter>
-                <Button 
-                  onClick={() => handleSaveSettings('notifications')}
+                <Button
+                  onClick={() => handleSaveSettings("notifications")}
                   className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 rounded-xl text-white hover:opacity-90"
                 >
                   <CheckCircle2 className="w-4 h-4 mr-2" />
@@ -478,7 +567,8 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
                     Privacidade e Dados
                   </CardTitle>
                   <CardDescription>
-                    Gerencie suas preferências de privacidade e controle de dados pessoais.
+                    Gerencie suas preferências de privacidade e controle de
+                    dados pessoais.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -489,7 +579,12 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
                           <Eye className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div className="space-y-0.5 flex-1">
-                          <Label htmlFor="profile-visibility" className="text-base font-medium">Visibilidade do Perfil</Label>
+                          <Label
+                            htmlFor="profile-visibility"
+                            className="text-base font-medium"
+                          >
+                            Visibilidade do Perfil
+                          </Label>
                           <p className="text-sm text-muted-foreground">
                             Controle quem pode ver seu perfil e atividades.
                           </p>
@@ -497,17 +592,24 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
                       </div>
                       <Select
                         value={settings.privacy.profileVisibility}
-                        onValueChange={(value) => setSettings({
-                          ...settings,
-                          privacy: { ...settings.privacy, profileVisibility: value }
-                        })}
+                        onValueChange={(value) =>
+                          setSettings({
+                            ...settings,
+                            privacy: {
+                              ...settings.privacy,
+                              profileVisibility: value,
+                            },
+                          })
+                        }
                       >
                         <SelectTrigger className="w-40 rounded-xl">
                           <SelectValue placeholder="Visibilidade" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="public">🌍 Público</SelectItem>
-                          <SelectItem value="connections">👥 Conexões</SelectItem>
+                          <SelectItem value="connections">
+                            👥 Conexões
+                          </SelectItem>
                           <SelectItem value="private">🔒 Privado</SelectItem>
                         </SelectContent>
                       </Select>
@@ -519,19 +621,30 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
                           <Database className="w-5 h-5 text-green-600 dark:text-green-400" />
                         </div>
                         <div className="space-y-0.5">
-                          <Label htmlFor="data-sharing" className="text-base font-medium">Compartilhamento de Dados</Label>
+                          <Label
+                            htmlFor="data-sharing"
+                            className="text-base font-medium"
+                          >
+                            Compartilhamento de Dados
+                          </Label>
                           <p className="text-sm text-muted-foreground">
-                            Permitir uso anônimo de dados para melhorias do produto.
+                            Permitir uso anônimo de dados para melhorias do
+                            produto.
                           </p>
                         </div>
                       </div>
                       <Switch
                         id="data-sharing"
                         checked={settings.privacy.dataSharing}
-                        onCheckedChange={(checked) => setSettings({
-                          ...settings,
-                          privacy: { ...settings.privacy, dataSharing: checked }
-                        })}
+                        onCheckedChange={(checked) =>
+                          setSettings({
+                            ...settings,
+                            privacy: {
+                              ...settings.privacy,
+                              dataSharing: checked,
+                            },
+                          })
+                        }
                       />
                     </div>
 
@@ -541,7 +654,12 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
                           <UserCheck className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                         </div>
                         <div className="space-y-0.5">
-                          <Label htmlFor="analytics" className="text-base font-medium">Analytics e Métricas</Label>
+                          <Label
+                            htmlFor="analytics"
+                            className="text-base font-medium"
+                          >
+                            Analytics e Métricas
+                          </Label>
                           <p className="text-sm text-muted-foreground">
                             Permitir coleta de dados de uso para analytics.
                           </p>
@@ -550,10 +668,15 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
                       <Switch
                         id="analytics"
                         checked={settings.privacy.analytics}
-                        onCheckedChange={(checked) => setSettings({
-                          ...settings,
-                          privacy: { ...settings.privacy, analytics: checked }
-                        })}
+                        onCheckedChange={(checked) =>
+                          setSettings({
+                            ...settings,
+                            privacy: {
+                              ...settings.privacy,
+                              analytics: checked,
+                            },
+                          })
+                        }
                       />
                     </div>
                   </div>
@@ -570,15 +693,17 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
                     Exportar Dados Pessoais
                   </CardTitle>
                   <CardDescription>
-                    Baixe uma cópia completa dos seus dados pessoais conforme a LGPD.
+                    Baixe uma cópia completa dos seus dados pessoais conforme a
+                    LGPD.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-blue-700 dark:text-blue-300 mb-4">
-                    Você receberá um arquivo ZIP com todos os seus dados em até 24 horas no seu e-mail cadastrado.
+                    Você receberá um arquivo ZIP com todos os seus dados em até
+                    24 horas no seu e-mail cadastrado.
                   </p>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={handleExportData}
                     className="bg-white dark:bg-slate-900 text-foreground border-border border-blue-300 text-blue-700 hover:bg-blue-100 dark:border-blue-600 dark:text-blue-300 dark:hover:bg-muted/30 rounded-xl"
                   >
@@ -609,10 +734,12 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
                         Excluir Conta Permanentemente
                       </h4>
                       <p className="text-sm text-red-700 dark:text-red-300 mb-4">
-                        Esta ação não pode ser desfeita. Todos os seus dados, turmas, atividades e configurações serão removidos permanentemente.
+                        Esta ação não pode ser desfeita. Todos os seus dados,
+                        turmas, atividades e configurações serão removidos
+                        permanentemente.
                       </p>
-                      <Button 
-                        variant="destructive" 
+                      <Button
+                        variant="destructive"
                         onClick={handleDeleteAccount}
                         className="bg-red-600 hover:bg-red-700 rounded-xl"
                       >
@@ -632,4 +759,3 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
 };
 
 export default SettingsPage;
-

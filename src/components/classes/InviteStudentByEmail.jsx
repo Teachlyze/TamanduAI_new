@@ -1,18 +1,32 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Send, X, CheckCircle, AlertCircle, Loader2, UserPlus } from 'lucide-react';
-import { supabase } from '@/lib/supabaseClient';
-import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { toast } from '@/components/ui/use-toast';
-import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Mail,
+  Send,
+  X,
+  CheckCircle,
+  AlertCircle,
+  Loader2,
+  UserPlus,
+} from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "@/components/ui/use-toast";
+import { NotificationOrchestrator } from "@/services/notificationOrchestrator";
 
-  const InviteStudentByEmail = ({ classId, className }) => {
+const InviteStudentByEmail = ({ classId, className }) => {
   const { user } = useAuth();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [isInviting, setIsInviting] = useState(false);
   const [invitesSent, setInvitesSent] = useState([]);
   const [pendingInvites, setPendingInvites] = useState([]);
@@ -25,16 +39,16 @@ import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
   const loadPendingInvites = async () => {
     try {
       const { data, error } = await supabase
-        .from('class_invitations')
-        .select('*')
-        .eq('class_id', classId)
-        .eq('status', 'pending')
-        .order('created_at', { ascending: false });
+        .from("class_invitations")
+        .select("*")
+        .eq("class_id", classId)
+        .eq("status", "pending")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setPendingInvites(data || []);
     } catch (error) {
-      console.error('Erro ao carregar convites:', error);
+      console.error("Erro ao carregar convites:", error);
     }
   };
 
@@ -46,18 +60,18 @@ import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
   const handleInvite = async () => {
     if (!email.trim()) {
       toast({
-        variant: 'destructive',
-        title: 'Email inválido',
-        description: 'Por favor, insira um email.',
+        variant: "destructive",
+        title: "Email inválido",
+        description: "Por favor, insira um email.",
       });
       return;
     }
 
     if (!validateEmail(email)) {
       toast({
-        variant: 'destructive',
-        title: 'Email inválido',
-        description: 'Por favor, insira um email válido.',
+        variant: "destructive",
+        title: "Email inválido",
+        description: "Por favor, insira um email válido.",
       });
       return;
     }
@@ -67,21 +81,21 @@ import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
     try {
       // 1. Verificar se usuário existe
       const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('id, email, role, full_name')
-        .eq('email', email)
+        .from("profiles")
+        .select("id, email, role, full_name")
+        .eq("email", email)
         .maybeSingle();
 
-      if (profileError && profileError.code !== 'PGRST116') {
+      if (profileError && profileError.code !== "PGRST116") {
         throw profileError;
       }
 
       // 2. Validações
-      if (profile && profile.role !== 'student') {
+      if (profile && profile.role !== "student") {
         toast({
-          variant: 'destructive',
-          title: 'Usuário não é aluno',
-          description: 'Este email pertence a um professor ou escola.',
+          variant: "destructive",
+          title: "Usuário não é aluno",
+          description: "Este email pertence a um professor ou escola.",
         });
         setIsInviting(false);
         return;
@@ -90,16 +104,16 @@ import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
       if (profile) {
         // Verificar se já está na turma
         const { data: existing } = await supabase
-          .from('class_members')
-          .select('id')
-          .eq('class_id', classId)
-          .eq('user_id', profile.id)
+          .from("class_members")
+          .select("id")
+          .eq("class_id", classId)
+          .eq("user_id", profile.id)
           .maybeSingle();
 
         if (existing) {
           toast({
-            variant: 'destructive',
-            title: 'Aluno já está na turma',
+            variant: "destructive",
+            title: "Aluno já está na turma",
             description: `${profile.full_name || email} já é membro desta turma.`,
           });
           setIsInviting(false);
@@ -109,18 +123,18 @@ import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
 
       // Verificar se já tem convite pendente
       const { data: existingInvite } = await supabase
-        .from('class_invitations')
-        .select('id')
-        .eq('class_id', classId)
-        .eq('invitee_email', email)
-        .eq('status', 'pending')
+        .from("class_invitations")
+        .select("id")
+        .eq("class_id", classId)
+        .eq("invitee_email", email)
+        .eq("status", "pending")
         .maybeSingle();
 
       if (existingInvite) {
         toast({
-          variant: 'destructive',
-          title: 'Convite já enviado',
-          description: 'Este aluno já possui um convite pendente.',
+          variant: "destructive",
+          title: "Convite já enviado",
+          description: "Este aluno já possui um convite pendente.",
         });
         setIsInviting(false);
         return;
@@ -131,13 +145,13 @@ import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
       expiresAt.setDate(expiresAt.getDate() + 7); // Expira em 7 dias
 
       const { data: invitation, error: inviteError } = await supabase
-        .from('class_invitations')
+        .from("class_invitations")
         .insert({
           class_id: classId,
           invitee_email: email,
           invitee_id: profile?.id || null,
           inviter_id: user.id,
-          status: 'pending',
+          status: "pending",
           expires_at: expiresAt.toISOString(),
         })
         .select()
@@ -148,7 +162,7 @@ import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
       // 4. Enviar notificação por email
       if (profile) {
         try {
-          await NotificationOrchestrator.send('classInviteSent', {
+          await NotificationOrchestrator.send("classInviteSent", {
             userId: profile.id,
             variables: {
               className: className,
@@ -156,27 +170,27 @@ import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
             },
           });
         } catch (notifError) {
-          console.warn('Erro ao enviar notificação:', notifError);
+          console.warn("Erro ao enviar notificação:", notifError);
         }
       } else {
         // Usuário não tem conta - enviar email de convite para criar conta
         // TODO: Implementar envio de email via serviço externo (SendGrid, etc)
-        console.log('Enviar email de convite para:', email);
+        console.log("Enviar email de convite para:", email);
       }
 
       toast({
-        title: '✅ Convite enviado!',
+        title: "✅ Convite enviado!",
         description: `Convite enviado para ${email}`,
       });
 
       setInvitesSent([...invitesSent, { email, sentAt: new Date() }]);
-      setEmail('');
+      setEmail("");
       loadPendingInvites();
     } catch (error) {
-      console.error('Erro ao enviar convite:', error);
+      console.error("Erro ao enviar convite:", error);
       toast({
-        variant: 'destructive',
-        title: 'Erro ao enviar convite',
+        variant: "destructive",
+        title: "Erro ao enviar convite",
         description: error.message,
       });
     } finally {
@@ -187,23 +201,23 @@ import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
   const handleCancelInvite = async (invitationId) => {
     try {
       const { error } = await supabase
-        .from('class_invitations')
+        .from("class_invitations")
         .delete()
-        .eq('id', invitationId);
+        .eq("id", invitationId);
 
       if (error) throw error;
 
       toast({
-        title: 'Convite cancelado',
-        description: 'O convite foi removido.',
+        title: "Convite cancelado",
+        description: "O convite foi removido.",
       });
 
       loadPendingInvites();
     } catch (error) {
-      console.error('Erro ao cancelar convite:', error);
+      console.error("Erro ao cancelar convite:", error);
       toast({
-        variant: 'destructive',
-        title: 'Erro ao cancelar convite',
+        variant: "destructive",
+        title: "Erro ao cancelar convite",
         description: error.message,
       });
     }
@@ -212,7 +226,7 @@ import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
   const handleResendInvite = async (invitation) => {
     try {
       if (invitation.invitee_id) {
-        await NotificationOrchestrator.send('classInviteSent', {
+        await NotificationOrchestrator.send("classInviteSent", {
           userId: invitation.invitee_id,
           variables: {
             className: className,
@@ -221,27 +235,27 @@ import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
         });
 
         toast({
-          title: '✅ Convite reenviado!',
+          title: "✅ Convite reenviado!",
           description: `Convite reenviado para ${invitation.invitee_email}`,
         });
       } else {
         toast({
-          variant: 'destructive',
-          title: 'Não é possível reenviar',
-          description: 'Usuário ainda não possui conta.',
+          variant: "destructive",
+          title: "Não é possível reenviar",
+          description: "Usuário ainda não possui conta.",
         });
       }
     } catch (error) {
-      console.error('Erro ao reenviar convite:', error);
+      console.error("Erro ao reenviar convite:", error);
       toast({
-        variant: 'destructive',
-        title: 'Erro ao reenviar convite',
+        variant: "destructive",
+        title: "Erro ao reenviar convite",
         description: error.message,
       });
     }
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <Card>
@@ -262,7 +276,7 @@ import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
             placeholder="email@exemplo.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleInvite()}
+            onKeyPress={(e) => e.key === "Enter" && handleInvite()}
             disabled={isInviting}
             className="flex-1"
           />
@@ -290,11 +304,13 @@ import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
           {invitesSent.length > 0 && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
+              animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               className="space-y-2"
             >
-              <p className="text-sm font-medium text-gray-700">Enviados agora:</p>
+              <p className="text-sm font-medium text-gray-700">
+                Enviados agora:
+              </p>
               {invitesSent.map((invite, index) => (
                 <motion.div
                   key={index}
@@ -327,9 +343,14 @@ import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
                   <div className="flex items-center gap-2">
                     <Mail className="h-4 w-4 text-gray-400" />
                     <div>
-                      <p className="text-sm font-medium">{invite.invitee_email}</p>
+                      <p className="text-sm font-medium">
+                        {invite.invitee_email}
+                      </p>
                       <p className="text-xs text-gray-500">
-                        Enviado em {new Date(invite.created_at).toLocaleDateString('pt-BR')}
+                        Enviado em{" "}
+                        {new Date(invite.created_at).toLocaleDateString(
+                          "pt-BR"
+                        )}
                       </p>
                     </div>
                   </div>

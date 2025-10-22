@@ -1,7 +1,7 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 /**
  * Interactive map component with markers, search, and multiple providers
@@ -20,25 +20,25 @@ import { Input } from '@/components/ui/input';
  * @param {string} props.className - Additional CSS classes
  */
 export const [loading, setLoading] = useState(true);
-  const InteractiveMap = ({
+const InteractiveMap = ({
   center = [-23.5505, -46.6333], // São Paulo, Brazil
   zoom = 13,
   markers = [],
-  provider = 'openstreetmap',
+  provider = "openstreetmap",
   apiKey,
   searchable = true,
   onMarkerClick,
   onMapClick,
   onSearch,
   readOnly = false,
-  height = '400px',
-  className = '',
+  height = "400px",
+  className = "",
   ...props
 }) => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [mapError, setMapError] = useState(null);
 
@@ -53,27 +53,27 @@ export const [loading, setLoading] = useState(true);
       let mapInstance;
 
       switch (provider) {
-        case 'google':
+        case "google":
           if (!window.google || !apiKey) {
-            throw new Error('Google Maps API key required');
+            throw new Error("Google Maps API key required");
           }
           mapInstance = new window.google.maps.Map(mapRef.current, {
             center: { lat: center[0], lng: center[1] },
             zoom: zoom,
-            mapTypeId: 'roadmap',
+            mapTypeId: "roadmap",
             disableDefaultUI: readOnly,
-            gestureHandling: readOnly ? 'none' : 'auto',
+            gestureHandling: readOnly ? "none" : "auto",
           });
           break;
 
-        case 'mapbox':
+        case "mapbox":
           if (!apiKey) {
-            throw new Error('Mapbox API key required');
+            throw new Error("Mapbox API key required");
           }
           // Mapbox implementation would go here
-          throw new Error('Mapbox integration not implemented');
+          throw new Error("Mapbox integration not implemented");
 
-        case 'openstreetmap':
+        case "openstreetmap":
         default:
           // Simple OpenStreetMap-like implementation using Leaflet-style approach
           mapInstance = {
@@ -95,7 +95,9 @@ export const [loading, setLoading] = useState(true);
               return marker;
             },
             removeMarker: (markerId) => {
-              mapInstance.markers = mapInstance.markers.filter(m => m.id !== markerId);
+              mapInstance.markers = mapInstance.markers.filter(
+                (m) => m.id !== markerId
+              );
             },
             on: (event, handler) => {
               if (!mapInstance.eventHandlers) {
@@ -107,8 +109,13 @@ export const [loading, setLoading] = useState(true);
               mapInstance.eventHandlers[event].push(handler);
             },
             fire: (event, data) => {
-              if (mapInstance.eventHandlers && mapInstance.eventHandlers[event]) {
-                mapInstance.eventHandlers[event].forEach(handler => handler(data));
+              if (
+                mapInstance.eventHandlers &&
+                mapInstance.eventHandlers[event]
+              ) {
+                mapInstance.eventHandlers[event].forEach((handler) =>
+                  handler(data)
+                );
               }
             },
           };
@@ -118,21 +125,20 @@ export const [loading, setLoading] = useState(true);
       mapInstanceRef.current = mapInstance;
 
       // Add initial markers
-      markers.forEach(marker => addMarker(marker));
+      markers.forEach((marker) => addMarker(marker));
 
       setIsLoading(false);
-
     } catch (error) {
-      console.error('Error initializing map:', error);
+      console.error("Error initializing map:", error);
       setMapError(error.message);
       setIsLoading(false);
     }
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
+    return () => {
       // Cleanup map instance
-      if (mapInstanceRef.current && provider === 'google') {
+      if (mapInstanceRef.current && provider === "google") {
         // Google Maps cleanup would go here
       }
       mapInstanceRef.current = null;
@@ -140,53 +146,55 @@ export const [loading, setLoading] = useState(true);
   }, [center, zoom, provider, apiKey, readOnly]);
 
   // Add marker to map
-  const addMarker = useCallback((markerData) => {
-    const map = mapInstanceRef.current;
-    if (!map) return null;
+  const addMarker = useCallback(
+    (markerData) => {
+      const map = mapInstanceRef.current;
+      if (!map) return null;
 
-    try {
-      let marker;
+      try {
+        let marker;
 
-      if (provider === 'google') {
-        marker = new window.google.maps.Marker({
-          position: { lat: markerData.lat, lng: markerData.lng },
-          map: map,
-          title: markerData.title || markerData.popup,
-          icon: markerData.icon,
-        });
-
-        if (markerData.popup) {
-          const infoWindow = new window.google.maps.InfoWindow({
-            content: markerData.popup,
+        if (provider === "google") {
+          marker = new window.google.maps.Marker({
+            position: { lat: markerData.lat, lng: markerData.lng },
+            map: map,
+            title: markerData.title || markerData.popup,
+            icon: markerData.icon,
           });
 
-          marker.addListener('click', () => {
-            infoWindow.open(map, marker);
+          if (markerData.popup) {
+            const infoWindow = new window.google.maps.InfoWindow({
+              content: markerData.popup,
+            });
+
+            marker.addListener("click", () => {
+              infoWindow.open(map, marker);
+              onMarkerClick?.(markerData);
+            });
+          }
+        } else {
+          // Simple marker implementation for other providers
+          marker = map.addMarker(markerData.lat, markerData.lng, {
+            title: markerData.title || markerData.popup,
+            popup: markerData.popup,
+            icon: markerData.icon,
+          });
+
+          // Add click handler
+          marker.addListener("click", () => {
             onMarkerClick?.(markerData);
           });
         }
-      } else {
-        // Simple marker implementation for other providers
-        marker = map.addMarker(markerData.lat, markerData.lng, {
-          title: markerData.title || markerData.popup,
-          popup: markerData.popup,
-          icon: markerData.icon,
-        });
 
-        // Add click handler
-        marker.addListener('click', () => {
-          onMarkerClick?.(markerData);
-        });
+        markersRef.current.push({ marker, data: markerData });
+        return marker;
+      } catch (error) {
+        console.error("Error adding marker:", error);
+        return null;
       }
-
-      markersRef.current.push({ marker, data: markerData });
-      return marker;
-
-    } catch (error) {
-      console.error('Error adding marker:', error);
-      return null;
-    }
-  }, [provider, onMarkerClick]);
+    },
+    [provider, onMarkerClick]
+  );
 
   // Update markers when markers prop changes
   useEffect(() => {
@@ -194,7 +202,7 @@ export const [loading, setLoading] = useState(true);
 
     // Remove existing markers
     markersRef.current.forEach(({ marker }) => {
-      if (provider === 'google') {
+      if (provider === "google") {
         marker.setMap(null);
       } else {
         // Remove from simple map implementation
@@ -203,7 +211,7 @@ export const [loading, setLoading] = useState(true);
     markersRef.current = [];
 
     // Add new markers
-    markers.forEach(marker => addMarker(marker));
+    markers.forEach((marker) => addMarker(marker));
   }, [markers, addMarker, provider]);
 
   // Handle search
@@ -215,11 +223,21 @@ export const [loading, setLoading] = useState(true);
     try {
       // Simple geocoding implementation (replace with actual geocoding service)
       const mockResults = [
-        { lat: -23.5505, lng: -46.6333, name: 'São Paulo, SP', address: 'São Paulo, São Paulo, Brasil' },
-        { lat: -22.9068, lng: -43.1729, name: 'Rio de Janeiro, RJ', address: 'Rio de Janeiro, Rio de Janeiro, Brasil' },
+        {
+          lat: -23.5505,
+          lng: -46.6333,
+          name: "São Paulo, SP",
+          address: "São Paulo, São Paulo, Brasil",
+        },
+        {
+          lat: -22.9068,
+          lng: -43.1729,
+          name: "Rio de Janeiro, RJ",
+          address: "Rio de Janeiro, Rio de Janeiro, Brasil",
+        },
       ];
 
-      const result = mockResults.find(r =>
+      const result = mockResults.find((r) =>
         r.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
@@ -227,32 +245,42 @@ export const [loading, setLoading] = useState(true);
         onSearch(result);
         // Center map on result
         if (mapInstanceRef.current) {
-          if (provider === 'google') {
-            mapInstanceRef.current.setCenter({ lat: result.lat, lng: result.lng });
+          if (provider === "google") {
+            mapInstanceRef.current.setCenter({
+              lat: result.lat,
+              lng: result.lng,
+            });
           } else {
             mapInstanceRef.current.setView([result.lat, result.lng], zoom);
           }
         }
       }
     } catch (error) {
-      console.error('Search error:', error);
+      console.error("Search error:", error);
     }
 
     setIsLoading(false);
   }, [searchQuery, searchable, onSearch, provider, zoom]);
 
   // Handle map click
-  const handleMapClick = useCallback((event) => {
-    if (readOnly) return;
+  const handleMapClick = useCallback(
+    (event) => {
+      if (readOnly) return;
 
-    const coords = provider === 'google'
-      ? { lat: event.latLng.lat(), lng: event.latLng.lng() }
-      : { lat: event.latlng?.lat || event.lat, lng: event.latlng?.lng || event.lng };
+      const coords =
+        provider === "google"
+          ? { lat: event.latLng.lat(), lng: event.latLng.lng() }
+          : {
+              lat: event.latlng?.lat || event.lat,
+              lng: event.latlng?.lng || event.lng,
+            };
 
-    onMapClick?.(coords);
-  }, [provider, readOnly, onMapClick]);
+      onMapClick?.(coords);
+    },
+    [provider, readOnly, onMapClick]
+  );
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <Card className={`interactive-map ${className}`} {...props}>
@@ -267,10 +295,10 @@ export const [loading, setLoading] = useState(true);
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-48"
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                onKeyPress={(e) => e.key === "Enter" && handleSearch()}
               />
               <Button onClick={handleSearch} disabled={isLoading}>
-                {isLoading ? '🔍' : '🔍'}
+                {isLoading ? "🔍" : "🔍"}
               </Button>
             </div>
           )}
@@ -318,7 +346,9 @@ export const [loading, setLoading] = useState(true);
           {/* Read-only overlay */}
           {readOnly && (
             <div className="absolute inset-0 bg-gray-50 bg-opacity-50 flex items-center justify-center rounded-b-lg">
-              <span className="text-gray-500 text-lg">Modo somente leitura</span>
+              <span className="text-gray-500 text-lg">
+                Modo somente leitura
+              </span>
             </div>
           )}
         </div>
@@ -332,7 +362,7 @@ export const [loading, setLoading] = useState(true);
                 <div key={index} className="flex items-center gap-2 text-sm">
                   <div
                     className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: marker.color || '#3b82f6' }}
+                    style={{ backgroundColor: marker.color || "#3b82f6" }}
                   />
                   <span>{marker.title || `Marcador ${index + 1}`}</span>
                 </div>

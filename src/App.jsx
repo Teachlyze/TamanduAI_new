@@ -1,25 +1,25 @@
-import { useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { useLocation } from 'react-router-dom';
-import { I18nextProvider } from 'react-i18next';
-import i18n from './i18n';
-import ErrorBoundary from './components/ui/ErrorBoundary';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import AccessibilityButton from './components/AccessibilityButton';
-import useKeyboardNavigation from '@/hooks/useKeyboardNavigation';
-import { GlobalAccessibility } from './components/ui/GlobalAccessibility';
-import { PremiumToaster, CommandPalette } from '@/components/ui';
-import { monitorPerformance } from '@/utils/performance';
-import { useAuth } from '@/hooks/useAuth';
-import XPNotificationProvider from '@/components/gamification/XPNotificationProvider';
-
+import { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
+import { useLocation } from "react-router-dom";
+import { I18nextProvider } from "react-i18next";
+import i18n from "./i18n";
+import ErrorBoundary from "./components/ui/ErrorBoundary";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import AccessibilityButton from "./components/AccessibilityButton";
+import useKeyboardNavigation from "@/hooks/useKeyboardNavigation";
+import { GlobalAccessibility } from "./components/ui/GlobalAccessibility";
+import { PremiumToaster, CommandPalette } from "@/components/ui";
+import { monitorPerformance } from "@/utils/performance";
+import { useAuth } from "@/hooks/useAuth";
+import XPNotificationProvider from "@/components/gamification/XPNotificationProvider";
+import { Suspense } from "react";
 // Componente para aplicar configurações de acessibilidade globalmente
 const AccessibilityProvider = ({ children }) => {
   useEffect(() => {
     // Aplicar configurações salvas no localStorage
     const applyAccessibilitySettings = () => {
       try {
-        const settings = localStorage.getItem('accessibility-settings');
+        const settings = localStorage.getItem("accessibility-settings");
         if (settings) {
           const parsed = JSON.parse(settings);
 
@@ -39,13 +39,13 @@ const AccessibilityProvider = ({ children }) => {
           }
 
           if (parsed.highContrast) {
-            root.classList.add('high-contrast');
+            root.classList.add("high-contrast");
           } else {
-            root.classList.remove('high-contrast');
+            root.classList.remove("high-contrast");
           }
         }
       } catch (error) {
-        console.warn('Erro ao aplicar configurações de acessibilidade:', error);
+        console.warn("Erro ao aplicar configurações de acessibilidade:", error);
       }
     };
 
@@ -53,15 +53,15 @@ const AccessibilityProvider = ({ children }) => {
 
     // Ouvir mudanças no localStorage
     const handleStorageChange = (e) => {
-      if (e.key === 'accessibility-settings') {
+      if (e.key === "accessibility-settings") {
         applyAccessibilitySettings();
       }
     };
 
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
 
@@ -82,7 +82,7 @@ const ScrollToTop = () => {
 const AppContent = ({ children }) => {
   const { user } = useAuth();
   const location = useLocation();
-  
+
   // Initialize global keyboard navigation
   useKeyboardNavigation();
 
@@ -92,7 +92,11 @@ const AppContent = ({ children }) => {
   }, []);
 
   // Mostrar botão de acessibilidade apenas na landing page (não logado)
-  const isLandingPage = !user && (location.pathname === '/' || location.pathname === '/login' || location.pathname === '/register');
+  const isLandingPage =
+    !user &&
+    (location.pathname === "/" ||
+      location.pathname === "/login" ||
+      location.pathname === "/register");
 
   return (
     <I18nextProvider i18n={i18n}>
@@ -104,23 +108,58 @@ const AppContent = ({ children }) => {
             <div className="flex flex-col min-h-screen bg-background text-foreground">
               <Helmet>
                 <title>TamanduAI — Plataforma EdTech Inteligente</title>
-                <meta name="description" content="Plataforma educacional com IA para alunos, professores e escolas: questões, atividades, correções, analytics e gestão." />
-                <link rel="canonical" href={import.meta.env.VITE_APP_URL || 'https://tamanduai.com'} />
+                <meta
+                  name="description"
+                  content="Plataforma educacional com IA para alunos, professores e escolas: questões, atividades, correções, analytics e gestão."
+                />
+                <link
+                  rel="canonical"
+                  href={import.meta.env.VITE_APP_URL || "https://tamanduai.com"}
+                />
                 <meta name="robots" content="index, follow" />
                 <meta property="og:type" content="website" />
                 <meta property="og:site_name" content="TamanduAI" />
-                <meta property="og:url" content={import.meta.env.VITE_APP_URL || 'https://tamanduai.com'} />
-                <meta property="og:title" content="TamanduAI — Plataforma EdTech Inteligente" />
-                <meta property="og:description" content="IA educacional: banco de questões, quizzes, correção automática, gamificação e gestão escolar." />
-                <meta property="og:image" content={(import.meta.env.VITE_APP_URL || 'https://tamanduai.com') + '/og-cover.jpg'} />
+                <meta
+                  property="og:url"
+                  content={
+                    import.meta.env.VITE_APP_URL || "https://tamanduai.com"
+                  }
+                />
+                <meta
+                  property="og:title"
+                  content="TamanduAI — Plataforma EdTech Inteligente"
+                />
+                <meta
+                  property="og:description"
+                  content="IA educacional: banco de questões, quizzes, correção automática, gamificação e gestão escolar."
+                />
+                <meta
+                  property="og:image"
+                  content={
+                    (import.meta.env.VITE_APP_URL || "https://tamanduai.com") +
+                    "/og-cover.jpg"
+                  }
+                />
                 <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:title" content="TamanduAI — Plataforma EdTech Inteligente" />
-                <meta name="twitter:description" content="IA educacional para alunos, professores e escolas." />
-                <meta name="twitter:image" content={(import.meta.env.VITE_APP_URL || 'https://tamanduai.com') + '/og-cover.jpg'} />
+                <meta
+                  name="twitter:title"
+                  content="TamanduAI — Plataforma EdTech Inteligente"
+                />
+                <meta
+                  name="twitter:description"
+                  content="IA educacional para alunos, professores e escolas."
+                />
+                <meta
+                  name="twitter:image"
+                  content={
+                    (import.meta.env.VITE_APP_URL || "https://tamanduai.com") +
+                    "/og-cover.jpg"
+                  }
+                />
               </Helmet>
               {/* Premium Toast System */}
               <PremiumToaster />
-              
+
               {/* Command Palette (⌘K) */}
               <CommandPalette />
 

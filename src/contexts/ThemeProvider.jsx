@@ -1,6 +1,6 @@
-import { THEME_DARK, THEME_LIGHT, THEME_STORAGE_KEY } from '../constants/theme';
-import ThemeContext from './ThemeContext';
-
+import { THEME_DARK, THEME_LIGHT, THEME_STORAGE_KEY } from "../constants/theme";
+import ThemeContext from "./ThemeContext";
+import { useState, useEffect, useCallback, useMemo } from "react";
 /**
  * Provedor de tema que envolve a aplicação
  * @component
@@ -8,13 +8,15 @@ import ThemeContext from './ThemeContext';
  * @param {React.ReactNode} props.children - Componentes filhos que terão acesso ao tema
  */
 const ThemeProvider = ({ children }) => {
-    const [theme, setTheme] = useState(() => {
-    if (typeof window === 'undefined') return THEME_LIGHT;
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === "undefined") return THEME_LIGHT;
     // Prefer unified key 'appTheme', then fallback to legacy THEME_STORAGE_KEY
-    const savedPrimary = localStorage.getItem('appTheme');
-    if (savedPrimary === THEME_LIGHT || savedPrimary === THEME_DARK) return savedPrimary;
+    const savedPrimary = localStorage.getItem("appTheme");
+    if (savedPrimary === THEME_LIGHT || savedPrimary === THEME_DARK)
+      return savedPrimary;
     const savedLegacy = localStorage.getItem(THEME_STORAGE_KEY);
-    if (savedLegacy === THEME_LIGHT || savedLegacy === THEME_DARK) return savedLegacy;
+    if (savedLegacy === THEME_LIGHT || savedLegacy === THEME_DARK)
+      return savedLegacy;
     // Default to light, do NOT auto-apply system preference
     return THEME_LIGHT;
   });
@@ -22,45 +24,45 @@ const ThemeProvider = ({ children }) => {
   // Aplicar classe de tema ao elemento raiz
   useEffect(() => {
     const root = window.document.documentElement;
-    
+
     // Remover classes de tema existentes
     root.classList.remove(THEME_LIGHT, THEME_DARK);
-    
+
     // Adicionar a classe do tema atual
     root.classList.add(theme);
-    
+
     // Salvar no localStorage (unificado + legado para compatibilidade)
-    localStorage.setItem('appTheme', theme);
+    localStorage.setItem("appTheme", theme);
     localStorage.setItem(THEME_STORAGE_KEY, theme);
-    
+
     // Para o modo escuro do Tailwind
     if (theme === THEME_DARK) {
-      root.classList.add('dark');
+      root.classList.add("dark");
     } else {
-      root.classList.remove('dark');
+      root.classList.remove("dark");
     }
-    
+
     // Definir atributo data-theme para outras bibliotecas
-    root.setAttribute('data-theme', theme);
+    root.setAttribute("data-theme", theme);
   }, [theme]);
-  
+
   // Ouvir mudanças no tema do sistema quando não houver preferência salva
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
+    if (typeof window === "undefined") return;
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
     const handleChange = () => {
       // Não alterar automaticamente se houver preferência salva em qualquer chave
-      const savedPrimary = localStorage.getItem('appTheme');
+      const savedPrimary = localStorage.getItem("appTheme");
       const savedLegacy = localStorage.getItem(THEME_STORAGE_KEY);
       if (!savedPrimary && !savedLegacy) {
         setTheme(mediaQuery.matches ? THEME_DARK : THEME_LIGHT);
       }
     };
-    
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
   // Função para alternar entre temas
@@ -71,12 +73,15 @@ const ThemeProvider = ({ children }) => {
   }, [theme]);
 
   // Valor do contexto
-  const contextValue = useMemo(() => ({
-    theme,
-    toggleTheme,
-    isDark: theme === THEME_DARK,
-    isLight: theme === THEME_LIGHT,
-  }), [theme, toggleTheme]);
+  const contextValue = useMemo(
+    () => ({
+      theme,
+      toggleTheme,
+      isDark: theme === THEME_DARK,
+      isLight: theme === THEME_LIGHT,
+    }),
+    [theme, toggleTheme]
+  );
 
   return (
     <ThemeContext.Provider value={contextValue}>

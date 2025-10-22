@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useRef, useEffect } from 'react';
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
+import { createContext, useContext, useState, useRef, useEffect } from "react";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 // Contexto para gerenciar focus trap global
 const FocusTrapContext = createContext({
@@ -10,11 +10,7 @@ const FocusTrapContext = createContext({
 
 // Hook para usar focus trap
 export const useFocusTrap = (options = {}) => {
-  const {
-    isActive = false,
-    restoreFocus = true,
-    loop = true,
-  } = options;
+  const { isActive = false, restoreFocus = true, loop = true } = options;
 
   const containerRef = useRef(null);
   const previousFocusRef = useRef(null);
@@ -35,7 +31,7 @@ export const useFocusTrap = (options = {}) => {
 
     // Adicionar event listeners para navegação por teclado
     const handleKeyDown = (e) => {
-      if (!loop && e.key === 'Tab') {
+      if (!loop && e.key === "Tab") {
         const focusableElements = getFocusableElements(containerRef.current);
         const firstElement = focusableElements[0];
         const lastElement = focusableElements[focusableElements.length - 1];
@@ -51,7 +47,7 @@ export const useFocusTrap = (options = {}) => {
     };
 
     const handleEscape = (e) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         // Focar elemento anterior se disponível
         if (previousFocusRef.current && restoreFocus) {
           previousFocusRef.current.focus();
@@ -59,14 +55,14 @@ export const useFocusTrap = (options = {}) => {
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('keydown', handleEscape);
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleEscape);
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", handleEscape);
 
       // Restaurar foco se necessário
       if (previousFocusRef.current && restoreFocus) {
@@ -92,26 +88,22 @@ const getFocusableElements = (container) => {
     '[contenteditable="true"]:not([aria-hidden="true"])',
   ];
 
-  return Array.from(container.querySelectorAll(focusableSelectors.join(', ')));
+  return Array.from(container.querySelectorAll(focusableSelectors.join(", ")));
 };
 
 // Componente FocusTrap
 export const FocusTrap = ({
   children,
   isActive = true,
-  className = '',
+  className = "",
   ...props
 }) => {
   const containerRef = useFocusTrap({ isActive });
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
-    <div
-      ref={containerRef}
-      className={`focus-trap ${className}`}
-      {...props}
-    >
+    <div ref={containerRef} className={`focus-trap ${className}`} {...props}>
       {children}
     </div>
   );
@@ -119,11 +111,7 @@ export const FocusTrap = ({
 
 // Hook para gerenciar focus automático
 export const useAutoFocus = (options = {}) => {
-  const {
-    selector = null,
-    delay = 0,
-    condition = true,
-  } = options;
+  const { selector = null, delay = 0, condition = true } = options;
 
   useEffect(() => {
     if (!condition) return;
@@ -137,22 +125,18 @@ export const useAutoFocus = (options = {}) => {
       }
     }, delay);
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => clearTimeout(timer);
+    return () => clearTimeout(timer);
   }, [selector, delay, condition]);
 };
 
 // Hook para gerenciar rolagem para elementos focados
 export const useScrollToFocus = (options = {}) => {
-  const {
-    behavior = 'smooth',
-    block = 'center',
-    inline = 'nearest',
-  } = options;
+  const { behavior = "smooth", block = "center", inline = "nearest" } = options;
 
   const scrollToElement = (element) => {
-    if (element && typeof element.scrollIntoView === 'function') {
+    if (element && typeof element.scrollIntoView === "function") {
       element.scrollIntoView({
         behavior,
         block,
@@ -167,7 +151,7 @@ export const useScrollToFocus = (options = {}) => {
 // Hook para gerenciar navegação por teclado em listas
 export const useKeyboardListNavigation = (items = [], options = {}) => {
   const {
-    orientation = 'vertical',
+    orientation = "vertical",
     loop = true,
     onSelect = () => {},
     onFocus = () => {},
@@ -179,8 +163,8 @@ export const useKeyboardListNavigation = (items = [], options = {}) => {
     let newIndex = focusedIndex;
 
     switch (e.key) {
-      case 'ArrowUp':
-        if (orientation === 'vertical') {
+      case "ArrowUp":
+        if (orientation === "vertical") {
           e.preventDefault();
           newIndex = loop
             ? (focusedIndex - 1 + items.length) % items.length
@@ -188,8 +172,8 @@ export const useKeyboardListNavigation = (items = [], options = {}) => {
         }
         break;
 
-      case 'ArrowDown':
-        if (orientation === 'vertical') {
+      case "ArrowDown":
+        if (orientation === "vertical") {
           e.preventDefault();
           newIndex = loop
             ? (focusedIndex + 1) % items.length
@@ -197,8 +181,8 @@ export const useKeyboardListNavigation = (items = [], options = {}) => {
         }
         break;
 
-      case 'ArrowLeft':
-        if (orientation === 'horizontal') {
+      case "ArrowLeft":
+        if (orientation === "horizontal") {
           e.preventDefault();
           newIndex = loop
             ? (focusedIndex - 1 + items.length) % items.length
@@ -206,8 +190,8 @@ export const useKeyboardListNavigation = (items = [], options = {}) => {
         }
         break;
 
-      case 'ArrowRight':
-        if (orientation === 'horizontal') {
+      case "ArrowRight":
+        if (orientation === "horizontal") {
           e.preventDefault();
           newIndex = loop
             ? (focusedIndex + 1) % items.length
@@ -215,18 +199,18 @@ export const useKeyboardListNavigation = (items = [], options = {}) => {
         }
         break;
 
-      case 'Home':
+      case "Home":
         e.preventDefault();
         newIndex = 0;
         break;
 
-      case 'End':
+      case "End":
         e.preventDefault();
         newIndex = items.length - 1;
         break;
 
-      case 'Enter':
-      case ' ':
+      case "Enter":
+      case " ":
         e.preventDefault();
         if (items[focusedIndex]) {
           onSelect(items[focusedIndex], focusedIndex);
@@ -264,14 +248,16 @@ export const FocusTrapProvider = ({ children }) => {
     }
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
-    <FocusTrapContext.Provider value={{
-      activeTrap,
-      registerTrap,
-      unregisterTrap,
-    }}>
+    <FocusTrapContext.Provider
+      value={{
+        activeTrap,
+        registerTrap,
+        unregisterTrap,
+      }}
+    >
       {children}
     </FocusTrapContext.Provider>
   );
@@ -280,12 +266,12 @@ export const FocusTrapProvider = ({ children }) => {
 // Componente para anunciar mudanças dinâmicas
 export const LiveAnnouncer = ({
   message,
-  priority = 'polite',
+  priority = "polite",
   children,
-  className = '',
+  className = "",
   ...props
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <>

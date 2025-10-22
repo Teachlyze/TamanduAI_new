@@ -1,11 +1,14 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Bell, Search, User, Settings } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { ScrollArea } from '../ui/scroll-area';
-import { NotificationBell, NotificationContainer } from '../ui/notification-system';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X, Bell, Search, User, Settings } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { ScrollArea } from "../ui/scroll-area";
+import {
+  NotificationBell,
+  NotificationContainer,
+} from "../ui/notification-system";
 
 /**
  * Advanced Responsive Layout Component for TamanduAI
@@ -16,7 +19,7 @@ import { NotificationBell, NotificationContainer } from '../ui/notification-syst
 // LAYOUT CONFIGURATION
 // ============================================
 
-  const LAYOUT_CONFIG = {
+const LAYOUT_CONFIG = {
   BREAKPOINTS: {
     MOBILE: 768,
     TABLET: 1024,
@@ -25,7 +28,7 @@ import { NotificationBell, NotificationContainer } from '../ui/notification-syst
   },
 
   SIDEBAR: {
-    MOBILE_WIDTH: '100vw',
+    MOBILE_WIDTH: "100vw",
     DESKTOP_WIDTH: 280,
     COLLAPSED_WIDTH: 80,
     ANIMATION_DURATION: 300,
@@ -37,8 +40,8 @@ import { NotificationBell, NotificationContainer } from '../ui/notification-syst
   },
 
   CONTENT: {
-    MIN_HEIGHT: 'calc(100vh - 64px)',
-    MOBILE_MIN_HEIGHT: 'calc(100vh - 56px)',
+    MIN_HEIGHT: "calc(100vh - 64px)",
+    MOBILE_MIN_HEIGHT: "calc(100vh - 56px)",
   },
 };
 
@@ -51,33 +54,46 @@ import { NotificationBell, NotificationContainer } from '../ui/notification-syst
  */
 export const useResponsive = () => {
   const [dimensions, setDimensions] = useState({
-    width: typeof window !== 'undefined' ? window.innerWidth : 1024,
-    height: typeof window !== 'undefined' ? window.innerHeight : 768,
+    width: typeof window !== "undefined" ? window.innerWidth : 1024,
+    height: typeof window !== "undefined" ? window.innerHeight : 768,
   });
 
   useEffect(() => {
     const handleResize = () => {
-      setDimensions({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      }, []); // TODO: Add dependencies
+      setDimensions(
+        {
+          width: window.innerWidth,
+          height: window.innerHeight,
+        },
+        []
+      ); // TODO: Add dependencies
     };
 
-    window.addEventListener('resize', handleResize);
-    if (loading) return <LoadingScreen />;
+    window.addEventListener("resize", handleResize);
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const breakpoints = useMemo(() => ({
-    isMobile: dimensions.width < LAYOUT_CONFIG.BREAKPOINTS.MOBILE,
-    isTablet: dimensions.width >= LAYOUT_CONFIG.BREAKPOINTS.MOBILE && dimensions.width < LAYOUT_CONFIG.BREAKPOINTS.TABLET,
-    isDesktop: dimensions.width >= LAYOUT_CONFIG.BREAKPOINTS.TABLET,
-    isLarge: dimensions.width >= LAYOUT_CONFIG.BREAKPOINTS.LARGE,
-    currentBreakpoint: dimensions.width < LAYOUT_CONFIG.BREAKPOINTS.MOBILE ? 'mobile' :
-                     dimensions.width < LAYOUT_CONFIG.BREAKPOINTS.TABLET ? 'tablet' :
-                     dimensions.width < LAYOUT_CONFIG.BREAKPOINTS.LARGE ? 'desktop' : 'large',
-  }), [dimensions.width]);
+  const breakpoints = useMemo(
+    () => ({
+      isMobile: dimensions.width < LAYOUT_CONFIG.BREAKPOINTS.MOBILE,
+      isTablet:
+        dimensions.width >= LAYOUT_CONFIG.BREAKPOINTS.MOBILE &&
+        dimensions.width < LAYOUT_CONFIG.BREAKPOINTS.TABLET,
+      isDesktop: dimensions.width >= LAYOUT_CONFIG.BREAKPOINTS.TABLET,
+      isLarge: dimensions.width >= LAYOUT_CONFIG.BREAKPOINTS.LARGE,
+      currentBreakpoint:
+        dimensions.width < LAYOUT_CONFIG.BREAKPOINTS.MOBILE
+          ? "mobile"
+          : dimensions.width < LAYOUT_CONFIG.BREAKPOINTS.TABLET
+            ? "tablet"
+            : dimensions.width < LAYOUT_CONFIG.BREAKPOINTS.LARGE
+              ? "desktop"
+              : "large",
+    }),
+    [dimensions.width]
+  );
 
   return { ...dimensions, ...breakpoints };
 };
@@ -89,7 +105,7 @@ export const useSidebar = () => {
   const { isMobile, isDesktop } = useResponsive();
   const [isOpen, setIsOpen] = useState(() => {
     // Default state based on screen size
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       return window.innerWidth >= LAYOUT_CONFIG.BREAKPOINTS.TABLET;
     }
     return true;
@@ -109,9 +125,9 @@ export const useSidebar = () => {
 
   const toggle = useCallback(() => {
     if (isMobile) {
-      setMobileMenuOpen(prev => !prev);
+      setMobileMenuOpen((prev) => !prev);
     } else {
-      setIsOpen(prev => !prev);
+      setIsOpen((prev) => !prev);
     }
   }, [isMobile]);
 
@@ -169,24 +185,24 @@ export const Sidebar = ({
     return null;
   }
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <motion.aside
       initial={false}
       animate={{
-        width: isMobile ? '100vw' : sidebarWidth,
-        x: isMobile && mobileMenuOpen ? 0 : (isMobile ? '-100%' : 0),
+        width: isMobile ? "100vw" : sidebarWidth,
+        x: isMobile && mobileMenuOpen ? 0 : isMobile ? "-100%" : 0,
       }}
       transition={{
-        type: 'spring',
+        type: "spring",
         stiffness: 300,
         damping: 30,
       }}
       className={cn(
-        'bg-background border-r border-border flex flex-col',
-        'fixed lg:relative z-40 h-full',
-        isMobile && 'shadow-xl',
+        "bg-background border-r border-border flex flex-col",
+        "fixed lg:relative z-40 h-full",
+        isMobile && "shadow-xl",
         className
       )}
       style={{
@@ -195,9 +211,7 @@ export const Sidebar = ({
       {...props}
     >
       <ScrollArea className="flex-1">
-        <div className="p-4">
-          {children}
-        </div>
+        <div className="p-4">{children}</div>
       </ScrollArea>
     </motion.aside>
   );
@@ -221,13 +235,13 @@ export const Header = ({
 
   const headerHeight = isMobile ? mobileHeight : height;
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <header
       className={cn(
-        'bg-background border-b border-border sticky top-0 z-30',
-        'flex items-center justify-between',
+        "bg-background border-b border-border sticky top-0 z-30",
+        "flex items-center justify-between",
         className
       )}
       style={{ height: headerHeight }}
@@ -241,20 +255,20 @@ export const Header = ({
           onClick={toggle}
           className="lg:hidden"
         >
-          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          {mobileMenuOpen ? (
+            <X className="w-5 h-5" />
+          ) : (
+            <Menu className="w-5 h-5" />
+          )}
         </Button>
       )}
 
       {/* Left content */}
-      <div className="flex items-center gap-4">
-        {leftContent}
-      </div>
+      <div className="flex items-center gap-4">{leftContent}</div>
 
       {/* Center content */}
       {centerContent && (
-        <div className="flex-1 flex justify-center">
-          {centerContent}
-        </div>
+        <div className="flex-1 flex justify-center">{centerContent}</div>
       )}
 
       {/* Right content */}
@@ -262,9 +276,7 @@ export const Header = ({
         {rightContent}
 
         {/* Desktop notifications */}
-        {!isMobile && (
-          <NotificationBell />
-        )}
+        {!isMobile && <NotificationBell />}
       </div>
     </header>
   );
@@ -287,21 +299,21 @@ export const MainLayout = ({
   // Close mobile menu when clicking outside on mobile
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (isMobile && isOpen && !e.target.closest('[data-sidebar]')) {
+      if (isMobile && isOpen && !e.target.closest("[data-sidebar]")) {
         closeMobileMenu();
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    if (loading) return <LoadingScreen />;
+    document.addEventListener("mousedown", handleClickOutside);
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isMobile, isOpen, closeMobileMenu]);
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
-    <div className={cn('flex h-screen bg-background', className)} {...props}>
+    <div className={cn("flex h-screen bg-background", className)} {...props}>
       {/* Sidebar overlay for mobile */}
       {isMobile && isOpen && (
         <div
@@ -313,7 +325,7 @@ export const MainLayout = ({
       {/* Sidebar */}
       {sidebar && (
         <div data-sidebar>
-          {typeof sidebar === 'function' ? sidebar() : sidebar}
+          {typeof sidebar === "function" ? sidebar() : sidebar}
         </div>
       )}
 
@@ -322,15 +334,15 @@ export const MainLayout = ({
         {/* Header */}
         {header && (
           <div className="flex-shrink-0">
-            {typeof header === 'function' ? header() : header}
+            {typeof header === "function" ? header() : header}
           </div>
         )}
 
         {/* Main content */}
         <main
           className={cn(
-            'flex-1 overflow-auto',
-            'max-w-full mx-auto',
+            "flex-1 overflow-auto",
+            "max-w-full mx-auto",
             contentClassName
           )}
           style={{
@@ -339,9 +351,7 @@ export const MainLayout = ({
               : LAYOUT_CONFIG.CONTENT.MIN_HEIGHT,
           }}
         >
-          <div className="h-full">
-            {children}
-          </div>
+          <div className="h-full">{children}</div>
         </main>
       </div>
 
@@ -360,43 +370,43 @@ export const ContentArea = ({
   children,
   className,
   padding = true,
-  maxWidth = 'none',
+  maxWidth = "none",
   ...props
 }) => {
   const { isMobile, isTablet, isDesktop } = useResponsive();
 
   const responsivePadding = useMemo(() => {
-    if (!padding) return '';
+    if (!padding) return "";
 
-    if (isMobile) return 'p-4';
-    if (isTablet) return 'p-6';
-    return 'p-8';
+    if (isMobile) return "p-4";
+    if (isTablet) return "p-6";
+    return "p-8";
   }, [padding, isMobile, isTablet]);
 
   const responsiveMaxWidth = useMemo(() => {
-    if (maxWidth === 'none') return '';
+    if (maxWidth === "none") return "";
 
     const widths = {
-      sm: 'max-w-sm',
-      md: 'max-w-md',
-      lg: 'max-w-lg',
-      xl: 'max-w-xl',
-      '2xl': 'max-w-2xl',
-      '4xl': 'max-w-4xl',
-      '6xl': 'max-w-6xl',
-      '7xl': 'max-w-7xl',
-      full: 'max-w-full',
+      sm: "max-w-sm",
+      md: "max-w-md",
+      lg: "max-w-lg",
+      xl: "max-w-xl",
+      "2xl": "max-w-2xl",
+      "4xl": "max-w-4xl",
+      "6xl": "max-w-6xl",
+      "7xl": "max-w-7xl",
+      full: "max-w-full",
     };
 
     return widths[maxWidth] || `max-w-${maxWidth}`;
   }, [maxWidth]);
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div
       className={cn(
-        'w-full h-full',
+        "w-full h-full",
         responsivePadding,
         responsiveMaxWidth,
         className
@@ -414,15 +424,15 @@ export const ContentArea = ({
 export const GridLayout = ({
   children,
   cols = { default: 1, sm: 2, lg: 3, xl: 4 },
-  gap = 'md',
+  gap = "md",
   className,
   ...props
 }) => {
   const gapClasses = {
-    sm: 'gap-2',
-    md: 'gap-4',
-    lg: 'gap-6',
-    xl: 'gap-8',
+    sm: "gap-2",
+    md: "gap-4",
+    lg: "gap-6",
+    xl: "gap-8",
   };
 
   const gridCols = useMemo(() => {
@@ -434,15 +444,15 @@ export const GridLayout = ({
     if (cols.lg) colsArray.push(`lg:grid-cols-${cols.lg}`);
     if (cols.xl) colsArray.push(`xl:grid-cols-${cols.xl}`);
 
-    return colsArray.join(' ');
+    return colsArray.join(" ");
   }, [cols]);
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div
       className={cn(
-        'grid',
+        "grid",
         gridCols,
         gapClasses[gap] || gapClasses.md,
         className
@@ -465,14 +475,14 @@ export const ResponsiveContainer = ({
 }) => {
   const { isMobile } = useResponsive();
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div
       className={cn(
-        'w-full mx-auto',
-        !fluid && 'max-w-7xl px-4 sm:px-6 lg:px-8',
-        isMobile && 'px-4',
+        "w-full mx-auto",
+        !fluid && "max-w-7xl px-4 sm:px-6 lg:px-8",
+        isMobile && "px-4",
         className
       )}
       {...props}
@@ -499,9 +509,11 @@ export const useLayout = () => {
     // Computed layout properties
     sidebarWidth: responsive.isMobile
       ? 0
-      : (sidebar.isCollapsed ? LAYOUT_CONFIG.SIDEBAR.COLLAPSED_WIDTH : LAYOUT_CONFIG.SIDEBAR.DESKTOP_WIDTH),
+      : sidebar.isCollapsed
+        ? LAYOUT_CONFIG.SIDEBAR.COLLAPSED_WIDTH
+        : LAYOUT_CONFIG.SIDEBAR.DESKTOP_WIDTH,
     contentWidth: responsive.isMobile
-      ? '100vw'
+      ? "100vw"
       : `calc(100vw - ${sidebar.isOpen ? LAYOUT_CONFIG.SIDEBAR.DESKTOP_WIDTH : 0}px)`,
   };
 };
@@ -512,11 +524,14 @@ export const useLayout = () => {
 export const useResponsiveContent = () => {
   const { isMobile, isTablet, isDesktop } = useResponsive();
 
-  const contentConfig = useMemo(() => ({
-    padding: isMobile ? 'p-4' : isTablet ? 'p-6' : 'p-8',
-    maxWidth: isMobile ? 'max-w-none' : 'max-w-6xl',
-    spacing: isMobile ? 'space-y-4' : 'space-y-6',
-  }), [isMobile, isTablet]);
+  const contentConfig = useMemo(
+    () => ({
+      padding: isMobile ? "p-4" : isTablet ? "p-6" : "p-8",
+      maxWidth: isMobile ? "max-w-none" : "max-w-6xl",
+      spacing: isMobile ? "space-y-4" : "space-y-6",
+    }),
+    [isMobile, isTablet]
+  );
 
   return contentConfig;
 };

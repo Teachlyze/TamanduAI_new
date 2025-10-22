@@ -1,9 +1,9 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 
 /**
  * High-performance virtualized table component for large datasets
@@ -19,7 +19,7 @@ import { Checkbox } from '@/components/ui/checkbox';
  * @param {string} props.className - Additional CSS classes
  */
 export const [loading, setLoading] = useState(true);
-  const VirtualizedTable = ({
+const VirtualizedTable = ({
   data = [],
   columns = [],
   rowHeight = 50,
@@ -28,12 +28,12 @@ export const [loading, setLoading] = useState(true);
   onSelectionChange,
   onRowClick,
   onSort,
-  className = '',
+  className = "",
   ...props
 }) => {
   const [scrollTop, setScrollTop] = useState(0);
   const [selectedRows, setSelectedRows] = useState(new Set());
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   // Calculate visible range
   const visibleRange = useMemo(() => {
@@ -50,40 +50,52 @@ export const [loading, setLoading] = useState(true);
   }, []);
 
   // Handle row selection
-  const handleRowSelect = useCallback((rowIndex, isSelected) => {
-    const newSelected = new Set(selectedRows);
+  const handleRowSelect = useCallback(
+    (rowIndex, isSelected) => {
+      const newSelected = new Set(selectedRows);
 
-    if (isSelected) {
-      newSelected.add(rowIndex);
-    } else {
-      newSelected.delete(rowIndex);
-    }
+      if (isSelected) {
+        newSelected.add(rowIndex);
+      } else {
+        newSelected.delete(rowIndex);
+      }
 
-    setSelectedRows(newSelected);
-    onSelectionChange?.(Array.from(newSelected).map(index => data[index]));
-  }, [selectedRows, data, onSelectionChange]);
+      setSelectedRows(newSelected);
+      onSelectionChange?.(Array.from(newSelected).map((index) => data[index]));
+    },
+    [selectedRows, data, onSelectionChange]
+  );
 
   // Handle select all
-  const handleSelectAll = useCallback((isSelected) => {
-    if (isSelected) {
-      const allIndices = new Set(data.map((_, index) => index));
-      setSelectedRows(allIndices);
-      onSelectionChange?.(data);
-    } else {
-      setSelectedRows(new Set());
-      onSelectionChange?.([]);
-    }
-  }, [data, onSelectionChange]);
+  const handleSelectAll = useCallback(
+    (isSelected) => {
+      if (isSelected) {
+        const allIndices = new Set(data.map((_, index) => index));
+        setSelectedRows(allIndices);
+        onSelectionChange?.(data);
+      } else {
+        setSelectedRows(new Set());
+        onSelectionChange?.([]);
+      }
+    },
+    [data, onSelectionChange]
+  );
 
   // Handle sort
-  const handleSort = useCallback((columnKey) => {
-    const direction = sortConfig.key === columnKey && sortConfig.direction === 'asc' ? 'desc' : 'asc';
-    setSortConfig({ key: columnKey, direction });
+  const handleSort = useCallback(
+    (columnKey) => {
+      const direction =
+        sortConfig.key === columnKey && sortConfig.direction === "asc"
+          ? "desc"
+          : "asc";
+      setSortConfig({ key: columnKey, direction });
 
-    if (onSort) {
-      onSort(columnKey, direction);
-    }
-  }, [sortConfig, onSort]);
+      if (onSort) {
+        onSort(columnKey, direction);
+      }
+    },
+    [sortConfig, onSort]
+  );
 
   // Render table header
   const renderHeader = () => (
@@ -97,7 +109,7 @@ export const [loading, setLoading] = useState(true);
         </div>
       )}
 
-      {columns.map(column => (
+      {columns.map((column) => (
         <div
           key={column.key}
           className="flex-1 p-3 border-r last:border-r-0 cursor-pointer hover:bg-muted/70 flex items-center justify-between"
@@ -106,7 +118,7 @@ export const [loading, setLoading] = useState(true);
           <span className="font-medium">{column.title}</span>
           {column.sortable !== false && sortConfig.key === column.key && (
             <span className="text-muted-foreground">
-              {sortConfig.direction === 'asc' ? '↑' : '↓'}
+              {sortConfig.direction === "asc" ? "↑" : "↓"}
             </span>
           )}
         </div>
@@ -118,13 +130,13 @@ export const [loading, setLoading] = useState(true);
   const renderRow = (rowData, rowIndex) => {
     const isSelected = selectedRows.has(rowIndex);
 
-    if (loading) return <LoadingScreen />;
+    /* if (loading) return <LoadingScreen />; */
 
-  return (
+    return (
       <div
         key={rowIndex}
         className={`flex border-b hover:bg-muted/50 cursor-pointer ${
-          isSelected ? 'bg-primary/5' : ''
+          isSelected ? "bg-primary/5" : ""
         }`}
         style={{ height: rowHeight }}
         onClick={() => onRowClick?.(rowData, rowIndex)}
@@ -139,23 +151,29 @@ export const [loading, setLoading] = useState(true);
           </div>
         )}
 
-        {columns.map(column => {
+        {columns.map((column) => {
           const cellValue = rowData[column.key];
-          const cellContent = column.render ? column.render(cellValue, rowData, rowIndex) : cellValue;
+          const cellContent = column.render
+            ? column.render(cellValue, rowData, rowIndex)
+            : cellValue;
 
-          if (loading) return <LoadingScreen />;
+          /* if (loading) return <LoadingScreen />; */
 
-  return (
+          return (
             <div
               key={column.key}
               className="flex-1 p-3 border-r last:border-r-0 flex items-center overflow-hidden"
             >
-              {column.type === 'badge' ? (
-                <Badge variant={cellValue === 'active' ? 'default' : 'secondary'}>
+              {column.type === "badge" ? (
+                <Badge
+                  variant={cellValue === "active" ? "default" : "secondary"}
+                >
                   {cellContent}
                 </Badge>
-              ) : column.type === 'boolean' ? (
-                <div className={`w-4 h-4 rounded-full ${cellValue ? 'bg-green-500' : 'bg-gray-300'}`} />
+              ) : column.type === "boolean" ? (
+                <div
+                  className={`w-4 h-4 rounded-full ${cellValue ? "bg-green-500" : "bg-gray-300"}`}
+                />
               ) : (
                 <span className="truncate">{cellContent}</span>
               )}
@@ -170,7 +188,7 @@ export const [loading, setLoading] = useState(true);
   const totalHeight = data.length * rowHeight;
   const offsetY = visibleRange.startIndex * rowHeight;
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <Card className={`virtualized-table ${className}`} {...props}>
@@ -197,21 +215,23 @@ export const [loading, setLoading] = useState(true);
             style={{ height: containerHeight }}
             onScroll={handleScroll}
           >
-            <div style={{ height: totalHeight, position: 'relative' }}>
+            <div style={{ height: totalHeight, position: "relative" }}>
               {/* Rendered rows */}
-              {Array.from({ length: visibleRange.endIndex - visibleRange.startIndex }).map((_, index) => {
+              {Array.from({
+                length: visibleRange.endIndex - visibleRange.startIndex,
+              }).map((_, index) => {
                 const dataIndex = visibleRange.startIndex + index;
                 if (dataIndex >= data.length) return null;
 
-                if (loading) return <LoadingScreen />;
+                /* if (loading) return <LoadingScreen />; */
 
-  return (
+                return (
                   <div
                     key={dataIndex}
                     style={{
-                      position: 'absolute',
-                      top: offsetY + (index * rowHeight),
-                      width: '100%',
+                      position: "absolute",
+                      top: offsetY + index * rowHeight,
+                      width: "100%",
                     }}
                   >
                     {renderRow(data[dataIndex], dataIndex)}

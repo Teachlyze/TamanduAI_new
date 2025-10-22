@@ -1,27 +1,33 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ClassService } from '@/services/classService';
-import { toast } from '@/components/ui/use-toast';
-import { Calendar, X, Plus, Save, AlertTriangle, Trash2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ClassService } from "@/services/classService";
+import { toast } from "@/components/ui/use-toast";
+import { Calendar, X, Plus, Save, AlertTriangle, Trash2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
-  const EditClassScheduleCard = ({ classId, initialData }) => {
-  const [vacationStart, setVacationStart] = useState('');
-  const [vacationEnd, setVacationEnd] = useState('');
+const EditClassScheduleCard = ({ classId, initialData }) => {
+  const [vacationStart, setVacationStart] = useState("");
+  const [vacationEnd, setVacationEnd] = useState("");
   const [cancelledDates, setCancelledDates] = useState([]);
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDate, setSelectedDate] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
     if (initialData) {
-      setVacationStart(initialData.vacation_start || '');
-      setVacationEnd(initialData.vacation_end || '');
+      setVacationStart(initialData.vacation_start || "");
+      setVacationEnd(initialData.vacation_end || "");
       setCancelledDates(initialData.cancelled_dates || []);
     }
   }, [initialData]);
@@ -29,35 +35,35 @@ import { motion, AnimatePresence } from 'framer-motion';
   const addCancelledDate = () => {
     if (!selectedDate) {
       toast({
-        variant: 'destructive',
-        title: 'Data não selecionada',
-        description: 'Selecione uma data para cancelar.'
+        variant: "destructive",
+        title: "Data não selecionada",
+        description: "Selecione uma data para cancelar.",
       });
       return;
     }
 
     if (cancelledDates.includes(selectedDate)) {
       toast({
-        variant: 'destructive',
-        title: 'Data já cancelada',
-        description: 'Esta data já está na lista de cancelamentos.'
+        variant: "destructive",
+        title: "Data já cancelada",
+        description: "Esta data já está na lista de cancelamentos.",
       });
       return;
     }
 
     setCancelledDates([...cancelledDates, selectedDate].sort());
-    setSelectedDate('');
+    setSelectedDate("");
     setHasChanges(true);
   };
 
   const removeCancelledDate = (date) => {
-    setCancelledDates(cancelledDates.filter(d => d !== date));
+    setCancelledDates(cancelledDates.filter((d) => d !== date));
     setHasChanges(true);
   };
 
   const clearVacation = () => {
-    setVacationStart('');
-    setVacationEnd('');
+    setVacationStart("");
+    setVacationEnd("");
     setHasChanges(true);
   };
 
@@ -71,9 +77,9 @@ import { motion, AnimatePresence } from 'framer-motion';
         const end = new Date(vacationEnd);
         if (end < start) {
           toast({
-            variant: 'destructive',
-            title: 'Período inválido',
-            description: 'A data de fim deve ser posterior à data de início.'
+            variant: "destructive",
+            title: "Período inválido",
+            description: "A data de fim deve ser posterior à data de início.",
           });
           return;
         }
@@ -82,23 +88,23 @@ import { motion, AnimatePresence } from 'framer-motion';
       const scheduleData = {
         vacation_start: vacationStart || null,
         vacation_end: vacationEnd || null,
-        cancelled_dates: cancelledDates.length > 0 ? cancelledDates : null
+        cancelled_dates: cancelledDates.length > 0 ? cancelledDates : null,
       };
 
       await ClassService.updateClassSchedule(classId, scheduleData);
 
       toast({
-        title: '✅ Horários atualizados!',
-        description: 'As alterações de férias e cancelamentos foram salvas.'
+        title: "✅ Horários atualizados!",
+        description: "As alterações de férias e cancelamentos foram salvas.",
       });
 
       setHasChanges(false);
     } catch (error) {
-      console.error('Error updating schedule:', error);
+      console.error("Error updating schedule:", error);
       toast({
-        variant: 'destructive',
-        title: 'Erro ao salvar',
-        description: error.message || 'Não foi possível atualizar os horários.'
+        variant: "destructive",
+        title: "Erro ao salvar",
+        description: error.message || "Não foi possível atualizar os horários.",
       });
     } finally {
       setIsSubmitting(false);
@@ -106,11 +112,11 @@ import { motion, AnimatePresence } from 'framer-motion';
   };
 
   const formatDate = (dateStr) => {
-    const date = new Date(dateStr + 'T00:00:00');
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
+    const date = new Date(dateStr + "T00:00:00");
+    return date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
     });
   };
 
@@ -122,7 +128,7 @@ import { motion, AnimatePresence } from 'framer-motion';
     return days;
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <Card className="bg-white/80 backdrop-blur-sm shadow-lg">
@@ -133,11 +139,9 @@ import { motion, AnimatePresence } from 'framer-motion';
           </div>
           Cancelamentos e Férias
         </CardTitle>
-        <CardDescription>
-          Gerencie quando a turma não terá aula
-        </CardDescription>
+        <CardDescription>Gerencie quando a turma não terá aula</CardDescription>
       </CardHeader>
-      
+
       <CardContent className="space-y-6">
         {/* Vacation Period */}
         <div className="space-y-3">
@@ -155,10 +159,12 @@ import { motion, AnimatePresence } from 'framer-motion';
               </Button>
             )}
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="vacation-start" className="text-sm">Data de Início</Label>
+              <Label htmlFor="vacation-start" className="text-sm">
+                Data de Início
+              </Label>
               <Input
                 id="vacation-start"
                 type="date"
@@ -170,9 +176,11 @@ import { motion, AnimatePresence } from 'framer-motion';
                 className="mt-1 bg-white dark:bg-slate-900"
               />
             </div>
-            
+
             <div>
-              <Label htmlFor="vacation-end" className="text-sm">Data de Término</Label>
+              <Label htmlFor="vacation-end" className="text-sm">
+                Data de Término
+              </Label>
               <Input
                 id="vacation-end"
                 type="date"
@@ -191,9 +199,10 @@ import { motion, AnimatePresence } from 'framer-motion';
             <Alert className="bg-orange-50 dark:bg-orange-950 border-orange-200 dark:border-orange-800">
               <AlertTriangle className="h-4 w-4 text-orange-600" />
               <AlertDescription className="text-sm">
-                <span className="font-semibold">Férias programadas:</span> {getVacationDuration()} dias
-                ({formatDate(vacationStart)} a {formatDate(vacationEnd)}).
-                As aulas não aparecerão para os alunos durante este período.
+                <span className="font-semibold">Férias programadas:</span>{" "}
+                {getVacationDuration()} dias ({formatDate(vacationStart)} a{" "}
+                {formatDate(vacationEnd)}). As aulas não aparecerão para os
+                alunos durante este período.
               </AlertDescription>
             </Alert>
           )}
@@ -203,11 +212,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 
         {/* Cancelled Dates */}
         <div className="space-y-3">
-          <Label className="text-base font-semibold">Cancelar Aulas em Datas Específicas</Label>
+          <Label className="text-base font-semibold">
+            Cancelar Aulas em Datas Específicas
+          </Label>
           <p className="text-sm text-muted-foreground">
-            Selecione dias específicos em que a aula não acontecerá (ex: feriados)
+            Selecione dias específicos em que a aula não acontecerá (ex:
+            feriados)
           </p>
-          
+
           <div className="flex gap-2">
             <Input
               type="date"
@@ -269,8 +281,11 @@ import { motion, AnimatePresence } from 'framer-motion';
             <Alert>
               <Calendar className="h-4 w-4" />
               <AlertDescription className="text-sm">
-                {cancelledDates.length} {cancelledDates.length === 1 ? 'aula cancelada' : 'aulas canceladas'}.
-                Os alunos não verão essas datas na agenda.
+                {cancelledDates.length}{" "}
+                {cancelledDates.length === 1
+                  ? "aula cancelada"
+                  : "aulas canceladas"}
+                . Os alunos não verão essas datas na agenda.
               </AlertDescription>
             </Alert>
           )}

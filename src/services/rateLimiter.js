@@ -1,4 +1,4 @@
-import { Redis } from '@upstash/redis';
+import { Redis } from "@upstash/redis";
 
 /**
  * Rate Limiter usando Upstash Redis
@@ -19,64 +19,64 @@ export const RATE_LIMITS = {
   CHATBOT_FREE: {
     max: 10,
     window: 24 * 60 * 60, // 24 horas
-    message: 'Limite de 10 mensagens/dia atingido (Plano Free)',
+    message: "Limite de 10 mensagens/dia atingido (Plano Free)",
   },
   CHATBOT_BASIC: {
     max: 50,
     window: 24 * 60 * 60,
-    message: 'Limite de 50 mensagens/dia atingido (Plano Basic)',
+    message: "Limite de 50 mensagens/dia atingido (Plano Basic)",
   },
   CHATBOT_PRO: {
     max: 200,
     window: 24 * 60 * 60,
-    message: 'Limite de 200 mensagens/dia atingido (Plano Pro)',
+    message: "Limite de 200 mensagens/dia atingido (Plano Pro)",
   },
   CHATBOT_ENTERPRISE: {
     max: 10000,
     window: 24 * 60 * 60,
-    message: 'Sem limite (Enterprise)',
+    message: "Sem limite (Enterprise)",
   },
 
   // Antiplágio
   PLAGIARISM_CHECK: {
     max: 100,
     window: 60 * 60, // 1 hora
-    message: 'Limite de 100 verificações/hora atingido',
+    message: "Limite de 100 verificações/hora atingido",
   },
 
   // APIs gerais
   API_GENERAL: {
     max: 1000,
     window: 60 * 60, // 1 hora
-    message: 'Limite de 1000 requisições/hora atingido',
+    message: "Limite de 1000 requisições/hora atingido",
   },
 
   // Upload de arquivos
   FILE_UPLOAD: {
     max: 50,
     window: 60 * 60, // 1 hora
-    message: 'Limite de 50 uploads/hora atingido',
+    message: "Limite de 50 uploads/hora atingido",
   },
 
   // Criação de turmas
   CREATE_CLASS: {
     max: 10,
     window: 24 * 60 * 60, // 24 horas
-    message: 'Limite de 10 turmas criadas/dia atingido',
+    message: "Limite de 10 turmas criadas/dia atingido",
   },
 
   // Envio de convites
   SEND_INVITATION: {
     max: 50,
     window: 60 * 60, // 1 hora
-    message: 'Limite de 50 convites/hora atingido',
+    message: "Limite de 50 convites/hora atingido",
   },
 
   // Submissões de atividades
   SUBMIT_ACTIVITY: {
     max: 100,
     window: 60 * 60, // 1 hora
-    message: 'Limite de 100 submissões/hora atingido',
+    message: "Limite de 100 submissões/hora atingido",
   },
 };
 
@@ -121,7 +121,7 @@ export async function checkRateLimit(key, limit) {
       message: allowed ? null : limit.message,
     };
   } catch (error) {
-    console.error('[RateLimiter] Error checking rate limit:', error);
+    console.error("[RateLimiter] Error checking rate limit:", error);
     // Em caso de erro, permitir a requisição (fail-open)
     return {
       allowed: true,
@@ -136,7 +136,7 @@ export async function checkRateLimit(key, limit) {
 /**
  * Middleware de rate limiting para chatbot
  */
-export async function checkChatbotLimit(userId, userPlan = 'free') {
+export async function checkChatbotLimit(userId, userPlan = "free") {
   const planLimits = {
     free: RATE_LIMITS.CHATBOT_FREE,
     basic: RATE_LIMITS.CHATBOT_BASIC,
@@ -206,7 +206,7 @@ export async function resetRateLimit(key) {
     await redis.del(key);
     return { success: true };
   } catch (error) {
-    console.error('[RateLimiter] Error resetting rate limit:', error);
+    console.error("[RateLimiter] Error resetting rate limit:", error);
     return { success: false, error: error.message };
   }
 }
@@ -230,7 +230,7 @@ export async function getRateLimitStats(userId) {
     const now = Date.now();
 
     for (const key of keys) {
-      const type = key.split(':')[0];
+      const type = key.split(":")[0];
       const count = await redis.zcard(key);
       const limit = RATE_LIMITS[type.toUpperCase()] || RATE_LIMITS.API_GENERAL;
 
@@ -244,7 +244,7 @@ export async function getRateLimitStats(userId) {
 
     return stats;
   } catch (error) {
-    console.error('[RateLimiter] Error getting stats:', error);
+    console.error("[RateLimiter] Error getting stats:", error);
     return {};
   }
 }
@@ -256,10 +256,10 @@ export async function cleanupExpiredLimits() {
   try {
     // Redis já faz isso automaticamente com EXPIRE
     // Esta função é apenas para logging
-    console.log('[RateLimiter] Cleanup não necessário - Redis TTL automático');
+    console.log("[RateLimiter] Cleanup não necessário - Redis TTL automático");
     return { success: true };
   } catch (error) {
-    console.error('[RateLimiter] Cleanup error:', error);
+    console.error("[RateLimiter] Cleanup error:", error);
     return { success: false, error: error.message };
   }
 }
@@ -273,7 +273,7 @@ export async function incrementCounter(key, amount = 1, ttl = 3600) {
     await redis.expire(key, ttl);
     return { success: true, value: newValue };
   } catch (error) {
-    console.error('[RateLimiter] Error incrementing counter:', error);
+    console.error("[RateLimiter] Error incrementing counter:", error);
     return { success: false, error: error.message };
   }
 }
@@ -282,7 +282,9 @@ export async function incrementCounter(key, amount = 1, ttl = 3600) {
  * Hook React para verificar rate limit
  */
 export function useRateLimit(type, identifier) {
-  const [limit, setLimit] = React.useState(null);
+  import { useState } from "react";
+
+  const [limit, setLimit] = useState(null);
   const [loading, setLoading] = React.useState(false);
 
   const check = async () => {
@@ -290,25 +292,25 @@ export function useRateLimit(type, identifier) {
     try {
       let result;
       switch (type) {
-        case 'chatbot':
+        case "chatbot":
           result = await checkChatbotLimit(identifier.userId, identifier.plan);
           break;
-        case 'plagiarism':
+        case "plagiarism":
           result = await checkPlagiarismLimit(identifier);
           break;
-        case 'upload':
+        case "upload":
           result = await checkFileUploadLimit(identifier);
           break;
-        case 'api':
+        case "api":
           result = await checkAPILimit(identifier);
           break;
         default:
-          throw new Error('Unknown rate limit type');
+          throw new Error("Unknown rate limit type");
       }
       setLimit(result);
       return result;
     } catch (error) {
-      console.error('[useRateLimit] Error:', error);
+      console.error("[useRateLimit] Error:", error);
       return { allowed: true, error: true };
     } finally {
       setLoading(false);

@@ -1,17 +1,17 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { useParams, useNavigate } from 'react-router-dom';
-import { format, parseISO } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useParams, useNavigate } from "react-router-dom";
+import { format, parseISO } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { useAuth } from "@/hooks/useAuth";
 
 // Import tab components
-import AssignmentDetailsTab from './tabs/AssignmentDetailsTab';
-import AssignmentSettingsTab from './tabs/AssignmentSettingsTab';
-import QuestionBankTab from './tabs/QuestionBankTab';
-import MaterialDetailsTab from './tabs/MaterialDetailsTab';
-import PublishTab from './tabs/PublishTab';
+import AssignmentDetailsTab from "./tabs/AssignmentDetailsTab";
+import AssignmentSettingsTab from "./tabs/AssignmentSettingsTab";
+import QuestionBankTab from "./tabs/QuestionBankTab";
+import MaterialDetailsTab from "./tabs/MaterialDetailsTab";
+import PublishTab from "./tabs/PublishTab";
 
 import {
   Box,
@@ -57,7 +57,7 @@ import {
   Tooltip,
   LinearProgress,
   Badge,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Add as AddIcon,
   ArrowBack as ArrowBackIcon,
@@ -91,31 +91,34 @@ import {
   VideoLibrary as VideoLibraryIcon,
   Visibility as VisibilityIcon,
   Warning as WarningIcon,
-} from '@mui/icons-material';
-import PageHeader from '../PageHeader';
-import RichTextEditor from '../common/RichTextEditor';
+} from "@mui/icons-material";
+import PageHeader from "../PageHeader";
+import RichTextEditor from "../common/RichTextEditor";
 
 // Esquema de validação
-  const validationSchema = Yup.object().shape({
-  title: Yup.string().required('Título é obrigatório'),
+const validationSchema = Yup.object().shape({
+  title: Yup.string().required("Título é obrigatório"),
   description: Yup.string(),
-  type: Yup.string().required('Tipo de atividade é obrigatório'),
-  dueDate: Yup.date().when('hasDueDate', {
+  type: Yup.string().required("Tipo de atividade é obrigatório"),
+  dueDate: Yup.date().when("hasDueDate", {
     is: true,
-    then: Yup.date().required('Data de entrega é obrigatória'),
+    then: Yup.date().required("Data de entrega é obrigatória"),
   }),
-  dueTime: Yup.string().when('hasDueDate', {
+  dueTime: Yup.string().when("hasDueDate", {
     is: true,
-    then: Yup.string().required('Hora de entrega é obrigatória'),
+    then: Yup.string().required("Hora de entrega é obrigatória"),
   }),
-  points: Yup.number().min(0, 'Pontuação não pode ser negativa'),
-  submissionType: Yup.string().when('type', {
-    is: 'assignment',
-    then: Yup.string().required('Tipo de envio é obrigatório'),
+  points: Yup.number().min(0, "Pontuação não pode ser negativa"),
+  submissionType: Yup.string().when("type", {
+    is: "assignment",
+    then: Yup.string().required("Tipo de envio é obrigatório"),
   }),
-  allowedFileTypes: Yup.array().when('submissionType', {
-    is: 'file',
-    then: Yup.array().min(1, 'Selecione pelo menos um tipo de arquivo permitido'),
+  allowedFileTypes: Yup.array().when("submissionType", {
+    is: "file",
+    then: Yup.array().min(
+      1,
+      "Selecione pelo menos um tipo de arquivo permitido"
+    ),
   }),
 });
 
@@ -124,53 +127,53 @@ const CreateActivityForm = ({ isEditing = false, initialData = null }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const { currentUser } = useAuth();
-  
+
   // State
   const [activeStep, setActiveStep] = useState(0);
-  const [tabValue, setTabValue] = useState('details');
+  const [tabValue, setTabValue] = useState("details");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [attachments, setAttachments] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [publishDialogOpen, setPublishDialogOpen] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const [scheduledPublish, setScheduledPublish] = useState(false);
-  const [publishDate, setPublishDate] = useState('');
-  const [publishTime, setPublishTime] = useState('');
+  const [publishDate, setPublishDate] = useState("");
+  const [publishTime, setPublishTime] = useState("");
 
   // Formik initialization
   const formik = useFormik({
     initialValues: {
-      title: '',
-      description: '',
-      type: 'material',
-      status: 'draft',
-      dueDate: '',
+      title: "",
+      description: "",
+      type: "material",
+      status: "draft",
+      dueDate: "",
       points: 10,
       allowLateSubmissions: false,
-      ...(initialData || {})
+      ...(initialData || {}),
     },
     validationSchema: Yup.object({
-      title: Yup.string().required('Título é obrigatório'),
-      description: Yup.string().required('Descrição é obrigatória'),
-      type: Yup.string().required('Tipo de atividade é obrigatório'),
-      points: Yup.number().min(0, 'A pontuação não pode ser negativa')
+      title: Yup.string().required("Título é obrigatório"),
+      description: Yup.string().required("Descrição é obrigatória"),
+      type: Yup.string().required("Tipo de atividade é obrigatório"),
+      points: Yup.number().min(0, "A pontuação não pode ser negativa"),
     }),
     onSubmit: async (values) => {
       try {
         setIsSubmitting(true);
         // Handle form submission here
-        console.log('Form submitted:', values);
+        console.log("Form submitted:", values);
       } catch (error) {
-        console.error('Error submitting form:', error);
-        setError('Ocorreu um erro ao salvar a atividade');
+        console.error("Error submitting form:", error);
+        setError("Ocorreu um erro ao salvar a atividade");
       } finally {
         setIsSubmitting(false);
       }
-    }
+    },
   });
-  
+
   // Referências
   const fileInputRef = useRef(null);
 
@@ -181,29 +184,29 @@ const CreateActivityForm = ({ isEditing = false, initialData = null }) => {
         ...formik.values,
         status,
         ...(scheduledDate && { scheduledPublishDate: scheduledDate }),
-        publishedAt: status === 'published' ? new Date().toISOString() : null,
+        publishedAt: status === "published" ? new Date().toISOString() : null,
         updatedAt: new Date().toISOString(),
       };
-      
+
       // Chamar API para salvar/publicar
-      console.log('Dados para salvar:', activityData);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simular chamada à API
-      
+      console.log("Dados para salvar:", activityData);
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simular chamada à API
+
       // Redirecionar ou mostrar mensagem de sucesso
-      console.log('Atividade salva com sucesso!');
+      console.log("Atividade salva com sucesso!");
     } catch (error) {
-      console.error('Erro ao salvar atividade:', error);
+      console.error("Erro ao salvar atividade:", error);
     } finally {
       setIsPublishing(false);
     }
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <form onSubmit={formik.handleSubmit}>
-      <Box sx={{ width: '100%' }}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+      <Box sx={{ width: "100%" }}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
           <Tabs
             value={tabValue}
             onChange={(e, newValue) => setTabValue(newValue)}
@@ -213,56 +216,57 @@ const CreateActivityForm = ({ isEditing = false, initialData = null }) => {
           >
             <Tab label="Detalhes" value="details" />
             <Tab label="Configurações" value="settings" />
-            {formik.values.type === 'quiz' && (
+            {formik.values.type === "quiz" && (
               <Tab label="Banco de Questões" value="questions" />
             )}
-            {formik.values.type === 'material' && (
+            {formik.values.type === "material" && (
               <Tab label="Materiais" value="materials" />
             )}
-            <Tab 
-              label="Publicar" 
-              value="publish" 
+            <Tab
+              label="Publicar"
+              value="publish"
               disabled={!formik.dirty || !formik.isValid}
             />
           </Tabs>
         </Box>
 
         <Box sx={{ mb: 4 }}>
-          {tabValue === 'details' && (
-            {/* Conteúdo da aba de detalhes */}
-          )}
+          {tabValue === "details" &&
+            {
+              /* Conteúdo da aba de detalhes */
+            }}
 
-          {tabValue === 'settings' && (
-            <AssignmentSettingsTab 
-              formik={formik} 
-              tabValue={tabValue} 
-              onTabChange={setTabValue} 
+          {tabValue === "settings" && (
+            <AssignmentSettingsTab
+              formik={formik}
+              tabValue={tabValue}
+              onTabChange={setTabValue}
             />
           )}
 
-          {tabValue === 'questions' && formik.values.type === 'quiz' && (
-            <QuestionBankTab 
-              formik={formik} 
-              tabValue={tabValue} 
-              onTabChange={setTabValue} 
+          {tabValue === "questions" && formik.values.type === "quiz" && (
+            <QuestionBankTab
+              formik={formik}
+              tabValue={tabValue}
+              onTabChange={setTabValue}
             />
           )}
 
-          {tabValue === 'materials' && formik.values.type === 'material' && (
-            <MaterialDetailsTab 
-              formik={formik} 
-              tabValue={tabValue} 
-              onTabChange={setTabValue} 
+          {tabValue === "materials" && formik.values.type === "material" && (
+            <MaterialDetailsTab
+              formik={formik}
+              tabValue={tabValue}
+              onTabChange={setTabValue}
             />
           )}
 
-          {tabValue === 'publish' && (
-            <PublishTab 
-              formik={formik} 
-              tabValue={tabValue} 
-              onTabChange={setTabValue} 
-              onPublish={handlePublish} 
-              isPublishing={isPublishing} 
+          {tabValue === "publish" && (
+            <PublishTab
+              formik={formik}
+              tabValue={tabValue}
+              onTabChange={setTabValue}
+              onPublish={handlePublish}
+              isPublishing={isPublishing}
             />
           )}
         </Box>

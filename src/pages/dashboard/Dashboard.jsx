@@ -19,7 +19,7 @@ import { useAuth } from '@/hooks/useAuth';
     return null;
   }
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className="flex h-screen bg-background">

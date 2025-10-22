@@ -1,23 +1,29 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { motion, AnimatePresence } from "framer-motion";
+import { Link, useNavigate } from "react-router-dom";
 import {
-  Shield, Cookie, Settings, CheckCircle,
-  ExternalLink, Info, Heart, Lock
-} from 'lucide-react';
-import Button from '@/components/ui/button';
+  Shield,
+  Cookie,
+  Settings,
+  CheckCircle,
+  ExternalLink,
+  Info,
+  Heart,
+  Lock,
+} from "lucide-react";
+import Button from "@/components/ui/button";
 
-  const PrivacyButton = () => {
+const PrivacyButton = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleManagePreferences = () => {
     // Open cookie banner again by clearing storage temporarily
-    const currentPrefs = localStorage.getItem('cookie-consent');
+    const currentPrefs = localStorage.getItem("cookie-consent");
     if (currentPrefs) {
       // Store temporarily
-      sessionStorage.setItem('temp-cookie-consent', currentPrefs);
-      localStorage.removeItem('cookie-consent');
+      sessionStorage.setItem("temp-cookie-consent", currentPrefs);
+      localStorage.removeItem("cookie-consent");
       // Reload to show banner
       window.location.reload();
     }
@@ -29,25 +35,25 @@ import Button from '@/components/ui/button';
       title: "Preferências de Cookies",
       description: "Gerencie seus cookies",
       action: handleManagePreferences,
-      color: "blue"
+      color: "blue",
     },
     {
       icon: Info,
       title: "Política de Privacidade",
       description: "Como protegemos seus dados",
       link: "/privacy-policy",
-      color: "purple"
+      color: "purple",
     },
     {
       icon: Lock,
       title: "Termos de Uso",
       description: "Regras da plataforma",
       link: "/terms-of-use",
-      color: "green"
-    }
+      color: "green",
+    },
   ];
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <>
@@ -104,8 +110,12 @@ import Button from '@/components/ui/button';
                       <Shield className="w-6 h-6" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold">Privacidade & Cookies</h3>
-                      <p className="text-pink-100 text-sm">Seus dados, suas regras</p>
+                      <h3 className="text-lg font-bold">
+                        Privacidade & Cookies
+                      </h3>
+                      <p className="text-pink-100 text-sm">
+                        Seus dados, suas regras
+                      </p>
                     </div>
                   </div>
                   <Button
@@ -173,7 +183,13 @@ import Button from '@/components/ui/button';
                           </div>
                         </Link>
                       ) : (
-                        <button onClick={() => { action.action(); setIsOpen(false); }} className="w-full">
+                        <button
+                          onClick={() => {
+                            action.action();
+                            setIsOpen(false);
+                          }}
+                          className="w-full"
+                        >
                           <div className="group p-4 bg-white dark:bg-gray-700 rounded-2xl border-2 border-gray-200 dark:border-gray-600 hover:shadow-lg hover:border-blue-500 transition-all duration-300 cursor-pointer transform hover:-translate-y-0.5">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-3">

@@ -31,7 +31,7 @@ export const [loading, setLoading] = useState(true);
     outline: 'border-2 border-base-300 hover:bg-base-100 active:bg-base-200',
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <button
@@ -53,7 +53,7 @@ export const TouchTarget = ({
   minHeight = '44px',
   ...props
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div
@@ -77,7 +77,7 @@ export const TouchCard = ({
   padding = 'p-4',
   ...props
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div
@@ -98,7 +98,7 @@ export const TouchInput = ({
   className = '',
   ...props
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <input
@@ -118,7 +118,7 @@ export const TouchScrollArea = ({
   className = '',
   ...props
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div
@@ -195,7 +195,7 @@ export const TouchContainer = ({
   className = '',
   spacing = 'gap-4',
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`space-y-4 ${className}`} style={{ touchAction: 'pan-y' }}>
@@ -213,7 +213,7 @@ export const TouchList = ({
   className = '',
   itemHeight = 'min-h-[60px]',
 }) => {
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className={`divide-y divide-base-200 ${className}`}>
@@ -242,7 +242,7 @@ export const TouchModal = ({
 }) => {
   if (!isOpen) return null;
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/50 backdrop-blur-sm">

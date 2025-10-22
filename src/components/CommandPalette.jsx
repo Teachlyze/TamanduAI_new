@@ -1,6 +1,7 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useMemo } from "react";
 import {
   Search,
   Home,
@@ -16,8 +17,8 @@ import {
   Command,
   FileText,
   Video,
-  MessageSquare
-} from 'lucide-react';
+  MessageSquare,
+} from "lucide-react";
 
 /**
  * Command Palette (⌘K / Ctrl+K)
@@ -25,50 +26,138 @@ import {
  */
 export const CommandPalette = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const navigate = useNavigate();
 
   // Commands
-  const commands = useMemo(() => [
-    // Navigation
-    { id: 'home', label: 'Ir para Dashboard', icon: Home, action: () => navigate('/dashboard'), category: 'Navegação' },
-    { id: 'classes', label: 'Ver Turmas', icon: Users, action: () => navigate('/dashboard/classes'), category: 'Navegação' },
-    { id: 'activities', label: 'Ver Atividades', icon: BookOpen, action: () => navigate('/dashboard/activities'), category: 'Navegação' },
-    { id: 'calendar', label: 'Ver Calendário', icon: Calendar, action: () => navigate('/dashboard/calendar'), category: 'Navegação' },
-    { id: 'reports', label: 'Ver Relatórios', icon: BarChart3, action: () => navigate('/dashboard/reports'), category: 'Navegação' },
-    { id: 'settings', label: 'Configurações', icon: Settings, action: () => navigate('/dashboard/settings'), category: 'Navegação' },
-    
-    // Actions
-    { id: 'new-class', label: 'Criar Nova Turma', icon: Users, action: () => navigate('/dashboard/classes?action=new'), category: 'Ações' },
-    { id: 'new-activity', label: 'Criar Nova Atividade', icon: FileText, action: () => navigate('/dashboard/activities/new'), category: 'Ações' },
-    { id: 'new-meeting', label: 'Iniciar Videoconferência', icon: Video, action: () => navigate('/dashboard/meetings/new'), category: 'Ações' },
-    { id: 'chat', label: 'Abrir Chat', icon: MessageSquare, action: () => navigate('/dashboard/chat'), category: 'Ações' },
-    
-    // Theme
-    { id: 'theme-light', label: 'Tema Claro', icon: Sun, action: () => setTheme('light'), category: 'Tema' },
-    { id: 'theme-dark', label: 'Tema Escuro', icon: Moon, action: () => setTheme('dark'), category: 'Tema' },
-    { id: 'theme-contrast', label: 'Alto Contraste', icon: Palette, action: () => setTheme('high-contrast'), category: 'Tema' },
-    
-    // System
-    { id: 'logout', label: 'Sair', icon: LogOut, action: () => navigate('/logout'), category: 'Sistema' }
-  ], [navigate]);
+  const commands = useMemo(
+    () => [
+      // Navigation
+      {
+        id: "home",
+        label: "Ir para Dashboard",
+        icon: Home,
+        action: () => navigate("/dashboard"),
+        category: "Navegação",
+      },
+      {
+        id: "classes",
+        label: "Ver Turmas",
+        icon: Users,
+        action: () => navigate("/dashboard/classes"),
+        category: "Navegação",
+      },
+      {
+        id: "activities",
+        label: "Ver Atividades",
+        icon: BookOpen,
+        action: () => navigate("/dashboard/activities"),
+        category: "Navegação",
+      },
+      {
+        id: "calendar",
+        label: "Ver Calendário",
+        icon: Calendar,
+        action: () => navigate("/dashboard/calendar"),
+        category: "Navegação",
+      },
+      {
+        id: "reports",
+        label: "Ver Relatórios",
+        icon: BarChart3,
+        action: () => navigate("/dashboard/reports"),
+        category: "Navegação",
+      },
+      {
+        id: "settings",
+        label: "Configurações",
+        icon: Settings,
+        action: () => navigate("/dashboard/settings"),
+        category: "Navegação",
+      },
+
+      // Actions
+      {
+        id: "new-class",
+        label: "Criar Nova Turma",
+        icon: Users,
+        action: () => navigate("/dashboard/classes?action=new"),
+        category: "Ações",
+      },
+      {
+        id: "new-activity",
+        label: "Criar Nova Atividade",
+        icon: FileText,
+        action: () => navigate("/dashboard/activities/new"),
+        category: "Ações",
+      },
+      {
+        id: "new-meeting",
+        label: "Iniciar Videoconferência",
+        icon: Video,
+        action: () => navigate("/dashboard/meetings/new"),
+        category: "Ações",
+      },
+      {
+        id: "chat",
+        label: "Abrir Chat",
+        icon: MessageSquare,
+        action: () => navigate("/dashboard/chat"),
+        category: "Ações",
+      },
+
+      // Theme
+      {
+        id: "theme-light",
+        label: "Tema Claro",
+        icon: Sun,
+        action: () => setTheme("light"),
+        category: "Tema",
+      },
+      {
+        id: "theme-dark",
+        label: "Tema Escuro",
+        icon: Moon,
+        action: () => setTheme("dark"),
+        category: "Tema",
+      },
+      {
+        id: "theme-contrast",
+        label: "Alto Contraste",
+        icon: Palette,
+        action: () => setTheme("high-contrast"),
+        category: "Tema",
+      },
+
+      // System
+      {
+        id: "logout",
+        label: "Sair",
+        icon: LogOut,
+        action: () => navigate("/logout"),
+        category: "Sistema",
+      },
+    ],
+    [navigate]
+  );
 
   // Filter commands based on query
   const filteredCommands = useMemo(() => {
     if (!query) return commands;
-    
+
     const lowerQuery = query.toLowerCase();
-    return commands.filter(cmd =>
-      cmd.label.toLowerCase().includes(lowerQuery) ||
-      cmd.category.toLowerCase().includes(lowerQuery)
+    return commands.filter(
+      (cmd) =>
+        cmd.label.toLowerCase().includes(lowerQuery) ||
+        cmd.category.toLowerCase().includes(lowerQuery)
     );
   }, [query, commands]);
 
   // Group by category
   const groupedCommands = useMemo(() => {
     const groups = {};
-    filteredCommands.forEach(cmd => {
+    filteredCommands.forEach((cmd) => {
       if (!groups[cmd.category]) {
         groups[cmd.category] = [];
       }
@@ -81,68 +170,70 @@ export const CommandPalette = () => {
   useEffect(() => {
     const handleKeyDown = (e) => {
       // Open/close with ⌘K or Ctrl+K
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
-        setIsOpen(prev => !prev);
-        setQuery('');
+        setIsOpen((prev) => !prev);
+        setQuery("");
         setSelectedIndex(0);
       }
 
       if (!isOpen) return;
 
       // Close with Escape
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         setIsOpen(false);
-        setQuery('');
+        setQuery("");
         setSelectedIndex(0);
       }
 
       // Navigate with arrow keys
-      if (e.key === 'ArrowDown') {
+      if (e.key === "ArrowDown") {
         e.preventDefault();
-        setSelectedIndex(prev => Math.min(prev + 1, filteredCommands.length - 1));
+        setSelectedIndex((prev) =>
+          Math.min(prev + 1, filteredCommands.length - 1)
+        );
       }
 
-      if (e.key === 'ArrowUp') {
+      if (e.key === "ArrowUp") {
         e.preventDefault();
-        setSelectedIndex(prev => Math.max(prev - 1, 0));
+        setSelectedIndex((prev) => Math.max(prev - 1, 0));
       }
 
       // Execute with Enter
-      if (e.key === 'Enter' && filteredCommands[selectedIndex]) {
+      if (e.key === "Enter" && filteredCommands[selectedIndex]) {
         e.preventDefault();
         executeCommand(filteredCommands[selectedIndex]);
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    if (loading) return <LoadingScreen />;
+    window.addEventListener("keydown", handleKeyDown);
+    /* if (loading) return <LoadingScreen />; */
 
-  return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, filteredCommands, selectedIndex]);
 
   const setTheme = (theme) => {
     const html = document.documentElement;
-    html.classList.remove('dark', 'high-contrast');
-    
-    if (theme === 'dark') {
-      html.classList.add('dark');
-    } else if (theme === 'high-contrast') {
-      html.classList.add('high-contrast');
+    html.classList.remove("dark", "high-contrast");
+
+    if (theme === "dark") {
+      html.classList.add("dark");
+    } else if (theme === "high-contrast") {
+      html.classList.add("high-contrast");
     }
-    
-    localStorage.setItem('theme', theme);
+
+    localStorage.setItem("theme", theme);
     setIsOpen(false);
   };
 
   const executeCommand = (command) => {
     command.action();
     setIsOpen(false);
-    setQuery('');
+    setQuery("");
     setSelectedIndex(0);
   };
 
-  if (loading) return <LoadingScreen />;
+  /* if (loading) return <LoadingScreen />; */
 
   return (
     <AnimatePresence>
@@ -205,25 +296,31 @@ export const CommandPalette = () => {
                         const globalIndex = filteredCommands.indexOf(cmd);
                         const isSelected = globalIndex === selectedIndex;
 
-                        if (loading) return <LoadingScreen />;
+                        /* if (loading) return <LoadingScreen />; */
 
-  return (
+                        return (
                           <motion.button
                             key={cmd.id}
                             onClick={() => executeCommand(cmd)}
                             onMouseEnter={() => setSelectedIndex(globalIndex)}
                             className={`w-full flex items-center gap-3 px-4 py-3 transition-colors ${
                               isSelected
-                                ? 'bg-primary/10 border-l-2 border-primary'
-                                : 'hover:bg-muted/50 border-l-2 border-transparent'
+                                ? "bg-primary/10 border-l-2 border-primary"
+                                : "hover:bg-muted/50 border-l-2 border-transparent"
                             }`}
                           >
-                            <cmd.icon className={`w-5 h-5 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />
-                            <span className={`flex-1 text-left ${isSelected ? 'text-foreground font-medium' : 'text-foreground'}`}>
+                            <cmd.icon
+                              className={`w-5 h-5 ${isSelected ? "text-primary" : "text-muted-foreground"}`}
+                            />
+                            <span
+                              className={`flex-1 text-left ${isSelected ? "text-foreground font-medium" : "text-foreground"}`}
+                            >
                               {cmd.label}
                             </span>
                             {isSelected && (
-                              <kbd className="px-2 py-1 bg-muted rounded text-xs">↵</kbd>
+                              <kbd className="px-2 py-1 bg-muted rounded text-xs">
+                                ↵
+                              </kbd>
                             )}
                           </motion.button>
                         );
