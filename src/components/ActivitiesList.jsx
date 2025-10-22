@@ -62,8 +62,6 @@ import { getClassActivities } from '@/services/apiSupabase';
   };
 
   if (isLoading) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></PremiumCard>
@@ -74,8 +72,6 @@ import { getClassActivities } from '@/services/apiSupabase';
 
   // Error handling for denied access (RLS)
   if (error && (typeof error === 'string' ? error.toLowerCase().includes('permission') || error.toLowerCase().includes('recursion') : false)) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="flex flex-col justify-center items-center min-h-screen bg-gray-50">
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative max-w-md w-full text-center" role="alert">
@@ -87,8 +83,6 @@ import { getClassActivities } from '@/services/apiSupabase';
   }
 
   if (error) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
         <p className="font-bold">Erro</p>
@@ -96,9 +90,6 @@ import { getClassActivities } from '@/services/apiSupabase';
       </div>
     );
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="container mx-auto p-4">
       <PremiumCard variant="elevated">

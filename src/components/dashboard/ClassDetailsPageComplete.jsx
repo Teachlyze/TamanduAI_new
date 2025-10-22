@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { getClassDetails, getClassStudents } from '@/services/apiSupabase';
 import { useAuth } from "@/hooks/useAuth";

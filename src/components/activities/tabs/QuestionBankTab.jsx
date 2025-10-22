@@ -1,4 +1,5 @@
 // src/components/activities/tabs/QuestionBankTab.jsx
+import React, { useState } from 'react';
 import {
   Box,
   Button,

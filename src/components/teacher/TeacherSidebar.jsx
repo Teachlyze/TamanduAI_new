@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -65,9 +66,7 @@ import {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 60000); // Update every minute
-    if (loading) return <LoadingScreen />;
-
-  return () => clearInterval(timer);
+    return () => clearInterval(timer);
   }, []);
 
   const toggleTheme = () => {
@@ -169,13 +168,6 @@ import {
       badge: stats.activities
     },
     {
-      label: 'Correções',
-      icon: CheckCircle,
-      path: '/dashboard/corrections',
-      gradient: 'from-red-500 to-orange-500',
-      badge: stats.pendingCorrections || 0
-    },
-    {
       label: 'Alunos',
       icon: GraduationCap,
       path: '/dashboard/students',
@@ -189,16 +181,10 @@ import {
       gradient: 'from-yellow-500 to-amber-500'
     },
     {
-      label: 'Analytics',
-      icon: BarChart3,
-      path: '/dashboard/analytics',
-      gradient: 'from-orange-500 to-red-500'
-    },
-    {
       label: 'Analytics Avançado',
-      icon: TrendingUp,
+      icon: BarChart3,
       path: '/dashboard/analytics-advanced',
-      gradient: 'from-pink-500 to-rose-500'
+      gradient: 'from-indigo-500 via-purple-500 to-pink-500'
     },
     {
       label: 'Banco de Questões',
@@ -250,8 +236,6 @@ import {
     await signOut();
     navigate('/login');
   };
-
-  if (loading) return <LoadingScreen />;
 
   return (
     <motion.aside
@@ -455,9 +439,7 @@ import {
         <nav className="flex-1 space-y-0.5 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-emerald-300 dark:scrollbar-thumb-emerald-700 scrollbar-track-transparent">
           {navItems.map((item, index) => {
             const Icon = item.icon;
-            if (loading) return <LoadingScreen />;
-
-  return (
+            return (
               <NavLink
                 key={item.path}
                 to={item.path}

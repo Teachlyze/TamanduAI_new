@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -276,7 +277,7 @@ const UploadMaterialModal = ({ classId, onClose, onSuccess }) => {
                 />
                 <button
                   onClick={handleAddTag}
-                  className="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90"
+                  className="px-4 py-2 bg-primary text-slate-900 dark:text-white rounded-lg hover:opacity-90"
                 >
                   Adicionar
                 </button>

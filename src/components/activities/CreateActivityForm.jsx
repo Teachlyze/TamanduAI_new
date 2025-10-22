@@ -1,3 +1,4 @@
+import React, { useRef, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
@@ -197,9 +198,6 @@ const CreateActivityForm = ({ isEditing = false, initialData = null }) => {
       setIsPublishing(false);
     }
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <form onSubmit={formik.handleSubmit}>
       <Box sx={{ width: '100%' }}>

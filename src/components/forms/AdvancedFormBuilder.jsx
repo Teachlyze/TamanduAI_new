@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -160,8 +161,6 @@ export const [loading, setLoading] = useState(true);
         case 'number':
         case 'tel':
         case 'url':
-          if (loading) return <LoadingScreen />;
-
   return (
             <Input
               {...commonProps}
@@ -172,8 +171,6 @@ export const [loading, setLoading] = useState(true);
           );
 
         case 'textarea':
-          if (loading) return <LoadingScreen />;
-
   return (
             <Textarea
               {...commonProps}
@@ -183,8 +180,6 @@ export const [loading, setLoading] = useState(true);
           );
 
         case 'select':
-          if (loading) return <LoadingScreen />;
-
   return (
             <Select
               {...commonProps}
@@ -204,8 +199,6 @@ export const [loading, setLoading] = useState(true);
           );
 
         case 'checkbox':
-          if (loading) return <LoadingScreen />;
-
   return (
             <div className="flex items-center space-x-2">
               <Checkbox
@@ -220,8 +213,6 @@ export const [loading, setLoading] = useState(true);
           );
 
         case 'radio':
-          if (loading) return <LoadingScreen />;
-
   return (
             <RadioGroup
               {...commonProps}
@@ -239,8 +230,6 @@ export const [loading, setLoading] = useState(true);
           );
 
         case 'switch':
-          if (loading) return <LoadingScreen />;
-
   return (
             <div className="flex items-center space-x-2">
               <Switch
@@ -255,8 +244,6 @@ export const [loading, setLoading] = useState(true);
           );
 
         case 'file':
-          if (loading) return <LoadingScreen />;
-
   return (
             <Input
               {...commonProps}
@@ -266,8 +253,6 @@ export const [loading, setLoading] = useState(true);
           );
 
         default:
-          if (loading) return <LoadingScreen />;
-
   return (
             <Input
               {...commonProps}
@@ -277,9 +262,6 @@ export const [loading, setLoading] = useState(true);
           );
       }
     })();
-
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className={cn(
         layout === 'horizontal' && "flex items-center gap-4",
@@ -321,9 +303,6 @@ export const [loading, setLoading] = useState(true);
 
     return groups;
   }, [schema]);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <form onSubmit={handleSubmit} className={cn("advanced-form-builder", className)} {...props}>
       <div className={cn(

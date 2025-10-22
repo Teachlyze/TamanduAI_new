@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, Check, Trash2, X, AlertCircle, BookOpen, Users, Calendar } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
@@ -162,7 +163,7 @@ export const NotificationCenter = () => {
           <motion.span
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold"
+            className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-slate-900 dark:text-white text-xs rounded-full flex items-center justify-center font-bold"
           >
             {unreadCount > 9 ? '9+' : unreadCount}
           </motion.span>

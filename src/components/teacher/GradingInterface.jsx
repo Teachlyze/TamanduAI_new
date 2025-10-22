@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -145,9 +146,6 @@ import { ptBR } from 'date-fns/locale';
 
   const finalGrade = Math.max(0, parseFloat(grade || 0) - latePenalty);
   const percentage = maxScore > 0 ? ((finalGrade / maxScore) * 100).toFixed(1) : 0;
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="space-y-6">
       {/* Header */}

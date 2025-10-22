@@ -1,4 +1,5 @@
 // src/components/ui/async-wrapper.jsx
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -27,17 +28,12 @@ import { Button } from '@/components/ui/button';
       const timer = setTimeout(() => {
         setInternalLoading(false);
       }, 100); // Pequeno delay para mostrar skeleton
-
-      if (loading) return <LoadingScreen />;
-
   return () => clearTimeout(timer);
     }
   }, [externalLoading]);
 
   // Loading state
   if (isLoading) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="space-y-4 animate-pulse">
         {Array.from({ length: skeletonCount }).map((_, index) => (
@@ -49,8 +45,6 @@ import { Button } from '@/components/ui/button';
 
   // Error state
   if (error) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <Alert variant="destructive" className="max-w-md mx-auto">
         <AlertTriangle className="h-4 w-4" />

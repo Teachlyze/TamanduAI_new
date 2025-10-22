@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
 import { PremiumCard, LoadingScreen, EmptyState, PremiumButton, toast } from '@/components/ui';
@@ -176,14 +177,11 @@ const TeacherChatbotSettingsPage = () => {
       setTraining(false);
     }
   };
-
-  if (loading) return <LoadingScreen message="Carregando configurações..." />;
-
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-br from-purple-600 to-pink-600 p-8 rounded-2xl text-white">
         <h1 className="text-2xl font-bold flex items-center gap-3"><Bot className="w-6 h-6"/> Configurações do Chatbot</h1>
-        <p className="text-white/90">Selecione a turma e os materiais para treinar o chatbot</p>
+        <p className="text-slate-900 dark:text-white/90">Selecione a turma e os materiais para treinar o chatbot</p>
       </div>
 
       {/* Select Class */}

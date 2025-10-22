@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { Play, Pause, Square, Coffee, Clock, Zap, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import focusService from '@/services/focusService';
@@ -168,7 +169,7 @@ const FocusMode = () => {
                 <button
                   onClick={endSession}
                   disabled={loading}
-                  className="rounded-lg bg-green-600 px-6 py-3 font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                  className="rounded-lg bg-green-600 px-6 py-3 font-medium text-slate-900 dark:text-white hover:bg-green-700 disabled:opacity-50"
                 >
                   <Square className="inline h-4 w-4 mr-2" />
                   Finalizar

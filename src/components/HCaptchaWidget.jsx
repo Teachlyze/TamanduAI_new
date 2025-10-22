@@ -1,3 +1,4 @@
+import React, { forwardRef, lazy, useCallback, useEffect, useRef } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import Button from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
@@ -86,8 +87,6 @@ const HCaptchaWidget = forwardRef(({
   if (!siteKey) {
     const errorMsg = 'hCaptcha não configurado. Por favor, verifique as configurações.';
     console.error(errorMsg);
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="text-red-500 text-sm p-2 bg-red-50 rounded">
         {errorMsg}
@@ -97,12 +96,10 @@ const HCaptchaWidget = forwardRef(({
 
   // Se não estiver em desenvolvimento e lazy loading estiver habilitado
   if (!isLocalhost && lazyLoad && !isLoaded) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className={`hcaptcha-container ${className}`}>
         <div className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
-          <div className="text-gray-500 text-sm mb-3">
+          <div className="text-gray-700 dark:text-gray-400 text-sm mb-3">
             Verificação de segurança necessária
           </div>
           <Button
@@ -117,15 +114,12 @@ const HCaptchaWidget = forwardRef(({
       </div>
     );
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`hcaptcha-container ${className}`}>
       <Suspense fallback={
         <div className="flex items-center justify-center p-4">
           <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
-          <span className="ml-2 text-sm text-gray-600">Carregando verificação...</span>
+          <span className="ml-2 text-sm text-gray-800 dark:text-gray-300">Carregando verificação...</span>
         </div>
       }>
         <LazyHCaptcha

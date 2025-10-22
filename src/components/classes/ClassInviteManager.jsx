@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -84,9 +85,6 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
       locale: ptBR 
     })})`;
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <Card className={className}>
       <CardHeader>

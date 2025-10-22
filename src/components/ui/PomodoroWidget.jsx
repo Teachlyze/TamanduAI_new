@@ -1,3 +1,4 @@
+import React, { useEffect, useRef, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Clock, Play, Pause, RotateCcw, Award, Target } from 'lucide-react';
 import { PremiumCard, PremiumButton, toast } from '@/components/ui';
@@ -31,9 +32,6 @@ import { useAuth } from '@/hooks/useAuth';
     } else {
       clearInterval(intervalRef.current);
     }
-
-    if (loading) return <LoadingScreen />;
-
   return () => clearInterval(intervalRef.current);
   }, [isActive, minutes, seconds]);
 
@@ -128,8 +126,6 @@ import { useAuth } from '@/hooks/useAuth';
   const progress = ((((isBreak ? 5 : 25) - minutes) * 60 + (60 - seconds)) / ((isBreak ? 5 : 25) * 60)) * 100;
 
   if (variant === 'compact') {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-lg border border-purple-200 dark:border-purple-800 text-white hover:opacity-90">
         <Clock className="w-5 h-5 text-purple-600" />
@@ -145,9 +141,6 @@ import { useAuth } from '@/hooks/useAuth';
       </div>
     );
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <PremiumCard variant="elevated">
       <div className="p-6 space-y-6">
@@ -155,7 +148,7 @@ import { useAuth } from '@/hooks/useAuth';
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-              <Clock className="w-6 h-6 text-white" />
+              <Clock className="w-6 h-6 text-slate-900 dark:text-white" />
             </div>
             <div>
               <h3 className="text-lg font-bold">Pomodoro Timer</h3>

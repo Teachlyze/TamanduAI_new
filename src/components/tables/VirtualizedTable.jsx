@@ -1,3 +1,4 @@
+import React, { useCallback, useMemo, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -117,9 +118,6 @@ export const [loading, setLoading] = useState(true);
   // Render table row
   const renderRow = (rowData, rowIndex) => {
     const isSelected = selectedRows.has(rowIndex);
-
-    if (loading) return <LoadingScreen />;
-
   return (
       <div
         key={rowIndex}
@@ -142,9 +140,6 @@ export const [loading, setLoading] = useState(true);
         {columns.map(column => {
           const cellValue = rowData[column.key];
           const cellContent = column.render ? column.render(cellValue, rowData, rowIndex) : cellValue;
-
-          if (loading) return <LoadingScreen />;
-
   return (
             <div
               key={column.key}
@@ -169,9 +164,6 @@ export const [loading, setLoading] = useState(true);
   // Calculate total height for scroll container
   const totalHeight = data.length * rowHeight;
   const offsetY = visibleRange.startIndex * rowHeight;
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <Card className={`virtualized-table ${className}`} {...props}>
       <CardHeader className="pb-3">
@@ -202,9 +194,6 @@ export const [loading, setLoading] = useState(true);
               {Array.from({ length: visibleRange.endIndex - visibleRange.startIndex }).map((_, index) => {
                 const dataIndex = visibleRange.startIndex + index;
                 if (dataIndex >= data.length) return null;
-
-                if (loading) return <LoadingScreen />;
-
   return (
                   <div
                     key={dataIndex}

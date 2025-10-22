@@ -46,7 +46,6 @@ const PlagiarismCheck = ({ submissionId, initialText = '' }) => {
   }, [submissionId]);
 
   const getStatusIcon = () => {
-    if (loading) return <LoadingOutlined />;
     if (!check) return null;
     
     return check.status === 'completed' ? (

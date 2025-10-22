@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -39,9 +40,6 @@ import { Progress } from '@/components/ui/progress';
           },
         }));
       }, 2000);
-
-      if (loading) return <LoadingScreen />;
-
   return () => clearInterval(interval);
     }
   }, [isMonitoring]);
@@ -68,9 +66,6 @@ import { Progress } from '@/components/ui/progress';
   const lazyLoadProgress = metrics.lazyComponents.total > 0
     ? (metrics.lazyComponents.loaded / metrics.lazyComponents.total) * 100
     : 0;
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
       <motion.div
@@ -340,7 +335,7 @@ ActivitiesListPage → CreateActivityPage, ActivityPage`}
                           {component.status}
                         </Badge>
                       </div>
-                      <div className="text-xs text-gray-500">{component.size}</div>
+                      <div className="text-xs text-gray-700 dark:text-gray-400">{component.size}</div>
                     </div>
                   ))}
                 </div>

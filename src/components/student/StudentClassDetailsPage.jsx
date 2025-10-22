@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { PremiumCard, LoadingScreen, EmptyState, PremiumButton } from '@/components/ui';
@@ -53,15 +54,13 @@ const StudentClassDetailsPage = () => {
     };
     loadAll();
   }, [classId]);
-
-  if (loading) return <LoadingScreen message="Carregando turma..." />;
   if (!klass) return <EmptyState title="Turma não encontrada" description="Verifique o link e tente novamente." icon={BookOpen} />;
 
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-br from-blue-600 to-purple-600 p-8 rounded-2xl text-white">
         <h1 className="text-2xl font-bold">{klass.name}</h1>
-        <p className="text-white/90">{klass.subject || 'Sem disciplina'}</p>
+        <p className="text-slate-900 dark:text-white/90">{klass.subject || 'Sem disciplina'}</p>
       </div>
 
       {error && (

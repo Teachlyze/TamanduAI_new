@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, Target, Clock, TrendingUp, Sparkles, Flame } from 'lucide-react';
 import GamificationPanel from '@/components/gamification/GamificationPanel';
@@ -42,7 +43,7 @@ const StudentGamificationPage = () => {
             <span className="text-sm font-medium">Sistema de Gamificação</span>
           </motion.div>
           <h1 className="text-4xl font-bold mb-2">Conquistas & Progresso 🏆</h1>
-          <p className="text-white/90 text-lg">Complete missões, ganhe XP, suba de nível e conquiste badges!</p>
+          <p className="text-slate-900 dark:text-white/90 text-lg">Complete missões, ganhe XP, suba de nível e conquiste badges!</p>
         </div>
 
         {/* Floating Trophy */}

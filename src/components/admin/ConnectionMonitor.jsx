@@ -1,4 +1,5 @@
 // src/components/admin/ConnectionMonitor.jsx
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion } from 'framer-motion';
 import {
@@ -51,9 +52,6 @@ import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx'
 
     // Atualizar a cada 10 segundos
     const interval = setInterval(updateConnectionState, 10000);
-
-    if (loading) return <LoadingScreen />;
-
   return () => clearInterval(interval);
   }, []);
 
@@ -94,48 +92,36 @@ import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx'
 
     switch (state) {
       case 'connected':
-        if (loading) return <LoadingScreen />;
-
   return (
           <Badge className="bg-green-100 text-green-800 border-green-200">
             Conectado
           </Badge>
         );
       case 'connecting':
-        if (loading) return <LoadingScreen />;
-
   return (
           <Badge className="bg-blue-100 text-blue-800 border-blue-200">
             Conectando...
           </Badge>
         );
       case 'reconnecting':
-        if (loading) return <LoadingScreen />;
-
   return (
           <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
             Reconectando...
           </Badge>
         );
       case 'error':
-        if (loading) return <LoadingScreen />;
-
   return (
           <Badge className="bg-red-100 text-red-800 border-red-200">
             Erro
           </Badge>
         );
       case 'disconnected':
-        if (loading) return <LoadingScreen />;
-
   return (
           <Badge className="bg-gray-100 text-gray-800 border-gray-200">
             Desconectado
           </Badge>
         );
       default:
-        if (loading) return <LoadingScreen />;
-
   return (
           <Badge className="bg-gray-100 text-gray-800 border-gray-200">
             Verificando...
@@ -145,8 +131,6 @@ import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx'
   };
 
   if (isLoading && !connectionState) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <Card className={className}>
         <CardContent className="flex items-center justify-center p-6">
@@ -158,9 +142,6 @@ import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx'
       </Card>
     );
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -263,9 +244,6 @@ import { usePerformanceOptimization } from '@/services/performanceOptimizer.jsx'
  */
 export const IntegratedMonitoringDashboard = ({ className = '' }) => {
   const [activeTab, setActiveTab] = useState('connection');
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Tabs */}
@@ -276,8 +254,6 @@ export const IntegratedMonitoringDashboard = ({ className = '' }) => {
           { id: 'performance', label: 'Performance', icon: Zap },
         ].map((tab) => {
           const Icon = tab.icon;
-          if (loading) return <LoadingScreen />;
-
   return (
             <button
               key={tab.id}
@@ -285,7 +261,7 @@ export const IntegratedMonitoringDashboard = ({ className = '' }) => {
               className={`flex items-center space-x-2 flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                 activeTab === tab.id
                   ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  : 'text-gray-800 dark:text-gray-300 hover:text-gray-900'
               }`}
             >
               <Icon className="h-4 w-4" />
@@ -323,9 +299,6 @@ export const ConnectionIndicator = () => {
 
     checkConnection();
     const interval = setInterval(checkConnection, 30000);
-
-    if (loading) return <LoadingScreen />;
-
   return () => clearInterval(interval);
   }, []);
 
@@ -360,9 +333,6 @@ export const ConnectionIndicator = () => {
         return 'Verificando conexão...';
     }
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="flex items-center gap-2 px-2" title={getTooltipText()}>
       <div className={`w-2 h-2 rounded-full ${getIndicatorColor()}`} />

@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus,
@@ -296,7 +297,7 @@ const RubricModal = ({ rubric, activityId, onClose, onSave }) => {
                 <h4 className="text-lg font-semibold">Critérios de Avaliação</h4>
                 <button
                   onClick={addCriterion}
-                  className="whitespace-nowrap inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg bg-primary text-white hover:opacity-90"
+                  className="whitespace-nowrap inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg bg-primary text-slate-900 dark:text-white hover:opacity-90"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Adicionar Critério</span>

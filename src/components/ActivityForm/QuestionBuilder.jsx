@@ -58,7 +58,7 @@ const QuestionBuilder = ({ question, index, onUpdate, onDelete, isDragging = fal
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="cursor-move text-gray-400 hover:text-gray-600">
+              <div className="cursor-move text-gray-400 hover:text-gray-800 dark:text-gray-300">
                 <GripVertical className="w-4 h-4" />
               </div>
               <div className="flex items-center gap-2">

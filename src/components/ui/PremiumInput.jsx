@@ -1,3 +1,4 @@
+import React, { forwardRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Eye, EyeOff, AlertCircle, CheckCircle2, X } from 'lucide-react';
@@ -25,7 +26,9 @@ export const PremiumInput = React.forwardRef(({
   className = '',
   ...props
 }, ref) => {
-
+  const [internalValue, setInternalValue] = useState(value ?? '');
+  const [isFocused, setIsFocused] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const hasValue = internalValue.length > 0;
   const isPassword = type === 'password';
 

@@ -1,3 +1,4 @@
+import React, { useEffect, useMemo, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useForm } from 'react-hook-form';
 import { FiUpload, FiCheck, FiAlertCircle, FiFileText, FiX } from 'react-icons/fi';
@@ -60,8 +61,6 @@ import { BUCKETS } from '../../services/storageService';
         // silent
       }
     }, 1000);
-    if (loading) return <LoadingScreen />;
-
   return () => clearTimeout(t);
   }, [answer, files, answersByIndex, onAutosave]);
   
@@ -185,8 +184,6 @@ import { BUCKETS } from '../../services/storageService';
   
   // Se a submissão foi bem-sucedida, exibe mensagem de sucesso
   if (submissionSuccess) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="rounded-md bg-green-50 p-4 mb-6">
         <div className="flex">
@@ -205,9 +202,6 @@ import { BUCKETS } from '../../services/storageService';
       </div>
     );
   }
-  
-  if (loading) return <LoadingScreen />;
-
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
       {/* Dynamic schema-driven questions (optional) */}
@@ -223,9 +217,6 @@ import { BUCKETS } from '../../services/storageService';
 
             const value = answersByIndex[qIndex];
             const setValueFor = (v) => setAnswersByIndex(prev => ({ ...prev, [qIndex]: v }));
-
-            if (loading) return <LoadingScreen />;
-
   return (
               <div key={key} className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">{prop.title || `Pergunta ${qIndex}`}</label>
@@ -259,8 +250,6 @@ import { BUCKETS } from '../../services/storageService';
                     {prop.items.enum.map((opt) => {
                       const arr = Array.isArray(value) ? value : [];
                       const checked = arr.includes(opt);
-                      if (loading) return <LoadingScreen />;
-
   return (
                         <label key={opt} className="inline-flex items-center gap-1 text-sm">
                           <input type="checkbox" checked={checked} disabled={isSubmitting}

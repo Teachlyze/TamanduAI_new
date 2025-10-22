@@ -254,7 +254,7 @@ const showNotificationToast = (notification) => {
             </div>
             <button
               onClick={() => toast.dismiss(t.id)}
-              className="flex-shrink-0 text-gray-400 hover:text-gray-500"
+              className="flex-shrink-0 text-gray-400 hover:text-gray-700 dark:text-gray-400"
             >
               ✕
             </button>

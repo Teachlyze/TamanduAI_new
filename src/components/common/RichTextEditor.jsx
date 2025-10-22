@@ -1,3 +1,4 @@
+import React, { useEffect, useRef, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
   const RichTextEditor = ({
@@ -39,8 +40,6 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
   };
 
   if (readOnly) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div
         className={`border rounded-md p-3 min-h-[200px] bg-gray-50 ${className}`}
@@ -50,9 +49,6 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
       />
     );
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`border rounded-md ${isFocused ? 'border-blue-500' : 'border-gray-300'} ${className}`} style={style}>
       {/* Toolbar */}

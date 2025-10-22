@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, Medal, Star, TrendingUp, Users, Award, Zap, Target, Crown, Flame } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -213,9 +214,6 @@ const TeacherRankingPage = () => {
     if (position === 3) return <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white">🥉 3º Lugar</Badge>;
     return <Badge variant="outline">{position}º</Badge>;
   };
-
-  if (loading) return <Loading />;
-
   return (
     <div className="space-y-6">
       {/* Header */}

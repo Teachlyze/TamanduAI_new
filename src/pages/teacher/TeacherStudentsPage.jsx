@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -214,7 +215,7 @@ const TeacherStudentsPage = () => {
               <span className="text-sm font-medium">Gestão de Alunos</span>
             </motion.div>
             <h1 className="text-4xl font-bold mb-2">Meus Alunos 🎓</h1>
-            <p className="text-white/90 text-lg">Acompanhe o desempenho e evolução dos seus alunos</p>
+            <p className="text-slate-900 dark:text-white/90 text-lg">Acompanhe o desempenho e evolução dos seus alunos</p>
           </div>
         </div>
 

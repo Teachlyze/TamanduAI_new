@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe, ChevronDown, Check } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -40,7 +41,7 @@ const LanguageSelector = () => {
           {currentLanguage.nativeName}
         </span>
         <ChevronDown
-          className={`h-3 w-3 text-gray-500 transition-transform duration-200 ${
+          className={`h-3 w-3 text-gray-700 dark:text-gray-400 transition-transform duration-200 ${
             isOpen ? 'rotate-180' : ''
           }`}
         />

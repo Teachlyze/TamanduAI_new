@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -216,7 +217,7 @@ const SchoolTeachersPage = () => {
                   <stat.icon className="w-6 h-6" />
                 </div>
                 <div className="text-3xl font-bold mb-1">{stat.value}</div>
-                <div className="text-sm text-muted-foreground">{stat.title}</div>
+                <div className="text-sm text-slate-700 dark:text-slate-300">{stat.title}</div>
               </div>
             </PremiumCard>
           </motion.div>
@@ -232,7 +233,7 @@ const SchoolTeachersPage = () => {
         <PremiumCard variant="elevated" className="p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-700 dark:text-slate-300" />
               <Input
                 placeholder="Buscar professores por nome ou email..."
                 value={searchQuery}
@@ -306,7 +307,7 @@ const SchoolTeachersPage = () => {
                         <h3 className="font-bold text-lg truncate group-hover:text-primary transition-colors">
                           {teacher.name}
                         </h3>
-                        <p className="text-sm text-muted-foreground truncate">{teacher.email}</p>
+                        <p className="text-sm text-slate-700 dark:text-slate-300 truncate">{teacher.email}</p>
                         <div className="flex items-center gap-2 mt-2">
                           <Badge className={teacher.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}>
                             {teacher.isActive ? 'Ativo' : 'Inativo'}
@@ -319,15 +320,15 @@ const SchoolTeachersPage = () => {
                     <div className="grid grid-cols-3 gap-2 pt-4 border-t border-border">
                       <div className="text-center">
                         <div className="text-lg font-bold text-blue-600">{teacher.classesCount}</div>
-                        <div className="text-xs text-muted-foreground">Turmas</div>
+                        <div className="text-xs text-slate-700 dark:text-slate-300">Turmas</div>
                       </div>
                       <div className="text-center">
                         <div className="text-lg font-bold text-green-600">{teacher.studentsCount}</div>
-                        <div className="text-xs text-muted-foreground">Alunos</div>
+                        <div className="text-xs text-slate-700 dark:text-slate-300">Alunos</div>
                       </div>
                       <div className="text-center">
                         <div className="text-lg font-bold text-purple-600">{teacher.activitiesCount}</div>
-                        <div className="text-xs text-muted-foreground">Atividades</div>
+                        <div className="text-xs text-slate-700 dark:text-slate-300">Atividades</div>
                       </div>
                     </div>
 

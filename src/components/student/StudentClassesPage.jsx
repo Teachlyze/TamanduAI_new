@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
 import { LoadingScreen, EmptyState, PremiumCard, PremiumButton, toast } from '@/components/ui';
@@ -52,16 +53,13 @@ const StudentClassesPage = () => {
     };
     load();
   }, [user?.id]);
-
-  if (loading) return <LoadingScreen message="Carregando suas turmas..." />;
-
   return (
     <div className="space-y-6 animate-fade-in-up">
       <div className="bg-gradient-to-br from-emerald-600 to-teal-600 p-8 rounded-2xl text-white">
         <h1 className="text-2xl font-bold flex items-center gap-3">
           <Users className="w-6 h-6" /> Minhas Turmas
         </h1>
-        <p className="text-white/90">Veja as turmas das quais você participa</p>
+        <p className="text-slate-900 dark:text-white/90">Veja as turmas das quais você participa</p>
       </div>
 
       <PremiumCard variant="elevated">

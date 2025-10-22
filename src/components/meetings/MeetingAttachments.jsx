@@ -1,3 +1,4 @@
+import React, { createElement, useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useTranslation } from 'react-i18next';
 import {
@@ -142,7 +143,7 @@ import { AttachmentService } from '@/services/attachmentService';
       return <FileText className="w-4 h-4 text-red-500" />;
     }
 
-    return <File className="w-4 h-4 text-gray-500" />;
+    return <File className="w-4 h-4 text-gray-700 dark:text-gray-400" />;
   };
 
   // Format file size
@@ -155,8 +156,6 @@ import { AttachmentService } from '@/services/attachmentService';
   };
 
   if (isLoading) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="flex justify-center py-8">
         <LoadingSpinner size="md" text="Carregando anexos..." />
@@ -165,8 +164,6 @@ import { AttachmentService } from '@/services/attachmentService';
   }
 
   if (error) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="text-center py-8">
         <AlertCircle className="mx-auto h-12 w-12 text-destructive mb-4" />
@@ -181,9 +178,6 @@ import { AttachmentService } from '@/services/attachmentService';
       </div>
     );
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="space-y-4">
       {/* Upload section */}

@@ -1,3 +1,4 @@
+import React, { useEffect, useMemo, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -52,9 +53,6 @@ const StudentHeader = ({ student, onBack, onEdit }) => {
     if (!dateString) return '';
     return format(new Date(dateString), "dd/MM/yyyy", { locale: ptBR });
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <motion.div 
       initial={{ opacity: 0, y: -20 }}
@@ -260,8 +258,6 @@ const StudentDetailPage = () => {
 
   // Loading state
   if (isLoading) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         <div className="flex items-center justify-center min-h-screen">
@@ -276,8 +272,6 @@ const StudentDetailPage = () => {
 
   // Error state
   if (!student) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
@@ -312,9 +306,6 @@ const StudentDetailPage = () => {
   // Handle navigation
   const handleBack = () => navigate(-1);
   const handleEdit = () => navigate(`/dashboard/students/edit/${student.id}`);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <TooltipProvider>

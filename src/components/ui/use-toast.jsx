@@ -28,8 +28,6 @@ const toastStore = {
   
   subscribe: (listener) => {
     toastStore.listeners.push(listener)
-    if (loading) return <LoadingScreen />;
-
   return () => {
       toastStore.listeners = toastStore.listeners.filter(l => l !== listener)
     }
@@ -92,9 +90,6 @@ export function useToast() {
 
       timeouts.push(timeout)
     })
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       timeouts.forEach((timeout) => clearTimeout(timeout))
     }

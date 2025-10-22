@@ -37,7 +37,7 @@ const NotFound = () => {
       <Card className="max-w-md w-full">
         <CardHeader className="text-center pb-4">
           <div className="mx-auto w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center mb-4">
-            <SearchX className="w-10 h-10 text-white" />
+            <SearchX className="w-10 h-10 text-slate-900 dark:text-white" />
           </div>
           <CardTitle className="text-2xl font-bold">Página Não Encontrada</CardTitle>
           <p className="text-6xl font-bold text-muted-foreground/20 mt-4">404</p>

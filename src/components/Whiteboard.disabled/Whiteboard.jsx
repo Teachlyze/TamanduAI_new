@@ -69,9 +69,6 @@ import './Whiteboard.css';
     if (roomId && userId) {
       init();
     }
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       // Cleanup is handled by the useWhiteboard hook
     };
@@ -117,9 +114,6 @@ import './Whiteboard.css';
       }}
     />
   );
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div 
       className={`whiteboard-container ${className}`}

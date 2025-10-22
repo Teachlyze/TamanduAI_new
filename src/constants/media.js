@@ -31,7 +31,7 @@ export const FILE_ICONS = {
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': { icon: 'FileSpreadsheet', color: 'text-green-600' },
   'application/vnd.ms-powerpoint': { icon: 'FileSlides', color: 'text-orange-500' },
   'application/vnd.openxmlformats-officedocument.presentationml.presentation': { icon: 'FileSlides', color: 'text-orange-500' },
-  'text/plain': { icon: 'FileText', color: 'text-gray-500' },
+  'text/plain': { icon: 'FileText', color: 'text-gray-700 dark:text-gray-400' },
 
   // Imagens
   'image/': { icon: 'FileImage', color: 'text-purple-500' },

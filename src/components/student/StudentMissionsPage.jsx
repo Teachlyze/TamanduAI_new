@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
 import { PremiumCard, LoadingScreen, EmptyState, PremiumButton, toast } from '@/components/ui';
@@ -57,9 +58,6 @@ const StudentMissionsPage = () => {
     inProgress: studentMissions.filter((sm) => sm.status === 'in_progress').length,
     totalXp: studentMissions.filter((sm) => sm.status === 'completed').reduce((sum, sm) => sum + (sm.missions?.xp_reward || 0), 0),
   };
-
-  if (loading) return <LoadingScreen message="Carregando missões..." />;
-
   return (
     <div className="p-6 space-y-6">
       {/* Header */}

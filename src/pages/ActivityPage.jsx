@@ -190,8 +190,6 @@ import { FiArrowLeft } from 'react-icons/fi';
 
   // Exibe um indicador de carregamento enquanto verifica a autenticação ou carrega os dados
   if (isLoading) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="flex justify-center items-center h-screen">
         <div className="text-center">
@@ -204,8 +202,6 @@ import { FiArrowLeft } from 'react-icons/fi';
 
   // Redireciona para o login se não estiver autenticado
   if (!isAuthenticated) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="flex justify-center items-center h-screen">
         <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4">
@@ -217,8 +213,6 @@ import { FiArrowLeft } from 'react-icons/fi';
   
   // Exibe mensagem de erro se ocorrer algum problema
   if (error) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
@@ -249,9 +243,6 @@ import { FiArrowLeft } from 'react-icons/fi';
 
   // Verifica se o usuário atual é um professor
   const isTeacher = user?.user_metadata?.is_teacher || false;
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow-sm">

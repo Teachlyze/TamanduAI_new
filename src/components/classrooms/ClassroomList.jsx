@@ -44,7 +44,7 @@ const ClassroomList = ({ classrooms }) => {
             <Card.Meta
               description={getClassroomTypeTag(classroom.roomType)}
             />
-            <div className="mt-2 text-xs text-gray-500">
+            <div className="mt-2 text-xs text-gray-700 dark:text-gray-400">
               ID: {classroom.roomUuid}
             </div>
           </Card>

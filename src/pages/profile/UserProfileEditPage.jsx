@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -202,7 +203,7 @@ const UserProfileEditPage = () => {
               )}
             </div>
             <label className="absolute bottom-0 right-0 p-2 bg-primary rounded-full cursor-pointer hover:bg-primary/90 transition-colors">
-              <Camera className="w-4 h-4 text-white" />
+              <Camera className="w-4 h-4 text-slate-900 dark:text-white" />
               <input
                 type="file"
                 accept="image/*"

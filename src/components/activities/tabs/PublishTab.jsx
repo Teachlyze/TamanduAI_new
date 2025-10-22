@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import {
   Box,
@@ -297,9 +298,6 @@ import { ptBR } from 'date-fns/locale';
   const isPublishButtonDisabled = 
     isPublishing || 
     (publishOption === 'schedule' && !isScheduledDateValid);
-  
-  if (loading) return <LoadingScreen />;
-
   return (
     <Box>
       <Box sx={{ mb: 4 }}>

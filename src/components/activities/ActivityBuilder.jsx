@@ -67,9 +67,6 @@ export function RichTextEditor({ onChange, placeholder = 'Digite aqui...' }) {
       onChange(text);
     });
   }, [onChange]);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="border rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
       <RichTextPlugin
@@ -334,8 +331,6 @@ export default function ActivityBuilder({ draftId: initialDraftId, onActivityCre
     autosaveTimer.current = setTimeout(() => {
       doAutosave();
     }, 1000);
-    if (loading) return <LoadingScreen />;
-
   return () => {
       if (autosaveTimer.current) clearTimeout(autosaveTimer.current);
     };
@@ -347,8 +342,6 @@ export default function ActivityBuilder({ draftId: initialDraftId, onActivityCre
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden') doAutosave(, []);
     }, []);
-    if (loading) return <LoadingScreen />;
-
   return () => {
       window.removeEventListener('beforeunload', doAutosave);
     };
@@ -589,9 +582,6 @@ export default function ActivityBuilder({ draftId: initialDraftId, onActivityCre
       </div>
     </div>
   );
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

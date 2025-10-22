@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
@@ -293,7 +294,7 @@ const CalendarPage = () => {
               <CalendarIcon className="w-8 h-8" />
               Agenda
             </h1>
-            <p className="text-white/90">Gerencie sua agenda e compromissos</p>
+            <p className="text-slate-900 dark:text-white/90">Gerencie sua agenda e compromissos</p>
           </div>
           
           <Button

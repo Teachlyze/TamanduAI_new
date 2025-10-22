@@ -1,3 +1,4 @@
+import React, { cloneElement, lazy, useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Loader2 } from 'lucide-react';
 
@@ -38,8 +39,6 @@ export const [loading, setLoading] = useState(true);
         );
 
         observer.observe(elementRef.current);
-        if (loading) return <LoadingScreen />;
-
   return () => observer.disconnect();
       }
     }, [strategy, threshold, rootMargin]);
@@ -49,8 +48,6 @@ export const [loading, setLoading] = useState(true);
         const timer = setTimeout(() => {
           setIsVisible(true);
         }, timeout);
-        if (loading) return <LoadingScreen />;
-
   return () => clearTimeout(timer);
       }
     }, [strategy, timeout]);
@@ -71,8 +68,6 @@ export const [loading, setLoading] = useState(true);
 
     // Renderizar baseado no estado
     if (hasError) {
-      if (loading) return <LoadingScreen />;
-
   return (
         <div className="flex items-center justify-center p-8 text-red-500">
           <div className="text-center">
@@ -86,8 +81,6 @@ export const [loading, setLoading] = useState(true);
     }
 
     if (!isVisible || !component) {
-      if (loading) return <LoadingScreen />;
-
   return (
         <div ref={elementRef} className="flex items-center justify-center p-8">
           {loadingComponent || (
@@ -106,8 +99,6 @@ export const [loading, setLoading] = useState(true);
   };
 
   // Wrapper com Suspense para casos onde o componente já foi carregado
-  if (loading) return <LoadingScreen />;
-
   return (props) => (
     <Suspense fallback={fallback || <div className="animate-pulse bg-gray-200 rounded-lg h-32" />}>
       <LazyWrapper {...props} />
@@ -287,8 +278,6 @@ export const useSmartPreloading = () => {
     }
 
     window.addEventListener('popstate', handleRouteChange);
-    if (loading) return <LoadingScreen />;
-
   return () => window.removeEventListener('popstate', handleRouteChange);
   }, [preloadedComponents]);
 
@@ -327,9 +316,6 @@ export const LazyComponentWrapper = ({
       console.log(`📊 Componente ${componentName} carregado em ${loadDuration}ms`);
     }
   }, [isLoaded, loadTime, componentName]);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div data-component={componentName}>
       {React.cloneElement(children, {

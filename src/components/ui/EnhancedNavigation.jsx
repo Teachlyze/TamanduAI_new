@@ -1,4 +1,5 @@
 // src/components/ui/EnhancedNavigation.jsx
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -53,9 +54,6 @@ export const [loading, setLoading] = useState(true);
     const hasChildren = item.children && item.children.length > 0;
     const isExpanded = expandedItems.has(item.id);
     const Icon = item.icon;
-
-    if (loading) return <LoadingScreen />;
-
   return (
       <div key={item.id}>
         <button
@@ -125,9 +123,6 @@ export const [loading, setLoading] = useState(true);
       </div>
     );
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <aside
       className={`bg-base-100 border-r border-base-200 transition-all duration-300 ${
@@ -178,8 +173,6 @@ export const EnhancedBreadcrumb = ({
   className = '',
   ...props
 }) => {
-  if (loading) return <LoadingScreen />;
-
   return (
     <nav
       className={`flex items-center space-x-2 text-sm ${className}`}
@@ -230,9 +223,6 @@ export const AdvancedDropdown = ({
     'top-start': 'dropdown-top dropdown-start',
     'top-end': 'dropdown-top dropdown-end',
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`dropdown ${placements[placement]} ${className}`}>
       <button
@@ -303,18 +293,12 @@ export const EnhancedTabs = ({
     pills: 'bg-base-200 rounded-lg p-1',
     buttons: '',
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`${variants[variant]} ${className}`} {...props}>
       <div className={`flex ${variant === 'pills' ? 'gap-2' : 'gap-6'}`}>
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           const Icon = tab.icon;
-
-          if (loading) return <LoadingScreen />;
-
   return (
             <button
               key={tab.id}
@@ -389,14 +373,9 @@ export const ContextMenu = ({
   useEffect(() => {
     if (isOpen) {
       document.addEventListener('click', handleClick);
-      if (loading) return <LoadingScreen />;
-
   return () => document.removeEventListener('click', handleClick);
     }
   }, [isOpen]);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <>
       <div onContextMenu={handleContextMenu}>
@@ -494,9 +473,6 @@ export const AdvancedPagination = ({
   };
 
   if (totalPages <= 1) return null;
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`flex items-center justify-between ${className}`} {...props}>
       {/* Info */}
@@ -592,9 +568,6 @@ export const AdvancedSearch = ({
       onSearch?.(value, selectedFilter);
     }
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`relative ${className}`}>
       <div className="flex gap-2">
@@ -689,9 +662,6 @@ export const AdvancedFilter = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const activeCount = Object.values(activeFilters).filter(Boolean).length;
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`relative ${className}`}>
       <button
@@ -824,9 +794,6 @@ export const QuickActionButton = ({
   ...props
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`fixed bottom-6 right-6 z-40 ${className}`}>
       <AnimatePresence>

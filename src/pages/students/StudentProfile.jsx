@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Button from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -54,9 +55,6 @@ import { useStudentPerformance } from '../../hooks/useRedisCache';
   if (!student) {
     return <div>Aluno não encontrado</div>;
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="container mx-auto p-6">
       <PremiumCard variant="elevated">

@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -387,7 +388,7 @@ const TeacherDashboardPremium = () => {
                     </div>
                     {action.indicator && (
                       <div className="mt-4 flex items-center">
-                        <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border bg-gray-100">
+                        <Badge variant="outline" className=" dark:bg-slate-900 text-foreground border-border bg-gray-100">
                           {action.indicator}
                         </Badge>
                       </div>
@@ -512,7 +513,7 @@ const TeacherDashboardPremium = () => {
                         </p>
                       </div>
                     </div>
-                    <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border bg-blue-50 shrink-0">{event.type}</Badge>
+                    <Badge variant="outline" className=" dark:bg-slate-900 text-foreground border-border bg-blue-50 shrink-0">{event.type}</Badge>
                   </div>
                 ))}
               </div>

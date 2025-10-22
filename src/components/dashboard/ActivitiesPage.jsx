@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -154,7 +155,7 @@ const ActivitiesPage = () => {
               <div className="space-y-2">
                 <div className="flex items-center gap-3">
                   <div className="p-5 bg-gradient-to-br from-indigo-700 via-violet-700 to-purple-700 rounded-4xl shadow-4xl hover:shadow-5xl transition-all duration-700 hover:scale-130">
-                    <Activity className="h-6 w-6 text-white" />
+                    <Activity className="h-6 w-6 text-slate-900 dark:text-white" />
                   </div>
                   <h1 className="text-7xl font-black bg-gradient-to-br from-indigo-800 via-violet-800 to-purple-800 bg-clip-text text-transparent drop-shadow-3xl">
                     Atividades

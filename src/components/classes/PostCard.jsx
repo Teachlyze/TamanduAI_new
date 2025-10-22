@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Heart,
@@ -57,7 +58,7 @@ const PostCard = ({ post, isTeacher, onLike, onPin, onDelete, onToggleComments, 
         {/* Pin Badge */}
         {post.is_pinned && (
           <div className="absolute top-4 right-4 z-10">
-            <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary text-white text-xs font-medium shadow-lg">
+            <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary text-slate-900 dark:text-white text-xs font-medium shadow-lg">
               <Pin className="w-3 h-3" />
               <span>Fixado</span>
             </div>

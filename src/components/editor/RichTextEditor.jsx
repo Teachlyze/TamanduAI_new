@@ -1,3 +1,4 @@
+import React, { forwardRef, useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import LexicalEditor from './LexicalEditor';
 
@@ -69,9 +70,6 @@ export const [loading, setLoading] = useState(true);
       console.error('RichTextEditor error:', error);
     },
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`rich-text-editor ${className}`} ref={ref} {...props}>
       <div

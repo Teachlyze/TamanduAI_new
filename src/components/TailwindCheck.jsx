@@ -1,3 +1,4 @@
+import React, { createElement, useEffect } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
   const TailwindCheck = () => {
@@ -31,9 +32,6 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
     console.log('[TailwindCheck] Fonte Inter carregada:', isFontLoaded);
     
   }, []);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="fixed bottom-4 right-4 bg-white p-4 rounded-lg shadow-lg border border-gray-200 z-50 max-w-sm">
       <h2 className="text-lg font-bold mb-2">Verificação do Tailwind</h2>

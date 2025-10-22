@@ -1,3 +1,4 @@
+import React, { useEffect, useRef, useState } from 'react';
 import { PremiumCard } from '@/components/ui/PremiumCard'
 import { PremiumButton } from '@/components/ui/PremiumButton';
 import { useParams } from 'react-router-dom';

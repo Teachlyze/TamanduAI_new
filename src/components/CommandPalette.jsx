@@ -1,3 +1,4 @@
+import React, { useState, useMemo, useEffect } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -116,9 +117,7 @@ export const CommandPalette = () => {
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    if (loading) return <LoadingScreen />;
-
-  return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, filteredCommands, selectedIndex]);
 
   const setTheme = (theme) => {
@@ -141,8 +140,6 @@ export const CommandPalette = () => {
     setQuery('');
     setSelectedIndex(0);
   };
-
-  if (loading) return <LoadingScreen />;
 
   return (
     <AnimatePresence>
@@ -205,9 +202,7 @@ export const CommandPalette = () => {
                         const globalIndex = filteredCommands.indexOf(cmd);
                         const isSelected = globalIndex === selectedIndex;
 
-                        if (loading) return <LoadingScreen />;
-
-  return (
+                        return (
                           <motion.button
                             key={cmd.id}
                             onClick={() => executeCommand(cmd)}

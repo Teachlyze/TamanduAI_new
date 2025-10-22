@@ -69,8 +69,6 @@ import { Settings, Type, Minimize2, Maximize2, Sun, Moon } from 'lucide-react';
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    if (loading) return <LoadingScreen />;
-
   return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -96,9 +94,6 @@ import { Settings, Type, Minimize2, Maximize2, Sun, Moon } from 'lucide-react';
       lineHeight: height
     }));
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="fixed bottom-4 right-4 z-50" ref={menuRef}>
       <div className="relative">

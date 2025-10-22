@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, TrendingUp, Award, Star } from 'lucide-react';
@@ -16,8 +17,6 @@ import { Zap, TrendingUp, Award, Star } from 'lucide-react';
         setVisible(false);
         setTimeout(onClose, 300);
       }, 3000);
-      if (loading) return <LoadingScreen />;
-
   return () => clearTimeout(timer);
     }
   }, [show, onClose]);
@@ -39,9 +38,6 @@ import { Zap, TrendingUp, Award, Star } from 'lucide-react';
     if (reason?.includes('streak')) return 'Streak mantido!';
     return 'XP ganho!';
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <AnimatePresence>
       {visible && (
@@ -80,7 +76,7 @@ import { Zap, TrendingUp, Award, Star } from 'lucide-react';
                     repeat: 2,
                   }}
                 >
-                  <Icon className="h-6 w-6 text-white" />
+                  <Icon className="h-6 w-6 text-slate-900 dark:text-white" />
                 </motion.div>
 
                 {/* Content */}

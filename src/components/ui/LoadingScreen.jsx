@@ -46,7 +46,7 @@ export const LoadingScreen = ({ message = 'Carregando...' }) => {
           className="mb-8"
         >
           <div className="w-20 h-20 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto shadow-themed-lg">
-            <BookOpen className="w-10 h-10 text-white" />
+            <BookOpen className="w-10 h-10 text-slate-900 dark:text-white" />
           </div>
         </motion.div>
 

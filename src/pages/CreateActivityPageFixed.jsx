@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from "@/hooks/useAuth";
 import { ArrowLeft, FileText, Save, X } from 'lucide-react';
@@ -107,7 +108,7 @@ const CreateActivityPage = () => {
         <PremiumCard className="p-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
-              <FileText className="w-5 h-5 text-white" />
+              <FileText className="w-5 h-5 text-slate-900 dark:text-white" />
             </div>
             <div>
               <h2 className="text-xl font-bold">Informações Básicas</h2>

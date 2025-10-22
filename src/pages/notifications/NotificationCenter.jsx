@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Bell, 
@@ -160,9 +161,6 @@ const NotificationCenter = () => {
     };
     return colors[type] || 'from-blue-500 to-purple-500';
   };
-
-  if (loading) return <LoadingScreen message="Carregando notificações..." />;
-
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
   return (

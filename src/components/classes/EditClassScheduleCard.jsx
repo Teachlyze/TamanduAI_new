@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -121,9 +122,6 @@ import { motion, AnimatePresence } from 'framer-motion';
     const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
     return days;
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <Card className="bg-white/80 backdrop-blur-sm shadow-lg">
       <CardHeader>

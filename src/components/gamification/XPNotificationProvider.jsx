@@ -1,4 +1,4 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
+import React, { useEffect, useState } from 'react';
 import { xpEventBus } from '@/hooks/useGamification';
 import XPNotification from './XPNotification';
 
@@ -11,7 +11,7 @@ import XPNotification from './XPNotification';
 
   useEffect(() => {
     const unsubscribe = xpEventBus.subscribe((xp, reason) => {
-      setNotification({ xp, reason, show: true }, []); // TODO: Add dependencies
+      setNotification({ xp, reason, show: true }); // TODO: Add dependencies
     });
 
     return unsubscribe;
@@ -20,8 +20,6 @@ import XPNotification from './XPNotification';
   const handleClose = () => {
     setNotification(null);
   };
-
-  if (loading) return <LoadingScreen />;
 
   return (
     <>

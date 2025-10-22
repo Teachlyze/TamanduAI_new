@@ -1,3 +1,4 @@
+import React, { createElement, useCallback, useEffect, useRef, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -182,9 +183,6 @@ export const [loading, setLoading] = useState(true);
       ctx.lineWidth = currentWidth;
     }
   }, [currentColor, currentWidth]);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <Card className={`whiteboard-canvas ${className}`} {...props}>
       <CardHeader className="pb-4">
@@ -296,7 +294,7 @@ export const [loading, setLoading] = useState(true);
 
           {readOnly && (
             <div className="absolute inset-0 bg-gray-50 bg-opacity-50 flex items-center justify-center">
-              <span className="text-gray-500 text-lg">Modo somente leitura</span>
+              <span className="text-gray-700 dark:text-gray-400 text-lg">Modo somente leitura</span>
             </div>
           )}
         </div>

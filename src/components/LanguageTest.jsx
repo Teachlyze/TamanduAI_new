@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useTranslation } from 'react-i18next';
 import { changeLanguage } from '../i18n';
@@ -18,9 +19,6 @@ import { Button } from './ui/button';
     };
 
     i18n.on('languageChanged', handleLanguageChanged);
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       i18n.off('languageChanged', handleLanguageChanged);
     };
@@ -39,9 +37,6 @@ import { Button } from './ui/button';
   const toggleTestMode = () => {
     setIsTestMode(!isTestMode);
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="p-6 max-w-2xl mx-auto bg-white dark:bg-gray-900 rounded-lg shadow-lg">
       <div className="flex justify-between items-center mb-6">

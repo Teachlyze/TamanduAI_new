@@ -1,5 +1,5 @@
 // src/components/admin/HealthDashboard.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Activity, CheckCircle, AlertTriangle, XCircle, Clock, Zap } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';

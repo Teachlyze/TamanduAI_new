@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
   const NOTIFICATION_TYPES = {
@@ -89,8 +90,6 @@ const Notifications = () => {
     
     // Set up polling to check for new notifications
     const interval = setInterval(fetchNotifications, 5 * 60 * 1000); // Check every 5 minutes
-    if (loading) return <LoadingScreen />;
-
   return () => clearInterval(interval);
   }, [fetchNotifications]);
 
@@ -125,7 +124,7 @@ const Notifications = () => {
       case NOTIFICATION_TYPES.TASK_SUBMITTED:
         return <BookOpen className={`${iconClass} text-blue-500`} />;
       default:
-        return <Bell className={`${iconClass} text-gray-500`} />;
+        return <Bell className={`${iconClass} text-gray-700 dark:text-gray-400`} />;
     }
   };
 
@@ -159,9 +158,6 @@ const Notifications = () => {
         break;
     }
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <DropdownMenu onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
@@ -173,7 +169,7 @@ const Notifications = () => {
         >
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-slate-900 dark:text-white">
               {unreadCount}
             </span>
           )}

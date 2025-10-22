@@ -1,3 +1,4 @@
+import React, { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import {
   PremiumCard,

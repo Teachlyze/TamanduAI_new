@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import {
   PremiumCard,
   StatsCard,
@@ -110,7 +111,7 @@ export default function UserProfilePagePremium() {
             <User className="w-8 h-8" />
             Meu Perfil
           </h1>
-          <p className="text-white/90">Gerencie suas informações pessoais e preferências</p>
+          <p className="text-slate-900 dark:text-white/90">Gerencie suas informações pessoais e preferências</p>
         </div>
       </div>
 

@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -111,9 +112,6 @@ export const SidebarPremium = ({ isOpen, onClose }) => {
     }
     return location.pathname.startsWith(href);
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <>
       {/* Mobile backdrop */}
@@ -184,9 +182,6 @@ export const SidebarPremium = ({ isOpen, onClose }) => {
             {navigation.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.href);
-              
-              if (loading) return <LoadingScreen />;
-
   return (
                 <Link
                   key={item.name}

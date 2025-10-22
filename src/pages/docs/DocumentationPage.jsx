@@ -1,3 +1,4 @@
+import React, { useEffect, useMemo, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import Seo from '@/components/Seo';
 import { useNavigate } from 'react-router-dom';
@@ -1010,9 +1011,6 @@ const calculateXP = (score, maxScore) => {
     // Salvar feedback (aqui você poderia enviar para analytics)
     console.log(`Feedback: ${type} na seção ${currentSection.id}`);
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="w-full min-h-screen bg-gray-50 dark:bg-gray-900">
       <Seo
@@ -1157,9 +1155,6 @@ const calculateXP = (score, maxScore) => {
                     {filteredSections.map((section, index) => {
                       const Icon = section.icon;
                       const isActive = selectedSection === section.id;
-                      
-                      if (loading) return <LoadingScreen />;
-
   return (
                         <motion.button
                           key={section.id}

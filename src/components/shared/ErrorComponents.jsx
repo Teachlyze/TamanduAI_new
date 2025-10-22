@@ -10,7 +10,7 @@ export const ErrorFallback = ({ error, resetErrorBoundary }) => {
       {resetErrorBoundary && (
         <button
           onClick={resetErrorBoundary}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+          className="px-4 py-2 bg-blue-600 text-slate-900 dark:text-white rounded hover:bg-blue-700 transition-colors"
         >
           Try again
         </button>
@@ -20,5 +20,5 @@ export const ErrorFallback = ({ error, resetErrorBoundary }) => {
 };
 
 export const Loading = () => (
-  <div className="w-full py-10 text-center text-gray-500">Loading...</div>
+  <div className="w-full py-10 text-center text-gray-700 dark:text-gray-400">Loading...</div>
 );

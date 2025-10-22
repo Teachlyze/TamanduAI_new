@@ -1,5 +1,5 @@
 // src/components/ui/MobileOptimized.jsx
-import { LoadingScreen } from '@/components/ui/LoadingScreen' from 'react';
+import React, { LoadingScreen, useEffect, useState } from 'react';
 
 /**
  * Componentes otimizados especificamente para mobile
@@ -15,8 +15,6 @@ export const [loading, setLoading] = useState(true);
   actions,
   className = '',
 }) => {
-  if (loading) return <LoadingScreen />;
-
   return (
     <header className={`sticky top-0 z-50 bg-base-100/95 backdrop-blur-sm border-b border-base-200 p-4 ${className}`}>
       <div className="flex items-center justify-between gap-4">
@@ -53,8 +51,6 @@ export const MobileCard = ({
   padding = 'p-4',
   className = '',
 }) => {
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`bg-base-100 rounded-lg border border-base-200 shadow-sm ${padding} ${className}`}>
       {(title || subtitle || actions) && (
@@ -92,8 +88,6 @@ export const MobileGrid = ({
   gap = 'gap-4',
   className = '',
 }) => {
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`grid grid-cols-${cols} sm:grid-cols-${Math.min(cols + 1, 4)} ${gap} ${className}`}>
       {children}
@@ -110,8 +104,6 @@ export const MobileList = ({
   className = '',
   divider = true,
 }) => {
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`divide-y divide-base-200 ${className}`}>
       {items.map((item, index) => (
@@ -131,8 +123,6 @@ export const MobileForm = ({
   onSubmit,
   className = '',
 }) => {
-  if (loading) return <LoadingScreen />;
-
   return (
     <form onSubmit={onSubmit} className={`space-y-4 ${className}`}>
       {children}
@@ -147,8 +137,6 @@ export const MobileScrollContainer = ({
   children,
   className = '',
 }) => {
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`overflow-x-auto -mx-4 px-4 ${className}`}>
       <div className="flex gap-4 pb-4" style={{ width: 'max-content' }}>
@@ -183,9 +171,6 @@ export const MobileBadge = ({
     md: 'px-2 py-1 text-xs',
     lg: 'px-3 py-1 text-sm',
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <span className={`inline-flex items-center rounded-full font-medium ${variants[variant]} ${sizes[size]} ${className}`}>
       {children}
@@ -201,8 +186,6 @@ export const MobileDropdown = ({
   items,
   className = '',
 }) => {
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`dropdown dropdown-end ${className}`}>
       <div tabIndex={0} className="btn btn-ghost btn-sm">
@@ -238,9 +221,6 @@ export const useIsMobile = () => {
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
-
-    if (loading) return <LoadingScreen />;
-
   return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -263,9 +243,6 @@ export const MobileText = ({
     lg: 'text-lg',
     xl: 'text-xl',
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <p className={`${sizeClasses[size]} text-base-content ${truncate ? 'truncate' : ''} ${className}`}>
       {children}

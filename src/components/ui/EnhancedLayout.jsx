@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Bell, User, Settings, LogOut } from 'lucide-react';
@@ -35,9 +36,6 @@ export const [loading, setLoading] = useState(true);
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
-
-    if (loading) return <LoadingScreen />;
-
   return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -51,8 +49,6 @@ export const [loading, setLoading] = useState(true);
       };
 
       document.addEventListener('mousedown', handleClickOutside);
-      if (loading) return <LoadingScreen />;
-
   return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [sidebarOpen, isMobile]);
@@ -80,9 +76,6 @@ export const [loading, setLoading] = useState(true);
     closed: { opacity: 0, display: 'none' },
     open: { opacity: 1, display: 'block' },
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`min-h-screen bg-base-100 ${className}`}>
       {/* Header */}
@@ -213,16 +206,11 @@ export const EnhancedSidebar = ({
   onItemClick,
   className = '',
 }) => {
-  if (loading) return <LoadingScreen />;
-
   return (
     <nav className={`space-y-1 ${className}`}>
       {items.map((item) => {
         const isActive = activeItem === item.id;
         const Icon = item.icon;
-
-        if (loading) return <LoadingScreen />;
-
   return (
           <button
             key={item.id}
@@ -270,9 +258,6 @@ export const EnhancedCard = ({
     elevated: 'bg-base-100 shadow-lg border-transparent',
     glass: 'glass border-base-200/50',
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div
       className={`card ${variants[variant]} ${className}`}
@@ -342,9 +327,6 @@ export const EnhancedButton = ({
     disabled ? 'btn-disabled' : '',
     className,
   ].filter(Boolean).join(' ');
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <button
       className={classes}
@@ -374,9 +356,6 @@ export const ResponsiveContainer = ({
     '2xl': 'max-w-7xl',
     none: 'max-w-none',
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div
       className={`mx-auto ${sizeClasses[size]} ${padding ? 'px-4 sm:px-6 lg:px-8' : ''} ${className}`}

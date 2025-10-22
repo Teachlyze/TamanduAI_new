@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { Users, GraduationCap, BookOpen, TrendingUp, Clock } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import schoolService from '@/services/schoolService';

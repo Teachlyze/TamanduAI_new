@@ -1,3 +1,4 @@
+import React, { createContext, useContext, useEffect, useMemo, useCallback, useReducer } from 'react';
 
 /**
  * Advanced State Management System for TamanduAI

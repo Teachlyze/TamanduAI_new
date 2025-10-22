@@ -1,4 +1,5 @@
 // src/components/ui/AdvancedComponents.jsx
+import React, { useEffect, useRef, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -69,9 +70,6 @@ export const [loading, setLoading] = useState(true);
     const dayEvents = getEventsForDate(date);
     const isSelected = selectedDate?.toDateString() === date.toDateString();
     const isToday = new Date().toDateString() === date.toDateString();
-
-    if (loading) return <LoadingScreen />;
-
   return (
       <motion.div
         key={day}
@@ -115,9 +113,6 @@ export const [loading, setLoading] = useState(true);
       </motion.div>
     );
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`card bg-base-100 ${className}`}>
       {/* Header do calendário */}
@@ -248,9 +243,6 @@ export const ActivityList = ({
       default: return 'info';
     }
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Filtros e controles */}
@@ -306,9 +298,6 @@ export const ActivityList = ({
             const StatusIcon = getStatusIcon(activity.status);
             const statusColor = getStatusColor(activity.status);
             const displayPoints = (activity?.points ?? activity?.total_points ?? null);
-
-            if (loading) return <LoadingScreen />;
-
   return (
               <motion.div
                 key={activity.id}
@@ -407,9 +396,6 @@ export const UserProfileCard = ({
     setIsFollowing(!isFollowing);
     onFollow?.(!isFollowing);
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -553,9 +539,6 @@ export const MessageBubble = ({
   useEffect(() => {
     setIsVisible(true);
   }, []);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 10, scale: 0.95 }}
@@ -667,9 +650,6 @@ export const MediaPlayer = ({
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`card bg-base-100 ${className}`}>
       {/* Thumbnail/Capa */}
@@ -796,9 +776,6 @@ export const ImageGallery = ({
     3: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
     4: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <>
       <div className={`grid ${gridCols[columns]} ${gap} ${className}`}>
@@ -920,9 +897,6 @@ export const Leaderboard = ({
       default: return 'bg-base-100';
     }
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`card bg-base-100 ${className}`}>
       <div className="card-header">
@@ -942,9 +916,6 @@ export const Leaderboard = ({
           {users.map((user, index) => {
             const rank = index + 1;
             const isCurrentUser = user.id === currentUserId;
-
-            if (loading) return <LoadingScreen />;
-
   return (
               <motion.div
                 key={user.id}
@@ -1016,8 +987,6 @@ export const ActivityFeed = ({
   onShare,
   className = '',
 }) => {
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`space-y-4 ${className}`}>
       {activities.map((activity) => (

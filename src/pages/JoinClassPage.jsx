@@ -134,8 +134,6 @@ export default function JoinClassPage() {
   const getStatusContent = () => {
     switch (status) {
       case 'loading':
-        if (loading) return <LoadingScreen />;
-
   return (
           <div className="flex flex-col items-center justify-center py-12 space-y-4">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -144,8 +142,6 @@ export default function JoinClassPage() {
         );
         
       case 'not_authenticated':
-        if (loading) return <LoadingScreen />;
-
   return (
           <Card className="max-w-2xl mx-auto">
             <CardHeader>
@@ -200,8 +196,6 @@ export default function JoinClassPage() {
         );
 
       case 'preview':
-        if (loading) return <LoadingScreen />;
-
   return (
           <Card className="max-w-2xl mx-auto">
             <CardHeader>
@@ -286,8 +280,6 @@ export default function JoinClassPage() {
         );
 
       case 'confirming':
-        if (loading) return <LoadingScreen />;
-
   return (
           <div className="flex flex-col items-center justify-center py-12 space-y-4">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -296,8 +288,6 @@ export default function JoinClassPage() {
         );
         
       case 'success':
-        if (loading) return <LoadingScreen />;
-
   return (
           <Card className="max-w-md mx-auto">
             <CardHeader className="text-center">
@@ -322,8 +312,6 @@ export default function JoinClassPage() {
         
         
       case 'error':
-        if (loading) return <LoadingScreen />;
-
   return (
           <Card className="max-w-md mx-auto">
             <CardHeader className="text-center">
@@ -358,9 +346,6 @@ export default function JoinClassPage() {
         return null;
     }
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <div className="container max-w-4xl py-12 px-4">

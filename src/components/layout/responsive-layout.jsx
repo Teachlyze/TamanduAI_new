@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Bell, Search, User, Settings } from 'lucide-react';
@@ -64,8 +65,6 @@ export const useResponsive = () => {
     };
 
     window.addEventListener('resize', handleResize);
-    if (loading) return <LoadingScreen />;
-
   return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -168,9 +167,6 @@ export const Sidebar = ({
   if (isMobile && !mobileMenuOpen) {
     return null;
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <motion.aside
       initial={false}
@@ -220,9 +216,6 @@ export const Header = ({
   const { mobileMenuOpen, toggle } = useSidebar();
 
   const headerHeight = isMobile ? mobileHeight : height;
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <header
       className={cn(
@@ -293,13 +286,8 @@ export const MainLayout = ({
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    if (loading) return <LoadingScreen />;
-
   return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isMobile, isOpen, closeMobileMenu]);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={cn('flex h-screen bg-background', className)} {...props}>
       {/* Sidebar overlay for mobile */}
@@ -390,9 +378,6 @@ export const ContentArea = ({
 
     return widths[maxWidth] || `max-w-${maxWidth}`;
   }, [maxWidth]);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div
       className={cn(
@@ -436,9 +421,6 @@ export const GridLayout = ({
 
     return colsArray.join(' ');
   }, [cols]);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div
       className={cn(
@@ -464,9 +446,6 @@ export const ResponsiveContainer = ({
   ...props
 }) => {
   const { isMobile } = useResponsive();
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div
       className={cn(

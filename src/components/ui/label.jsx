@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
 const Label = React.forwardRef(({ className, ...props }, ref) => (

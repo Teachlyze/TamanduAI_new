@@ -431,7 +431,7 @@ export const ErrorMetricsDashboard = ({ className = '' }) => {
                 <span className="text-sm truncate flex-1 mr-2">
                   {error.key.split(':').slice(-1)[0]}
                 </span>
-                <span className="text-sm font-medium text-gray-600">
+                <span className="text-sm font-medium text-gray-800 dark:text-gray-300">
                   {error.count}
                 </span>
               </div>

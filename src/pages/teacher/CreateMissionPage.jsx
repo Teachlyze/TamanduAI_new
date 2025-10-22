@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
@@ -116,9 +117,6 @@ const CreateMissionPage = () => {
       setSaving(false);
     }
   };
-
-  if (loading) return <LoadingScreen message="Carregando..." />;
-
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       {/* Header */}
@@ -146,7 +144,7 @@ const CreateMissionPage = () => {
         <div className="p-6 space-y-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
-              <Target className="w-6 h-6 text-white" />
+              <Target className="w-6 h-6 text-slate-900 dark:text-white" />
             </div>
             <div>
               <h2 className="text-xl font-bold">Informações da Missão</h2>

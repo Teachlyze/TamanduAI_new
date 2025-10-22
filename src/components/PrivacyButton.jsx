@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
@@ -46,9 +47,6 @@ import Button from '@/components/ui/button';
       color: "green"
     }
   ];
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <>
       {/* Privacy Button */}
@@ -112,7 +110,7 @@ import Button from '@/components/ui/button';
                     variant="ghost"
                     size="sm"
                     onClick={() => setIsOpen(false)}
-                    className="text-white hover:bg-white/20 rounded-xl"
+                    className="text-slate-900 dark:text-white hover:bg-white/20 rounded-xl"
                   >
                     ✕
                   </Button>

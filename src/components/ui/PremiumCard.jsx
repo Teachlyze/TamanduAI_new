@@ -160,7 +160,7 @@ export const FeatureCard = ({
   <PremiumCard variant="glass" hover className={className}>
     <PremiumCardContent className="space-y-4">
       <div className={cn("w-14 h-14 rounded-2xl bg-gradient-to-br flex items-center justify-center shadow-lg", gradient)}>
-        {Icon && <Icon className="w-7 h-7 text-white" />}
+        {Icon && <Icon className="w-7 h-7 text-slate-900 dark:text-white" />}
       </div>
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">{title}</h3>

@@ -585,7 +585,7 @@ export const getUserClasses = async (userId, role = 'student') => {
     }
 
     if (role === 'teacher') {
-      // Professor: turmas em que ele é created_by
+      // Professor: apenas turmas que ele criou
       const { data, error } = await supabase
         .from('classes')
         .select('id, name, subject, created_by, created_at, students_count, activities_count')

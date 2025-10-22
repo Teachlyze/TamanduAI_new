@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Accessibility, Sun, Moon, Globe, RotateCcw, Eye, Type, Settings } from 'lucide-react';
@@ -37,9 +38,7 @@ import useTheme from '../hooks/useTheme';
         setIsMinimized(true);
         localStorage.setItem('accessibility-minimized', 'true');
       }, 5000);
-      if (loading) return <LoadingScreen />;
-
-  return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
     }
   }, []);
 
@@ -164,8 +163,6 @@ import useTheme from '../hooks/useTheme';
       console.error('Erro ao alterar idioma:', error);
     }
   };
-
-  if (loading) return <LoadingScreen />;
 
   return (
     <>
@@ -331,7 +328,7 @@ import useTheme from '../hooks/useTheme';
                       }`}
                     >
                       <span
-                        className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition-all duration-300 flex items-center justify-center ${
+                        className={`h-6 w-6 transform rounded-full bg-white shadow-md transition-all duration-300 flex items-center justify-center ${
                           settings.highContrast ? 'translate-x-7' : 'translate-x-1'
                         }`}
                       >

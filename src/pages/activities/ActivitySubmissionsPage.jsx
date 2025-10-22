@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -112,9 +113,6 @@ const ActivitySubmissionsPage = () => {
     const variant = variants[status] || variants.submitted;
     return <Badge className={variant.color}>{variant.label}</Badge>;
   };
-
-  if (loading) return <LoadingScreen message="Carregando submissões..." />;
-
   if (!activity) {
     return (
       <div className="flex items-center justify-center min-h-screen">

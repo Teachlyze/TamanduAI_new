@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
@@ -61,15 +62,13 @@ const StudentDiscussionPage = () => {
       setPosting(false);
     }
   };
-
-  if (loading) return <LoadingScreen message="Carregando discussão..." />;
   if (!discussion) return <EmptyState icon={MessageSquare} title="Discussão não encontrada" description="Verifique o link." />;
 
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-br from-sky-600 to-indigo-600 p-8 rounded-2xl text-white">
         <h1 className="text-2xl font-bold flex items-center gap-3"><MessageSquare className="w-6 h-6"/> {discussion.title}</h1>
-        {discussion.description && <p className="text-white/90">{discussion.description}</p>}
+        {discussion.description && <p className="text-slate-900 dark:text-white/90">{discussion.description}</p>}
       </div>
 
       <PremiumCard variant="elevated">

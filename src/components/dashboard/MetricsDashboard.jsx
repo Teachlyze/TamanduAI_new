@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -118,8 +119,6 @@ export const [loading, setLoading] = useState(true);
 
     if (autoRefresh) {
       const interval = setInterval(loadDashboardData, refreshInterval * 1000);
-      if (loading) return <LoadingScreen />;
-
   return () => clearInterval(interval);
     }
   }, [loadDashboardData, autoRefresh, refreshInterval]);
@@ -219,8 +218,6 @@ export const [loading, setLoading] = useState(true);
   );
 
   if (isLoading && !dashboardData.overview) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className={`metrics-dashboard ${className}`}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -239,9 +236,6 @@ export const [loading, setLoading] = useState(true);
       </div>
     );
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`metrics-dashboard ${className}`} {...props}>
       {/* Header */}

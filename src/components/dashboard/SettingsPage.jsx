@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -133,8 +134,6 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
 
   // Show loading state while settings are being loaded
   if (isLoading) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="w-full space-y-8">
         <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-3xl p-8 text-white">
@@ -152,9 +151,6 @@ import AccessibilitySettings from '@/components/ui/AccessibilitySettings';
       </div>
     );
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="w-full space-y-8">
       {/* Header Section with Gradient Background */}

@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -56,7 +57,7 @@ const TeacherClassroomsPage = () => {
     try {
       setLoading(true);
 
-      // Buscar turmas do professor
+      // Buscar turmas do professor (apenas as que ele criou)
       const { data: classesData, error: classesError } = await supabase
         .from('classes')
         .select('*')
@@ -207,8 +208,8 @@ const TeacherClassroomsPage = () => {
                     <stat.icon className="w-6 h-6" />
                   </div>
                 </div>
-                <div className="text-3xl font-bold mb-1">{stat.value}</div>
-                <div className="text-sm text-muted-foreground">{stat.title}</div>
+                <div className="text-3xl font-bold mb-1 text-slate-900 dark:text-white">{stat.value}</div>
+                <div className="text-sm text-slate-700 dark:text-slate-300">{stat.title}</div>
               </div>
             </PremiumCard>
           </motion.div>
@@ -330,7 +331,7 @@ const TeacherClassroomsPage = () => {
                     </div>
 
                     {classItem.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                      <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-2 mb-4">
                         {classItem.description}
                       </p>
                     )}
@@ -340,13 +341,13 @@ const TeacherClassroomsPage = () => {
                       <div className="flex items-center gap-4 text-sm">
                         <div className="flex items-center gap-1">
                           <Users className="w-4 h-4 text-blue-600" />
-                          <span className="font-medium">{classItem.studentsCount}</span>
-                          <span className="text-muted-foreground">alunos</span>
+                          <span className="font-medium text-slate-900 dark:text-white">{classItem.studentsCount}</span>
+                          <span className="text-slate-700 dark:text-slate-300">alunos</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <BookOpen className="w-4 h-4 text-purple-600" />
-                          <span className="font-medium">{classItem.activitiesCount}</span>
-                          <span className="text-muted-foreground">atividades</span>
+                          <span className="font-medium text-slate-900 dark:text-white">{classItem.activitiesCount}</span>
+                          <span className="text-slate-700 dark:text-slate-300">atividades</span>
                         </div>
                       </div>
                       <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />

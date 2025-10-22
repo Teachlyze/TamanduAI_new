@@ -1,3 +1,4 @@
+import React, { useMemo } from 'react';
 import { Loader2, Loader, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

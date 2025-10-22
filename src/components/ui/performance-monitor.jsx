@@ -1,3 +1,4 @@
+import React, { useEffect, useMemo, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Activity, Zap, AlertTriangle, CheckCircle, TrendingUp } from 'lucide-react';
 
@@ -68,9 +69,6 @@ export const [loading, setLoading] = useState(true);
 
     // Update memory usage periodically
     const memoryInterval = setInterval(updateMemoryUsage, 5000);
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       cancelAnimationFrame(fpsInterval);
       clearInterval(memoryInterval);
@@ -90,8 +88,6 @@ export const [loading, setLoading] = useState(true);
   }, [position]);
 
   if (!enabled || !isVisible) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <button
         onClick={() => setIsVisible(true)}
@@ -114,9 +110,6 @@ export const [loading, setLoading] = useState(true);
     if (value >= thresholds.medium) return <TrendingUp className="w-4 h-4" />;
     return <CheckCircle className="w-4 h-4" />;
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`fixed ${positionStyles} z-50 bg-background border border-border rounded-lg shadow-lg p-4 min-w-48`}>
       <div className="flex items-center justify-between mb-3">
@@ -201,9 +194,6 @@ export const useWebVitals = (enabled = false) => {
     } catch (error) {
       console.warn('Performance Observer not supported:', error);
     }
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       observer.disconnect();
     };
@@ -248,9 +238,6 @@ export const useNetworkStatus = () => {
       navigator.connection.addEventListener('change', updateConnectionStatus);
       updateConnectionStatus();
     }
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       window.removeEventListener('online', updateOnlineStatus);
       window.removeEventListener('offline', updateOnlineStatus);

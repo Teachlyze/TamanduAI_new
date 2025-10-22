@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -255,8 +256,6 @@ const EditStudentPage = () => {
 
   // Loading state
   if (isLoading) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         <div className="flex items-center justify-center min-h-screen">
@@ -268,9 +267,6 @@ const EditStudentPage = () => {
       </div>
     );
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="w-full space-y-8 p-6">

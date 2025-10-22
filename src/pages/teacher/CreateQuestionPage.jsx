@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Save, Plus, X, BookOpen, Target, Award } from 'lucide-react';
@@ -139,7 +140,7 @@ export default function CreateQuestionPage() {
             <Button
               variant="ghost"
               onClick={() => navigate('/dashboard/question-bank')}
-              className="text-white hover:bg-white/20 whitespace-nowrap inline-flex items-center gap-2 min-w-fit"
+              className="text-slate-900 dark:text-white hover:bg-white/20 whitespace-nowrap inline-flex items-center gap-2 min-w-fit"
             >
               <ArrowLeft className="w-5 h-5" />
               <span>Voltar</span>
@@ -324,7 +325,7 @@ export default function CreateQuestionPage() {
                     onChange={(e) => setFormData({ ...formData, difficulty: parseInt(e.target.value) })}
                     className="w-full"
                   />
-                  <div className="flex justify-between text-xs text-gray-600 mt-1">
+                  <div className="flex justify-between text-xs text-gray-800 dark:text-gray-300 mt-1">
                     <span>Muito Fácil</span>
                     <span>Fácil</span>
                     <span>Médio</span>

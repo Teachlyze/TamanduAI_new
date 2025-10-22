@@ -129,7 +129,7 @@ const useKeyboardNavigation = () => {
         <div class="mt-6 text-center">
           <button
             onclick="this.closest('#keyboard-shortcuts-modal').remove()"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+            class="bg-blue-600 hover:bg-blue-700 text-slate-900 dark:text-white px-4 py-2 rounded-lg transition-colors"
           >
             Fechar
           </button>

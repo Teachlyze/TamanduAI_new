@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Send, Bot, Sparkles, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { askClassAI } from '@/services/aiService';

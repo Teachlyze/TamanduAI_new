@@ -58,7 +58,7 @@ const ActivityLogin = () => {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           TamanduAI - Atividades
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm text-gray-800 dark:text-gray-300">
           Plataforma de Atividades Educacionais
         </p>
       </div>
@@ -141,7 +141,7 @@ const ActivityLogin = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-slate-900 dark:text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
               >
                 {isLoading ? 'Entrando...' : 'Entrar'}
               </button>
@@ -163,7 +163,7 @@ const ActivityLogin = () => {
                 <div className="w-full border-t border-gray-300"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">
+                <span className="px-2 bg-white text-gray-700 dark:text-gray-400">
                   Ou acesse como visitante
                 </span>
               </div>

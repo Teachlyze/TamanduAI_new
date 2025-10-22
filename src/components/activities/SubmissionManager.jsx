@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { FiDownload, FiCheck, FiAlertTriangle, FiUser, FiClock, FiX } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -288,9 +289,6 @@ import { useToast } from '@/components/ui/use-toast';
       red: 'bg-red-100 text-red-800',
       gray: 'bg-gray-100 text-gray-800'
     }[getPlagiarismColor(score)];
-    
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="flex items-center space-x-2">
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colorClass}`}>
@@ -312,9 +310,6 @@ import { useToast } from '@/components/ui/use-toast';
 
   // Verifica se há submissões pendentes de verificação de plágio
   const hasPendingPlagiarismChecks = filteredSubmissions.some(s => !s.plagiarism_checked && isPlagiarismCheckEnabled);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="space-y-4">
       {/* Cabeçalho */}
@@ -465,8 +460,6 @@ import { useToast } from '@/components/ui/use-toast';
                       {(() => {
                         const { totalEarned, totalPossible } = computeSubmissionScore(submission.id);
                         const grade = submission.grade ?? (totalPossible > 0 ? Math.round((totalEarned / totalPossible) * 100) : null);
-                        if (loading) return <LoadingScreen />;
-
   return (
                           <div className="text-xs text-gray-600">
                             Pontos computados: {totalEarned} / {totalPossible || '?'}

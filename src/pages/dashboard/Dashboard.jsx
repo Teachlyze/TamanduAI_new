@@ -1,4 +1,4 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen' from 'react';
+import React, { LoadingScreen, useEffect, useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { SidebarPremium, HeaderPremium } from '@/components/ui';
 import { Toaster } from '@/components/ui/toaster';
@@ -18,9 +18,6 @@ import { useAuth } from '@/hooks/useAuth';
   if (!user) {
     return null;
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="flex h-screen bg-background">
       {/* Sidebar Premium - Fixed width 280px */}

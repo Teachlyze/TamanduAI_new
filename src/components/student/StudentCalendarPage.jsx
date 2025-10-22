@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
@@ -169,9 +170,6 @@ const StudentCalendarPage = () => {
     };
     return icons[type] || CalendarIcon;
   };
-
-  if (loading) return <LoadingScreen message="Carregando sua agenda..." />;
-
   const days = getDaysInMonth();
   const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
   const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
@@ -195,7 +193,7 @@ const StudentCalendarPage = () => {
             <CalendarIcon className="w-8 h-8" />
             <h1 className="text-3xl font-bold">Minha Agenda</h1>
           </div>
-          <p className="text-white/90">Acompanhe seus próximos eventos e prazos</p>
+          <p className="text-slate-900 dark:text-white/90">Acompanhe seus próximos eventos e prazos</p>
         </div>
       </motion.div>
 

@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -24,9 +25,8 @@ const CookieBanner = () => {
       const timer = setTimeout(() => {
         setShowBanner(true);
       }, 1000);
-      if (loading) return <LoadingScreen />;
 
-  return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
     }
   }, []);
 
@@ -82,8 +82,6 @@ const CookieBanner = () => {
   ];
 
   if (!showBanner) return null;
-
-  if (loading) return <LoadingScreen />;
 
   return (
     <AnimatePresence>

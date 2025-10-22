@@ -35,7 +35,7 @@ const PaginationLink = ({
     className={cn(
       "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background",
       isActive
-        ? "bg-blue-600 text-white hover:bg-blue-700 hover:text-white"
+        ? "bg-blue-600 text-slate-900 dark:text-white hover:bg-blue-700 hover:text-white"
         : "text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700",
       size === "default" ? "h-10 py-2 px-4" : "h-9 w-9",
       className

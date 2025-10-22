@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -93,9 +94,6 @@ export const [loading, setLoading] = useState(true);
       description: 'As configurações de acessibilidade foram restauradas aos padrões.',
     });
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="grid gap-6">
       {/* Tema */}

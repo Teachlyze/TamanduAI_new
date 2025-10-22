@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { PremiumCard } from '@/components/ui/PremiumCard'
 import { PremiumButton } from '@/components/ui/PremiumButton';
 import { useParams } from 'react-router-dom';
@@ -72,7 +73,7 @@ export default function ActivityDetailsPage() {
             <div className="prose max-w-none mb-6" dangerouslySetInnerHTML={{ __html: activity.description }} />
           )}
           <div className="text-center py-8">
-            <p className="text-gray-500">Visualização da atividade para alunos será implementada aqui.</p>
+            <p className="text-gray-700 dark:text-gray-400">Visualização da atividade para alunos será implementada aqui.</p>
             <p className="text-sm text-gray-400 mt-2">Em breve você poderá responder esta atividade.</p>
           </div>
         </div>

@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Users, TrendingUp, Award, Target, BarChart3, ArrowUp, ArrowDown } from 'lucide-react';
 import { PremiumCard, StatsCard } from '@/components/ui/PremiumCard';

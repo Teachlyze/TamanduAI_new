@@ -1,3 +1,4 @@
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { getClassActivities, createActivity as createActivityService, updateActivity as updateActivityService, deleteActivity as deleteActivityService } from '@/services/apiSupabase';
 import { useAuth } from "@/hooks/useAuth";
 import { Logger } from '@/services/logger';

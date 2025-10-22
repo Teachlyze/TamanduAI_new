@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Eye, EyeOff, CheckCircle } from 'lucide-react';
@@ -82,7 +83,7 @@ const ResetPasswordPagePremium = () => {
         <PremiumCard variant="elevated" className="p-8">
           <div className="text-center mb-8">
             <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <Lock className="w-8 h-8 text-white" />
+              <Lock className="w-8 h-8 text-slate-900 dark:text-white" />
             </div>
             <h1 className="text-2xl font-bold mb-2">Nova Senha</h1>
             <p className="text-muted-foreground">

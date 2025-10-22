@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useAuth } from '@/hooks/useAuth';
 import { useLocation } from 'react-router-dom';
@@ -51,9 +52,6 @@ import { X, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
   };
   const expectedPath = expectedPaths[role];
   const isCorrectPath = location.pathname.startsWith(expectedPath);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="fixed bottom-4 right-4 z-[9999] max-w-md">
       <div className="bg-white dark:bg-gray-800 border-2 border-orange-500 rounded-lg shadow-2xl p-4">

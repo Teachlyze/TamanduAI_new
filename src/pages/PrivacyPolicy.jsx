@@ -51,7 +51,7 @@ const PrivacyPolicy = () => {
                 </div>
                 <div className="mt-4 md:mt-0">
                   <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                    <Shield className="h-8 w-8 text-white" />
+                    <Shield className="h-8 w-8 text-slate-900 dark:text-white" />
                   </div>
                 </div>
               </div>

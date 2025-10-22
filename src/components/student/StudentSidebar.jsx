@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -61,8 +62,6 @@ import {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 60000); // Update every minute
-    if (loading) return <LoadingScreen />;
-
   return () => clearInterval(timer);
   }, []);
 
@@ -192,9 +191,6 @@ import {
     await signOut();
     navigate('/login');
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <motion.aside
       initial={{ x: -300 }}
@@ -424,8 +420,6 @@ import {
         <nav className="flex-1 space-y-0.5 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-blue-300 dark:scrollbar-thumb-blue-700 scrollbar-track-transparent">
           {navItems.map((item, index) => {
             const Icon = item.icon;
-            if (loading) return <LoadingScreen />;
-
   return (
               <NavLink
                 key={item.path}

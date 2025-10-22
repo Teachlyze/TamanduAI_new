@@ -24,9 +24,6 @@ export const [loading, setLoading] = useState(true);
         setEmergencyTimeout(true, []); // TODO: Add dependencies
         navigate('/login', { replace: true }, []); // TODO: Add dependencies
       }, 15000);
-
-      if (loading) return <LoadingScreen />;
-
   return () => clearTimeout(timeoutId);
     }
   }, [loading, navigate]);
@@ -58,8 +55,6 @@ export const [loading, setLoading] = useState(true);
   }, [user, loading, navigate, location.pathname]);
 
   if (loading || checkingOnboarding) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
         <motion.div

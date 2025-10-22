@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useState } from 'react';
 import { PremiumCard } from '@/components/ui/PremiumCard'
 import { PremiumButton } from '@/components/ui/PremiumButton', { useState }
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
@@ -214,9 +215,6 @@ import { UserService } from '@/services/userService';
       console.log('Meeting update received:', payload, []); // TODO: Add dependencies
       fetchMeetingDetails(, []); // TODO: Add dependencies
     }, []); // TODO: Add dependencies
-    
-    if (loading) return <LoadingScreen />;
-
   return () => {
       if (subscription) {
         subscription.unsubscribe();
@@ -226,8 +224,6 @@ import { UserService } from '@/services/userService';
 
   // Render loading state
   if (isLoading) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="container mx-auto py-12 px-4">
       <PremiumCard variant="elevated">
@@ -238,8 +234,6 @@ import { UserService } from '@/services/userService';
 
   // Render error state
   if (error || !meeting) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="container mx-auto py-12 px-4">
       <PremiumCard variant="elevated">
@@ -265,9 +259,6 @@ import { UserService } from '@/services/userService';
   const endTime = format(parseISO(meeting.end_time), 'HH:mm', { locale: ptBR });
   const isPastMeeting = isPast(parseISO(meeting.end_time));
   const isOnline = meeting.meeting_type === 'online';
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <ErrorBoundary
       errorTitle="Ocorreu um erro na página de detalhes da reunião"

@@ -1,4 +1,5 @@
 // src/components/dashboard/ChatbotPageWrapper.jsx
+import React, { useEffect, useState, Suspense } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from '@/lib/supabaseClient';
@@ -69,8 +70,6 @@ import { motion } from 'framer-motion';
 
   // Error state
   if (error) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-6">
         <Alert variant="destructive" className="max-w-md">
@@ -93,8 +92,6 @@ import { motion } from 'framer-motion';
   }
 
   // Success state - renderizar o componente real
-  if (loading) return <LoadingScreen />;
-
   return (
     <Suspense fallback={<ChatbotSkeleton />}>
       <ChatbotPageContent
@@ -296,9 +293,6 @@ const ChatbotPageContent = ({ teacherClasses, isLoading }) => {
     { icon: Brain, text: "A IA será treinada automaticamente com seu conteúdo.", color: "from-purple-500 to-purple-600" },
     { icon: MessageSquare, text: "Pronto! Seus alunos já podem conversar com o chatbot.", color: "from-orange-500 to-orange-600" }
   ];
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="space-y-8 p-6">
@@ -559,7 +553,7 @@ const ChatbotPageContent = ({ teacherClasses, isLoading }) => {
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
-                      className="bg-white dark:bg-slate-900 text-foreground border-border flex-1 bg-white/50 hover:bg-white/80 border-white/50"
+                      className="bg-white dark:bg-slate-900 text-foreground flex-1 bg-white/50 hover:bg-white/80 border-white/50"
                       onClick={() => handleAction('manage_materials')}
                       disabled={!selectedClass}
                     >
@@ -599,7 +593,7 @@ const ChatbotPageContent = ({ teacherClasses, isLoading }) => {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="bg-white dark:bg-slate-900 text-foreground border-border w-full bg-white/50 hover:bg-white/80 border-white/50"
+                    className="bg-white dark:bg-slate-900 text-foreground w-full bg-white/50 hover:bg-white/80"
                     onClick={() => handleAction('retrain')}
                     disabled={!selectedClass}
                   >

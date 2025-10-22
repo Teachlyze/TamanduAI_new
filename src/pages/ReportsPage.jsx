@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
@@ -401,7 +402,7 @@ const ReportsPage = () => {
               <FileText className="w-8 h-8" />
               Relatórios
             </h1>
-            <p className="text-white/90">Análise detalhada de desempenho dos alunos</p>
+            <p className="text-slate-900 dark:text-white/90">Análise detalhada de desempenho dos alunos</p>
           </div>
           
           <Button

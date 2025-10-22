@@ -1,4 +1,5 @@
 // src/pages/MeetingDetailsPageWrapper.jsx
+import React, { useCallback, useEffect, useState } from 'react';
 import { PremiumCard } from '@/components/ui/PremiumCard'
 import { PremiumButton } from '@/components/ui/PremiumButton', { useState }
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
@@ -221,9 +222,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
       console.log('Meeting update received:', payload, []); // TODO: Add dependencies
       fetchMeetingDetails(, []); // TODO: Add dependencies
     }, []); // TODO: Add dependencies
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       if (subscription) {
         subscription.unsubscribe();
@@ -233,8 +231,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 
   // Loading state
   if (isLoading) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="container mx-auto py-12 px-4">
       <PremiumCard variant="elevated">
@@ -273,8 +269,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 
   // Error state
   if (error || !meeting) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="container mx-auto py-12 px-4">
       <PremiumCard variant="elevated">
@@ -340,9 +334,6 @@ const MeetingDetailsPageContent = ({
   
 }) => {
   const { date, time } = formatDateTime(meeting.start_time);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <ErrorBoundary
       errorTitle="Ocorreu um erro na página de detalhes da reunião"

@@ -1,4 +1,5 @@
 // src/components/ui/LanguageSelector.jsx
+import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, Check } from 'lucide-react';

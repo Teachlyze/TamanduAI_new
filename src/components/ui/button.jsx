@@ -1,3 +1,4 @@
+import React, { forwardRef, useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { Slot } from '@radix-ui/react-slot';
 
@@ -65,7 +66,6 @@ const Button = React.forwardRef(({
 
     // Generate label from children for screen readers
     if (typeof children === 'string') {
-      if (loading) return loadingText;
       return children;
     }
 

@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -71,8 +72,6 @@ export const StudentActivitiesTab = ({
   const getStatusBadge = (status) => {
     switch (status) {
       case 'completed':
-        if (loading) return <LoadingScreen />;
-
   return (
           <Badge variant="success" className="gap-1">
             <CheckCircle2 className="h-3 w-3" />
@@ -80,8 +79,6 @@ export const StudentActivitiesTab = ({
           </Badge>
         );
       case 'late':
-        if (loading) return <LoadingScreen />;
-
   return (
           <Badge variant="destructive" className="gap-1">
             <XCircle className="h-3 w-3" />
@@ -89,8 +86,6 @@ export const StudentActivitiesTab = ({
           </Badge>
         );
       default:
-        if (loading) return <LoadingScreen />;
-
   return (
           <Badge variant="outline" className="bg-white dark:bg-slate-900 text-foreground border-border gap-1">
             <Clock className="h-3 w-3" />
@@ -99,9 +94,6 @@ export const StudentActivitiesTab = ({
         );
     }
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <Card>
       <CardHeader>

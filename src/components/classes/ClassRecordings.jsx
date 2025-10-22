@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -209,7 +210,7 @@ const ClassRecordings = ({ classId }) => {
             {recording.google_drive_id && (
               <div className="mt-3 pt-3 border-t border-border">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <div className="w-4 h-4 rounded bg-blue-500 flex items-center justify-center text-white text-[8px] font-bold">
+                  <div className="w-4 h-4 rounded bg-blue-500 flex items-center justify-center text-slate-900 dark:text-white text-[8px] font-bold">
                     G
                   </div>
                   <span>Armazenado no Google Drive</span>

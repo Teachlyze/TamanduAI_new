@@ -1,3 +1,4 @@
+import React, { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
 import { PremiumCard, LoadingScreen, EmptyState, PremiumButton, toast } from '@/components/ui';
@@ -346,9 +347,6 @@ const TeacherAnalyticsPage = () => {
     const yearStart = new Date(d.getFullYear(), 0, 1);
     return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
   };
-
-  if (loading) return <LoadingScreen message="Carregando analytics..." />;
-
   const exportPDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(18);
@@ -436,7 +434,7 @@ const TeacherAnalyticsPage = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-3"><BarChart3 className="w-6 h-6"/> Analytics Avançado</h1>
-            <p className="text-white/90">Métricas detalhadas e comparações</p>
+            <p className="text-slate-900 dark:text-white/90">Métricas detalhadas e comparações</p>
           </div>
           <div className="flex gap-3">
             <PremiumButton onClick={exportPDF} variant="secondary" className="whitespace-nowrap inline-flex items-center gap-2 min-w-fit">
@@ -509,219 +507,6 @@ const TeacherAnalyticsPage = () => {
           </div>
         </PremiumCard>
       </div>
-
-      {/* Comparação Manual - Aluno x Aluno */}
-      <PremiumCard variant="elevated">
-        <div className="p-6 space-y-4">
-          <h2 className="text-lg font-bold mb-4">Comparação Manual: Aluno x Aluno</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div>
-              <input 
-                type="text"
-                placeholder="Filtrar aluno A por nome..." 
-                value={searchStudentA}
-                onChange={(e) => setSearchStudentA(e.target.value)}
-                className="w-full px-3 py-2 rounded-t-lg border border-b-0 border-border bg-white dark:bg-slate-900 text-foreground" 
-              />
-              <select 
-                className="w-full px-3 py-2 rounded-b-lg border border-border bg-white dark:bg-slate-900 text-foreground max-h-40" 
-                value={selectedStudentA} 
-                onChange={(e) => setSelectedStudentA(e.target.value)}
-                size="5"
-              >
-                <option value="">— Selecione Aluno A —</option>
-                {uniqueStudents
-                  .filter(s => !searchStudentA || (s.user?.full_name || '').toLowerCase().includes(searchStudentA.toLowerCase()))
-                  .map((s) => (
-                    <option key={s.user_id} value={s.user_id}>
-                      {s.user?.full_name || 'Aluno'}
-                    </option>
-                  ))}
-              </select>
-            </div>
-            <div>
-              <input 
-                type="text"
-                placeholder="Filtrar aluno B por nome..." 
-                value={searchStudentB}
-                onChange={(e) => setSearchStudentB(e.target.value)}
-                className="w-full px-3 py-2 rounded-t-lg border border-b-0 border-border bg-white dark:bg-slate-900 text-foreground" 
-              />
-              <select 
-                className="w-full px-3 py-2 rounded-b-lg border border-border bg-white dark:bg-slate-900 text-foreground" 
-                value={selectedStudentB} 
-                onChange={(e) => setSelectedStudentB(e.target.value)}
-                size="5"
-              >
-                <option value="">— Selecione Aluno B —</option>
-                {uniqueStudents
-                  .filter(s => !searchStudentB || (s.user?.full_name || '').toLowerCase().includes(searchStudentB.toLowerCase()))
-                  .map((s) => (
-                    <option key={s.user_id} value={s.user_id}>
-                      {s.user?.full_name || 'Aluno'}
-                    </option>
-                  ))}
-              </select>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
-              <div className="font-semibold mb-3 pb-2 border-b border-border">
-                Aluno A
-                {selectedStudentA && (
-                  <div className="text-sm font-normal text-muted-foreground mt-1">
-                    {uniqueStudents.find(s => s.user_id === selectedStudentA)?.user?.full_name || 'N/A'}
-                  </div>
-                )}
-              </div>
-              {selectedStudentA ? (
-                renderStudentMetrics(selectedStudentA)
-              ) : <div className="text-sm text-muted-foreground">Selecione um aluno</div>}
-            </div>
-            <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
-              <div className="font-semibold mb-3 pb-2 border-b border-border">
-                Aluno B
-                {selectedStudentB && (
-                  <div className="text-sm font-normal text-muted-foreground mt-1">
-                    {uniqueStudents.find(s => s.user_id === selectedStudentB)?.user?.full_name || 'N/A'}
-                  </div>
-                )}
-              </div>
-              {selectedStudentB ? (
-                renderStudentMetrics(selectedStudentB)
-              ) : <div className="text-sm text-muted-foreground">Selecione um aluno</div>}
-            </div>
-          </div>
-        </div>
-      </PremiumCard>
-
-      {/* Comparação Manual - Turma x Turma */}
-      <PremiumCard variant="elevated">
-        <div className="p-6 space-y-4">
-          <h2 className="text-lg font-bold mb-4">Comparação Manual: Turma x Turma</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <select 
-              className="px-3 py-2 rounded-lg border border-border bg-white dark:bg-slate-900 text-foreground" 
-              value={selectedClassA} 
-              onChange={(e) => setSelectedClassA(e.target.value)}
-            >
-              <option value="">Selecione Turma A</option>
-              {classes.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-            <select 
-              className="px-3 py-2 rounded-lg border border-border bg-white dark:bg-slate-900 text-foreground" 
-              value={selectedClassB} 
-              onChange={(e) => setSelectedClassB(e.target.value)}
-            >
-              <option value="">Selecione Turma B</option>
-              {classes.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
-              <div className="font-semibold mb-3 pb-2 border-b border-border">
-                Turma A
-                {selectedClassA && classMap.get(selectedClassA)?.name && (
-                  <div className="text-sm font-normal text-muted-foreground mt-1">
-                    {classMap.get(selectedClassA).name}
-                  </div>
-                )}
-              </div>
-              {selectedClassA ? (
-                renderClassMetrics(selectedClassA)
-              ) : <div className="text-sm text-muted-foreground">Selecione uma turma</div>}
-            </div>
-            <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
-              <div className="font-semibold mb-3 pb-2 border-b border-border">
-                Turma B
-                {selectedClassB && classMap.get(selectedClassB)?.name && (
-                  <div className="text-sm font-normal text-muted-foreground mt-1">
-                    {classMap.get(selectedClassB).name}
-                  </div>
-                )}
-              </div>
-              {selectedClassB ? (
-                renderClassMetrics(selectedClassB)
-              ) : <div className="text-sm text-muted-foreground">Selecione uma turma</div>}
-            </div>
-          </div>
-        </div>
-      </PremiumCard>
-
-      {/* Comparação Manual - Aluno x Turma */}
-      <PremiumCard variant="elevated">
-        <div className="p-6 space-y-4">
-          <h2 className="text-lg font-bold mb-4">Comparação Manual: Aluno x Turma</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div>
-              <input 
-                type="text"
-                placeholder="Filtrar aluno por nome..." 
-                value={searchStudentC}
-                onChange={(e) => setSearchStudentC(e.target.value)}
-                className="w-full px-3 py-2 rounded-t-lg border border-b-0 border-border bg-white dark:bg-slate-900 text-foreground" 
-              />
-              <select 
-                className="w-full px-3 py-2 rounded-b-lg border border-border bg-white dark:bg-slate-900 text-foreground" 
-                value={selectedStudentA} 
-                onChange={(e) => setSelectedStudentA(e.target.value)}
-                size="5"
-              >
-                <option value="">— Selecione Aluno —</option>
-                {uniqueStudents
-                  .filter(s => !searchStudentC || (s.user?.full_name || '').toLowerCase().includes(searchStudentC.toLowerCase()))
-                  .map((s) => (
-                    <option key={s.user_id} value={s.user_id}>
-                      {s.user?.full_name || 'Aluno'}
-                    </option>
-                  ))}
-              </select>
-            </div>
-            <select 
-              className="px-3 py-2 rounded-lg border border-border bg-white dark:bg-slate-900 text-foreground" 
-              value={selectedClassA} 
-              onChange={(e) => setSelectedClassA(e.target.value)}
-            >
-              <option value="">— Selecione Turma —</option>
-              {classes.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
-              <div className="font-semibold mb-3 pb-2 border-b border-border">
-                Aluno
-                {selectedStudentA && (
-                  <div className="text-sm font-normal text-muted-foreground mt-1">
-                    {uniqueStudents.find(s => s.user_id === selectedStudentA)?.user?.full_name || 'N/A'}
-                  </div>
-                )}
-              </div>
-              {selectedStudentA ? (
-                renderStudentMetrics(selectedStudentA)
-              ) : <div className="text-sm text-muted-foreground">Selecione um aluno</div>}
-            </div>
-            <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
-              <div className="font-semibold mb-3 pb-2 border-b border-border">
-                Turma
-                {selectedClassA && classMap.get(selectedClassA)?.name && (
-                  <div className="text-sm font-normal text-muted-foreground mt-1">
-                    {classMap.get(selectedClassA).name}
-                  </div>
-                )}
-              </div>
-              {selectedClassA ? (
-                renderClassMetrics(selectedClassA)
-              ) : <div className="text-sm text-muted-foreground">Selecione uma turma</div>}
-            </div>
-          </div>
-        </div>
-      </PremiumCard>
 
       {/* Métricas Gerais */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
@@ -893,6 +678,236 @@ const TeacherAnalyticsPage = () => {
                 </LineChart>
               </ResponsiveContainer>
             )}
+          </div>
+        </PremiumCard>
+      </div>
+
+      {/* SEÇÃO DE COMPARAÇÕES - FINAL DA PÁGINA */}
+      <div className="mt-12 pt-8 border-t border-border">
+        <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Comparações Avançadas</h2>
+        
+        {/* Comparação Manual - Aluno x Aluno */}
+        <PremiumCard variant="elevated" className="mb-6">
+          <div className="p-6 space-y-4">
+            <h3 className="text-lg font-bold mb-4">Comparar Alunos</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Aluno A</label>
+                <input 
+                  type="text"
+                  placeholder="Filtrar por nome..." 
+                  value={searchStudentA}
+                  onChange={(e) => setSearchStudentA(e.target.value)}
+                  className="w-full px-3 py-2 rounded-t-lg border border-b-0 border-border bg-white dark:bg-slate-900 text-foreground" 
+                />
+                <select 
+                  className="w-full px-3 py-2 rounded-b-lg border border-border bg-white dark:bg-slate-900 text-foreground max-h-40" 
+                  value={selectedStudentA} 
+                  onChange={(e) => setSelectedStudentA(e.target.value)}
+                  size="5"
+                >
+                  <option value="">— Selecione Aluno A —</option>
+                  {uniqueStudents
+                    .filter(s => !searchStudentA || (s.user?.full_name || '').toLowerCase().includes(searchStudentA.toLowerCase()))
+                    .map((s) => (
+                      <option key={s.user_id} value={s.user_id}>
+                        {s.user?.full_name || 'Aluno'}
+                      </option>
+                    ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Aluno B</label>
+                <input 
+                  type="text"
+                  placeholder="Filtrar por nome..." 
+                  value={searchStudentB}
+                  onChange={(e) => setSearchStudentB(e.target.value)}
+                  className="w-full px-3 py-2 rounded-t-lg border border-b-0 border-border bg-white dark:bg-slate-900 text-foreground" 
+                />
+                <select 
+                  className="w-full px-3 py-2 rounded-b-lg border border-border bg-white dark:bg-slate-900 text-foreground" 
+                  value={selectedStudentB} 
+                  onChange={(e) => setSelectedStudentB(e.target.value)}
+                  size="5"
+                >
+                  <option value="">— Selecione Aluno B —</option>
+                  {uniqueStudents
+                    .filter(s => !searchStudentB || (s.user?.full_name || '').toLowerCase().includes(searchStudentB.toLowerCase()))
+                    .map((s) => (
+                      <option key={s.user_id} value={s.user_id}>
+                        {s.user?.full_name || 'Aluno'}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
+                <div className="font-semibold mb-3 pb-2 border-b border-border text-slate-900 dark:text-white">
+                  Aluno A
+                  {selectedStudentA && (
+                    <div className="text-sm font-normal text-slate-700 dark:text-slate-300 mt-1">
+                      {uniqueStudents.find(s => s.user_id === selectedStudentA)?.user?.full_name || 'N/A'}
+                    </div>
+                  )}
+                </div>
+                {selectedStudentA ? (
+                  renderStudentMetrics(selectedStudentA)
+                ) : <div className="text-sm text-slate-700 dark:text-slate-300">Selecione um aluno</div>}
+              </div>
+              <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
+                <div className="font-semibold mb-3 pb-2 border-b border-border text-slate-900 dark:text-white">
+                  Aluno B
+                  {selectedStudentB && (
+                    <div className="text-sm font-normal text-slate-700 dark:text-slate-300 mt-1">
+                      {uniqueStudents.find(s => s.user_id === selectedStudentB)?.user?.full_name || 'N/A'}
+                    </div>
+                  )}
+                </div>
+                {selectedStudentB ? (
+                  renderStudentMetrics(selectedStudentB)
+                ) : <div className="text-sm text-slate-700 dark:text-slate-300">Selecione um aluno</div>}
+              </div>
+            </div>
+          </div>
+        </PremiumCard>
+
+        {/* Comparação Manual - Turma x Turma */}
+        <PremiumCard variant="elevated" className="mb-6">
+          <div className="p-6 space-y-4">
+            <h3 className="text-lg font-bold mb-4">Comparar Turmas</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Turma A</label>
+                <select 
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-white dark:bg-slate-900 text-foreground" 
+                  value={selectedClassA} 
+                  onChange={(e) => setSelectedClassA(e.target.value)}
+                >
+                  <option value="">Selecione Turma A</option>
+                  {classes.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Turma B</label>
+                <select 
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-white dark:bg-slate-900 text-foreground" 
+                  value={selectedClassB} 
+                  onChange={(e) => setSelectedClassB(e.target.value)}
+                >
+                  <option value="">Selecione Turma B</option>
+                  {classes.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
+                <div className="font-semibold mb-3 pb-2 border-b border-border text-slate-900 dark:text-white">
+                  Turma A
+                  {selectedClassA && classMap.get(selectedClassA)?.name && (
+                    <div className="text-sm font-normal text-slate-700 dark:text-slate-300 mt-1">
+                      {classMap.get(selectedClassA).name}
+                    </div>
+                  )}
+                </div>
+                {selectedClassA ? (
+                  renderClassMetrics(selectedClassA)
+                ) : <div className="text-sm text-slate-700 dark:text-slate-300">Selecione uma turma</div>}
+              </div>
+              <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
+                <div className="font-semibold mb-3 pb-2 border-b border-border text-slate-900 dark:text-white">
+                  Turma B
+                  {selectedClassB && classMap.get(selectedClassB)?.name && (
+                    <div className="text-sm font-normal text-slate-700 dark:text-slate-300 mt-1">
+                      {classMap.get(selectedClassB).name}
+                    </div>
+                  )}
+                </div>
+                {selectedClassB ? (
+                  renderClassMetrics(selectedClassB)
+                ) : <div className="text-sm text-slate-700 dark:text-slate-300">Selecione uma turma</div>}
+              </div>
+            </div>
+          </div>
+        </PremiumCard>
+
+        {/* Comparação Manual - Aluno x Turma */}
+        <PremiumCard variant="elevated">
+          <div className="p-6 space-y-4">
+            <h3 className="text-lg font-bold mb-4">Comparar Aluno com Turma</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Aluno</label>
+                <input 
+                  type="text"
+                  placeholder="Filtrar por nome..." 
+                  value={searchStudentC}
+                  onChange={(e) => setSearchStudentC(e.target.value)}
+                  className="w-full px-3 py-2 rounded-t-lg border border-b-0 border-border bg-white dark:bg-slate-900 text-foreground" 
+                />
+                <select 
+                  className="w-full px-3 py-2 rounded-b-lg border border-border bg-white dark:bg-slate-900 text-foreground" 
+                  value={selectedStudentA} 
+                  onChange={(e) => setSelectedStudentA(e.target.value)}
+                  size="5"
+                >
+                  <option value="">— Selecione Aluno —</option>
+                  {uniqueStudents
+                    .filter(s => !searchStudentC || (s.user?.full_name || '').toLowerCase().includes(searchStudentC.toLowerCase()))
+                    .map((s) => (
+                      <option key={s.user_id} value={s.user_id}>
+                        {s.user?.full_name || 'Aluno'}
+                      </option>
+                    ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Turma</label>
+                <select 
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-white dark:bg-slate-900 text-foreground" 
+                  value={selectedClassA} 
+                  onChange={(e) => setSelectedClassA(e.target.value)}
+                >
+                  <option value="">— Selecione Turma —</option>
+                  {classes.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
+                <div className="font-semibold mb-3 pb-2 border-b border-border text-slate-900 dark:text-white">
+                  Aluno
+                  {selectedStudentA && (
+                    <div className="text-sm font-normal text-slate-700 dark:text-slate-300 mt-1">
+                      {uniqueStudents.find(s => s.user_id === selectedStudentA)?.user?.full_name || 'N/A'}
+                    </div>
+                  )}
+                </div>
+                {selectedStudentA ? (
+                  renderStudentMetrics(selectedStudentA)
+                ) : <div className="text-sm text-slate-700 dark:text-slate-300">Selecione um aluno</div>}
+              </div>
+              <div className="p-4 rounded-lg border border-border bg-white dark:bg-slate-900">
+                <div className="font-semibold mb-3 pb-2 border-b border-border text-slate-900 dark:text-white">
+                  Turma
+                  {selectedClassA && classMap.get(selectedClassA)?.name && (
+                    <div className="text-sm font-normal text-slate-700 dark:text-slate-300 mt-1">
+                      {classMap.get(selectedClassA).name}
+                    </div>
+                  )}
+                </div>
+                {selectedClassA ? (
+                  renderClassMetrics(selectedClassA)
+                ) : <div className="text-sm text-slate-700 dark:text-slate-300">Selecione uma turma</div>}
+              </div>
+            </div>
           </div>
         </PremiumCard>
       </div>

@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -173,7 +174,7 @@ const TeacherActivitiesPage = () => {
               <span className="text-sm font-medium">Gestão de Atividades</span>
             </motion.div>
             <h1 className="text-4xl font-bold mb-2">Minhas Atividades 📝</h1>
-            <p className="text-white/90 text-lg">Crie, gerencie e acompanhe as atividades das suas turmas</p>
+            <p className="text-slate-900 dark:text-white/90 text-lg">Crie, gerencie e acompanhe as atividades das suas turmas</p>
           </div>
           <motion.div
             initial={{ scale: 0 }}

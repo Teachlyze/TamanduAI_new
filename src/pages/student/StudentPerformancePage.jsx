@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   BarChart3, 
@@ -161,7 +162,7 @@ const StudentPerformancePage = () => {
             <span className="text-sm font-medium">Analytics de Performance</span>
           </motion.div>
           <h1 className="text-4xl font-bold mb-2">Meu Desempenho 📊</h1>
-          <p className="text-white/90 text-lg">Acompanhe sua evolução e identifique oportunidades</p>
+          <p className="text-slate-900 dark:text-white/90 text-lg">Acompanhe sua evolução e identifique oportunidades</p>
         </div>
 
         {/* Floating Charts */}

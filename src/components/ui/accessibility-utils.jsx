@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, forwardRef, useContext, useEffect, useRef, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
 // Contexto para gerenciar acessibilidade global
@@ -45,9 +45,6 @@ export const AccessibilityProvider = ({ children }) => {
       announce(`Focado em: ${label}`);
     }
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <AccessibilityContext.Provider value={{
       announce,
@@ -85,9 +82,6 @@ export const useFocusManagement = (options = {}) => {
         element.focus();
       }
     }
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       if (restoreFocus && previousFocusRef.current) {
         previousFocusRef.current.focus();
@@ -123,9 +117,6 @@ export const useFocusManagement = (options = {}) => {
     };
 
     container.addEventListener('keydown', handleTabKey);
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       container.removeEventListener('keydown', handleTabKey);
     };
@@ -306,8 +297,6 @@ export const LiveRegion = ({
   className = '',
   ...props
 }) => {
-  if (loading) return <LoadingScreen />;
-
   return (
     <div
       aria-live={priority}
@@ -334,9 +323,6 @@ export const AccessibleAlert = ({
     warning: 'bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200',
     error: 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200',
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div
       role="alert"
@@ -375,9 +361,6 @@ export const AccessibleButton = React.forwardRef(({
     md: 'px-4 py-2 text-base',
     lg: 'px-6 py-3 text-lg',
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <button
       ref={ref}

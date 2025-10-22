@@ -1,3 +1,4 @@
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/hooks/useAuth';
 import toast from 'react-hot-toast';
@@ -50,24 +51,28 @@ export const XPProvider = ({ children }) => {
       try {
         const { data: profile, error: profileError } = await supabase
           .from('gamification_profiles')
-          .select('id')
+          .select('id', { count: 'exact', head: true })
           .eq('user_id', user.id)
           .maybeSingle();
 
-        // Ignore 404 or 42501 errors (table doesn't exist or RLS denies)
-        if (!profileError && profile) {
-          await supabase
-            .from('gamification_profiles')
-            .update({ 
-              xp_total: totalXP, 
-              level: levelData.level,
-              updated_at: new Date().toISOString()
-            })
-            .eq('user_id', user.id);
+        // Ignore 400, 404, 42501 errors (table doesn't exist, RLS denies, or query invalid)
+        if (!profileError && profile?.id) {
+          try {
+            await supabase
+              .from('gamification_profiles')
+              .update({ 
+                xp_total: totalXP, 
+                level: levelData.level,
+                updated_at: new Date().toISOString()
+              })
+              .eq('user_id', user.id);
+          } catch (updateError) {
+            console.debug('gamification_profiles update failed:', updateError?.message);
+          }
         }
       } catch (gamificationError) {
-        // Silently ignore gamification_profiles errors
-        console.debug('gamification_profiles not available:', gamificationError?.message);
+        // Silently ignore gamification_profiles errors (400, 404, RLS, etc.)
+        console.debug('gamification_profiles query failed:', gamificationError?.message);
       }
     } catch (error) {
       console.error('Erro ao carregar XP:', error);

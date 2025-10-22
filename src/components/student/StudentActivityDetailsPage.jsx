@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useXP } from '@/contexts/XPContext';
@@ -113,8 +114,6 @@ const StudentActivityDetailsPage = () => {
       setSubmitting(false);
     }
   };
-
-  if (loading) return <LoadingScreen message="Carregando atividade..." />;
   if (!activity) return <EmptyState title="Atividade não encontrada" description="Verifique o link e tente novamente." icon={FileText} />;
 
   return (
@@ -122,7 +121,7 @@ const StudentActivityDetailsPage = () => {
       <div className="bg-gradient-to-br from-indigo-600 to-purple-600 p-8 rounded-2xl text-white">
         <h1 className="text-2xl font-bold">{activity.title}</h1>
         {activity.due_date && (
-          <p className="text-white/90">Entrega até {new Date(activity.due_date).toLocaleString('pt-BR')}</p>
+          <p className="text-slate-900 dark:text-white/90">Entrega até {new Date(activity.due_date).toLocaleString('pt-BR')}</p>
         )}
       </div>
 

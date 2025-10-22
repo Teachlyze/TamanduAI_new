@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -127,9 +128,6 @@ export const [loading, setLoading] = useState(true);
       setMapError(error.message);
       setIsLoading(false);
     }
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       // Cleanup map instance
       if (mapInstanceRef.current && provider === 'google') {
@@ -251,9 +249,6 @@ export const [loading, setLoading] = useState(true);
 
     onMapClick?.(coords);
   }, [provider, readOnly, onMapClick]);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <Card className={`interactive-map ${className}`} {...props}>
       <CardHeader className="pb-4">

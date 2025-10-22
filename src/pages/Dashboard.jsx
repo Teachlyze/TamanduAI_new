@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useLocation, Outlet } from 'react-router-dom';
 // useNavigate is imported for future use
@@ -19,13 +20,8 @@ import { SidebarPremium } from '@/components/ui/SidebarPremium';
   // Track route changes for debugging
   React.useEffect(() => {
     // Clean up function
-    if (loading) return <LoadingScreen />;
-
   return () => {};
   }, [location]);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="flex h-full min-h-screen bg-background">
       <SkipLinks />

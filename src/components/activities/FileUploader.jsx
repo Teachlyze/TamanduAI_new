@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useDropzone } from 'react-dropzone';
 import { FiUpload, FiX, FiCheck, FiAlertCircle, FiFile } from 'react-icons/fi';
@@ -94,8 +95,6 @@ import { motion, AnimatePresence } from 'framer-motion';
       const timer = setTimeout(() => {
         setErrors([]);
       }, 5000);
-      if (loading) return <LoadingScreen />;
-
   return () => clearTimeout(timer);
     }
   }, [errors]);
@@ -141,9 +140,6 @@ import { motion, AnimatePresence } from 'framer-motion';
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`space-y-4 ${className}`}>
       <div

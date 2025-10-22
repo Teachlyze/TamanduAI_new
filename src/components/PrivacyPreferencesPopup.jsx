@@ -26,8 +26,6 @@ const PrivacyPreferencesPopup = () => {
       const timer = setTimeout(() => {
         setIsOpen(true);
       }, 1000);
-      if (loading) return <LoadingScreen />;
-
   return () => clearTimeout(timer);
     }
   }, []);
@@ -51,8 +49,6 @@ const PrivacyPreferencesPopup = () => {
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
-    if (loading) return <LoadingScreen />;
-
   return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -130,9 +126,6 @@ const PrivacyPreferencesPopup = () => {
   if (hasAccepted && !isOpen) {
     return null;
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <>
       {/* Floating Settings Button - Only show if user hasn't accepted yet */}

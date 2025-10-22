@@ -1,3 +1,4 @@
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 /**
@@ -93,7 +94,6 @@ const Image = ({
   // Tratamento de carregamento prioritário
   const getLoadingBehavior = () => {
     if (priority) return 'eager';
-    if (loading) return loading;
     return lazy ? 'lazy' : 'eager';
   };
 

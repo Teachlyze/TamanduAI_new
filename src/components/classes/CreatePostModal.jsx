@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -200,7 +201,7 @@ const CreatePostModal = ({ isOpen, onClose, onSubmit }) => {
                   <button
                     type="button"
                     onClick={handleAddAttachment}
-                    className="whitespace-nowrap inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors"
+                    className="whitespace-nowrap inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-slate-900 dark:text-white hover:bg-primary/90 transition-colors"
                   >
                     <Paperclip className="w-4 h-4" />
                     <span>Adicionar</span>

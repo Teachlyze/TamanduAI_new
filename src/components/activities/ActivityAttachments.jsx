@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { FiPaperclip, FiDownload, FiTrash2, FiEye, FiX, FiCheck, FiAlertCircle } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -218,14 +219,9 @@ import { BUCKETS } from '../../services/storageService';
       const timer = setTimeout(() => {
         setErrors([]);
       }, 5000);
-      if (loading) return <LoadingScreen />;
-
   return () => clearTimeout(timer);
     }
   }, [errors]);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="space-y-4">
       {/* Título da seção */}

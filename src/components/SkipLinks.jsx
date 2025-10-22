@@ -9,7 +9,7 @@ const SkipLinks = () => {
   ];
 
   return (
-    <div className="sr-only focus-within:not-sr-only focus-within:absolute focus-within:top-0 focus-within:left-0 focus-within:z-50 focus-within:bg-blue-600 focus-within:text-white focus-within:p-2 focus-within:rounded focus-within:shadow-lg">
+    <div className="sr-only focus-within:not-sr-only focus-within:absolute focus-within:top-0 focus-within:left-0 focus-within:z-50 focus-within:bg-blue-600 focus-within:text-slate-900 dark:text-white focus-within:p-2 focus-within:rounded focus-within:shadow-lg">
       <nav aria-label="Links de navegação rápida">
         <ul className="flex space-x-2">
           {skipLinks.map((link, index) => (

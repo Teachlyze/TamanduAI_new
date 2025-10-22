@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -120,9 +121,6 @@ export const [loading, setLoading] = useState(true);
   const clearTerminal = useCallback(() => {
     setHistory([]);
   }, []);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <Card className={`terminal-component ${className}`} {...props}>
       {showHeader && (

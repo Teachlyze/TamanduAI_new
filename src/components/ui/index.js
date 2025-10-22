@@ -98,9 +98,9 @@ export {
 } from './PremiumToast';
 
 // Advanced Components
-export { OnboardingTour, useOnboarding } from '../OnboardingTour';
+export { default as OnboardingTour, useOnboarding } from '../OnboardingTour';
 export { CommandPalette } from '../CommandPalette';
-export { LazyImage } from '../LazyImage';
+export { default as LazyImage } from '../LazyImage';
 export { HeaderPremium } from './HeaderPremium';
 export { SidebarPremium } from './SidebarPremium';
 export { default as ChatbotWidget } from './ChatbotWidget';

@@ -218,15 +218,11 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
       }
     }, isFinal ? 0 : 2000);
     setAutoSaveTimeout(timeout);
-    if (loading) return <LoadingScreen />;
-
   return () => clearTimeout(timeout);
   }, [autoSaveTimeout]);
 
   // Efeito para limpar o timeout ao desmontar
   useEffect(() => {
-    if (loading) return <LoadingScreen />;
-
   return () => {
       if (autoSaveTimeout) {
         clearTimeout(autoSaveTimeout);
@@ -382,9 +378,6 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
     };
     
     loadActivity();
-    
-    if (loading) return <LoadingScreen />;
-
   return () => {
       isMounted = false;
     };
@@ -428,8 +421,6 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
       }
     };
     loadClasses();
-    if (loading) return <LoadingScreen />;
-
   return () => { isMounted = false; };
   }, [activityId]);
 
@@ -748,8 +739,6 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
   };
 
   if (isLoading) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="flex h-screen items-center justify-center">
         <div className="flex flex-col items-center gap-2">
@@ -759,9 +748,6 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
       </div>
     );
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="bg-card p-6 rounded-lg shadow-sm">
       <h2 className="text-2xl font-bold mb-6">
@@ -804,8 +790,6 @@ const ActivityBuilder = ({ activityId, initialData, onActivityCreated }) => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               {availableClasses.map(c => {
                 const checked = selectedClassIds.includes(c.id);
-                if (loading) return <LoadingScreen />;
-
   return (
                   <label key={c.id} className="flex items-center gap-2 border rounded-md p-2 cursor-pointer">
                     <input

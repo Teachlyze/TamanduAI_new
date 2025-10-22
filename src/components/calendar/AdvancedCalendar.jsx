@@ -1,3 +1,4 @@
+import React, { useCallback, useMemo, useState } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, startOfWeek, endOfWeek, eachDayOfInterval as eachDay, addDays, isToday, isWeekend } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar, Clock, Plus, Edit, Trash2 } from 'lucide-react';

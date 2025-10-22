@@ -1,4 +1,5 @@
 // src/pages/meetings/MeetingsPageWrapper.jsx
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from "@/hooks/useAuth";

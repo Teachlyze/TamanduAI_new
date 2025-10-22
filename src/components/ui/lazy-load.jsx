@@ -1,3 +1,4 @@
+import React, { lazy, useEffect, useMemo, useRef, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
 /**
@@ -32,9 +33,6 @@ export const [loading, setLoading] = useState(true);
       </div>
     </div>
   ), []);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <Suspense
       fallback={fallback || defaultFallback}
@@ -153,18 +151,12 @@ export const IntersectionLazyLoad = ({
     if (ref.current) {
       observer.observe(ref.current);
     }
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       if (ref.current) {
         observer.unobserve(ref.current);
       }
     };
   }, [rootMargin, threshold, hasLoaded]);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div ref={ref} {...props}>
       {isIntersecting ? children : (fallback || <div className="h-32 bg-muted animate-pulse rounded" />)}

@@ -1,3 +1,4 @@
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
@@ -134,8 +135,6 @@ const MissionDetailPage = () => {
     XLSX.writeFile(wb, `missao_${mission?.title?.replace(/\s/g, '_')}_progresso.xlsx`);
     toast({ title: 'Sucesso', description: 'Relatório exportado em Excel!' });
   };
-
-  if (loading) return <LoadingScreen message="Carregando missão..." />;
   if (!mission) return <EmptyState icon={Target} title="Missão não encontrada" />;
 
   return (

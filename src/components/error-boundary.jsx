@@ -22,7 +22,7 @@ export class ErrorBoundary extends Component {
       return (
         <div className="flex flex-col items-center justify-center min-h-[50vh] p-4 text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-4">Algo deu errado!</h2>
-          <p className="text-gray-600 mb-6">{this.state.error?.message || 'Ocorreu um erro inesperado.'}</p>
+          <p className="text-gray-800 dark:text-gray-300 mb-6">{this.state.error?.message || 'Ocorreu um erro inesperado.'}</p>
           <button onClick={this.handleReset} className="px-4 py-2 rounded border">Tentar novamente</button>
         </div>
       );

@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
@@ -40,51 +41,71 @@ const RoleProtectedRoute = ({ children, allowedRoles = ['teacher', 'student'] })
       try {
         setLoading(true);
         
-        // Primeiro tentar pegar do user_metadata (mais rápido)
-        if (user.user_metadata?.role) {
-          console.log('[RoleProtected] Role do metadata:', user.user_metadata.role);
-          setUserRole(user.user_metadata.role);
-          setLoading(false);
-          return;
-        }
-
-        // Fallback: buscar da tabela profiles (role somente)
+        // Estratégia de fallback:
+        // 1º Tentar buscar do banco (mais confiável)
+        // 2º Usar user_metadata como fallback (em caso de erro RLS/permissão)
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('role')
           .eq('id', user.id)
           .maybeSingle();
 
-        if (profileError) {
-          console.error('[RoleProtected] Erro ao buscar role:', profileError);
-          // CRÍTICO: Não definir role em caso de erro - deixar null para negar acesso
-          setUserRole(null);
-          setError('Não foi possível verificar suas permissões');
-        } else if (!profile) {
-          console.error('[RoleProtected] Profile não encontrado para user:', user.id);
-          setUserRole(null);
-          setError('Perfil de usuário não encontrado');
+        let role = null;
+        
+        // Prioridade 1: user_metadata (mais rápido e confiável)
+        role = user.user_metadata?.role || user.role;
+        
+        if (role) {
+          console.log('[RoleProtected] Role carregado de user_metadata:', role);
         } else {
-          const role = profile.role;
-          if (!role) {
-            console.error('[RoleProtected] Role vazio/null no profile');
-            setUserRole(null);
-            setError('Role de usuário não definido');
+          console.warn('[RoleProtected] Sem role em user_metadata, tentando banco...');
+          
+          // Prioridade 2: Buscar do banco
+          if (!profileError && profile && profile.role) {
+            role = profile.role;
+            console.log('[RoleProtected] Role carregado do banco:', role);
           } else {
-            setUserRole(role);
-            console.log('[RoleProtected] Role da tabela:', role);
+            console.warn('[RoleProtected] Erro ao buscar do banco:', profileError?.message);
+            
+            // Prioridade 3: Sessão atual
+            try {
+              const { data: { session } } = await supabase.auth.getSession();
+              role = session?.user?.user_metadata?.role || session?.user?.role;
+              console.log('[RoleProtected] Role carregado da sessão:', role);
+            } catch (sessionErr) {
+              console.error('[RoleProtected] Erro ao buscar sessão:', sessionErr);
+            }
           }
         }
+
+        if (!role) {
+          console.error('[RoleProtected] Role não encontrado em nenhum fallback');
+          setUserRole(null);
+          setError('Não foi possível verificar suas permissões. Tente fazer login novamente.');
+          return;
+        }
+
+        setUserRole(role);
+        setError(null);
       } catch (err) {
         console.error('[RoleProtected] Erro inesperado:', err);
-        setError(err.message);
+        // Mesmo com erro, tentar usar user_metadata
+        const fallbackRole = user.user_metadata?.role || user.role;
+        if (fallbackRole) {
+          setUserRole(fallbackRole);
+          setError(null);
+          console.log('[RoleProtected] Usando role de fallback após erro:', fallbackRole);
+        } else {
+          setError('Erro ao verificar permissões');
+          setUserRole(null);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchUserRole();
-  }, [user?.id, user?.user_metadata?.role, location?.pathname]);
+  }, [user?.id]);
 
   // Aguardar autenticação
   if (authLoading || loading) {
@@ -110,7 +131,7 @@ const RoleProtectedRoute = ({ children, allowedRoles = ['teacher', 'student'] })
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            className="w-full px-4 py-2 bg-red-600 text-slate-900 dark:text-white rounded-lg hover:bg-red-700 transition-colors"
           >
             Recarregar Página
           </button>

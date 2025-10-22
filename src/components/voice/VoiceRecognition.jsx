@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -97,9 +98,6 @@ export const [loading, setLoading] = useState(true);
     };
 
     recognitionRef.current = recognition;
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       if (recognitionRef.current) {
         recognitionRef.current.stop();
@@ -133,8 +131,6 @@ export const [loading, setLoading] = useState(true);
   }, []);
 
   if (!isSupported) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <Card className={`voice-recognition ${className}`} {...props}>
         <CardContent className="flex items-center justify-center h-32">
@@ -145,9 +141,6 @@ export const [loading, setLoading] = useState(true);
       </Card>
     );
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <Card className={`voice-recognition ${className}`} {...props}>
       <CardHeader>

@@ -1,3 +1,4 @@
+import React, { forwardRef, useCallback, useEffect, useRef } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { cn } from '@/lib/utils';
 
@@ -34,8 +35,6 @@ import { cn } from '@/lib/utils';
 
   // Calculate percentage for positioning
   const getPercentage = useCallback((val) => {
-    if (loading) return <LoadingScreen />;
-
   return ((val - min) / (max - min)) * 100;
   }, [min, max]);
 
@@ -113,9 +112,6 @@ import { cn } from '@/lib/utils';
       document.addEventListener('touchmove', handleInteractionMove, { passive: false }, []);
       document.addEventListener('touchend', handleInteractionEnd);
     }
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       document.removeEventListener('mousemove', handleInteractionMove);
       document.removeEventListener('mouseup', handleInteractionEnd);
@@ -126,9 +122,6 @@ import { cn } from '@/lib/utils';
 
   const currentValue = internalValue[0] || 0;
   const percentage = getPercentage(currentValue);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div
       ref={ref}

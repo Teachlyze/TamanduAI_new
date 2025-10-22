@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -34,9 +35,6 @@ import monitoringService from '@/services/monitoring';
     if (autoRefresh) {
       interval = setInterval(loadHealthReport, 10000); // Update every 10 seconds
     }
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       if (interval) clearInterval(interval);
     };
@@ -96,8 +94,6 @@ import monitoringService from '@/services/monitoring';
   };
 
   if (isLoading && !healthReport) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="p-6 space-y-6">
         <div className="animate-pulse space-y-4">
@@ -113,8 +109,6 @@ import monitoringService from '@/services/monitoring';
   }
 
   if (!healthReport) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="p-6 text-center">
         <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
@@ -124,9 +118,6 @@ import monitoringService from '@/services/monitoring';
       </div>
     );
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="p-6 space-y-6">
       {/* Header */}

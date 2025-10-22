@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -185,8 +186,6 @@ const CreateClassroomForm = () => {
 
   // Handle form submission
   const onSubmit = async (data) => {
-    e.preventDefault();
-
     if (!user) {
       toast({
         variant: 'destructive',

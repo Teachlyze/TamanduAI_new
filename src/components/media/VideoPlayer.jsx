@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -146,9 +147,6 @@ export const [loading, setLoading] = useState(true);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
     document.addEventListener('msfullscreenchange', handleFullscreenChange);
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
@@ -197,9 +195,6 @@ export const [loading, setLoading] = useState(true);
     video.addEventListener('pause', handlePause);
     video.addEventListener('ended', handleEnded);
     video.addEventListener('error', handleError);
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       video.removeEventListener('loadeddata', handleLoadedData);
       video.removeEventListener('timeupdate', handleTimeUpdate);
@@ -235,9 +230,6 @@ export const [loading, setLoading] = useState(true);
     }
 
     resetTimeout();
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       clearTimeout(timeout);
       if (containerRef.current) {
@@ -247,8 +239,6 @@ export const [loading, setLoading] = useState(true);
   }, [controls, isPlaying]);
 
   if (!src) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <Card className={`video-player ${className}`}>
         <CardContent className="flex items-center justify-center h-64">
@@ -257,9 +247,6 @@ export const [loading, setLoading] = useState(true);
       </Card>
     );
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <Card className={`video-player ${className}`} ref={containerRef} {...props}>
       <CardContent className="p-0 relative overflow-hidden">

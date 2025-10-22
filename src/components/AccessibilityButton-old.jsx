@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -123,9 +124,6 @@ import useTheme from '../hooks/useTheme';
   const hasActiveSettings = Object.values(settings).some(value =>
     typeof value === 'boolean' ? value : value !== 16
   );
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <>
       {/* Main Button */}
@@ -204,7 +202,7 @@ import useTheme from '../hooks/useTheme';
                     variant="ghost"
                     size="sm"
                     onClick={() => setIsOpen(false)}
-                    className="text-white hover:bg-white/20 rounded-xl h-8 w-8 p-0"
+                    className="text-slate-900 dark:text-white hover:bg-white/20 rounded-xl h-8 w-8 p-0"
                   >
                     ✕
                   </Button>
@@ -255,7 +253,7 @@ import useTheme from '../hooks/useTheme';
                       size="sm"
                       variant="outline"
                       onClick={toggleTheme}
-                      className="bg-white dark:bg-slate-900 text-foreground border-border h-8 px-3 dark:bg-gray-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-600 text-xs"
+                      className="bg-white dark:bg-slate-900 text-foreground border-border h-8 px-3 border border-gray-300 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-600 text-xs"
                     >
                       {isDark ? <Sun className="w-3 h-3 mr-1" /> : <Moon className="w-3 h-3 mr-1" />}
                       {isDark ? t('accessibility.light') : t('accessibility.dark')}

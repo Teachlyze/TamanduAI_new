@@ -61,9 +61,6 @@ export const useFocusTrap = (options = {}) => {
 
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keydown', handleEscape);
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('keydown', handleEscape);
@@ -103,9 +100,6 @@ export const FocusTrap = ({
   ...props
 }) => {
   const containerRef = useFocusTrap({ isActive });
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div
       ref={containerRef}
@@ -136,9 +130,6 @@ export const useAutoFocus = (options = {}) => {
         }
       }
     }, delay);
-
-    if (loading) return <LoadingScreen />;
-
   return () => clearTimeout(timer);
   }, [selector, delay, condition]);
 };
@@ -263,9 +254,6 @@ export const FocusTrapProvider = ({ children }) => {
       setActiveTrap(null);
     }
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <FocusTrapContext.Provider value={{
       activeTrap,
@@ -285,8 +273,6 @@ export const LiveAnnouncer = ({
   className = '',
   ...props
 }) => {
-  if (loading) return <LoadingScreen />;
-
   return (
     <>
       <div

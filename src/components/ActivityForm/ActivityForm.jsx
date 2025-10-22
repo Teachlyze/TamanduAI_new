@@ -74,9 +74,6 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
     } else {
       setConnectionStatus('offline');
     }
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
@@ -189,8 +186,6 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
   // Clean up preview URLs on unmount
   useEffect(() => {
     setIsMounted(true);
-    if (loading) return <LoadingScreen />;
-
   return () => {
       const image = watch('image');
       if (image?.previewUrl) {
@@ -211,8 +206,6 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
   }, [initialData, reset]);
 
   if (!isMounted) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -221,9 +214,6 @@ const ActivityForm = ({ initialData, onSubmit, isSubmitting = false }) => {
   }
 
   const progressPercentage = questions.length > 0 ? Math.min((questions.length / 10) * 100, 100) : 0;
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Connection Status Indicator */}

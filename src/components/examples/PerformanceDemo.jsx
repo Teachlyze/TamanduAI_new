@@ -1,3 +1,4 @@
+import React, { memo, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -132,7 +133,7 @@ const PerformanceDemo = React.memo(() => {
                 <div className="space-y-3">
                   {listItems.map((item, i) => (
                     <div key={i} className="flex items-center space-x-4 p-4 border rounded-lg">
-                      <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white text-sm">
+                      <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-slate-900 dark:text-white text-sm">
                         {i + 1}
                       </div>
                       <span>{item}</span>

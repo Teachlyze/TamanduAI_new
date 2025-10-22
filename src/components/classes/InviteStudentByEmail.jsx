@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Send, X, CheckCircle, AlertCircle, Loader2, UserPlus } from 'lucide-react';
@@ -240,9 +241,6 @@ import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
       });
     }
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <Card>
       <CardHeader>
@@ -328,7 +326,7 @@ import { NotificationOrchestrator } from '@/services/notificationOrchestrator';
                     <Mail className="h-4 w-4 text-gray-400" />
                     <div>
                       <p className="text-sm font-medium">{invite.invitee_email}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-700 dark:text-gray-400">
                         Enviado em {new Date(invite.created_at).toLocaleDateString('pt-BR')}
                       </p>
                     </div>

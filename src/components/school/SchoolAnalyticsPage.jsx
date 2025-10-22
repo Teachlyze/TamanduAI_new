@@ -1,3 +1,4 @@
+import React, { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
 import { PremiumCard, LoadingScreen, EmptyState, PremiumButton, toast } from '@/components/ui';
@@ -355,8 +356,6 @@ const SchoolAnalyticsPage = () => {
     const yearStart = new Date(d.getFullYear(), 0, 1);
     return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
   };
-
-  if (loading) return <LoadingScreen message="Carregando analytics da escola..." />;
   if (!school) return <EmptyState icon={Users} title="Escola não encontrada" description="Nenhuma escola vinculada." />;
 
   const exportPDF = () => {
@@ -404,7 +403,7 @@ const SchoolAnalyticsPage = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-3"><BarChart3 className="w-6 h-6"/> Analytics da Escola</h1>
-            <p className="text-white/90">{school.name} - Métricas e Comparações</p>
+            <p className="text-slate-900 dark:text-white/90">{school.name} - Métricas e Comparações</p>
           </div>
           <div className="flex gap-3">
             <PremiumButton onClick={exportPDF} variant="secondary" className="flex items-center gap-2">

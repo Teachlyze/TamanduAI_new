@@ -14,7 +14,7 @@ const NotFoundPage = () => {
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">
           {t('error.pageNotFound')}
         </h2>
-        <p className="text-gray-600 mb-8">
+        <p className="text-gray-800 dark:text-gray-300 mb-8">
           {t('error.pageNotFoundMessage')}
         </p>
         <Button onClick={() => navigate('/')}>

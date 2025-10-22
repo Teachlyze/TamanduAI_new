@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
@@ -227,7 +228,7 @@ const RegisterTeacherPage = () => {
             </CardTitle>
             <CardDescription className="text-center text-purple-100">
               Você foi convidado para fazer parte da{' '}
-              <strong className="text-white">{inviteData?.schools?.name || schoolName}</strong>
+              <strong className="text-slate-900 dark:text-white">{inviteData?.schools?.name || schoolName}</strong>
             </CardDescription>
           </CardHeader>
 

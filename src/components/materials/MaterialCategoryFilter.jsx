@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { supabase } from '@/lib/supabaseClient';
 import {
@@ -75,14 +76,11 @@ import { FiFilter, FiX } from 'react-icons/fi';
   };
 
   const hasActiveFilters = selectedCategory !== 'all' || selectedTags.length > 0 || searchQuery.length > 0;
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <FiFilter className="h-4 w-4 text-gray-600" />
+          <FiFilter className="h-4 w-4 text-gray-800 dark:text-gray-300" />
           <span className="text-sm font-medium text-gray-700">Filtros</span>
         </div>
         {hasActiveFilters && (

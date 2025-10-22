@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FiTrendingUp, FiTrendingDown, FiUsers, FiCheckCircle, FiAlertTriangle } from 'react-icons/fi';

@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 // changeLanguage is not used directly in this file, using i18n.changeLanguage instead
 import { Logger } from '../services/logger';

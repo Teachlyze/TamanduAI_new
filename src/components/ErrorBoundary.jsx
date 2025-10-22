@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createElement } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FiAlertTriangle, FiRefreshCw, FiHome, FiCopy, FiExternalLink } from 'react-icons/fi';

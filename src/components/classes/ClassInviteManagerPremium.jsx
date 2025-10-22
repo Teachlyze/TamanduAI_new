@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -94,9 +95,6 @@ export default function ClassInviteManagerPremium({ classId }) {
     if (date < now) {
       return <Badge variant="destructive" className="text-xs">Expirado</Badge>;
     }
-    
-    if (loading) return <LoadingScreen />;
-
   return (
       <span className="text-xs text-muted-foreground">
         {formatDistanceToNow(date, { addSuffix: true, locale: ptBR })}
@@ -125,9 +123,6 @@ export default function ClassInviteManagerPremium({ classId }) {
   ).length;
   const totalUses = invites.reduce((sum, i) => sum + (i.current_uses || 0), 0);
   const maxPossibleUses = invites.reduce((sum, i) => sum + i.max_uses, 0);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="space-y-6">
       {/* Header com Gradiente */}

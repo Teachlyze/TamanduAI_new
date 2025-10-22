@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -74,8 +75,6 @@ class NotificationManager {
   // Subscribe to notification changes
   subscribe(callback) {
     this.listeners.add(callback);
-    if (loading) return <LoadingScreen />;
-
   return () => this.listeners.delete(callback);
   }
 
@@ -345,8 +344,6 @@ export const NotificationItem = ({
   };
 
   if (compact) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <motion.div
         initial={{ opacity: 0, x: 300 }}
@@ -376,9 +373,6 @@ export const NotificationItem = ({
       </motion.div>
     );
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <motion.div
       initial={{ opacity: 0, y: -50, scale: 0.95 }}
@@ -468,9 +462,6 @@ export const NotificationContainer = ({
     };
     return positions[position] || positions[NOTIFICATION_POSITIONS.BOTTOM_RIGHT];
   }, [position]);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={cn(
       'fixed z-50 w-96 max-w-sm',
@@ -503,9 +494,6 @@ export const NotificationBell = ({
   onClick,
 }) => {
   const { unreadCount } = useNotifications();
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <Button
       variant="ghost"
@@ -536,9 +524,6 @@ export const NotificationSettings = ({
   const { settings, updateSettings } = useNotificationSettings();
 
   if (!isOpen) return null;
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <motion.div

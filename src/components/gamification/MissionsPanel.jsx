@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { Target, CheckCircle2, Clock, Zap } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import missionsService from '@/services/missionsService';

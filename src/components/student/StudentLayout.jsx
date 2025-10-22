@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Outlet, useLocation } from 'react-router-dom';
 import StudentSidebar from '@/components/student/StudentSidebar';

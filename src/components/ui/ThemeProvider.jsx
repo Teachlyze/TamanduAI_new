@@ -1,4 +1,5 @@
 // src/components/ui/ThemeProvider.jsx
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
 /**
@@ -32,9 +33,6 @@ export const TamanduAIThemeProvider = ({ children, defaultTheme = 'auto' }) => {
 
     updateResolvedTheme();
     mediaQuery.addEventListener('change', updateResolvedTheme);
-
-    if (loading) return <LoadingScreen />;
-
   return () => mediaQuery.removeEventListener('change', updateResolvedTheme);
   }, [theme]);
 
@@ -87,9 +85,6 @@ export const TamanduAIThemeProvider = ({ children, defaultTheme = 'auto' }) => {
     setDark: () => handleSetTheme('dark'),
     setAuto: () => handleSetTheme('auto'),
   };
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <ThemeContext.Provider value={value}>
       {children}
@@ -119,9 +114,6 @@ export const ThemeSelector = ({ className = '' }) => {
     { value: 'auto', label: 'Automático', icon: '🖥️' },
     { value: 'dark', label: 'Escuro', icon: '🌙' },
   ];
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`dropdown dropdown-end ${className}`}>
       <button tabIndex={0} className="btn btn-ghost btn-sm">
@@ -160,9 +152,6 @@ export const ThemeSelector = ({ className = '' }) => {
  */
 export const ThemeIndicator = ({ showLabel = true, className = '' }) => {
   const { resolvedTheme } = useTheme();
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       <div className={`w-3 h-3 rounded-full ${

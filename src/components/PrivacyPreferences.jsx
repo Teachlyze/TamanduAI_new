@@ -81,9 +81,6 @@ import { ShieldCheck, Cookie, BarChart3, Megaphone, Save, ArrowLeft, Lock, Eye, 
       required: false
     }
   ];
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
@@ -91,7 +88,7 @@ import { ShieldCheck, Cookie, BarChart3, Megaphone, Save, ArrowLeft, Lock, Eye, 
           {/* Header */}
           <div className="text-center mb-12">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl mb-4 shadow-lg text-white hover:opacity-90">
-              <ShieldCheck className="h-8 w-8 text-white" />
+              <ShieldCheck className="h-8 w-8 text-slate-900 dark:text-white" />
             </div>
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">
               Suas <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent text-white hover:opacity-90">Preferências</span> de Privacidade
@@ -120,13 +117,13 @@ import { ShieldCheck, Cookie, BarChart3, Megaphone, Save, ArrowLeft, Lock, Eye, 
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-3">
                         <div className={`w-12 h-12 bg-gradient-to-r from-${category.color}-400 to-${category.color}-600 rounded-xl flex items-center justify-center`}>
-                          <category.icon className="h-6 w-6 text-white" />
+                          <category.icon className="h-6 w-6 text-black" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                          <h3 className="text-xl font-bold text-black dark:text-white flex items-center gap-2">
                             {category.title}
                             {category.required && (
-                              <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 dark:bg-gray-100 dark:bg-gray-800 dark:text-blue-300 rounded-full">
+                              <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 dark:bg-gray-800 dark:text-white rounded-full">
                                 Sempre ativo
                               </span>
                             )}

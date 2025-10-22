@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -110,7 +111,7 @@ const StudentAlertsPanel = ({ classId }) => {
       </CardHeader>
       <CardContent>
         {alerts.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-gray-700 dark:text-gray-400">
             <FiCheckCircle className="mx-auto h-12 w-12 text-green-500 mb-2" />
             <p>Nenhum alerta pendente</p>
             <p className="text-sm mt-1">Clique em "Gerar Alertas" para analisar o desempenho dos alunos</p>
@@ -140,7 +141,7 @@ const StudentAlertsPanel = ({ classId }) => {
                           (alert.alert_type === 'plagiarism' && `${alert.details.plagiarism_count} ocorrências`)}
                       </p>
                     )}
-                    <p className="text-xs text-gray-600 mt-1">
+                    <p className="text-xs text-gray-800 dark:text-gray-300 mt-1">
                       Criado em: {new Date(alert.created_at).toLocaleString('pt-BR')}
                     </p>
                   </div>

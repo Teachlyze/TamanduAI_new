@@ -1,3 +1,4 @@
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import Joyride, { STATUS, ACTIONS, EVENTS } from 'react-joyride';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';

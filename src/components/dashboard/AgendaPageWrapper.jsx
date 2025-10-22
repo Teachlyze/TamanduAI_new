@@ -1,4 +1,5 @@
 // src/components/dashboard/AgendaPageWrapper.jsx
+import React, { useMemo, useState } from 'react';
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from '@/lib/supabaseClient';
 import { AttachmentService } from '@/services/attachmentService';
@@ -198,7 +199,7 @@ const AgendaPageContent = ({ events, attachmentsByEvent, isTeacher, user, onRefr
         </h1>
         <button
           onClick={onRefresh}
-          className="px-3 py-2 text-sm rounded-md bg-primary text-white hover:opacity-90"
+          className="px-3 py-2 text-sm rounded-md bg-primary text-slate-900 dark:text-white hover:opacity-90"
         >
           Atualizar
         </button>

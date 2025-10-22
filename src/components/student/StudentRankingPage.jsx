@@ -1,3 +1,4 @@
+import React, { useEffect, useMemo, useState } from 'react';
 import { PremiumCard, EmptyState, LoadingScreen } from '@/components/ui';
 import { Trophy, Users } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -107,14 +108,11 @@ const StudentRankingPage = () => {
     }
     return Array.from(ids);
   }, [schoolId, classes, classMembers]);
-
-  if (loading) return <LoadingScreen message="Calculando rankings..." />;
-
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-br from-amber-600 to-yellow-600 p-8 rounded-2xl text-white">
         <h1 className="text-2xl font-bold flex items-center gap-3"><Trophy className="w-6 h-6"/> Ranking</h1>
-        <p className="text-white/90">Rankings por turma e por escola</p>
+        <p className="text-slate-900 dark:text-white/90">Rankings por turma e por escola</p>
       </div>
 
       {/* Rankings lado a lado */}

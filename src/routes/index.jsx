@@ -1,3 +1,4 @@
+import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from '../components/ProtectedRoute';
 import RoleProtectedRoute from '../components/RoleProtectedRoute';
@@ -85,18 +86,19 @@ const VerifyEmailPage = lazyLoad(() => import('../pages/VerifyEmailPage'));
 const ActivitySubmissionsPageNew = lazyLoad(() => import('../pages/activities/ActivitySubmissionsPage'));
 const ClassActivitiesPage = lazyLoad(() => import('../pages/classes/ClassActivitiesPage'));
 const ClassSchedulePage = lazyLoad(() => import('../pages/classes/ClassSchedulePage'));
-const CorrectionsPage = lazyLoad(() => import('../pages/activities/CorrectionsPage'));
+// CorrectionsPage removido - usar ClassGradingPage dentro de ClassDetailsPage ao invés
+// const CorrectionsPage = lazyLoad(() => import('../pages/activities/CorrectionsPage'));
 const UserProfileEditPage = lazyLoad(() => import('../pages/profile/UserProfileEditPage'));
 
 // School pages
 const SchoolDashboard = lazyLoad(() => import('../pages/school/SchoolDashboard'));
 const SchoolTeachersPage = lazyLoad(() => import('../pages/school/SchoolTeachersPage'));
-const SchoolClassesPage = lazyLoad(() => import('../pages/school/SchoolClassesPage'));
 const SchoolReportsPage = lazyLoad(() => import('../pages/school/SchoolReportsPage'));
 const SchoolCommsPage = lazyLoad(() => import('../pages/school/SchoolCommsPage'));
-const SchoolSettingsPage = lazyLoad(() => import('../pages/school/SchoolSettingsPage'));
 const SchoolRankingPage = lazyLoad(() => import('../pages/school/SchoolRankingPage'));
 const SchoolStudentsPage = lazyLoad(() => import('../pages/school/SchoolStudentsPage'));
+const SchoolClassesPage = lazyLoad(() => import('../pages/school/SchoolClassesPage'));
+const SchoolSettingsPage = lazyLoad(() => import('../pages/school/SchoolSettingsPage'));
 const SchoolAnalyticsPage = lazyLoad(() => import('../components/school/SchoolAnalyticsPage'));
 const SchoolAnalyticsMLPage = lazyLoad(() => import('../pages/school/SchoolAnalyticsMLPage'));
 const SchoolClassMembersPage = lazyLoad(() => import('../components/school/SchoolClassMembersPage'));
@@ -131,6 +133,7 @@ const QuestionBankPage = lazyLoad(() => import('../pages/teacher/QuestionBankPag
 const CreateQuestionPage = lazyLoad(() => import('../pages/teacher/CreateQuestionPage'));
 const AnalyticsMLPage = lazyLoad(() => import('../pages/teacher/AnalyticsMLPage'));
 const EditClassPage = lazyLoad(() => import('../pages/teacher/EditClassPage'));
+const ClassDetailsPage = lazyLoad(() => import('../pages/teacher/ClassDetailsPage'));
 
 // New Class Systems - Janeiro 2025
 const ClassFeedPage = lazyLoad(() => import('../pages/classes/ClassFeedPage'));
@@ -539,7 +542,7 @@ const AppRoutes = () => {
           element={
             <ErrorBoundary errorTitle="Erro ao carregar Turmas" errorMessage="Não foi possível carregar a página de turmas. Tente recarregar a página.">
               <Suspense fallback={<Loading />}>
-                <ClassesPage />
+                <TeacherClassroomsPage />
               </Suspense>
             </ErrorBoundary>
           }
@@ -552,14 +555,14 @@ const AppRoutes = () => {
             </Suspense>
           }
         />
-        {/* <Route
+        <Route
           path="classes/:classId"
           element={
             <Suspense fallback={<Loading />}>
               <ClassDetailsPage />
             </Suspense>
           }
-        /> */}
+        />
         <Route
           path="classes/:classId/edit"
           element={
@@ -787,14 +790,15 @@ const AppRoutes = () => {
             </Suspense>
           }
         />
-        <Route
+        {/* Rota de correções removida - usar /dashboard/classes/:classId ao invés */}
+        {/* <Route
           path="corrections"
           element={
             <Suspense fallback={<Loading />}>
               <CorrectionsPage />
             </Suspense>
           }
-        />
+        /> */}
         <Route
           path="activities/:activityId/submissions"
           element={
@@ -950,6 +954,14 @@ const AppRoutes = () => {
           }
         />
         <Route
+          path="students"
+          element={
+            <Suspense fallback={<Loading />}>
+              <SchoolStudentsPage />
+            </Suspense>
+          }
+        />
+        <Route
           path="classes"
           element={
             <Suspense fallback={<Loading />}>
@@ -958,10 +970,10 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="students"
+          path="settings"
           element={
             <Suspense fallback={<Loading />}>
-              <SchoolStudentsPage />
+              <SchoolSettingsPage />
             </Suspense>
           }
         />
@@ -986,14 +998,6 @@ const AppRoutes = () => {
           element={
             <Suspense fallback={<Loading />}>
               <SchoolRankingPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path="settings"
-          element={
-            <Suspense fallback={<Loading />}>
-              <SchoolSettingsPage />
             </Suspense>
           }
         />

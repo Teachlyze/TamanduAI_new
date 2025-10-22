@@ -1,3 +1,4 @@
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight, ArrowLeft, Check } from 'lucide-react';
@@ -7,10 +8,10 @@ import { PremiumButton } from './ui/PremiumButton';
  * Onboarding Tour Component
  * Guided tour for first-time users
  */
-export const [loading, setLoading] = useState(true);
-  const OnboardingTour = ({ steps = [], onComplete, onSkip }) => {
+const OnboardingTour = ({ steps = [], onComplete, onSkip }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isActive, setIsActive] = useState(false);
+  const [loading] = useState(false);
 
   useEffect(() => {
     // Check if user has completed onboarding
@@ -50,9 +51,6 @@ export const [loading, setLoading] = useState(true);
 
   const currentStepData = steps[currentStep];
   const isLastStep = currentStep === steps.length - 1;
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <AnimatePresence>
       {isActive && (
@@ -116,7 +114,7 @@ export const [loading, setLoading] = useState(true);
                 <div className="flex-1">
                   {currentStepData.icon && (
                     <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center mb-3">
-                      <currentStepData.icon className="w-6 h-6 text-white" />
+                      <currentStepData.icon className="w-6 h-6 text-slate-900 dark:text-white" />
                     </div>
                   )}
                   <h3 className="text-xl font-bold text-foreground mb-2">

@@ -89,8 +89,6 @@ import { useToast } from '@/components/ui/use-toast';
   }
 
   if (submissionSuccess) {
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-md" role="alert">
         <div className="flex">
@@ -119,9 +117,6 @@ import { useToast } from '@/components/ui/use-toast';
       </div>
     );
   }
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="container mx-auto p-4 max-w-3xl">
       <PremiumCard variant="elevated">
@@ -158,7 +153,7 @@ import { useToast } from '@/components/ui/use-toast';
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+          className="px-4 py-2 bg-blue-600 text-slate-900 dark:text-white rounded hover:bg-blue-700 disabled:opacity-50"
         >
           {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>

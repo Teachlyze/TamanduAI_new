@@ -1,3 +1,4 @@
+import React, { useCallback, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 // Hook personalizado para listas acessíveis
@@ -292,7 +293,7 @@ export const AccessibleCheckbox = ({
       >
         {(checked || indeterminate) && (
           <svg
-            className="h-3 w-3 text-white"
+            className="h-3 w-3 text-slate-900 dark:text-white"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

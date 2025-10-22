@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import * as ToastPrimitives from '@radix-ui/react-toast';
 import { X } from 'lucide-react';
-import React from 'react';
+import React, { forwardRef } from 'react';
 
 const ToastProvider = ToastPrimitives.Provider;
 

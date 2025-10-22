@@ -1,12 +1,11 @@
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
 /**
  * Lazy Loading Image Component
  * Optimized image loading with blur placeholder
  */
-export const [loading, setLoading] = useState(true);
-  const LazyImage = ({
+const LazyImage = ({
   src,
   alt,
   placeholder = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"%3E%3Crect fill="%23f3f4f6" width="400" height="300"/%3E%3C/svg%3E',
@@ -46,16 +45,12 @@ export const [loading, setLoading] = useState(true);
       observer.observe(imgRef.current);
     }
 
-    if (loading) return <LoadingScreen />;
-
-  return () => {
+    return () => {
       if (imgRef.current) {
         observer.unobserve(imgRef.current);
       }
     };
   }, [src, onLoad]);
-
-  if (loading) return <LoadingScreen />;
 
   return (
     <motion.div
@@ -83,3 +78,4 @@ export const [loading, setLoading] = useState(true);
 };
 
 export default LazyImage;
+export { LazyImage };

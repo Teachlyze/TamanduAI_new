@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import useTheme from '../hooks/useTheme';
 import { THEME_DARK, THEME_LIGHT, DEFAULT_THEME } from '../constants/theme';
@@ -39,17 +40,12 @@ function ThemeWrapper({ children }) {
     const timer = setTimeout(() => {
       root.classList.add('transition-colors', 'duration-200');
     }, 0);
-    
-    if (loading) return <LoadingScreen />;
-
   return () => clearTimeout(timer);
   }, [theme]);
   
   // Efeito para aplicar o tema quando o componente for montado ou quando o tema mudar
   useEffect(() => {
     const cleanup = applyTheme();
-    if (loading) return <LoadingScreen />;
-
   return () => {
       if (cleanup) cleanup();
       
@@ -61,9 +57,6 @@ function ThemeWrapper({ children }) {
       }
     };
   }, [applyTheme]);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <>
       {children}

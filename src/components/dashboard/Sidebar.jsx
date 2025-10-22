@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -51,8 +52,6 @@ import { supabase } from '@/lib/supabaseClient';
         if (mounted) setRole('student'); // Sempre defaultar para student (mais seguro)
       }
     })();
-    if (loading) return <LoadingScreen />;
-
   return () => { mounted = false; };
   }, [user?.id, user?.user_metadata?.role]);
 
@@ -97,9 +96,6 @@ import { supabase } from '@/lib/supabaseClient';
   };
 
   const bottomItems = getBottomItems();
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <>
       {open && (
@@ -118,7 +114,7 @@ import { supabase } from '@/lib/supabaseClient';
         <div className="p-4 flex items-center justify-between border-b border-border/50 bg-gradient-to-r from-primary/5 to-purple-500/5 text-white hover:opacity-90">
           <div className="flex items-center">
             <div className="w-8 h-8 bg-gradient-to-br from-primary to-purple-600 rounded-xl flex items-center justify-center mr-2 shadow-lg">
-              <Zap className="w-5 h-5 text-white" />
+              <Zap className="w-5 h-5 text-slate-900 dark:text-white" />
             </div>
             <span className={`text-xl font-bold bg-gradient-to-r from-primary via-purple-600 to-indigo-600 bg-clip-text text-transparent ${open ? '' : 'lg:hidden'}`}>
               TamanduAI

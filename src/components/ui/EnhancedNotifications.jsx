@@ -1,4 +1,5 @@
 // src/components/ui/EnhancedNotifications.jsx
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,

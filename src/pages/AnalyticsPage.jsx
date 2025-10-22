@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
@@ -365,7 +366,7 @@ const AnalyticsPage = () => {
             <BarChart3 className="w-8 h-8" />
             Analytics
           </h1>
-          <p className="text-white/90">Análise comparativa de desempenho</p>
+          <p className="text-slate-900 dark:text-white/90">Análise comparativa de desempenho</p>
         </div>
       </motion.div>
 

@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { cn } from '@/lib/utils';
 import { Button } from './button';
@@ -59,9 +60,6 @@ export const [loading, setLoading] = useState(true);
       onBlur(name);
     }
   }, [name, onBlur]);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className={cn('space-y-2', className)}>
       {label && (
@@ -119,7 +117,7 @@ export const [loading, setLoading] = useState(true);
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-gray-400 hover:text-gray-600 focus:outline-none"
+              className="text-gray-400 hover:text-gray-800 dark:text-gray-300 focus:outline-none"
               tabIndex={-1}
             >
               {showPassword ? (
@@ -163,7 +161,7 @@ export const [loading, setLoading] = useState(true);
       {helpText && !hasError && (
         <div
           id={helpId}
-          className="text-sm text-gray-500"
+          className="text-sm text-gray-700 dark:text-gray-400"
         >
           {helpText}
         </div>
@@ -313,9 +311,6 @@ export const EnhancedForm = ({
     validateField,
     validateForm,
   ]);
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <form
       ref={formRef}
@@ -333,8 +328,6 @@ export const EnhancedForm = ({
  * Form Field Factory for creating consistent form fields
  */
 export const createFormField = (FieldComponent) => {
-  if (loading) return <LoadingScreen />;
-
   return ({
     name,
     label,
@@ -342,8 +335,6 @@ export const createFormField = (FieldComponent) => {
     validation,
     ...props
   }) => {
-    if (loading) return <LoadingScreen />;
-
   return (
       <FormField
         name={name}
@@ -544,9 +535,6 @@ export const useAutoSave = (values, onSave, options = {}) => {
     }
 
     timeoutRef.current = setTimeout(save, delay);
-
-    if (loading) return <LoadingScreen />;
-
   return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);

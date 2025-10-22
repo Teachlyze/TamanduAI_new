@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -161,9 +162,6 @@ export const [loading, setLoading] = useState(true);
   const Message = ({ message, isLast }) => {
     const isBot = message.type === 'bot';
     const isError = message.isError;
-
-    if (loading) return <LoadingScreen />;
-
   return (
       <div className={cn(
         "flex gap-3 p-4",
@@ -254,9 +252,6 @@ export const [loading, setLoading] = useState(true);
       </div>
     </div>
   );
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <Card className={cn("chatbot-widget flex flex-col", className)} style={{ height: '600px' }} {...props}>
       {/* Header */}

@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -244,9 +245,6 @@ const StudentsPage = () => {
       ))}
     </div>
   );
-
-  if (loading) return <LoadingScreen />;
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">

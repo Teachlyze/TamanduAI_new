@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
@@ -78,8 +79,6 @@ const TeacherClassMembersPage = () => {
       setRemoving(null);
     }
   };
-
-  if (loading) return <LoadingScreen message="Carregando membros..." />;
   if (!klass) return <EmptyState icon={Users} title="Turma não encontrada" />;
 
   const students = members.filter((m) => m.role === 'student');
@@ -89,7 +88,7 @@ const TeacherClassMembersPage = () => {
     <div className="space-y-6">
       <div className="bg-gradient-to-br from-indigo-600 to-purple-600 p-8 rounded-2xl text-white">
         <h1 className="text-2xl font-bold flex items-center gap-3"><Users className="w-6 h-6"/> Gerenciar Membros</h1>
-        <p className="text-white/90">{klass.name}</p>
+        <p className="text-slate-900 dark:text-white/90">{klass.name}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

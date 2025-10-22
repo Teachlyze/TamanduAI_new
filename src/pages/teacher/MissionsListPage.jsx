@@ -1,3 +1,4 @@
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
@@ -82,9 +83,6 @@ const MissionsListPage = () => {
       { name: 'Pendentes', value: pending, color: '#6b7280' },
     ];
   }, [studentMissions]);
-
-  if (loading) return <LoadingScreen message="Carregando missões..." />;
-
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
